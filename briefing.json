@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-28T00:04:32.256506+09:00",
-  "source_report_at": "2026-10-28T00:03:13.822674+09:00",
+  "generated_at": "2026-10-28T01:13:43.466670+09:00",
+  "source_report_at": "2026-10-28T01:12:03.497268+09:00",
   "valid_through": "2026-10-28T17:30:00+09:00",
   "status": "partial",
   "items": [
@@ -134,6 +134,40 @@
       "needs_recheck": false
     },
     {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027143146508980",
+      "title": "손목닥터9988 300만 돌파 기념, 걷다보니 운동회",
+      "summary": "손목닥터9988 300만 돌파 기념, 걷다보니 운동회",
+      "conditions": "11월5일 무료 걷기 행사. 샛강 서울교에서 여의도 행사장까지 약 4km. 1인별 신청. 정확한 행사 시각·추가 앱 조건은 주최 측 확인 필요. 포인트 지급이나 현장 잔량을 보장하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [
+        "영등포구"
+      ],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-04",
+      "deadline_at": "2026-11-04T18:00:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027144850152852",
+      "title": "서울청년센터 관악 신림동쓰리룸 <2026 청년 셀프 인테리어 레진아트 클래스>",
+      "summary": "서울청년센터 관악 신림동쓰리룸 <2026 청년 셀프 인테리어 레진아트 클래스>",
+      "conditions": "19~39세 1인가구 대상 무료 선발 과정, 군복무에 따른 연령 연장은 증빙 필요. 11월10·17·24일 19시30분~21시30분 3회 모두 참여 필수. 20명 선발, 신청 2배수 초과 시 조기 마감 가능. 우선순위 심사·선정 문자 회신 필요. 사진이 보고서·SNS에 활용됨. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [
+        "관악구"
+      ],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-04",
+      "deadline_at": "2026-11-04T23:59:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
       "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019810",
       "title": "봉은사 명상부터 한옥 전시까지 '웰니스 트래블 위크'",
@@ -146,6 +180,23 @@
       "deadline_at": null,
       "validity_kind": "fixed",
       "fee_status": "mixed",
+      "needs_recheck": false
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027150658101428",
+      "title": "서울청년센터 관악 신림동쓰리룸 <2026 청년 셀프 인테리어 마크라메-자이언트얀 클래스>",
+      "summary": "서울청년센터 관악 신림동쓰리룸 <2026 청년 셀프 인테리어 마크라메-자이언트얀 클래스>",
+      "conditions": "19~39세 1인가구 대상 무료 선발 과정, 군복무에 따른 연령 연장은 증빙 필요. 11월11·18·25일 19시30분~21시30분 3회 모두 참여 필수. 20명 선발, 신청 2배수 초과 시 조기 마감 가능. 우선순위 심사·선정 문자 회신 필요. 사진이 보고서·SNS에 활용됨. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [
+        "관악구"
+      ],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-05",
+      "deadline_at": "2026-11-05T23:59:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
       "needs_recheck": false
     },
     {
@@ -164,6 +215,55 @@
       "needs_recheck": false
     },
     {
+      "source": "seoul_lifelong",
+      "url": "https://sll.seoul.go.kr/lms/front/event/doJoinListEvent.do?main_se=lie&event_no=118&mnid=202412331716",
+      "title": "서울런 키즈영어 참여이벤트",
+      "summary": "키즈영어 참여자 추첨 300명에게 5천 원 상품권",
+      "conditions": "10월20일~11월10일 레벨테스트와 학습계획서 발급 신청을 모두 완료하면 자동 응모. 11월30일 당첨 발표, 파리바게뜨 5천 원 상품권 추첨 300명. 참가비·정확한 연령·추가 자격 조건은 확인되지 않음. 경품 지급 보장 아님. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-10",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027140829265399",
+      "title": "[주말가족/라임워크숍] 윈터기프트",
+      "summary": "[주말가족/라임워크숍] 윈터기프트",
+      "conditions": "초등학생 이상 자녀와 성인 2인 가족 대상. 참가비 4만 원(재료비 3만 원 포함). 11월15·22·29일 로봇펫, 12월6·13·20일 홀로그램, 14~17시. 회차별 8팀 모집, 5팀 미만 취소 가능. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [
+        "도봉구"
+      ],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-14",
+      "deadline_at": "2026-11-14T17:00:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027101819597947",
+      "title": "(공공미술/일) 서울시 공공미술 - 티코스터 제작, 다도 체험 워크숍 <볏짚 한 뼘, 차 한 모금>",
+      "summary": "(공공미술/일) 서울시 공공미술 - 티코스터 제작, 다도 체험 워크숍 <볏짚 한 뼘, 차 한 모금>",
+      "conditions": "7세 이상 무료 체험. 11월22일 13시30분 또는 14시45분, 평화문화진지. 인원별 개별 예약, 주차 보장 없음. 접수 종료는 11월22일 시작 시각인 0시로 표시됨. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [
+        "도봉구"
+      ],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-22",
+      "deadline_at": "2026-11-22T00:00:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
       "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019003",
       "title": "영화·AI 등 192개 강좌 쏟아진다! 서울시민대학 선착순 신청",
@@ -178,6 +278,23 @@
       "deadline_at": null,
       "validity_kind": "fixed",
       "fee_status": "mixed",
+      "needs_recheck": false
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027130112514944",
+      "title": "[서울기록원] 어린이 기록체험실 <꼬불꼬불 기록 탐험> 2026년 11월 개별 관람",
+      "summary": "[서울기록원] 어린이 기록체험실 <꼬불꼬불 기록 탐험> 2026년 11월 개별 관람",
+      "conditions": "어린이와 보호자 가족 2~5명, 보호자 필수·성인 최대 2명. 권장 7~10세. 무료, 방문 전날까지 예약·현장 접수 없음. 11월 개별 관람 회차 운영, 해당 회차 시각 확인 필요. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [
+        "은평구"
+      ],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-29",
+      "deadline_at": "2026-11-29T00:00:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
       "needs_recheck": false
     },
     {
@@ -276,6 +393,23 @@
       "deadline_at": null,
       "validity_kind": "fixed",
       "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S220426092440232101",
+      "title": "서울역사박물관(본관) 단체관람",
+      "summary": "서울역사박물관(본관) 단체관람",
+      "conditions": "20~100명 단체관람, 무료. 관람 전날 18시까지 예약. 9~18시 운영·17시30분 입장 마감·월요일 휴관. 성인 인솔자 동행 필수, 전시해설 미제공. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [
+        "종로구"
+      ],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": "2026-12-31",
+      "deadline_at": "2026-12-31T18:00:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
       "needs_recheck": false
     },
     {
@@ -504,6 +638,36 @@
       "needs_recheck": false
     },
     {
+      "source": "seven",
+      "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "title": "할인 카드",
+      "summary": "세븐일레븐 T멤버십 할인·현대카드 M포인트 사용",
+      "conditions": "T멤버십 VIP·Gold는 1천 원당 100원, Silver는 50원 할인 또는 적립. 하루 1회, 공식 안내에는 최대 2만 원 할인·적립 가능(등급별 차등)으로 표기되어 세부 한도는 사용 전 확인 필요. 현대카드 M포인트는 결제금액 10% 차감 안내. 담배·주류·서비스·일부 행사상품 및 점포 제외, 상세 제외 품목 확인 필요. 구매비용 발생, 보유 포인트 및 등급 미확인. 유료 구독 가입은 추천하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seven",
+      "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=3",
+      "title": "멤버십 카드",
+      "summary": "세븐일레븐 L.POINT 적립·사용",
+      "conditions": "구매금액 0.1% 적립, 하루 5천 포인트·월 1만5천 포인트 한도 및 하루 적립 10회. 1포인트 단위 사용. 담배·서비스 등 제외, 참여 점포·품목별 조건 확인 필요. 구매비용 발생. 신규 카드 발급이나 개인 포인트 잔액은 확인하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+      "districts": [],
+      "verified_at": "2026-10-28T01:08:52.475577+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
       "source": "government",
       "url": "https://www.korea.kr/news/policyNewsView.do?newsId=148974363",
       "title": "코리아 그랜드 페스티벌 할인 일정",
@@ -603,7 +767,7 @@
   "coverage_incomplete": true,
   "message": "공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다.",
   "withheld": {
-    "pending": 0,
+    "pending": 7,
     "expired": 16,
     "excluded": 2,
     "invalid_or_conflicting": 0
@@ -629,7 +793,7 @@
         "name": "은평구",
         "status": "checked",
         "scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님",
-        "verified_count": 2
+        "verified_count": 3
       },
       {
         "source": "seongnam",
@@ -648,9 +812,9 @@
       {
         "source": "culture",
         "name": "문화·예약",
-        "status": "not_connected",
-        "scope": "",
-        "verified_count": 0
+        "status": "checked",
+        "scope": "서울 공공서비스예약 첫 화면 공개 목록 · 잔여석·예약 성공 미확인",
+        "verified_count": 7
       },
       {
         "source": "kt",
@@ -676,184 +840,191 @@
       {
         "source": "seoul_lifelong",
         "name": "서울시 평생학습포털",
-        "status": "not_connected",
-        "scope": "",
-        "verified_count": 0
+        "status": "checked",
+        "scope": "평생학습포털 첫 화면 공식 이벤트 · 강좌 전체 수집 아님",
+        "verified_count": 1
+      },
+      {
+        "source": "seven",
+        "name": "세븐일레븐 공식 제휴",
+        "status": "failed",
+        "scope": "세븐일레븐 공식 카드 제휴 · 이미지 행사·앱 잔량 미포함",
+        "verified_count": 2
       }
     ],
     "districts": [
       {
         "name": "종로구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 0,
-        "verified_count": 1
+        "verified_count": 2
       },
       {
         "name": "중구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "용산구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "성동구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "광진구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "동대문구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 3,
         "verified_count": 2
       },
       {
         "name": "중랑구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "성북구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 3,
         "verified_count": 2
       },
       {
         "name": "강북구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "도봉구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 4,
-        "verified_count": 2
+        "verified_count": 4
       },
       {
         "name": "노원구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "은평구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 2,
-        "verified_count": 2
+        "verified_count": 3
       },
       {
         "name": "서대문구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "마포구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "양천구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "강서구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 4,
         "verified_count": 3
       },
       {
         "name": "구로구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "금천구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "영등포구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 4,
-        "verified_count": 1
+        "verified_count": 2
       },
       {
         "name": "동작구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "관악구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 4,
-        "verified_count": 2
+        "verified_count": 4
       },
       {
         "name": "서초구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강남구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "송파구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강동구",
         "status": "checked",
-        "checked_at": "2026-10-28T00:03:13.822674+09:00",
+        "checked_at": "2026-10-28T01:12:03.497268+09:00",
         "candidates_count": 0,
         "verified_count": 0
       }
