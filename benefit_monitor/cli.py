@@ -31,6 +31,7 @@ def run(root, imports=None, online=False, now=None):
         incoming = []
         handoffs, failures = [], []
         district_coverage = []
+        successful_sources = []
         if config.get("seoul_district_coverage"):
             if online:
                 district_items, district_coverage = collect_districts(root, sources["seoul"], now)
@@ -46,6 +47,7 @@ def run(root, imports=None, online=False, now=None):
             if online and (s.get("feed_url") or s.get("html_url")):
                 try:
                     incoming.extend(collect(s) if s.get("feed_url") else collect_html(s))
+                    successful_sources.append(s["id"])
                     continue
                 except Exception as e:
                     failures.append(dict(source=s["id"], reason=type(e).__name__, detail=str(e)[:240]))
@@ -80,6 +82,8 @@ def run(root, imports=None, online=False, now=None):
             current[item.id] = item
         report = classify(old, current, now, config.get("expiring_days", 7), config.get("max_age_days", 7))
         report["district_coverage"] = district_coverage
+        report["collection"] = dict(online=online, successful_sources=successful_sources,
+                                  successful_districts=sum(d["status"] == "checked" and d.get("mode") == "live" for d in district_coverage))
         report["cost_policy"] = cost_policy.telemetry()
         report["by_district"] = {}
         for key, entries in report.items():
@@ -108,3 +112,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

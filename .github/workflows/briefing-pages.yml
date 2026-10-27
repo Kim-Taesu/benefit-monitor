@@ -1,0 +1,87 @@
+name: Daily benefit briefing
+on:
+  schedule:
+    # 07:00 Asia/Seoul (UTC+9); GitHub may delay scheduled runs.
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benefit-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # Standard runners on public repositories are free. Never consume
+    # unverified private-repository allowances or change repository visibility.
+    if: github.event.repository.private == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      collection_outcome: ${{ steps.briefing.outcome }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Test
+        run: python -m unittest discover -s tests -v
+      - name: Collect and export public briefing
+        if: github.event_name != 'push'
+        id: briefing
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m benefit_monitor.publish --prepare-import
+          python -m benefit_monitor.cli --online --import-items inputs/public.json
+          python -m benefit_monitor.publish
+      - name: Publish failure status instead of old recommendations
+        if: github.event_name != 'push' && steps.briefing.outcome == 'failure'
+        run: python -m benefit_monitor.publish --failure
+      - name: Summarize collection status
+        if: github.event_name != 'push'
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads(Path("delivery/public/briefing.json").read_text())
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as stream:
+              stream.write(f"Public briefing status: **{data['status']}**\n")
+              stream.write(f"Generated: {data['generated_at']}\n")
+              stream.write(f"Verified public items: {len(data['items'])}\n")
+          PY
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        if: github.event_name != 'push'
+        with:
+          path: delivery/public
+          retention-days: 1
+
+  deploy:
+    if: github.event_name != 'push' && github.event.repository.private == false
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Requires an existing Pages configuration; do not enable a paid feature.
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - name: Deploy public briefing
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Fail the run when collection failed, after deploying the warning
+        env:
+          COLLECTION_OUTCOME: ${{ needs.build.outputs.collection_outcome }}
+        run: test "$COLLECTION_OUTCOME" = success
+
