@@ -40,24 +40,32 @@
       "tier": "B",
       "domains": [
         "www.gangseo.seoul.kr",
-        "gangseo.seoul.kr"
+        "gangseo.seoul.kr",
+        "mediahub.seoul.go.kr"
       ],
       "routes": [
-        "https://www.gangseo.seoul.kr/"
+        "https://www.gangseo.seoul.kr/",
+        "https://mediahub.seoul.go.kr/"
       ],
-      "feed_url": null
+      "feed_url": null,
+      "district_feed": "강서구",
+      "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
     },
     {
       "id": "eunpyeong",
       "name": "은평구",
       "tier": "A",
       "domains": [
-        "www.ep.go.kr"
+        "www.ep.go.kr",
+        "mediahub.seoul.go.kr"
       ],
       "routes": [
-        "https://www.ep.go.kr/"
+        "https://www.ep.go.kr/",
+        "https://mediahub.seoul.go.kr/"
       ],
-      "feed_url": null
+      "feed_url": null,
+      "district_feed": "은평구",
+      "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
     },
     {
       "id": "seongnam",
@@ -146,13 +154,28 @@
       "tier": "B",
       "domains": [
         "my.homeplus.co.kr",
-        "eapp.emart.com"
+        "eapp.emart.com",
+        "www.shinsegaegroupnewsroom.com"
       ],
       "routes": [
         "https://my.homeplus.co.kr/leaflet",
-        "https://eapp.emart.com/"
+        "https://eapp.emart.com/",
+        "https://www.shinsegaegroupnewsroom.com/family/emart/"
       ],
-      "feed_url": null
+      "feed_url": null,
+      "html_url": "https://www.shinsegaegroupnewsroom.com/family/emart/",
+      "article_path_pattern": "/[a-z0-9-]+/",
+      "keywords": [
+        "할인",
+        "행사",
+        "쓱데이",
+        "혜택",
+        "세일",
+        "최저가",
+        "페스티벌",
+        "특가"
+      ],
+      "collection_scope": "신세계그룹 공식 이마트 뉴스 · 홈플러스 전단 자동 수집 미연결"
     },
     {
       "id": "convenience",
@@ -166,9 +189,17 @@
       ],
       "routes": [
         "https://membership.kt.com/",
-        "https://pay.naver.com/"
+        "https://pay.naver.com/",
+        "https://cu.bgfretail.com/service/credit_info.do?category=service&depth2=2&sf=N",
+        "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1"
       ],
-      "feed_url": null
+      "feed_url": null,
+      "html_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "article_path_pattern": "/service/membership_info.do",
+      "keywords": [
+        "제휴"
+      ],
+      "collection_scope": "CU 공식 제휴 멤버십 안내 · 다른 편의점·앱 전용 행사 미포함"
     },
     {
       "id": "seoul_lifelong",

@@ -57,12 +57,22 @@ STATUS = {"checked": "목록 수집 성공 · 본문 검증 별도", "cached": "
 def coverage(root, config, report, items):
     success = report.get("collection", {}).get("successful_sources", [])
     sources = []
+    observed = {d["district"]: d for d in report.get("district_coverage", []) if "district" in d}
     for source in config["sources"]:
         connected = bool(source.get("feed_url") or source.get("html_url"))
         status = "checked" if source["id"] in success else "failed" if connected else "not_connected"
+        district = source.get("district_feed")
+        if district:
+            record = observed.get(district, {})
+            status = record.get("status", "not_checked")
+            if status == "checked" and record.get("mode") == "cached":
+                status = "cached"
+            if status not in STATUS:
+                status = "failed"
         sources.append(dict(source=source["id"], name=source.get("name", source["id"]), status=status,
-                            verified_count=sum(i["source"] == source["id"] for i in items)))
-    observed = {d["district"]: d for d in report.get("district_coverage", []) if "district" in d}
+                            scope=source.get("collection_scope", ""),
+                            verified_count=sum(i["source"] == source["id"] or
+                                               bool(district and district in i["districts"]) for i in items)))
     districts = []
     for district in load(root / "districts.json", {"districts": []})["districts"]:
         name = district["name"]
@@ -91,7 +101,7 @@ def page(data):
     sections = ['<section><h2>분야별 수집 현황</h2><ul>']
     cov = data.get("coverage", {})
     for row in cov.get("sources", []):
-        sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 공개 검증 ' + str(row["verified_count"]) + '건</li>')
+        sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 공개 검증 ' + str(row["verified_count"]) + '건' + (' · ' + esc(row.get("scope", "")) if row.get("scope") else '') + '</li>')
     sections.append('</ul><h2>서울 25개 지역구</h2><p>' + esc(cov.get("scope", "")) + '</p><ul>')
     for row in cov.get("districts", []):
         sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 후보 ' + str(row["candidates_count"]) + '건 · 공개 검증 ' + str(row["verified_count"]) + '건</li>')
@@ -179,7 +189,7 @@ def run(root, now=None, failure=False):
         if cov.get(group):
             lines += ["", "## " + ("분야별 수집 현황" if group == "sources" else "지역구 수집 현황")]
             for row in cov[group]:
-                lines.append("- " + md_text(row["name"]) + ": " + STATUS[row["status"]] + " · 공개 검증 " + str(row["verified_count"]) + "건")
+                lines.append("- " + md_text(row["name"]) + ": " + STATUS[row["status"]] + " · 공개 검증 " + str(row["verified_count"]) + "건" + (" · " + md_text(row.get("scope", "")) if row.get("scope") else ""))
     if cov:
         lines.append(cov["scope"])
     save_text(output / "briefing.md", "\n".join(lines) + "\n")

@@ -44,6 +44,12 @@ def run(root, imports=None, online=False, now=None):
                     failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), detail=d.get("detail")))
 
         for s in sources.values():
+            if online and s.get("district_feed"):
+                record = next((d for d in district_coverage if d["district"] == s["district_feed"]), {})
+                if record.get("status") == "checked":
+                    successful_sources.append(s["id"])
+                    continue
+                failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
             if online and (s.get("feed_url") or s.get("html_url")):
                 try:
                     incoming.extend(collect(s) if s.get("feed_url") else collect_html(s))

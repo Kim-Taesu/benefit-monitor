@@ -1,5 +1,6 @@
 """Official HTML links are candidates, never automatically verified benefits."""
 from html.parser import HTMLParser
+from urllib.error import HTTPError
 import re
 from urllib.parse import urljoin, urlsplit, urlunsplit, parse_qsl, urlencode
 from .rss import AGENT, fetch
@@ -13,11 +14,13 @@ class ArticleLinks(HTMLParser):
         self.pattern, self.keywords = re.compile(pattern), keywords
         self.href, self.parts, self.items = None, [], {}
         self.title_parts, self.title_tag = [], None
+        self.link_title = ""
     def handle_starttag(self, tag, attrs):
         if tag == "a":
             self.href, self.parts = dict(attrs).get("href"), []
+            self.link_title = dict(attrs).get("title", "")
             self.title_parts, self.title_tag = [], None
-        if self.href and (tag in ("h1", "h2", "h3", "strong") or "tit" in dict(attrs).get("class", "").split()):
+        if self.href and (tag in ("h1", "h2", "h3", "strong") or set(dict(attrs).get("class", "").split()) & {"tit", "item-title", "title"}):
             self.title_tag = tag
     def handle_data(self, data):
         if self.href:
@@ -29,13 +32,17 @@ class ArticleLinks(HTMLParser):
             self.title_tag = None
         if tag != "a" or not self.href:
             return
+        if self.href.startswith("#"):
+            self.href = None
+            return
         url = urljoin(self.route, self.href)
         parts = urlsplit(url)
         if parts.hostname == "www.korea.kr":
             query = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
                      if k not in ("pWise", "pWiseSub")]
             url = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
-        title = re.sub(r"^\d{1,2}\s+", "", " ".join(" ".join(self.title_parts or self.parts).split()))
+        text = " ".join(" ".join(self.title_parts or self.parts).split()) or self.link_title
+        title = re.sub(r"^\d{1,2}\s+", "", text)
         if (title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path)
                 and any(word in title for word in self.keywords)):
             self.items.setdefault(url, title[:240])
@@ -44,7 +51,13 @@ class ArticleLinks(HTMLParser):
 def collect(source):
     route = source["html_url"]
     u = urlsplit(route)
-    robot = fetch(f"{u.scheme}://{u.netloc}/robots.txt", source["domains"]).decode("utf-8")
+    try:
+        robot = fetch(f"{u.scheme}://{u.netloc}/robots.txt", source["domains"]).decode("utf-8")
+    except HTTPError as error:
+        # A missing robots file is distinct from an access denial or outage.
+        if error.code != 404:
+            raise
+        robot = ""
     if not allowed(robot, route, AGENT):
         raise ValueError("robots disallows HTML collection")
     parser = ArticleLinks(route, source["domains"], source["article_path_pattern"], source["keywords"])
