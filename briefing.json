@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-27T23:26:06.365567+09:00",
-  "source_report_at": "2026-10-27T23:24:51.744060+09:00",
+  "generated_at": "2026-10-27T23:28:44.361843+09:00",
+  "source_report_at": "2026-10-27T23:27:45.177067+09:00",
   "valid_through": "2026-10-28T00:00:00+09:00",
   "status": "partial",
   "items": [
@@ -38,6 +38,23 @@
       "needs_recheck": false
     },
     {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019773",
+      "title": "서울시립과학관 과학관에 ON 예술가",
+      "summary": "과학·예술 융합 전시와 워크숍 일정",
+      "conditions": "10월24~25일 별빛축제와 공개관측회는 종료. 이 항목은 11월29일까지 운영한다고 명시한 과학관에 ON 예술가 프로젝트만 안내. 워크숍별 날짜·예약·잔여석과 별도 요금은 확인되지 않았으므로 무료나 현장 참여 가능으로 단정하지 않음.",
+      "districts": [
+        "노원구"
+      ],
+      "verified_at": "2026-10-27T23:26:01.163079+09:00",
+      "valid_from": "2026-10-24",
+      "valid_until": "2026-11-29",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
       "source": "seongnam",
       "url": "https://snvision.seongnam.go.kr/23521",
       "title": "성남 산성대로 미션투어",
@@ -52,6 +69,24 @@
       "deadline_at": null,
       "validity_kind": "fixed",
       "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019836",
+      "title": "청계 A01 무료 야간 자율주행버스",
+      "summary": "평일 저녁 청계광장~광장시장 무료 자율주행버스",
+      "conditions": "평일 19:00~23:50 운행 안내, 청계광장 출발 막차 23:00. 30분 간격 하루9회, 최대8명 탑승. 승하차 교통카드 태그 필수. 좌석이 없으면 탑승하지 못할 수 있으며 실시간 빈자리·당일 운행 여부는 확인하지 않음.",
+      "districts": [
+        "중구",
+        "종로구"
+      ],
+      "verified_at": "2026-10-27T23:26:01.163079+09:00",
+      "valid_from": "2026-10-22",
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "free",
       "needs_recheck": false
     },
     {
@@ -100,12 +135,29 @@
       "validity_kind": "fixed",
       "fee_status": "unknown",
       "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019791",
+      "title": "서울 AI 인사이트 포럼 온라인 생중계",
+      "summary": "11월 3일 무료 AI 강연 온라인 시청",
+      "conditions": "14:00~16:00 서울시·서울AI재단 공식 유튜브 생중계 예정. 현장 참가 신청은 10월23일에 마감됐으므로 현장 신청 혜택으로 추천하지 않음. 온라인 강연 시청은 무료이며 경품 당첨은 보장하지 않음.",
+      "districts": [
+        "중구"
+      ],
+      "verified_at": "2026-10-27T23:26:01.163079+09:00",
+      "valid_from": "2026-11-03",
+      "valid_until": "2026-11-03",
+      "deadline_at": "2026-11-03T16:00:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
     }
   ],
   "coverage_incomplete": true,
   "message": "공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다.",
   "withheld": {
-    "pending": 39,
+    "pending": 35,
     "expired": 0,
     "excluded": 0,
     "invalid_or_conflicting": 0
@@ -116,7 +168,7 @@
         "source": "seoul",
         "name": "서울시",
         "status": "checked",
-        "verified_count": 2
+        "verified_count": 5
       },
       {
         "source": "gangseo",
@@ -177,175 +229,175 @@
       {
         "name": "종로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 0,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "중구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 2,
-        "verified_count": 0
+        "verified_count": 2
       },
       {
         "name": "용산구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "성동구",
-        "status": "failed",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
-        "candidates_count": 0,
+        "status": "checked",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
+        "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "광진구",
-        "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
-        "candidates_count": 2,
+        "status": "failed",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
+        "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "동대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "중랑구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "성북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "강북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "도봉구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "노원구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 2,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "은평구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "서대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "마포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "양천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "강서구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "구로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "금천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "영등포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "동작구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "관악구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "서초구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강남구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "송파구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강동구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:24:51.744060+09:00",
+        "checked_at": "2026-10-27T23:27:45.177067+09:00",
         "candidates_count": 0,
         "verified_count": 0
       }
