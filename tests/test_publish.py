@@ -43,6 +43,18 @@ class PublishTests(unittest.TestCase):
         self.assertIn("추가 출처", page)
         self.assertNotIn("detail", result["coverage"]["districts"][0])
 
+    def test_long_public_identifier_is_not_a_phone_number(self):
+        self.item["url"] = "https://official.example/?id=S261027101819597947"
+        self.release(self.item)
+        publish.prepare_import(self.root, now=NOW)
+
+    def test_phone_numbers_still_block_public_release(self):
+        for phone in ("01012345678", "010-1234-5678", "연락010 1234 5678"):
+            self.item["conditions"] = phone
+            self.release(self.item)
+            with self.assertRaises(ValueError):
+                publish.prepare_import(self.root, now=NOW)
+
     def test_release_keeps_fees_and_times_but_drops_private_fields(self):
         self.item.update(evidence="internal verification evidence", review_notes="private note")
         self.release(self.item)

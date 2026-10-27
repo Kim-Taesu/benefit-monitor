@@ -35,12 +35,25 @@ class ArticleLinks(HTMLParser):
         if self.href.startswith("#"):
             self.href = None
             return
+        # Translate only the observed public card-tab links; never execute JS.
+        tab = re.fullmatch(r"javascript:\s*fncTab\('([23])'\);?", self.href)
+        if tab and urlsplit(self.route).hostname == "www.7-eleven.co.kr" and urlsplit(self.route).path == "/product/cardInfo.asp":
+            self.href = "/product/cardInfo.asp?gbn=" + tab.group(1)
         url = urljoin(self.route, self.href)
         parts = urlsplit(url)
+        if parts.hostname == "www.7-eleven.co.kr" and parts.path == "/product/cardInfo.asp":
+            if parse_qsl(parts.query) not in ([('gbn', '2')], [('gbn', '3')]):
+                self.href = None
+                return
         if parts.hostname == "www.korea.kr":
             query = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
                      if k not in ("pWise", "pWiseSub")]
             url = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+        if parts.hostname == "yeyak.seoul.go.kr" and parts.path == "/web/reservation/selectReservView.do":
+            query = [(k, v) for k, v in parse_qsl(parts.query) if k != "reSvc"]
+            url = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+            if self.link_title.strip():
+                self.title_parts = [self.link_title]
         text = " ".join(" ".join(self.title_parts or self.parts).split()) or self.link_title
         title = re.sub(r"^\d{1,2}\s+", "", text)
         if (title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path)

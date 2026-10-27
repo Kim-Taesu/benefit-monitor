@@ -30,7 +30,7 @@ def releases(root, config, now):
         public = {k: data[k] for k in PUBLIC_FIELDS}
         text = json.dumps(public, ensure_ascii=False)
         # Defense in depth; explicit review is still required for freeform text.
-        if re.search(r"생년월일|거주지|집주소|개인조건|비밀키|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|01[016789][- ]?\d{3,4}[- ]?\d{4}", text):
+        if re.search(r"생년월일|거주지|집주소|개인조건|비밀키|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<!\d)01[016789][- ]?\d{3,4}[- ]?\d{4}(?!\d)", text):
             raise ValueError("Possible private information in public release")
         if any(re.search(r"token|secret|password|auth|session|api.?key", key, re.I)
                for key, _ in parse_qsl(urlsplit(item.url).query)):

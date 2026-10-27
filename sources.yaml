@@ -134,7 +134,25 @@
         "https://yeyak.seoul.go.kr/web/main.do",
         "https://mediahub.seoul.go.kr/"
       ],
-      "feed_url": null
+      "feed_url": null,
+      "html_url": "https://yeyak.seoul.go.kr/web/main.do",
+      "article_path_pattern": "/web/reservation/selectReservView.do",
+      "keywords": [
+        "모집",
+        "체험",
+        "행사",
+        "교육",
+        "강좌",
+        "전시",
+        "관람",
+        "숲",
+        "운동회",
+        "워크숍",
+        "클래스",
+        "활쏘기",
+        "티톡"
+      ],
+      "collection_scope": "서울 공공서비스예약 첫 화면 공개 목록 · 잔여석·예약 성공 미확인"
     },
     {
       "id": "kt",
@@ -211,7 +229,34 @@
       "routes": [
         "https://sll.seoul.go.kr/lms/simin_course/courseRequest/doListView.do?main_se=ssu&simin_yn=M%2CDC%2CMD%2CO%2CR%2CRG&mnid=202501604868"
       ],
-      "feed_url": null
+      "feed_url": null,
+      "html_url": "https://sll.seoul.go.kr/",
+      "article_path_pattern": "/lms/front/event/doJoinListEvent.do",
+      "keywords": [
+        "이벤트",
+        "EVENT",
+        "경품"
+      ],
+      "collection_scope": "평생학습포털 첫 화면 공식 이벤트 · 강좌 전체 수집 아님"
+    },
+    {
+      "id": "seven",
+      "name": "세븐일레븐 공식 제휴",
+      "tier": "C",
+      "domains": [
+        "www.7-eleven.co.kr"
+      ],
+      "routes": [
+        "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2"
+      ],
+      "feed_url": null,
+      "html_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "article_path_pattern": "/product/cardInfo.asp",
+      "keywords": [
+        "할인 카드",
+        "멤버십 카드"
+      ],
+      "collection_scope": "세븐일레븐 공식 카드 제휴 · 이미지 행사·앱 잔량 미포함"
     }
   ],
   "seoul_district_coverage": true,
