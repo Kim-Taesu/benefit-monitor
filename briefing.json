@@ -1,10 +1,25 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-27T23:49:47.177562+09:00",
-  "source_report_at": "2026-10-27T23:48:35.834900+09:00",
-  "valid_through": "2026-10-28T00:00:00+09:00",
+  "generated_at": "2026-10-28T00:04:32.256506+09:00",
+  "source_report_at": "2026-10-28T00:03:13.822674+09:00",
+  "valid_through": "2026-10-28T17:30:00+09:00",
   "status": "partial",
   "items": [
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019833",
+      "title": "광화문광장에 '25개 문화원' 모여 엑스포 연다! 체험·전시까지",
+      "summary": "25개 자치구 문화원 엑스포: 10월 28일 무료",
+      "conditions": "광화문광장12~17:30 공연·전시·체험. 전시·체험과 민속놀이 마당은14~17:30. 누구나 무료 참여 안내이며 현장 프로그램 수용 인원은 미확인.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-28",
+      "valid_until": "2026-10-28",
+      "deadline_at": "2026-10-28T17:30:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
     {
       "source": "retail",
       "url": "https://my.homeplus.co.kr/leaflet",
@@ -17,6 +32,36 @@
       "verified_at": "2026-10-27T23:17:50.018485+09:00",
       "valid_from": "2026-10-22",
       "valid_until": "2026-10-28",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "retail",
+      "url": "https://www.shinsegaegroupnewsroom.com/emart-cabbage-pre-order/",
+      "title": "“오더픽으로 겨울 김장 장바구니 물가 안정” 이마트, 절임배추 사전예약 할인 행사 진행",
+      "summary": "이마트 절임배추 오더픽 사전예약: 10월 28일까지",
+      "conditions": "앱 오더픽에서 행사카드 구매 조건. 일반20kg은1차29,800원, 1차 소진 후2차35,800원+e머니3천점. 현재 적용 차수·재고 미확인. 수령11월13일~12월12일 선택, e머니12월17일 지급 예정·12월30일까지 사용. 별도 오더투홈은10월29일~12월9일 예정이며 오더픽과 조건을 혼합하지 않음.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:55:38.055545+09:00",
+      "valid_from": "2026-10-15",
+      "valid_until": "2026-10-28",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "retail",
+      "url": "https://www.shinsegaegroupnewsroom.com/e-mart-holds-discount-event-for-camping-gear-and-home-appliances/",
+      "title": "집 밖 나들이 준비부터 집 안 가전 장만까지! 이마트, 캠핑용품·가전제품 할인 행사 진행",
+      "summary": "이마트 캠핑용품 행사카드 할인: 10월 29일까지",
+      "conditions": "그릴·화롯대·튜맨 캠핑매트 전 품목은 행사카드 전액 결제 시30%, 시티 피크닉 캠핑용품은20% 할인. 행사카드: 이마트e·삼성·KB국민·신한·현대·NH농협·우리·롯데 등, KB국민BC·신한BC·NH농협BC 제외. 점포별 품목·재고 미확인. 같은 기사 속 가전 특가는10월25일 종료.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:55:38.055545+09:00",
+      "valid_from": null,
+      "valid_until": "2026-10-29",
       "deadline_at": null,
       "validity_kind": "fixed",
       "fee_status": "paid",
@@ -203,6 +248,21 @@
     },
     {
       "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019869",
+      "title": "제철 차, 명상 배워요! 웰니스 학습라운지 '다감' 개관…무료 교육",
+      "summary": "웰니스 학습라운지 다감: 무료 시범 프로그램 신청",
+      "conditions": "10월28일9:30 선착순 신청 개시, 11월9일~12월5일16개 프로그램106회 무료 운영. 서울시민·생활권자 대상, 사전 신청 후 확정. 일요일 휴관. 잔여석·신청 성공 미확인.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-28",
+      "valid_until": "2026-12-05",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019841",
       "title": "자연과 평화가 만나는 자리…서울창포원 공공미술 전시",
       "summary": "서울창포원 공공미술 ‘평화의 잔상’ 전시",
@@ -250,6 +310,21 @@
       "deadline_at": null,
       "validity_kind": "fixed",
       "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "convenience",
+      "url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "title": "제휴 멤버십카드",
+      "summary": "CU 제휴 멤버십: KT 아침 간편식 할인·T멤버십 안내",
+      "conditions": "KT: 매일5~9시 대상 간편식1천원당200원 할인, 하루1회·최대1천원. T멤버십: VIP·골드1천원당100원, 실버50원 할인 또는 적립. T멤버십은1+1·2+1·담배·주류·서비스 등 제외. 타 할인·적립 중복 불가, 일부 특수시설 점포 제외. 상품 구매비용 발생. 개인 등급·포인트·잔여 한도·적용 성공 미확인.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:55:38.055545+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "paid",
       "needs_recheck": false
     },
     {
@@ -429,36 +504,6 @@
       "needs_recheck": false
     },
     {
-      "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019833",
-      "title": "광화문광장에 '25개 문화원' 모여 엑스포 연다! 체험·전시까지",
-      "summary": "25개 자치구 문화원 엑스포: 10월 28일 무료",
-      "conditions": "광화문광장12~17:30 공연·전시·체험. 전시·체험과 민속놀이 마당은14~17:30. 누구나 무료 참여 안내이며 현장 프로그램 수용 인원은 미확인.",
-      "districts": [],
-      "verified_at": "2026-10-27T23:46:28.922319+09:00",
-      "valid_from": "2026-10-28",
-      "valid_until": "2026-10-28",
-      "deadline_at": "2026-10-28T17:30:00+09:00",
-      "validity_kind": "fixed",
-      "fee_status": "free",
-      "needs_recheck": false
-    },
-    {
-      "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019869",
-      "title": "제철 차, 명상 배워요! 웰니스 학습라운지 '다감' 개관…무료 교육",
-      "summary": "웰니스 학습라운지 다감: 무료 시범 프로그램 신청",
-      "conditions": "10월28일9:30 선착순 신청 개시, 11월9일~12월5일16개 프로그램106회 무료 운영. 서울시민·생활권자 대상, 사전 신청 후 확정. 일요일 휴관. 잔여석·신청 성공 미확인.",
-      "districts": [],
-      "verified_at": "2026-10-27T23:46:28.922319+09:00",
-      "valid_from": "2026-10-28",
-      "valid_until": "2026-12-05",
-      "deadline_at": null,
-      "validity_kind": "fixed",
-      "fee_status": "free",
-      "needs_recheck": false
-    },
-    {
       "source": "government",
       "url": "https://www.korea.kr/news/policyNewsView.do?newsId=148974363",
       "title": "코리아 그랜드 페스티벌 할인 일정",
@@ -559,7 +604,7 @@
   "message": "공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다.",
   "withheld": {
     "pending": 0,
-    "expired": 10,
+    "expired": 16,
     "excluded": 2,
     "invalid_or_conflicting": 0
   },
@@ -569,60 +614,70 @@
         "source": "seoul",
         "name": "서울시",
         "status": "checked",
+        "scope": "",
         "verified_count": 29
       },
       {
         "source": "gangseo",
         "name": "강서구",
-        "status": "not_connected",
-        "verified_count": 0
+        "status": "checked",
+        "scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님",
+        "verified_count": 3
       },
       {
         "source": "eunpyeong",
         "name": "은평구",
-        "status": "not_connected",
-        "verified_count": 0
+        "status": "checked",
+        "scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님",
+        "verified_count": 2
       },
       {
         "source": "seongnam",
         "name": "성남시",
         "status": "failed",
+        "scope": "",
         "verified_count": 2
       },
       {
         "source": "government",
         "name": "정부",
         "status": "checked",
+        "scope": "",
         "verified_count": 1
       },
       {
         "source": "culture",
         "name": "문화·예약",
         "status": "not_connected",
+        "scope": "",
         "verified_count": 0
       },
       {
         "source": "kt",
         "name": "KT",
         "status": "not_connected",
+        "scope": "",
         "verified_count": 0
       },
       {
         "source": "retail",
         "name": "마트",
-        "status": "not_connected",
-        "verified_count": 1
+        "status": "checked",
+        "scope": "신세계그룹 공식 이마트 뉴스 · 홈플러스 전단 자동 수집 미연결",
+        "verified_count": 3
       },
       {
         "source": "convenience",
         "name": "편의점 공식 제휴",
-        "status": "not_connected",
-        "verified_count": 0
+        "status": "checked",
+        "scope": "CU 공식 제휴 멤버십 안내 · 다른 편의점·앱 전용 행사 미포함",
+        "verified_count": 1
       },
       {
         "source": "seoul_lifelong",
         "name": "서울시 평생학습포털",
         "status": "not_connected",
+        "scope": "",
         "verified_count": 0
       }
     ],
@@ -630,175 +685,175 @@
       {
         "name": "종로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 0,
         "verified_count": 1
       },
       {
         "name": "중구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "용산구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "성동구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "광진구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "동대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 3,
         "verified_count": 2
       },
       {
         "name": "중랑구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "성북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 3,
         "verified_count": 2
       },
       {
         "name": "강북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "도봉구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 4,
         "verified_count": 2
       },
       {
         "name": "노원구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "은평구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "서대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "마포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "양천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "강서구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 4,
         "verified_count": 3
       },
       {
         "name": "구로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "금천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "영등포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 4,
         "verified_count": 1
       },
       {
         "name": "동작구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "관악구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 4,
         "verified_count": 2
       },
       {
         "name": "서초구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강남구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "송파구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강동구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:48:35.834900+09:00",
+        "checked_at": "2026-10-28T00:03:13.822674+09:00",
         "candidates_count": 0,
         "verified_count": 0
       }
