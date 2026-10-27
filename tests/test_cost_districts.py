@@ -61,3 +61,14 @@ class CostDistrictTests(unittest.TestCase):
         p=ArticleLinks("https://mediahub.seoul.go.kr/",["mediahub.seoul.go.kr"],r"/archives/\d+",["혜택"])
         p.feed('<a href="/archives/12"><p class="tit">혜택 안내</p><p class="summary">매일 바뀌는 조회수 설명</p></a>')
         self.assertEqual(p.items,{"https://mediahub.seoul.go.kr/archives/12":"혜택 안내"})
+
+    def test_shared_robots_failure_is_not_repeated_for_each_district(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as directory:
+            root=Path(directory)
+            save(root/"districts.json",dict(districts=[dict(code="110",name="종로구"),dict(code="230",name="강남구")]))
+            with patch("benefit_monitor.collectors.districts.fetch", side_effect=TimeoutError("robots timeout")) as fetcher:
+                items,coverage=collect(root,dict(keywords=["무료"]),NOW)
+            self.assertEqual(items,[])
+            self.assertEqual([c["status"] for c in coverage],["failed","failed"])
+            fetcher.assert_called_once_with("https://mediahub.seoul.go.kr/robots.txt",["mediahub.seoul.go.kr"])
+

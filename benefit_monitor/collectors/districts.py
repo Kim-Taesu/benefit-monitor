@@ -44,7 +44,7 @@ def collect(root, source, now):
     registry = load(root/"districts.json", None)["districts"]
     cache = load(root/"cache/district_candidates.json", {})
     all_items, coverage = [], []
-    robot = None
+    robot, robot_error = None, None
     for district in registry:
         key, name = district["code"], district["name"]
         previous = cache.get(key)
@@ -61,8 +61,15 @@ def collect(root, source, now):
         result = dict(district=name, code=key, checked_at=now.isoformat(), url=route,
                       scope="seoul_publications_first_page", status="failed", items=[])
         try:
+            if robot_error is not None:
+                raise robot_error
             if robot is None:
-                robot = fetch(BASE+"/robots.txt", DOMAINS).decode("utf-8")
+                try:
+                    robot = fetch(BASE+"/robots.txt", DOMAINS).decode("utf-8")
+                except Exception as error:
+                    # One shared endpoint; its failure must not restart 25 retries.
+                    robot_error = error
+                    raise
             if not allowed(robot, route, AGENT):
                 raise ValueError("robots disallows district listing")
             body = fetch(route, DOMAINS).decode("utf-8")
@@ -75,3 +82,4 @@ def collect(root, source, now):
         coverage.append({k:v for k,v in result.items() if k != "items"} | {"mode":"live"})
     save(root/"cache/district_candidates.json", cache)
     return all_items, coverage
+
