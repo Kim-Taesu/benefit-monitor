@@ -6,6 +6,7 @@ from .rss import fetch, AGENT
 from .html import ArticleLinks
 from ..store import load, save
 from ..robots import allowed
+from ..operations import error_info
 
 BASE = "https://mediahub.seoul.go.kr"
 DOMAINS = ["mediahub.seoul.go.kr"]
@@ -82,7 +83,7 @@ def collect(root, source, now):
                 result["items"] = parse(body, route, name, source["keywords"])
             result.update(status="checked", candidates_count=len(result["items"]))
         except Exception as error:
-            result.update(error_type=type(error).__name__, detail=str(error)[:240], candidates_count=0)
+            result.update(**error_info(error), candidates_count=0)
         cache[key] = result
         all_items.extend(result["items"])
         coverage.append({k:v for k,v in result.items() if k != "items"} | {"mode":"live"})

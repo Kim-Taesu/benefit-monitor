@@ -55,6 +55,38 @@ class PublishTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 publish.prepare_import(self.root, now=NOW)
 
+    def test_export_contains_only_projected_operational_state(self):
+        save(self.root / "cache/operational_state.json", dict(schema_version=1, items={}, profile="private"))
+        result=self.run_export()
+        self.assertEqual(result["operational_state"], dict(schema_version=1, items={}, sources={}))
+        self.assertNotIn("private", json.dumps(result))
+
+    def test_one_early_deadline_does_not_expire_whole_document(self):
+        early=dict(self.item, valid_until="2026-10-26", deadline_at="2026-10-26T09:00:00+09:00")
+        later=dict(self.item, url="https://official.example/later", valid_until="2026-10-30")
+        self.release(early,later)
+        self.report["new"]=[early,later]
+        save(self.root/"report.json",self.report)
+        result=self.run_export()
+        self.assertEqual(result["valid_through"],"2026-10-27T00:00:00+09:00")
+        deadlines={i["url"]:i["display_until"] for i in result["items"]}
+        self.assertEqual(deadlines[early["url"]],"2026-10-26T09:00:00+09:00")
+        self.assertEqual(deadlines[later["url"]],"2026-10-31T00:00:00+09:00")
+        at_ten=self.run_export(now=NOW+timedelta(hours=2))
+        self.assertEqual([i["url"] for i in at_ten["items"]],[later["url"]])
+
+    def test_human_dates_are_consistent_without_changing_json_timestamps(self):
+        item=dict(self.item,valid_until="2026-11-04",deadline_at="2026-11-04T18:00:00+09:00")
+        self.release(item);self.report["new"]=[item];save(self.root/"report.json",self.report)
+        result=self.run_export()
+        self.assertEqual(result["items"][0]["deadline_at"],"2026-11-04T18:00:00+09:00")
+        for filename in ("index.html","briefing.md"):
+            text=(self.root/"delivery/public"/filename).read_text()
+            self.assertIn("2026.11.04 18:00 (KST)",text)
+            self.assertIn("2026.10.26 07:00 (KST)",text)
+            self.assertIn("시작일 미확인",text)
+            self.assertNotIn("공식 확인: 2026-10-26T",text)
+
     def test_release_keeps_fees_and_times_but_drops_private_fields(self):
         self.item.update(evidence="internal verification evidence", review_notes="private note")
         self.release(self.item)
@@ -188,7 +220,7 @@ class PublishTests(unittest.TestCase):
         save(self.root / "report.json", dict(self.report, new=[item]))
         self.run_export()
         text = (self.root / "delivery/public/briefing.md").read_text()
-        for expected in ("시작 예정", "2026-10-28", "2026-10-29T12:00:00+09:00"):
+        for expected in ("시작 예정", "2026.10.28", "2026.10.29 12:00 (KST)"):
             self.assertIn(expected, text)
 
 

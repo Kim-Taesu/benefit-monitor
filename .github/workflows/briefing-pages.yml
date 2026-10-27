@@ -39,8 +39,13 @@ jobs:
         id: briefing
         continue-on-error: true
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRIEFING_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
+          python -m benefit_monitor.mirror --restore --repository "$BRIEFING_REPOSITORY"
+          unset GH_TOKEN
           python -m benefit_monitor.publish --prepare-import
           python -m benefit_monitor.cli --online --import-items inputs/public.json
           python -m benefit_monitor.publish
@@ -62,7 +67,7 @@ jobs:
               failures = json.loads(log.read_text()) if log.exists() else []
               for failure in failures:
                   # Only identifiers/types; never publish raw errors or URLs.
-                  stream.write(f"Collection issue: {failure['source']} / {failure.get('district', '-')} / {failure['reason']}\n")
+                  stream.write(f"Collection issue: {failure['source']} / {failure.get('district', '-')} / {failure.get('category', failure['reason'])}\n")
           PY
       - name: Mirror public JSON for the existing ChatGPT reader
         if: github.event_name != 'push'

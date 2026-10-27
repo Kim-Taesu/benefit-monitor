@@ -42,3 +42,34 @@ class MirrorTests(unittest.TestCase):
                 with self.assertRaises(FileNotFoundError):
                     mirror.run(Path(directory), "Kim-Taesu/benefit-monitor")
                 api.assert_not_called()
+
+    def test_restore_reads_only_metadata_from_existing_public_json(self):
+        from datetime import datetime
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            save(root/'sources.yaml',{'sources':[{'id':'test'}]})
+            remote={'operational_state':{'schema_version':1,'items':{},'profile':'do not copy'},'items':[{'conditions':'do not restore'}]}
+            response=json.dumps({'content':base64.b64encode(json.dumps(remote).encode()).decode(),'encoding':'base64'})
+            with patch('benefit_monitor.mirror.subprocess.run',return_value=subprocess.CompletedProcess([],0,response,'')):
+                mirror.restore(root,'Kim-Taesu/benefit-monitor',datetime.fromisoformat('2026-10-28T07:00:00+09:00'))
+            state=json.loads((root/'cache/operational_state.json').read_text())
+            self.assertEqual(state,{'schema_version':1,'items':{},'sources':{}})
+            self.assertFalse((root/'cache/verified_items.json').exists())
+
+    def test_failure_export_preserves_previous_operational_state(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            save(root/'sources.yaml',{'sources':[{'id':'test'}]})
+            prior={'schema_version':1,'items':{},'sources':{'test':{'consecutive_failures':3}}}
+            save(root/'delivery/public/briefing.json',{'status':'collection_failed','items':[]})
+            def api(args,**kwargs):
+                if 'GET' in args:
+                    if '--jq' in args:return subprocess.CompletedProcess(args,0,'sha','')
+                    envelope={'encoding':'base64','content':base64.b64encode(json.dumps({'operational_state':prior}).encode()).decode()}
+                    return subprocess.CompletedProcess(args,0,json.dumps(envelope),'')
+                uploaded=json.loads(base64.b64decode(json.loads(kwargs['input'])['content']))
+                self.assertEqual(uploaded['operational_state'],prior)
+                self.assertEqual(uploaded['items'],[])
+                return subprocess.CompletedProcess(args,0,'{}','')
+            with patch('benefit_monitor.mirror.subprocess.run',side_effect=api):mirror.run(root,'Kim-Taesu/benefit-monitor')
+            self.assertEqual(json.loads((root/'delivery/public/briefing.json').read_text())['operational_state'],prior)

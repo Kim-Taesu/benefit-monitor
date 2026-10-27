@@ -10,6 +10,7 @@ from .collectors.rss import collect
 from .collectors.html import collect as collect_html
 from .collectors.districts import collect as collect_districts
 from . import cost_policy
+from . import operations
 from .briefing import build as build_briefing, write as write_briefing
 
 def run(root, imports=None, online=False, now=None):
@@ -41,7 +42,7 @@ def run(root, imports=None, online=False, now=None):
                 district_coverage = [{k:v for k,v in c.items() if k != "items"} | {"mode":"cached"} for c in cached.values()]
             for d in district_coverage:
                 if d["status"] != "checked":
-                    failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), detail=d.get("detail")))
+                    failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), category=d.get("category", "other")))
 
         for s in sources.values():
             if online and s.get("district_feed"):
@@ -56,10 +57,14 @@ def run(root, imports=None, online=False, now=None):
                     successful_sources.append(s["id"])
                     continue
                 except Exception as e:
-                    failures.append(dict(source=s["id"], reason=type(e).__name__, detail=str(e)[:240]))
+                    failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
             handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
         # Explicit validated inputs take precedence over discovered candidates.
         explicit_items = [validate(d, sources, now) for d in explicit]
+        operational_state = operations.sanitize(load(root/"cache/operational_state.json", {}), set(sources), now)
+        explicit_items = operations.observe(operational_state, incoming, explicit_items, now)
+        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0)) if online else []
+        explicit_items = operations.observe(operational_state, [], explicit_items, now)
         if len({i.id for i in explicit_items}) != len(explicit_items):
             raise ValueError("Duplicate imported URL")
         merged = {}
@@ -87,6 +92,11 @@ def run(root, imports=None, online=False, now=None):
                 continue
             current[item.id] = item
         report = classify(old, current, now, config.get("expiring_days", 7), config.get("max_age_days", 7))
+        operations.health(operational_state, successful_sources, failures, now)
+        operations.classify_history(report, operational_state)
+        report["body_check_failures"] = body_failures
+        report["review_queue"] = operations.queue(report, operational_state, now, config.get("max_age_days", 7))
+        save(root/"cache/operational_state.json", operational_state)
         report["district_coverage"] = district_coverage
         report["collection"] = dict(online=online, successful_sources=successful_sources,
                                   successful_districts=sum(d["status"] == "checked" and d.get("mode") == "live" for d in district_coverage))

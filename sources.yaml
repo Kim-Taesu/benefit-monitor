@@ -257,6 +257,25 @@
         "멤버십 카드"
       ],
       "collection_scope": "세븐일레븐 공식 카드 제휴 · 이미지 행사·앱 잔량 미포함"
+    },
+    {
+      "id": "emart24",
+      "name": "이마트24 공식 제휴",
+      "tier": "C",
+      "domains": [
+        "emart24.co.kr",
+        "www.emart24.co.kr"
+      ],
+      "routes": [
+        "https://emart24.co.kr/service/alliance"
+      ],
+      "feed_url": null,
+      "html_url": "https://emart24.co.kr/service/alliance",
+      "article_path_pattern": "/service/alliance",
+      "keywords": [
+        "제휴"
+      ],
+      "collection_scope": "공식 제휴 서비스 안내 · 행사 전체·앱 잔량 미포함"
     }
   ],
   "seoul_district_coverage": true,
@@ -264,5 +283,6 @@
   "cost_policy": {
     "mode": "free_public_only",
     "paid_services_allowed": false
-  }
+  },
+  "body_checks_per_run": 5
 }

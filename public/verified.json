@@ -1530,5 +1530,25 @@
     "validity_kind": "fixed",
     "excluded_reason": "",
     "public_release": true
+  },
+  {
+    "source": "emart24",
+    "url": "https://emart24.co.kr/service/alliance",
+    "title": "제휴 서비스",
+    "summary": "이마트24 KT멤버십 할인·현대카드 M포인트 사용",
+    "conditions": "KT멤버십: VVIP·VIP·GOLD는 1천 원당 100원, SILVER·WHITE·일반은 50원 포인트 차감 할인, 하루 1회. 담배·주류·서비스 등 일부 상품 제외. 현대카드 M포인트는 결제금액의 20% 포인트 결제로 안내되며 상세 제외 품목·최소 보유 포인트는 이 안내만으로 확인되지 않음. 구매비용 발생. 개인 등급·포인트 잔액·당일 사용 이력·적용 성공 및 두 혜택의 중복 적용은 미확인. 유료 구독 가입은 포함하지 않음.",
+    "valid_until": null,
+    "valid_from": null,
+    "verified_at": "2026-10-28T01:32:50.564109+09:00",
+    "needs_recheck": false,
+    "published_at": null,
+    "evidence": "이마트24 공식 제휴 서비스 페이지 본문에서 KT 등급별 할인과 M포인트 사용 비율 확인. 단순 결제수단 소개와 유료 구독 상품을 추천에서 구분.",
+    "districts": [],
+    "review_notes": "",
+    "fee_status": "paid",
+    "validity_kind": "ongoing",
+    "deadline_at": null,
+    "excluded_reason": "",
+    "public_release": true
   }
 ]

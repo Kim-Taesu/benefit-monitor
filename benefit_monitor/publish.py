@@ -3,13 +3,15 @@ import argparse
 import html
 import json
 import re
-from datetime import datetime, timedelta, time
+import os
+from datetime import datetime, timedelta, time, date
 from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
 from .briefing import SEOUL, FEES, aware_time, build, identity
 from .store import load, save, save_text
 from .validation import validate
+from . import operations
 
 PUBLIC_FIELDS = ("source", "url", "title", "summary", "conditions", "districts",
                  "verified_at", "valid_from", "valid_until", "deadline_at",
@@ -88,15 +90,21 @@ def coverage(root, config, report, items):
     return dict(sources=sources, districts=districts, scope="서울시 우리동네 뉴스 첫 페이지. 구청 전체 공지 수집과는 다릅니다.")
 
 
+def display_date(value, missing="미확인"):
+    if not value:return missing
+    if "T" in value:return aware_time(value).strftime("%Y.%m.%d %H:%M (KST)")
+    return date.fromisoformat(value).strftime("%Y.%m.%d")
+
+
 def page(data):
     esc = lambda value: html.escape(str(value), quote=True)
     cards = []
     for item in data["items"]:
         cards.append(
-            '<article><h2>' + esc(item["summary"]) + '</h2><p>요금: ' + FEES[item["fee_status"]]
-            + '</p><p>' + esc(item["conditions"]) + '</p><p>공식 확인: ' + esc(item["verified_at"])
-            + '</p><p>기간: ' + esc(item["valid_from"] or "공식 안내 확인") + ' ~ '
-            + esc(item["deadline_at"] or item["valid_until"] or "상시 안내")
+            '<article data-valid-until="' + esc(item.get("display_until", data["valid_through"])) + '"><h2>' + esc(item["summary"]) + '</h2><p>요금: ' + FEES[item["fee_status"]]
+            + '</p><p>' + esc(item["conditions"]) + '</p><p>공식 확인: ' + esc(display_date(item["verified_at"]))
+            + '</p><p>기간: ' + esc(display_date(item["valid_from"], "시작일 미확인")) + ' ~ '
+            + esc(display_date(item["deadline_at"] or item["valid_until"], "상시 안내"))
             + '</p><a rel="noopener noreferrer" href="' + esc(item["url"]) + '">공식 안내</a></article>')
     sections = ['<section><h2>분야별 수집 현황</h2><ul>']
     cov = data.get("coverage", {})
@@ -106,12 +114,26 @@ def page(data):
     for row in cov.get("districts", []):
         sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 후보 ' + str(row["candidates_count"]) + '건 · 공개 검증 ' + str(row["verified_count"]) + '건</li>')
     sections.append('</ul><p>0건은 혜택이 없다는 뜻이 아닙니다. 미검증 후보는 추천에 포함하지 않습니다.</p></section>')
+    if data.get("review_queue"):
+        reasons={"title_changed":"제목 변경", "body_changed":"본문 변경", "verification_expired":"검증 유효기간 경과", "manual_review":"조건 확인 필요"}
+        names={row["source"]:row["name"] for row in cov.get("sources",[])}
+        sections.append('<section><details><summary>재검증 대기 '+str(len(data["review_queue"]))+'건</summary><ul>')
+        for row in data["review_queue"]:
+            sections.append('<li>'+esc(names.get(row["source"],row["source"]))+' · '+esc(reasons.get(row["reason"],"조건 확인 필요"))+' · 마감 '+esc(display_date(row.get("deadline")))+'</li>')
+        sections.append('</ul><p>보류 항목은 추천에 포함하지 않습니다. 본문 변경 감지는 사실 검증을 대신하지 않습니다.</p></details></section>')
+    if data.get("source_health"):
+        sections.append('<section><details><summary>수집 상태 기록</summary><ul>')
+        names={row["source"]:row["name"] for row in cov.get("sources",[])}
+        for source,row in data["source_health"].items():
+            if row.get("consecutive_failures"):
+                sections.append('<li>'+esc(names.get(source,source))+' · 연속 실패 '+str(row["consecutive_failures"])+'회 · '+esc(row.get("error_category","other"))+' · 마지막 성공 '+esc(display_date(row.get("last_success_at")))+'</li>')
+        sections.append('</ul></details></section>')
     return '''<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>생활 혜택 브리핑</title>
 <style>body{font:17px/1.7 system-ui,sans-serif;margin:auto;max-width:850px;padding:32px 20px;background:#f5f6f8;color:#182333}h1{line-height:1.3}article{background:white;border:1px solid #dce1e8;border-radius:14px;padding:20px;margin:20px 0}h2{font-size:21px}a{color:#185acb}#notice{padding:16px;border-left:4px solid #b35d00;background:#fff2de}small{color:#48586e}#offers{display:none}</style></head><body>
 <header><small>공식 출처 · 검증된 공개 정보</small><h1>생활 혜택 브리핑</h1></header>
-<p>생성: ''' + esc(data["generated_at"]) + '''<br>수집 기준: ''' + esc(data["source_report_at"] or "확인 실패") + '''</p>
+<p>생성: ''' + esc(display_date(data["generated_at"])) + '''<br>수집 기준: ''' + esc(display_date(data["source_report_at"], "확인 실패")) + '''</p>
 <p id="notice">''' + esc(data["message"]) + '''</p>
 <p>개인 자격·쿠폰 잔량·잔여석·신청 성공은 확인하지 않았습니다. 비용과 조건은 이용 전 공식 안내에서 확인하세요.</p>
 <main id="offers">''' + ''.join(cards) + ''.join(sections) + '''</main>
@@ -122,6 +144,9 @@ const until = ''' + json.dumps(data["valid_through"]) + ''';
 function refresh() {
   const fresh = until && Date.now() < Date.parse(until);
   document.getElementById('offers').style.display = fresh ? 'block' : 'none';
+  document.querySelectorAll('article[data-valid-until]').forEach(card => {
+    card.hidden = !fresh || Date.now() >= Date.parse(card.dataset.validUntil);
+  });
   if (!fresh && until) document.getElementById('notice').textContent = '최신 결과 확인 필요: 표시 기한이 지났습니다. 이전 파일을 오늘의 브리핑으로 사용하지 마세요.';
 }
 refresh();setInterval(refresh, 60000);
@@ -162,12 +187,23 @@ def run(root, now=None, failure=False):
                         message=("공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다." if items else
                                  "공개 승인된 검증 항목이 아직 없습니다. 혜택이 없다는 뜻은 아닙니다."))
             data["coverage"] = coverage(root, config, report, data["items"])
-            expires = [datetime.combine(now.date() + timedelta(days=1), time.min, SEOUL)]
+            data["valid_through"] = datetime.combine(now.date()+timedelta(days=1), time.min, SEOUL).isoformat()
             for item in data["items"]:
-                expires.append(aware_time(item["verified_at"]) + timedelta(days=config.get("max_age_days", 7)))
+                expires=[aware_time(item["verified_at"])+timedelta(days=config.get("max_age_days",7))]
                 if item["deadline_at"]:
                     expires.append(aware_time(item["deadline_at"]))
-            data["valid_through"] = min(expires).isoformat()
+                if item["valid_until"]:
+                    expires.append(datetime.combine(date.fromisoformat(item["valid_until"])+timedelta(days=1),time.min,SEOUL))
+                item["display_until"]=min(expires).isoformat()
+    config = load(root / "sources.yaml", None)
+    state = operations.sanitize(load(root / "cache/operational_state.json", {}),
+                               {s["id"] for s in config["sources"]}, now)
+    data["operational_state"] = state
+    data["source_health"] = state["sources"]
+    data["run_id"] = os.environ.get("GITHUB_RUN_ID", "local-" + now.isoformat())
+    data["review_queue"] = operations.queue(report, state, now, config.get("max_age_days", 7)) if not failure and data["source_report_at"] else []
+    if "withheld" in data:
+        data["withheld"]["pending"] = max(data["withheld"]["pending"],len(data["review_queue"]))
     output = root / "delivery/public"
     output.mkdir(parents=True, exist_ok=True)
     if any(p.name not in {"briefing.json", "briefing.md", "index.html"} for p in output.iterdir()):
@@ -175,15 +211,15 @@ def run(root, now=None, failure=False):
     save(output / "briefing.json", data)
     save_text(output / "index.html", page(data))
     lines = ["# 생활 혜택 브리핑", data["message"],
-             "생성: " + data["generated_at"], "수집 기준: " + str(data["source_report_at"]),
-             "표시 기한: " + str(data["valid_through"]), "최신성은 briefing.json을 확인하세요."]
+             "생성: " + display_date(data["generated_at"]), "수집 기준: " + display_date(data["source_report_at"]),
+             "표시 기한: " + display_date(data["valid_through"]), "최신성과 항목별 마감은 briefing.json을 확인하세요. 종료된 항목은 추천에서 제외해야 합니다."]
     from .briefing import md_text
     for item in data["items"]:
         lines += ["", "## " + md_text(item["summary"]), "요금: " + FEES[item["fee_status"]],
-                  md_text(item["conditions"]), "공식 확인: " + item["verified_at"],
+                  md_text(item["conditions"]), "공식 확인: " + display_date(item["verified_at"]),
                   "시작" + (" 예정: " if item["valid_from"] and item["valid_from"] > now.date().isoformat() else ": ")
-                  + (item["valid_from"] or "공식 안내 확인"),
-                  "종료/마감: " + (item["deadline_at"] or item["valid_until"] or "상시 안내"), item["url"]]
+                  + display_date(item["valid_from"], "시작일 미확인"),
+                  "종료/마감: " + display_date(item["deadline_at"] or item["valid_until"], "상시 안내"), item["url"]]
     cov = data.get("coverage", {})
     for group in ("sources", "districts"):
         if cov.get(group):
