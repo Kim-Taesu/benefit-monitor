@@ -18,7 +18,7 @@ jobs:
   build:
     # Standard runners on public repositories are free. Never consume
     # unverified private-repository allowances or change repository visibility.
-    if: github.event.repository.private == false
+    if: github.event.repository.private == false && vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     outputs:
@@ -64,7 +64,7 @@ jobs:
           retention-days: 1
 
   deploy:
-    if: github.event_name != 'push' && github.event.repository.private == false
+    if: github.event_name != 'push' && github.event.repository.private == false && vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 5
