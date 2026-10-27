@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source",
+    "url",
+    "title",
+    "summary"
+  ],
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "conditions": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "string"
+    },
+    "valid_from": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "valid_until": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "published_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "verified_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "needs_recheck": {
+      "type": "boolean",
+      "default": true
+    },
+    "districts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "review_notes": {
+      "type": "string"
+    },
+    "fee_status": {
+      "type": "string",
+      "enum": [
+        "free",
+        "paid",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "validity_kind": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "ongoing"
+      ],
+      "default": "fixed"
+    },
+    "deadline_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "excluded_reason": {
+      "type": "string"
+    }
+  }
+}

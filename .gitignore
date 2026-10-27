@@ -1,0 +1,31 @@
+# Runtime data and personalized outputs
+/cache/
+/inputs/
+/delivery/
+/report.json
+/briefing.md
+/briefing.json
+/pending*.json
+/pending*.md
+/review*.md
+/official-followup*.md
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+/secrets/
+/credentials*
+/personal*
+/local*
+# Python and tools
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+.pytest_cache/

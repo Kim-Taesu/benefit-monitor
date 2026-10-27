@@ -1,0 +1,165 @@
+{
+  "version": 1,
+  "timezone": "Asia/Seoul",
+  "expiring_days": 7,
+  "max_age_days": 7,
+  "sources": [
+    {
+      "id": "seoul",
+      "name": "서울시",
+      "tier": "A",
+      "domains": [
+        "mediahub.seoul.go.kr",
+        "www.seoul.go.kr"
+      ],
+      "routes": [
+        "https://mediahub.seoul.go.kr/"
+      ],
+      "feed_url": null,
+      "html_url": "https://mediahub.seoul.go.kr/",
+      "article_path_pattern": "/archives/\\d+",
+      "keywords": [
+        "혜택",
+        "할인",
+        "지원",
+        "상품권",
+        "무료",
+        "모집",
+        "접수",
+        "신청",
+        "공모",
+        "체험",
+        "포인트",
+        "행사",
+        "전시"
+      ]
+    },
+    {
+      "id": "gangseo",
+      "name": "강서구",
+      "tier": "B",
+      "domains": [
+        "www.gangseo.seoul.kr",
+        "gangseo.seoul.kr"
+      ],
+      "routes": [
+        "https://www.gangseo.seoul.kr/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "eunpyeong",
+      "name": "은평구",
+      "tier": "A",
+      "domains": [
+        "www.ep.go.kr"
+      ],
+      "routes": [
+        "https://www.ep.go.kr/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "seongnam",
+      "name": "성남시",
+      "tier": "A",
+      "domains": [
+        "www.seongnam.go.kr",
+        "snvision.seongnam.go.kr"
+      ],
+      "routes": [
+        "https://www.seongnam.go.kr/",
+        "https://snvision.seongnam.go.kr/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "government",
+      "name": "정부",
+      "tier": "A",
+      "domains": [
+        "www.mss.go.kr",
+        "www.korea.kr"
+      ],
+      "routes": [
+        "https://www.mss.go.kr/",
+        "https://www.korea.kr/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "culture",
+      "name": "문화·예약",
+      "tier": "B",
+      "domains": [
+        "yeyak.seoul.go.kr",
+        "mediahub.seoul.go.kr"
+      ],
+      "routes": [
+        "https://yeyak.seoul.go.kr/web/main.do",
+        "https://mediahub.seoul.go.kr/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "kt",
+      "name": "KT",
+      "tier": "B",
+      "domains": [
+        "membership.kt.com"
+      ],
+      "routes": [
+        "https://membership.kt.com/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "retail",
+      "name": "마트",
+      "tier": "B",
+      "domains": [
+        "my.homeplus.co.kr",
+        "eapp.emart.com"
+      ],
+      "routes": [
+        "https://my.homeplus.co.kr/leaflet",
+        "https://eapp.emart.com/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "convenience",
+      "name": "편의점 공식 제휴",
+      "tier": "C",
+      "domains": [
+        "membership.kt.com",
+        "pay.naver.com",
+        "www.gsretail.com",
+        "cu.bgfretail.com"
+      ],
+      "routes": [
+        "https://membership.kt.com/",
+        "https://pay.naver.com/"
+      ],
+      "feed_url": null
+    },
+    {
+      "id": "seoul_lifelong",
+      "name": "서울시 평생학습포털",
+      "tier": "A",
+      "domains": [
+        "sll.seoul.go.kr"
+      ],
+      "routes": [
+        "https://sll.seoul.go.kr/lms/simin_course/courseRequest/doListView.do?main_se=ssu&simin_yn=M%2CDC%2CMD%2CO%2CR%2CRG&mnid=202501604868"
+      ],
+      "feed_url": null
+    }
+  ],
+  "seoul_district_coverage": true,
+  "max_http_requests": 60,
+  "cost_policy": {
+    "mode": "free_public_only",
+    "paid_services_allowed": false
+  }
+}
