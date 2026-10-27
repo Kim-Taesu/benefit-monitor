@@ -50,6 +50,34 @@ def prepare_import(root, now=None):
     return path
 
 
+STATUS = {"checked": "목록 수집 성공 · 본문 검증 별도", "cached": "6시간 이내 목록 캐시 · 본문 검증 별도",
+          "failed": "이번 수집 실패", "not_connected": "자동 수집 미연결", "not_checked": "이번 실행에서 확인 안 됨"}
+
+
+def coverage(root, config, report, items):
+    success = report.get("collection", {}).get("successful_sources", [])
+    sources = []
+    for source in config["sources"]:
+        connected = bool(source.get("feed_url") or source.get("html_url"))
+        status = "checked" if source["id"] in success else "failed" if connected else "not_connected"
+        sources.append(dict(source=source["id"], name=source.get("name", source["id"]), status=status,
+                            verified_count=sum(i["source"] == source["id"] for i in items)))
+    observed = {d["district"]: d for d in report.get("district_coverage", []) if "district" in d}
+    districts = []
+    for district in load(root / "districts.json", {"districts": []})["districts"]:
+        name = district["name"]
+        record = observed.get(name, {})
+        status = record.get("status", "not_checked")
+        if status == "checked" and record.get("mode") == "cached":
+            status = "cached"
+        if status not in STATUS:
+            status = "failed"
+        districts.append(dict(name=name, status=status, checked_at=record.get("checked_at"),
+                              candidates_count=record.get("candidates_count", 0),
+                              verified_count=sum(name in i["districts"] for i in items)))
+    return dict(sources=sources, districts=districts, scope="서울시 우리동네 뉴스 첫 페이지. 구청 전체 공지 수집과는 다릅니다.")
+
+
 def page(data):
     esc = lambda value: html.escape(str(value), quote=True)
     cards = []
@@ -60,6 +88,14 @@ def page(data):
             + '</p><p>기간: ' + esc(item["valid_from"] or "공식 안내 확인") + ' ~ '
             + esc(item["deadline_at"] or item["valid_until"] or "상시 안내")
             + '</p><a rel="noopener noreferrer" href="' + esc(item["url"]) + '">공식 안내</a></article>')
+    sections = ['<section><h2>분야별 수집 현황</h2><ul>']
+    cov = data.get("coverage", {})
+    for row in cov.get("sources", []):
+        sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 공개 검증 ' + str(row["verified_count"]) + '건</li>')
+    sections.append('</ul><h2>서울 25개 지역구</h2><p>' + esc(cov.get("scope", "")) + '</p><ul>')
+    for row in cov.get("districts", []):
+        sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 후보 ' + str(row["candidates_count"]) + '건 · 공개 검증 ' + str(row["verified_count"]) + '건</li>')
+    sections.append('</ul><p>0건은 혜택이 없다는 뜻이 아닙니다. 미검증 후보는 추천에 포함하지 않습니다.</p></section>')
     return '''<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>생활 혜택 브리핑</title>
@@ -68,7 +104,7 @@ def page(data):
 <p>생성: ''' + esc(data["generated_at"]) + '''<br>수집 기준: ''' + esc(data["source_report_at"] or "확인 실패") + '''</p>
 <p id="notice">''' + esc(data["message"]) + '''</p>
 <p>개인 자격·쿠폰 잔량·잔여석·신청 성공은 확인하지 않았습니다. 비용과 조건은 이용 전 공식 안내에서 확인하세요.</p>
-<main id="offers">''' + ''.join(cards) + '''</main>
+<main id="offers">''' + ''.join(cards) + ''.join(sections) + '''</main>
 <noscript>현재 유효성 확인을 위해 JavaScript를 켜세요. 이전 결과를 오늘의 추천으로 표시하지 않습니다.</noscript>
 <footer><a href="briefing.json">JSON</a> · <a href="briefing.md">텍스트</a><p>부분 수집이며 미검증 후보는 추천하지 않습니다.</p></footer>
 <script>
@@ -115,6 +151,7 @@ def run(root, now=None, failure=False):
                         status="partial" if items else "awaiting_verification",
                         message=("공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다." if items else
                                  "공개 승인된 검증 항목이 아직 없습니다. 혜택이 없다는 뜻은 아닙니다."))
+            data["coverage"] = coverage(root, config, report, data["items"])
             expires = [datetime.combine(now.date() + timedelta(days=1), time.min, SEOUL)]
             for item in data["items"]:
                 expires.append(aware_time(item["verified_at"]) + timedelta(days=config.get("max_age_days", 7)))
@@ -137,6 +174,14 @@ def run(root, now=None, failure=False):
                   "시작" + (" 예정: " if item["valid_from"] and item["valid_from"] > now.date().isoformat() else ": ")
                   + (item["valid_from"] or "공식 안내 확인"),
                   "종료/마감: " + (item["deadline_at"] or item["valid_until"] or "상시 안내"), item["url"]]
+    cov = data.get("coverage", {})
+    for group in ("sources", "districts"):
+        if cov.get(group):
+            lines += ["", "## " + ("분야별 수집 현황" if group == "sources" else "지역구 수집 현황")]
+            for row in cov[group]:
+                lines.append("- " + md_text(row["name"]) + ": " + STATUS[row["status"]] + " · 공개 검증 " + str(row["verified_count"]) + "건")
+    if cov:
+        lines.append(cov["scope"])
     save_text(output / "briefing.md", "\n".join(lines) + "\n")
     return data
 

@@ -17,7 +17,7 @@ class ArticleLinks(HTMLParser):
         if tag == "a":
             self.href, self.parts = dict(attrs).get("href"), []
             self.title_parts, self.title_tag = [], None
-        if self.href and (tag in ("h1", "h2", "h3") or "tit" in dict(attrs).get("class", "").split()):
+        if self.href and (tag in ("h1", "h2", "h3", "strong") or "tit" in dict(attrs).get("class", "").split()):
             self.title_tag = tag
     def handle_data(self, data):
         if self.href:
@@ -48,7 +48,8 @@ def collect(source):
     for url, title in parser.items.items():
         if allowed(robot, url, AGENT):
             result.append(dict(source=source["id"], url=url, title=title,
-                               summary="공식 서울시 페이지에서 발견한 후보. 상세 조건 검증 필요.", needs_recheck=True))
+                               summary="공식 페이지에서 발견한 후보. 상세 조건 검증 필요.", needs_recheck=True))
     if not result:
         raise ValueError("No matching official articles; manual review required")
     return result
+

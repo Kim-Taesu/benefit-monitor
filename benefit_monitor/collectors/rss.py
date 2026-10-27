@@ -32,7 +32,7 @@ def fetch(url, domains):
                     raise ValueError("Response too large")
                 return body
         except urllib.error.HTTPError as e:
-            if e.code != 502 or attempt:
+            if e.code not in (502, 503, 504) or attempt:
                 raise
         except TimeoutError:
             if attempt:
@@ -42,6 +42,7 @@ def fetch(url, domains):
 def parse(body, source):
     root = ET.fromstring(body)
     result = []
+    usable = 0
     for entry in root.findall(".//item") + root.findall("{http://www.w3.org/2005/Atom}entry"):
         title = entry.findtext("title") or entry.findtext("{http://www.w3.org/2005/Atom}title") or ""
         url = entry.findtext("link")
@@ -49,9 +50,12 @@ def parse(body, source):
             link = entry.find("{http://www.w3.org/2005/Atom}link")
             url = link.get("href") if link is not None else None
         if title.strip() and url and official(url, source["domains"]):
+            usable += 1
+            if source.get("keywords") and not any(word in title for word in source["keywords"]):
+                continue
             result.append(dict(source=source["id"], url=url, title=title.strip(),
                                summary="공식 피드 후보. 상세 조건 검증 필요.", needs_recheck=True))
-    if not result:
+    if not usable:
         raise ValueError("No usable entries; browser review required")
     return result
 
@@ -62,3 +66,4 @@ def collect(source):
     if not allowed(robots, url, AGENT):
         raise ValueError("robots disallows feed")
     return parse(fetch(url, source["domains"]), source)
+

@@ -29,6 +29,20 @@ class PublishTests(unittest.TestCase):
     def run_export(self, now=NOW):
         return publish.run(self.root, now=now)
 
+    def test_coverage_shows_unconnected_sources_and_all_registered_districts(self):
+        save(self.root / "districts.json", {"districts": [{"name": "강서구"}, {"name": "강남구"}]})
+        other = dict(SOURCE, id="other", name="추가 출처", html_url="https://official.example/")
+        save(self.root / "sources.yaml", dict(sources=[SOURCE, other], max_age_days=7))
+        self.report["district_coverage"] = [dict(district="강서구", status="checked", mode="cached", checked_at=NOW.isoformat(), candidates_count=2)]
+        save(self.root / "report.json", self.report)
+        result = self.run_export()
+        self.assertEqual([d["status"] for d in result["coverage"]["districts"]], ["cached", "not_checked"])
+        self.assertEqual(result["coverage"]["sources"][1]["status"], "failed")
+        page = (self.root / "delivery/public/index.html").read_text()
+        self.assertIn("강남구", page)
+        self.assertIn("추가 출처", page)
+        self.assertNotIn("detail", result["coverage"]["districts"][0])
+
     def test_release_keeps_fees_and_times_but_drops_private_fields(self):
         self.item.update(evidence="internal verification evidence", review_notes="private note")
         self.release(self.item)

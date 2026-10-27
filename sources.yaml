@@ -71,7 +71,20 @@
         "https://www.seongnam.go.kr/",
         "https://snvision.seongnam.go.kr/"
       ],
-      "feed_url": null
+      "feed_url": "https://snvision.seongnam.go.kr/rss/rss_news.php",
+      "keywords": [
+        "혜택",
+        "할인",
+        "지원",
+        "상품권",
+        "무료",
+        "모집",
+        "접수",
+        "신청",
+        "체험",
+        "축제",
+        "페스티벌"
+      ]
     },
     {
       "id": "government",
@@ -85,7 +98,21 @@
         "https://www.mss.go.kr/",
         "https://www.korea.kr/"
       ],
-      "feed_url": null
+      "feed_url": null,
+      "html_url": "https://www.korea.kr/news/policyNewsList.do",
+      "article_path_pattern": "/news/policyNewsView.do",
+      "keywords": [
+        "혜택",
+        "할인",
+        "지원",
+        "상품권",
+        "무료",
+        "모집",
+        "접수",
+        "신청",
+        "환급",
+        "적립"
+      ]
     },
     {
       "id": "culture",
