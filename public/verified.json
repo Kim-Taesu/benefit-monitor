@@ -124,5 +124,72 @@
     "deadline_at": null,
     "excluded_reason": "",
     "public_release": true
+  },
+  {
+    "source": "seoul",
+    "url": "https://mediahub.seoul.go.kr/archives/2019791",
+    "title": "서울 AI 인사이트 포럼 온라인 생중계",
+    "summary": "11월 3일 무료 AI 강연 온라인 시청",
+    "valid_until": "2026-11-03",
+    "verified_at": "2026-10-27T23:26:01.163079+09:00",
+    "needs_recheck": false,
+    "valid_from": "2026-11-03",
+    "published_at": null,
+    "conditions": "14:00~16:00 서울시·서울AI재단 공식 유튜브 생중계 예정. 현장 참가 신청은 10월23일에 마감됐으므로 현장 신청 혜택으로 추천하지 않음. 온라인 강연 시청은 무료이며 경품 당첨은 보장하지 않음.",
+    "evidence": "서울시 공식 본문 2026-10-27 확인: 현장 모집 마감과 온라인 생중계 참여 경로를 구분.",
+    "districts": [
+      "중구"
+    ],
+    "review_notes": "",
+    "fee_status": "free",
+    "validity_kind": "fixed",
+    "deadline_at": "2026-11-03T16:00:00+09:00",
+    "excluded_reason": "",
+    "public_release": true
+  },
+  {
+    "source": "seoul",
+    "url": "https://mediahub.seoul.go.kr/archives/2019836",
+    "title": "청계 A01 무료 야간 자율주행버스",
+    "summary": "평일 저녁 청계광장~광장시장 무료 자율주행버스",
+    "valid_until": null,
+    "verified_at": "2026-10-27T23:26:01.163079+09:00",
+    "needs_recheck": false,
+    "valid_from": "2026-10-22",
+    "published_at": null,
+    "conditions": "평일 19:00~23:50 운행 안내, 청계광장 출발 막차 23:00. 30분 간격 하루9회, 최대8명 탑승. 승하차 교통카드 태그 필수. 좌석이 없으면 탑승하지 못할 수 있으며 실시간 빈자리·당일 운행 여부는 확인하지 않음.",
+    "evidence": "서울시 공식 시민기자 기사 본문에서 정기 운행 시간, 무료 요금, 교통카드 태그 및 빈자리 제약 확인. 종료일 명시 없음.",
+    "districts": [
+      "중구",
+      "종로구"
+    ],
+    "review_notes": "",
+    "fee_status": "free",
+    "validity_kind": "ongoing",
+    "deadline_at": null,
+    "excluded_reason": "",
+    "public_release": true
+  },
+  {
+    "source": "seoul",
+    "url": "https://mediahub.seoul.go.kr/archives/2019773",
+    "title": "서울시립과학관 과학관에 ON 예술가",
+    "summary": "과학·예술 융합 전시와 워크숍 일정",
+    "valid_until": "2026-11-29",
+    "verified_at": "2026-10-27T23:26:01.163079+09:00",
+    "needs_recheck": false,
+    "valid_from": "2026-10-24",
+    "published_at": null,
+    "conditions": "10월24~25일 별빛축제와 공개관측회는 종료. 이 항목은 11월29일까지 운영한다고 명시한 과학관에 ON 예술가 프로젝트만 안내. 워크숍별 날짜·예약·잔여석과 별도 요금은 확인되지 않았으므로 무료나 현장 참여 가능으로 단정하지 않음.",
+    "evidence": "서울시 공식 기사 본문에서 종료된 별빛축제와 10월24일~11월29일 과학·예술 프로젝트를 구분하여 확인.",
+    "districts": [
+      "노원구"
+    ],
+    "review_notes": "",
+    "fee_status": "unknown",
+    "validity_kind": "fixed",
+    "deadline_at": null,
+    "excluded_reason": "",
+    "public_release": true
   }
 ]

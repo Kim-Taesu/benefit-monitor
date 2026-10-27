@@ -1,7 +1,7 @@
 """Official HTML links are candidates, never automatically verified benefits."""
 from html.parser import HTMLParser
 import re
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit, urlunsplit, parse_qsl, urlencode
 from .rss import AGENT, fetch
 from ..validation import official
 from ..robots import allowed
@@ -30,6 +30,11 @@ class ArticleLinks(HTMLParser):
         if tag != "a" or not self.href:
             return
         url = urljoin(self.route, self.href)
+        parts = urlsplit(url)
+        if parts.hostname == "www.korea.kr":
+            query = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
+                     if k not in ("pWise", "pWiseSub")]
+            url = urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
         title = re.sub(r"^\d{1,2}\s+", "", " ".join(" ".join(self.title_parts or self.parts).split()))
         if (title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path)
                 and any(word in title for word in self.keywords)):

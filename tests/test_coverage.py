@@ -29,3 +29,8 @@ class CoverageTests(unittest.TestCase):
                 return BytesIO(b'current official response')
         with patch('urllib.request.build_opener', return_value=Opener()), patch('time.sleep'):
             self.assertEqual(fetch('https://official.example/a', ['official.example']), b'current official response')
+
+    def test_government_tracking_links_do_not_duplicate_candidates(self):
+        parser = ArticleLinks('https://www.korea.kr/', ['www.korea.kr'], r'/news/policyNewsView.do', ['할인'])
+        parser.feed('<a href="/news/policyNewsView.do?newsId=1">할인</a><a href="/news/policyNewsView.do?newsId=1&amp;pWise=sub&amp;pWiseSub=R2">할인</a>')
+        self.assertEqual(list(parser.items), ['https://www.korea.kr/news/policyNewsView.do?newsId=1'])
