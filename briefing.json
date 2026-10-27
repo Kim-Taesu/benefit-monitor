@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-27T23:31:07.611203+09:00",
-  "source_report_at": "2026-10-27T23:29:57.793101+09:00",
+  "generated_at": "2026-10-27T23:49:47.177562+09:00",
+  "source_report_at": "2026-10-27T23:48:35.834900+09:00",
   "valid_through": "2026-10-28T00:00:00+09:00",
   "status": "partial",
   "items": [
@@ -35,6 +35,104 @@
       "deadline_at": null,
       "validity_kind": "fixed",
       "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019783",
+      "title": "'나도 버스커 페스티벌' 무대 주인공 찾습니다! 참가자 모집",
+      "summary": "나도 버스커 참가팀 모집: 10월 30일 17시 마감",
+      "conditions": "나이·지역 제한 없이 참가 신청서와 공연 영상 제출, 14팀 선정·11월5일 결과 안내. 공연11월15일14~17시. 관람은 무료지만 참가 신청 비용은 본문 명시 없음. 선정·접수 성공 미확인.",
+      "districts": [
+        "동대문구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-19",
+      "valid_until": "2026-10-30",
+      "deadline_at": "2026-10-30T17:00:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019088",
+      "title": "여공의 하루부터 오락실까지! 아이와 가기 좋은 G밸리 무료 코스",
+      "summary": "금천순이의집 AR 체험 후 넷마블게임박물관 무료 관람권",
+      "conditions": "금천순이의집 사전 예약 후 AR 체험 완료 조건. 관람권은 소진될 수 있고 사용기한은 10월31일. 잔여 관람권·예약 가능 여부 미확인. 넷마블 일반 입장료 성인 1만원·청소년 7천원·어린이 5천원, 관람권 적용 시 무료. G밸리산업박물관은 별도 무료 시설.",
+      "districts": [
+        "금천구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": "2026-10-31",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "mixed",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019487",
+      "title": "식물 자세히 보니 色 다르네! '컬러헌터' 서울식물원 이색 전시",
+      "summary": "서울식물원 컬러헌터: 10월 31일까지",
+      "conditions": "색상 사진·SNS 인증 후 씨앗도서관에서 두 종류 또는 두 배 수량의 씨앗 대출 안내. 성인 온실 입장료5천원. 화~일9:30~18시(입장17시까지), 월요일 휴관. 씨앗 재고 미확인.",
+      "districts": [
+        "강서구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-09-19",
+      "valid_until": "2026-10-31",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019810",
+      "title": "봉은사 명상부터 한옥 전시까지 '웰니스 트래블 위크'",
+      "summary": "서울 웰니스 여행주간 무료 전시·공연·야간 명상",
+      "conditions": "필경재 한지등 전시10월26일~11월4일12~22시 무료·식당 이용 불필요. 보스턴체임버11월4일12:30 무료 공연. 봉은사·조계사·화계사 같은 기간18~20:30 무료 오디오 명상. 별도 웰니스100선 체험은 요금·예약 조건이 달라 전부 무료로 볼 수 없음.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-26",
+      "valid_until": "2026-11-04",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "mixed",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019848",
+      "title": "당신의 재능을 서울에 더해주세요! 11월 마감 서울시 공모전 모음",
+      "summary": "서울 밤로그 영상·도심 쓰레기 아이디어 공모: 11월 8일까지",
+      "conditions": "밤로그는30~60초 세로 영상, 관련 사업 최소2개 포함·지정 SNS 게시 후 접수. 쓰레기 아이디어는 개인 또는3인 이하 팀 등 방식별 조건 확인 필요. 기사 속 용산 AI도시 공모는19~39세 대상11월20일까지 별도 일정. 참가비 본문 명시 없음.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-09-30",
+      "valid_until": "2026-11-08",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019003",
+      "title": "영화·AI 등 192개 강좌 쏟아진다! 서울시민대학 선착순 신청",
+      "summary": "서울시민대학 2학기 강좌 운영: 11월 27일까지",
+      "conditions": "2차 강좌는 10월20일~11월27일. 10월6일 선착순 접수 개시 안내이며 현재 추가 접수·빈자리 여부는 미확인. 1~4주 무료, 5주 1만원, 10주 2만원, 학점은행 3만원.",
+      "districts": [
+        "관악구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-09-01",
+      "valid_until": "2026-11-27",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "mixed",
       "needs_recheck": false
     },
     {
@@ -73,19 +171,290 @@
     },
     {
       "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019606",
+      "title": "가을 한강 나들이 필수 팁! 서울배달+땡겨요 배달 할인, 상품권 환급까지",
+      "summary": "한강공원 땡겨요 배달 할인·상품권 결제 환급",
+      "conditions": "11개 공원17개 배달구역. 2만5천원 이상 주문3천원 쿠폰; 서울사랑상품권 1만5천원 이상 결제3천원·2만5천원 이상5천원 환급(다음 달14일). 음식·배달 비용 발생. 중복 적용·잔량·개인 적용 여부는 결제 전 별도 확인.",
+      "districts": [
+        "영등포구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-01",
+      "valid_until": "2026-11-30",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019823",
+      "title": "울긋불긋~ 남산으로 가을소풍가요! 11월 투어·체험 신청",
+      "summary": "남산둘레길 가을소풍: 11월 행사·체험 예약 안내",
+      "conditions": "11월1~30일 운영, 7~8일 투어·체험은 10월26일14시 접수 개시. 프로그램별 연령·인원 제한 있으며 잔여석 미확인. 활쏘기대회 신청11월2~8일, 행사14일. 사진전11월1~30일. 참가비 본문 명시 없음.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-26",
+      "valid_until": "2026-11-30",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019841",
+      "title": "자연과 평화가 만나는 자리…서울창포원 공공미술 전시",
+      "summary": "서울창포원 공공미술 ‘평화의 잔상’ 전시",
+      "conditions": "1부 전시10월24일~12월13일 서울창포원. 개장일 체험·보물찾기를 상시 프로그램으로 안내하지 않음. 전시 요금은 본문에 명시되지 않음. 2부는2027년 상반기 예정으로 이번 일정과 구분.",
+      "districts": [
+        "도봉구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-24",
+      "valid_until": "2026-12-13",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019755",
+      "title": "가을 탄다 싶다면 가보세요! 힐링·예술·체험 다 되는 '서울식물원'",
+      "summary": "서울식물원 식물생활 전시 ‘초록, 속’: 12월 31일까지",
+      "conditions": "10월 주방·11월 침실과 책상·12월 베란다 식물생활 전시. 이 전시 자체의 입장료는 본문만으로 확인되지 않음. 식물원 온실·주제정원은 성인5천원·청소년3천원·어린이2천원, 야외는 무료이며 전시 적용 요금은 별도 확인.",
+      "districts": [
+        "강서구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": "2026-12-31",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019571",
+      "title": "한글날, 세종대왕 발자취 따라가 볼까? 광화문·서촌 일대 6곳(ft. 참여행사)",
+      "summary": "대한민국역사박물관 특별전: 2027년 2월 9일까지 무료",
+      "conditions": "기사 속 현재 일정은 대한민국역사박물관 ‘일구이륙 무한이륙’ 전시. 월·화·목·금·일10~18시, 수·토10~21시. 1월1일·설날 당일 휴관. 함께 소개된 10월9일 행사는 종료됐으며 다른 박물관 요금은 각각 다름.",
+      "districts": [
+        "동대문구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-02",
+      "valid_until": "2027-02-09",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019121",
+      "title": "완벽 방음에 최신 장비 갖춘 '화상면접실'이 무료! '서울청년센터 성북'",
+      "summary": "성북청년센터 화상면접실 무료 이용",
+      "conditions": "서울 생활권 19~39세 청년. 공공서비스예약 신청 후 승인 및 신분 확인 필요. 평일10~21시·토10~16시, 월5회·하루1회 최대4시간. 매월20일 다음 달 예약 개시(휴일이면 다음 평일). 빈자리 미확인.",
+      "districts": [
+        "성북구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019453",
+      "title": "좁은 집에 쌓아두지 말고, 잠깐 쓸 물건은 빌려 쓰세요! 1인가구 무료 물품대여",
+      "summary": "성북구 1인 가구 생활물품 무료 대여",
+      "conditions": "성북구 1인 가구 대상, 사전 자격 승인 후 예약. 서로 다른 분류 최대2개, 1~7일 대여·1회 연장 가능. 수령 시 신분 확인과 물품 점검. 평일9~18시·목요일19시까지. 품목별 재고·개인 자격 미확인.",
+      "districts": [
+        "성북구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019517",
+      "title": "북한산 보며 한복 입고 전시까지! '은평한옥마을' 가을 나들이 코스",
+      "summary": "은평한옥마을 한복 대여·박물관·미술관 이용 안내",
+      "conditions": "너나들이센터 한복 대여 무료·사전 예약 필요(수~월10~18시, 화요일 휴관). 은평역사한옥박물관 성인1천원·청소년500원, 삼각산금암미술관 무료. 시설마다 운영일이 다르며 대여 재고·예약 성공은 미확인.",
+      "districts": [
+        "은평구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "mixed",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019524",
+      "title": "키즈카페인 줄! 놀면서 떠나는 '물의 여행' (ft.서울물재생체험관)",
+      "summary": "서울물재생체험관 무료 관람·주차",
+      "conditions": "화~일10~17시, 10~12시·12:30~14:30·15~17시 회차. 사전 예약 필요하며 어린이는 보호자 동반. 월요일·공휴일·지정일 휴관. 예약 잔여석 미확인.",
+      "districts": [
+        "강서구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019568",
+      "title": "서울의 밤 걸으며, 건강과 포인트 챙겨요! 손목닥터9988 야간걷기 챌린지",
+      "summary": "손목닥터9988 야간 걷기 챌린지 포인트 안내",
+      "conditions": "10월1일부터 예산 소진 시까지. 앱 챌린지 등록·18시 이후 GPS 인증·완료 버튼 등 조건 필요. 야간명소 3곳 인증 선착순1만명 1천P, 2인3천보 선착순1만명 1인500P, 25개 구 코스 선착순1천명 1만P. 지급은 종료 후. 현재 예산·잔량·개인 지급 여부와 별도 참가비는 미확인.",
+      "districts": [
+        "서대문구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-01",
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019619",
+      "title": "무거운 가방 맡기고 가볍게 달리자! 월드컵경기장역 '러너지원공간'",
+      "summary": "월드컵경기장역 러너 지원 공간 무료 이용",
+      "conditions": "매일5:30~23시 지하철 운영 연계. 네이버 QR 인증 입장, 탈의실·보관함·세면대 무료. 자판기 구매는 별도 비용. 빈 보관함·현장 운영 변경 여부는 미확인.",
+      "districts": [
+        "마포구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019670",
+      "title": "어르신께 10% 할인! 숙대 앞 '시니어 동행상점' 미용실 가보니",
+      "summary": "시니어 동행상점: 형한나미용실 65세 이상 10% 할인",
+      "conditions": "기사의 해당 미용실 안내 기준. 남성8천원(샴푸 별도)·여성1만원·파마3만원부터이며 할인 전후 금액을 추가 계산해 단정하지 않음. 연령 확인·예약 및 적용 조건은 매장 확인 필요. 다른 동행상점은 할인율·시간이 다름.",
+      "districts": [
+        "용산구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019734",
+      "title": "서울 예비맘 주목! 임신하면 꼭 챙겨야 할 알짜 혜택들(ft. 교통비 지원)",
+      "summary": "서울 임산부 교통비 지원 공공 안내",
+      "conditions": "공식 기사에는 첫째70만원·둘째80만원·셋째 이상100만원, 서울3개월 이상 계속 거주 및 임신 확인 이후 출산6개월 이내 신청 기준을 안내. 지원 한도 밖 교통비는 본인 부담. 신청 비용은 본문 명시 없음. 개인 자격·지급 여부를 판단하지 않으며 신청 전 공식 사업의 최신 세부 기준 확인 필요.",
+      "districts": [
+        "은평구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019785",
+      "title": "서울의 밤을 채울 새로운 즐거움 '서울 달빛야장'(ft. 달빛상품권)",
+      "summary": "달빛상품권 10% 할인 판매·야간 사용 안내",
+      "conditions": "10월23일10시 판매 개시, 소진 시 종료. 월 구매50만원·보유150만원, 17~24시 지정 가맹점 결제. 광진 화양·중랑 상봉2·도봉 창4·동작 사당1·관악 남현·강남 신사 대상. 발행규모는 현재 잔량이 아니며 앱 재고 미확인.",
+      "districts": [
+        "강남구",
+        "관악구",
+        "광진구",
+        "도봉구",
+        "동작구",
+        "중랑구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-23",
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019836",
       "title": "청계 A01 무료 야간 자율주행버스",
       "summary": "평일 저녁 청계광장~광장시장 무료 자율주행버스",
       "conditions": "평일 19:00~23:50 운행 안내, 청계광장 출발 막차 23:00. 30분 간격 하루9회, 최대8명 탑승. 승하차 교통카드 태그 필수. 좌석이 없으면 탑승하지 못할 수 있으며 실시간 빈자리·당일 운행 여부는 확인하지 않음.",
       "districts": [
-        "중구",
-        "종로구"
+        "종로구",
+        "중구"
       ],
       "verified_at": "2026-10-27T23:26:01.163079+09:00",
       "valid_from": "2026-10-22",
       "valid_until": null,
       "deadline_at": null,
       "validity_kind": "ongoing",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019833",
+      "title": "광화문광장에 '25개 문화원' 모여 엑스포 연다! 체험·전시까지",
+      "summary": "25개 자치구 문화원 엑스포: 10월 28일 무료",
+      "conditions": "광화문광장12~17:30 공연·전시·체험. 전시·체험과 민속놀이 마당은14~17:30. 누구나 무료 참여 안내이며 현장 프로그램 수용 인원은 미확인.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-28",
+      "valid_until": "2026-10-28",
+      "deadline_at": "2026-10-28T17:30:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "free",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019869",
+      "title": "제철 차, 명상 배워요! 웰니스 학습라운지 '다감' 개관…무료 교육",
+      "summary": "웰니스 학습라운지 다감: 무료 시범 프로그램 신청",
+      "conditions": "10월28일9:30 선착순 신청 개시, 11월9일~12월5일16개 프로그램106회 무료 운영. 서울시민·생활권자 대상, 사전 신청 후 확정. 일요일 휴관. 잔여석·신청 성공 미확인.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-28",
+      "valid_until": "2026-12-05",
+      "deadline_at": null,
+      "validity_kind": "fixed",
       "fee_status": "free",
       "needs_recheck": false
     },
@@ -97,6 +466,21 @@
       "conditions": "통합 행사 기간 10월29일~11월15일. 한우는 10월28일~11월8일 최대50%, 모바일 농할상품권은 11월2~15일 20% 할인 판매 안내. 품목별·매장별 가격과 기간이 다르며 모든 상품에 최대 할인율이 적용되지 않음. 구매비용 발생. 판매처·한도·결제조건·재고는 개별 공식 행사 안내에서 추가 확인 필요. 자료출처: 대한민국 정책브리핑.",
       "districts": [],
       "verified_at": "2026-10-27T23:17:50.018485+09:00",
+      "valid_from": "2026-10-29",
+      "valid_until": "2026-11-15",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019868",
+      "title": "최대 15% 할인! 서울사랑상품권 '코.그.페' 행사",
+      "summary": "서울사랑상품권 결제 추가 5% 페이백",
+      "conditions": "10월29일~11월15일 대상 광역·25개 구 상품권 결제. 별도 신청 없이10월분11월20일·11월분12월20일 지급 예정. 기존 페이백은 상품권별로 다르며 모두15% 혜택이 아님. 예산 소진 시 조기 종료, 현재 잔량·개인 지급 여부 미확인.",
+      "districts": [],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
       "valid_from": "2026-10-29",
       "valid_until": "2026-11-15",
       "deadline_at": null,
@@ -117,6 +501,23 @@
       "valid_from": "2026-10-31",
       "valid_until": "2026-10-31",
       "deadline_at": "2026-10-31T16:30:00+09:00",
+      "validity_kind": "fixed",
+      "fee_status": "unknown",
+      "needs_recheck": false
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019631",
+      "title": "광화문 한글 체험부터 한강 드론쇼까지… 한글로 빛난 서울",
+      "summary": "뚝섬한강공원 드론쇼: 다음 공연 10월 31일",
+      "conditions": "10월9일 공연 후기와 구분하여 본문에 예고된 10월31일20:30~20:45 공연만 안내. 기상에 따라 변경 가능하며 당일 공식 공지 확인 필요. 참가비 본문 명시 없음.",
+      "districts": [
+        "광진구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-31",
+      "valid_until": "2026-10-31",
+      "deadline_at": "2026-10-31T20:45:00+09:00",
       "validity_kind": "fixed",
       "fee_status": "unknown",
       "needs_recheck": false
@@ -157,9 +558,9 @@
   "coverage_incomplete": true,
   "message": "공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다.",
   "withheld": {
-    "pending": 36,
-    "expired": 0,
-    "excluded": 0,
+    "pending": 0,
+    "expired": 10,
+    "excluded": 2,
     "invalid_or_conflicting": 0
   },
   "coverage": {
@@ -168,7 +569,7 @@
         "source": "seoul",
         "name": "서울시",
         "status": "checked",
-        "verified_count": 5
+        "verified_count": 29
       },
       {
         "source": "gangseo",
@@ -229,175 +630,175 @@
       {
         "name": "종로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 0,
         "verified_count": 1
       },
       {
         "name": "중구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "용산구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 1,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "성동구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "광진구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 2,
-        "verified_count": 0
+        "verified_count": 2
       },
       {
         "name": "동대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 3,
-        "verified_count": 0
+        "verified_count": 2
       },
       {
         "name": "중랑구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 3,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "성북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 3,
-        "verified_count": 0
+        "verified_count": 2
       },
       {
         "name": "강북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "도봉구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 4,
-        "verified_count": 0
+        "verified_count": 2
       },
       {
         "name": "노원구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "은평구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 2,
-        "verified_count": 0
+        "verified_count": 2
       },
       {
         "name": "서대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 3,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "마포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 1,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "양천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "강서구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 4,
-        "verified_count": 0
+        "verified_count": 3
       },
       {
         "name": "구로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "금천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 2,
-        "verified_count": 1
+        "verified_count": 2
       },
       {
         "name": "영등포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 4,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "동작구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 2,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "관악구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 4,
-        "verified_count": 0
+        "verified_count": 2
       },
       {
         "name": "서초구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강남구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 1,
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "name": "송파구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강동구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:29:57.793101+09:00",
+        "checked_at": "2026-10-27T23:48:35.834900+09:00",
         "candidates_count": 0,
         "verified_count": 0
       }
