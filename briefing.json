@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-27T23:21:13.709584+09:00",
-  "source_report_at": "2026-10-27T23:20:01.737345+09:00",
+  "generated_at": "2026-10-27T23:26:06.365567+09:00",
+  "source_report_at": "2026-10-27T23:24:51.744060+09:00",
   "valid_through": "2026-10-28T00:00:00+09:00",
   "status": "partial",
   "items": [
@@ -177,175 +177,175 @@
       {
         "name": "종로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "중구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "용산구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "성동구",
         "status": "failed",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "광진구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "동대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "중랑구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "성북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "강북구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "도봉구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "노원구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "은평구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "서대문구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 3,
         "verified_count": 0
       },
       {
         "name": "마포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "양천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "강서구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "구로구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "금천구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "영등포구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "동작구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "관악구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 4,
         "verified_count": 0
       },
       {
         "name": "서초구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강남구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "송파구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강동구",
         "status": "checked",
-        "checked_at": "2026-10-27T23:20:01.737345+09:00",
+        "checked_at": "2026-10-27T23:24:51.744060+09:00",
         "candidates_count": 0,
         "verified_count": 0
       }
