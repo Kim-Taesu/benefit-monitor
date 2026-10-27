@@ -72,3 +72,22 @@ class CostDistrictTests(unittest.TestCase):
             self.assertEqual([c["status"] for c in coverage],["failed","failed"])
             fetcher.assert_called_once_with("https://mediahub.seoul.go.kr/robots.txt",["mediahub.seoul.go.kr"])
 
+
+    def test_temporary_invalid_listing_is_retried_without_accepting_wrong_region(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as directory:
+            root = Path(directory)
+            save(root / "districts.json", dict(districts=[dict(code="110", name="종로구")]))
+            valid = '<p class="type corres_box"><strong>종로구</strong></p><a href="/archives/12"><h2>무료 전시</h2></a>'.encode()
+            with patch("benefit_monitor.collectors.districts.fetch", side_effect=[b"User-agent: *\nAllow: /", b"<html>temporary</html>", valid]):
+                items, coverage = collect(root, dict(keywords=["무료"]), NOW)
+            self.assertEqual(coverage[0]["status"], "checked")
+            self.assertEqual(items[0]["districts"], ["종로구"])
+
+    def test_repeated_invalid_listing_stays_failed(self):
+        with tempfile.TemporaryDirectory(dir=ROOT) as directory:
+            root = Path(directory)
+            save(root / "districts.json", dict(districts=[dict(code="110", name="종로구")]))
+            with patch("benefit_monitor.collectors.districts.fetch", side_effect=[b"User-agent: *\nAllow: /", b"<html/>", b"<html/>"]):
+                items, coverage = collect(root, dict(keywords=["무료"]), NOW)
+            self.assertEqual(items, [])
+            self.assertEqual(coverage[0]["status"], "failed")

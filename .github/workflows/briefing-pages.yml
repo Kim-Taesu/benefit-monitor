@@ -58,6 +58,11 @@ jobs:
               stream.write(f"Public briefing status: **{data['status']}**\n")
               stream.write(f"Generated: {data['generated_at']}\n")
               stream.write(f"Verified public items: {len(data['items'])}\n")
+              log = Path("cache/collection_log.json")
+              failures = json.loads(log.read_text()) if log.exists() else []
+              for failure in failures:
+                  # Only identifiers/types; never publish raw errors or URLs.
+                  stream.write(f"Collection issue: {failure['source']} / {failure.get('district', '-')} / {failure['reason']}\n")
           PY
       - name: Mirror public JSON for the existing ChatGPT reader
         if: github.event_name != 'push'

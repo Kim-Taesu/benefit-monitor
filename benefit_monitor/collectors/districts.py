@@ -73,7 +73,13 @@ def collect(root, source, now):
             if not allowed(robot, route, AGENT):
                 raise ValueError("robots disallows district listing")
             body = fetch(route, DOMAINS).decode("utf-8")
-            result["items"] = parse(body, route, name, source["keywords"])
+            try:
+                result["items"] = parse(body, route, name, source["keywords"])
+            except ValueError:
+                # A transient HTML/error response may arrive with HTTP 200.
+                # Retry once, still requiring an exact district match.
+                body = fetch(route, DOMAINS).decode("utf-8")
+                result["items"] = parse(body, route, name, source["keywords"])
             result.update(status="checked", candidates_count=len(result["items"]))
         except Exception as error:
             result.update(error_type=type(error).__name__, detail=str(error)[:240], candidates_count=0)
