@@ -21,6 +21,8 @@ jobs:
     if: github.event.repository.private == false && vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: write
     outputs:
       collection_outcome: ${{ steps.briefing.outcome }}
     steps:
@@ -57,6 +59,12 @@ jobs:
               stream.write(f"Generated: {data['generated_at']}\n")
               stream.write(f"Verified public items: {len(data['items'])}\n")
           PY
+      - name: Mirror public JSON for the existing ChatGPT reader
+        if: github.event_name != 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRIEFING_REPOSITORY: ${{ github.repository }}
+        run: python -m benefit_monitor.mirror --repository "$BRIEFING_REPOSITORY"
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         if: github.event_name != 'push'
         with:
