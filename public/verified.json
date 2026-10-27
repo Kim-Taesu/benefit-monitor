@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "source": "seoul",
+    "url": "https://mediahub.seoul.go.kr/archives/2019820",
+    "title": "서울레스토랑위크 참여 매장 Npay 적립",
+    "summary": "서울레스토랑위크 일부 매장 Npay 결제 50% 적립·최대 1만 포인트",
+    "valid_until": "2026-10-29",
+    "verified_at": "2026-10-27T22:41:06.477879+09:00",
+    "needs_recheck": false,
+    "valid_from": "2026-10-23",
+    "published_at": "2026-10-22",
+    "conditions": "행사 참여 매장 중 Npay 프로모션 대상 매장에서 QR결제 또는 페이스사인 결제 시 1인 1회, 최대 1만 포인트. 식음료 구매비용이 발생하며 메뉴 가격·최소결제액·다른 할인과 중복 가능 여부는 이 안내만으로 확인되지 않음. 참여 매장과 행사 적용 여부는 결제 전에 공식 안내에서 확인. 개인별 사용 이력·잔여 혜택은 확인하지 않음.",
+    "evidence": "서울시 공식 안내의 행사 기간과 Npay 결제 프로모션 본문을 직접 확인. 124개 업장 전체가 Npay 적립 대상이라는 뜻은 아니며 일부 참여 매장에 한함.",
+    "districts": [],
+    "review_notes": "공식 공개 정보만 기재. 원문 확인 후 공개 승인.",
+    "fee_status": "paid",
+    "validity_kind": "fixed",
+    "deadline_at": null,
+    "excluded_reason": "",
+    "public_release": true
+  }
+]
