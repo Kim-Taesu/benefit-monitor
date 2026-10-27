@@ -34,6 +34,9 @@ def fetch(url, domains):
         except urllib.error.HTTPError as e:
             if e.code not in (502, 503, 504) or attempt:
                 raise
+        except urllib.error.URLError as e:
+            if attempt or not isinstance(e.reason, (TimeoutError, ConnectionResetError)):
+                raise
         except TimeoutError:
             if attempt:
                 raise

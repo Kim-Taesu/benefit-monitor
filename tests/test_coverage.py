@@ -34,3 +34,26 @@ class CoverageTests(unittest.TestCase):
         parser = ArticleLinks('https://www.korea.kr/', ['www.korea.kr'], r'/news/policyNewsView.do', ['할인'])
         parser.feed('<a href="/news/policyNewsView.do?newsId=1">할인</a><a href="/news/policyNewsView.do?newsId=1&amp;pWise=sub&amp;pWiseSub=R2">할인</a>')
         self.assertEqual(list(parser.items), ['https://www.korea.kr/news/policyNewsView.do?newsId=1'])
+
+    def test_wrapped_timeout_retries_but_tls_errors_do_not(self):
+        from unittest.mock import patch
+        from urllib.error import URLError
+        from io import BytesIO
+        import ssl
+        from benefit_monitor.collectors.rss import fetch
+        from benefit_monitor import cost_policy
+        for reason, retry in [(TimeoutError('timeout'), True), (ssl.SSLError('TLS failure'), False)]:
+            cost_policy.reset(3)
+            class Opener:
+                attempts = 0
+                def open(self, request, timeout):
+                    self.attempts += 1
+                    if self.attempts == 1:
+                        raise URLError(reason)
+                    return BytesIO(b'ok')
+            with patch('urllib.request.build_opener', return_value=Opener()), patch('time.sleep'):
+                if retry:
+                    self.assertEqual(fetch('https://official.example/a', ['official.example']), b'ok')
+                else:
+                    with self.assertRaises(URLError):
+                        fetch('https://official.example/a', ['official.example'])
