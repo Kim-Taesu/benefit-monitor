@@ -4,7 +4,7 @@ import html
 import json
 import re
 import os
-from datetime import datetime, timedelta, time, date
+from datetime import datetime, timedelta, time, date, timezone
 from pathlib import Path
 from urllib.parse import parse_qsl, urlsplit
 
@@ -90,8 +90,23 @@ def coverage(root, config, report, items):
     return dict(sources=sources, districts=districts, scope="서울시 우리동네 뉴스 첫 페이지. 구청 전체 공지 수집과는 다릅니다.")
 
 
+def collection_time(workflow=None):
+    """Read the single daily UTC cron from the repository workflow."""
+    workflow = workflow or Path(__file__).resolve().parents[1] / ".github/workflows/briefing-pages.yml"
+    text = Path(workflow).read_text(encoding="utf-8")
+    block = re.search(r"(?ms)^  schedule:\n(.*?)(?=^  \S|\Z)", text)
+    entries = re.findall(r"(?m)^\s+- cron: (.+)$", block.group(1)) if block else []
+    if len(entries) != 1:
+        raise ValueError("Exactly one daily workflow schedule is required")
+    cron = re.fullmatch(r"['\"](\d{1,2}) (\d{1,2}) \* \* \*['\"]", entries[0].strip())
+    if not cron:
+        raise ValueError("Expected a fixed daily UTC cron")
+    minute, hour = map(int, cron.groups())
+    return datetime(2000, 1, 1, hour, minute, tzinfo=timezone.utc).astimezone(SEOUL).time()
+
+
 def run_context(now, report_time, event):
-    expected=datetime.combine(now.date(),time(7),SEOUL)
+    expected=datetime.combine(now.astimezone(SEOUL).date(),collection_time(),SEOUL)
     event=event if event in ("schedule","workflow_dispatch","push") else "local_or_unknown"
     status=("unavailable" if report_time is None else "pre_schedule_snapshot" if report_time<expected
             else "scheduled_refresh" if event=="schedule" else "manual_refresh" if event=="workflow_dispatch" else "unknown_trigger")
@@ -108,7 +123,7 @@ def display_date(value, missing="미확인"):
 def page(data):
     esc = lambda value: html.escape(str(value), quote=True)
     context=data.get("run_context",{})
-    run_label={"pre_schedule_snapshot":"정기 수집 예정시각 이전의 결과입니다. 오늘 07시 정기 실행 성공을 확인한 자료가 아닙니다.",
+    run_label={"pre_schedule_snapshot":"정기 수집 예정시각 이전의 결과입니다. 오늘 정기 실행 성공을 확인한 자료가 아닙니다.",
                "manual_refresh":"수동 실행으로 갱신한 결과입니다. 정기 실행 성공을 뜻하지 않습니다.",
                "scheduled_refresh":"GitHub 정기 실행에서 생성한 결과입니다.",
                "unknown_trigger":"실행 유형 미확인", "unavailable":"수집 실행 결과 확인 불가"}.get(context.get("status"),"")
