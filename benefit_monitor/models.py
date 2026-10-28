@@ -20,6 +20,7 @@ class Benefit:
     validity_kind: str = "fixed"
     deadline_at: str | None = None
     excluded_reason: str = ""
+    payment_terms: dict = field(default_factory=dict)
 
     @property
     def id(self):
@@ -29,4 +30,5 @@ class Benefit:
         return asdict(self)
 
     def content(self):
-        return {k: v for k, v in self.data().items() if k not in ("verified_at", "needs_recheck")}
+        return {k: v for k, v in self.data().items() if k not in ("verified_at", "needs_recheck") and not (k == "payment_terms" and not v)}
+

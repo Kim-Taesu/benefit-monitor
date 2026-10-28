@@ -5,19 +5,27 @@
     "title": "서울레스토랑위크 참여 매장 Npay 적립",
     "summary": "서울레스토랑위크 일부 매장 Npay 결제 50% 적립·최대 1만 포인트",
     "valid_until": "2026-10-29",
-    "verified_at": "2026-10-27T22:41:06.477879+09:00",
+    "verified_at": "2026-10-28T09:08:25.695816+09:00",
     "needs_recheck": false,
     "valid_from": "2026-10-23",
     "published_at": "2026-10-22",
-    "conditions": "행사 참여 매장 중 Npay 프로모션 대상 매장에서 QR결제 또는 페이스사인 결제 시 1인 1회, 최대 1만 포인트. 식음료 구매비용이 발생하며 메뉴 가격·최소결제액·다른 할인과 중복 가능 여부는 이 안내만으로 확인되지 않음. 참여 매장과 행사 적용 여부는 결제 전에 공식 안내에서 확인. 개인별 사용 이력·잔여 혜택은 확인하지 않음.",
-    "evidence": "서울시 공식 안내의 행사 기간과 Npay 결제 프로모션 본문을 직접 확인. 124개 업장 전체가 Npay 적립 대상이라는 뜻은 아니며 일부 참여 매장에 한함.",
+    "conditions": "서울시 선정 행사 매장 중 Npay 커넥트 설치 가맹점에서 QR 또는 페이스사인으로 Npay 포인트·머니를 사용해 결제해야 함. 50% 적립, 1인 1회·최대 1만 포인트. 카드 재원 등 다른 결제수단은 이 원문에서 혜택 대상으로 명시되지 않음. 식음료 구매비용 발생, 최소결제액·다른 할인과 중복 여부는 미확인. 대상 매장은 행사 중 추가될 수 있으며 조기 종료·조건 변경 가능. 개인 사용 이력·잔여 혜택·실제 적립 성공은 확인하지 않음.",
+    "evidence": "서울시 기사와 Npay 운영주체 행사 본문·FAQ·유의사항 대조. 결제 재원 포인트·머니 필수 조건을 정정.",
     "districts": [],
-    "review_notes": "공식 공개 정보만 기재. 원문 확인 후 공개 승인.",
+    "review_notes": "2026-10-28 예약 브리핑 품질 피드백 반영. 원문에 없는 제외 조건·최소금액은 추정하지 않음.",
     "fee_status": "paid",
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "payment_terms": {
+      "method": "QR 또는 페이스사인",
+      "funding_source": "Npay 포인트·머니",
+      "excluded_methods": "카드 재원 등 다른 결제수단은 원문에서 혜택 대상으로 명시되지 않음",
+      "minimum_spend": "원문에 명시되지 않음",
+      "limit": "1인 1회, 50% 적립·최대 1만 포인트",
+      "evidence_url": "https://mkt.naver.com/event/mo/taste_of_seoul"
+    }
   },
   {
     "source": "seoul",

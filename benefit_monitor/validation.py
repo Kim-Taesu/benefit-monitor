@@ -11,6 +11,14 @@ def validate(data, sources, now):
     item = Benefit(**data)
     if item.source not in sources or not official(item.url, sources[item.source]["domains"]):
         raise ValueError("Official HTTPS source required")
+    if not isinstance(item.payment_terms, dict):
+        raise ValueError("payment_terms must be an object")
+    if item.payment_terms:
+        required={"method","funding_source","excluded_methods","minimum_spend","limit","evidence_url"}
+        if set(item.payment_terms)!=required or any(not isinstance(v,str) or not v.strip() for v in item.payment_terms.values()):
+            raise ValueError("Payment review requires method, funding, exclusions, minimum spend, limit and evidence; mark unknown explicitly")
+        if not official(item.payment_terms["evidence_url"],sources[item.source]["domains"]):
+            raise ValueError("Official payment evidence required")
     if not item.title.strip() or not item.summary.strip():
         raise ValueError("Title and summary required")
     if not isinstance(item.districts, list) or any(not isinstance(d, str) for d in item.districts):
@@ -43,3 +51,4 @@ def validate(data, sources, now):
     if not item.needs_recheck and not (item.verified_at and item.evidence.strip()):
         raise ValueError("Verified item requires timestamp and evidence")
     return item
+

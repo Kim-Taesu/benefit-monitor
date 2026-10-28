@@ -10,7 +10,8 @@
       "tier": "A",
       "domains": [
         "mediahub.seoul.go.kr",
-        "www.seoul.go.kr"
+        "www.seoul.go.kr",
+        "mkt.naver.com"
       ],
       "routes": [
         "https://mediahub.seoul.go.kr/"

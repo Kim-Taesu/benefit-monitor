@@ -15,7 +15,7 @@ from . import operations
 
 PUBLIC_FIELDS = ("source", "url", "title", "summary", "conditions", "districts",
                  "verified_at", "valid_from", "valid_until", "deadline_at",
-                 "validity_kind", "fee_status", "needs_recheck")
+                 "validity_kind", "fee_status", "needs_recheck", "payment_terms")
 
 
 def releases(root, config, now):
@@ -90,6 +90,15 @@ def coverage(root, config, report, items):
     return dict(sources=sources, districts=districts, scope="서울시 우리동네 뉴스 첫 페이지. 구청 전체 공지 수집과는 다릅니다.")
 
 
+def run_context(now, report_time, event):
+    expected=datetime.combine(now.date(),time(7),SEOUL)
+    event=event if event in ("schedule","workflow_dispatch","push") else "local_or_unknown"
+    status=("unavailable" if report_time is None else "pre_schedule_snapshot" if report_time<expected
+            else "scheduled_refresh" if event=="schedule" else "manual_refresh" if event=="workflow_dispatch" else "unknown_trigger")
+    return dict(trigger=event,status=status,expected_collection_at=expected.isoformat(),
+                scheduled_run_confirmed=status=="scheduled_refresh")
+
+
 def display_date(value, missing="미확인"):
     if not value:return missing
     if "T" in value:return aware_time(value).strftime("%Y.%m.%d %H:%M (KST)")
@@ -98,6 +107,11 @@ def display_date(value, missing="미확인"):
 
 def page(data):
     esc = lambda value: html.escape(str(value), quote=True)
+    context=data.get("run_context",{})
+    run_label={"pre_schedule_snapshot":"정기 수집 예정시각 이전의 결과입니다. 오늘 07시 정기 실행 성공을 확인한 자료가 아닙니다.",
+               "manual_refresh":"수동 실행으로 갱신한 결과입니다. 정기 실행 성공을 뜻하지 않습니다.",
+               "scheduled_refresh":"GitHub 정기 실행에서 생성한 결과입니다.",
+               "unknown_trigger":"실행 유형 미확인", "unavailable":"수집 실행 결과 확인 불가"}.get(context.get("status"),"")
     cards = []
     for item in data["items"]:
         cards.append(
@@ -105,7 +119,7 @@ def page(data):
             + '</p><p>' + esc(item["conditions"]) + '</p><p>공식 확인: ' + esc(display_date(item["verified_at"]))
             + '</p><p>기간: ' + esc(display_date(item["valid_from"], "시작일 미확인")) + ' ~ '
             + esc(display_date(item["deadline_at"] or item["valid_until"], "상시 안내"))
-            + '</p><a rel="noopener noreferrer" href="' + esc(item["url"]) + '">공식 안내</a></article>')
+            + '</p><a rel="noopener noreferrer" href="' + esc(item["url"]) + '">공식 안내</a>' + (' · <a rel="noopener noreferrer" href="' + esc(item['payment_terms']['evidence_url']) + '">결제조건 원문</a>' if item.get('payment_terms') else '') + '</article>')
     sections = ['<section><h2>분야별 수집 현황</h2><ul>']
     cov = data.get("coverage", {})
     for row in cov.get("sources", []):
@@ -134,6 +148,7 @@ def page(data):
 <style>body{font:17px/1.7 system-ui,sans-serif;margin:auto;max-width:850px;padding:32px 20px;background:#f5f6f8;color:#182333}h1{line-height:1.3}article{background:white;border:1px solid #dce1e8;border-radius:14px;padding:20px;margin:20px 0}h2{font-size:21px}a{color:#185acb}#notice{padding:16px;border-left:4px solid #b35d00;background:#fff2de}small{color:#48586e}#offers{display:none}</style></head><body>
 <header><small>공식 출처 · 검증된 공개 정보</small><h1>생활 혜택 브리핑</h1></header>
 <p>생성: ''' + esc(display_date(data["generated_at"])) + '''<br>수집 기준: ''' + esc(display_date(data["source_report_at"], "확인 실패")) + '''</p>
+<p>''' + esc(run_label) + '''</p>
 <p id="notice">''' + esc(data["message"]) + '''</p>
 <p>개인 자격·쿠폰 잔량·잔여석·신청 성공은 확인하지 않았습니다. 비용과 조건은 이용 전 공식 안내에서 확인하세요.</p>
 <main id="offers">''' + ''.join(cards) + ''.join(sections) + '''</main>
@@ -200,6 +215,7 @@ def run(root, now=None, failure=False):
                                {s["id"] for s in config["sources"]}, now)
     data["operational_state"] = state
     data["source_health"] = state["sources"]
+    data["run_context"] = run_context(now, aware_time(data["source_report_at"]) if data["source_report_at"] else None, os.environ.get("GITHUB_EVENT_NAME", ""))
     data["run_id"] = os.environ.get("GITHUB_RUN_ID", "local-" + now.isoformat())
     data["review_queue"] = operations.queue(report, state, now, config.get("max_age_days", 7)) if not failure and data["source_report_at"] else []
     if "withheld" in data:
@@ -220,6 +236,7 @@ def run(root, now=None, failure=False):
                   "시작" + (" 예정: " if item["valid_from"] and item["valid_from"] > now.date().isoformat() else ": ")
                   + display_date(item["valid_from"], "시작일 미확인"),
                   "종료/마감: " + display_date(item["deadline_at"] or item["valid_until"], "상시 안내"), item["url"]]
+    lines += ["", "실행 유형: " + data["run_context"]["trigger"], "정기 실행 확인: " + ("확인" if data["run_context"]["scheduled_run_confirmed"] else "미확인") ]
     cov = data.get("coverage", {})
     for group in ("sources", "districts"):
         if cov.get(group):

@@ -93,13 +93,19 @@ def check_bodies(state,items,sources,now,limit):
         row=records.setdefault(item.id,dict(source=item.source,first_seen_at=now.isoformat()))
         row['body_attempted_at']=now.isoformat()
         try:
-            source=sources[item.source];u=urlsplit(item.url)
+            source=sources[item.source]
+            target=item.payment_terms.get('evidence_url',item.url)
+            target_hash=digest(target)
+            if row.get('body_target_hash')!=target_hash and (row.get('body_target_hash') or target!=item.url):
+                row.pop('body_hash',None)
+            row['body_target_hash']=target_hash
+            u=urlsplit(target)
             try:robot=rss.fetch(f'{u.scheme}://{u.netloc}/robots.txt',source['domains']).decode('utf-8')
             except HTTPError as e:
                 if e.code!=404:raise
                 robot=''
-            if not allowed(robot,item.url,rss.AGENT):raise ValueError('robots_denied')
-            parser=Text();parser.feed(rss.fetch(item.url,source['domains']).decode('utf-8'))
+            if not allowed(robot,target,rss.AGENT):raise ValueError('robots_denied')
+            parser=Text();parser.feed(rss.fetch(target,source['domains']).decode('utf-8'))
             content=' '.join(' '.join(parser.parts).split())
             if len(content)<80:raise ValueError('insufficient_text')
             hashed=digest(content)
@@ -141,7 +147,7 @@ def sanitize(state,source_ids,now):
         if not re.fullmatch('[0-9a-f]{24}',key) or not isinstance(row,dict):raise ValueError('Invalid item state')
         if row.get('source') not in source_ids:continue
         out=dict(source=row['source'])
-        for field in ('title_hash','body_hash','approved_hash'):
+        for field in ('title_hash','body_hash','approved_hash','body_target_hash'):
             if field in row:
                 if not isinstance(row[field],str) or not re.fullmatch('[0-9a-f]{64}',row[field]):raise ValueError('Invalid hash')
                 out[field]=row[field]
