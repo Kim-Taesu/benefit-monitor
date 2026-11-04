@@ -65,3 +65,14 @@ test('adapter expiry and verification gates cannot be bypassed by recommendation
  assert.deepEqual(topicsFor(adapt(snapshot([item({summary:'야간',needs_recheck:true})]),NOW).items,p,[],NOW),[]);
  assert.deepEqual(topicsFor(adapt(snapshot([item({summary:'야간',display_until:'2026-11-04T11:00:00+09:00'})]),NOW).items,p,[],NOW),[]);
 });
+test('real Seoul and nationwide scope labels remain eligible, other cities do not',()=>{
+ const p=emptyBeta().profile;p.interests=['shopping'];
+ for(const region of ['전국 참여 유통업체','전국 CU(일부 점포 제외)','전국 이마트24','서울 야간명소·25개 구 코스']){
+  const rows=adapt(snapshot([item({summary:'할인 야간',districts:[],labels:{region}})]),NOW).items;
+  assert.ok(topicsFor(rows,p,[],NOW).length>0,region);
+ }
+ for(const region of ['성남시','서울 근교 성남시','전국 제외 서울불가']){
+  const rows=adapt(snapshot([item({summary:'할인 야간',districts:[],labels:{region}})]),NOW).items;
+  assert.equal(topicsFor(rows,p,[],NOW).length,0,region);
+ }
+});

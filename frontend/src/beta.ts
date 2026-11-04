@@ -48,7 +48,7 @@ export function summarizeEvents(events:LocalEvent[],now:number) {
  });
 }
 export function isSeoulCandidate(i:Benefit):boolean {
- if(i.regions.some(r=>['서울','서울시','서울 전체','전국'].includes(r)||DISTRICTS.includes(r)))return true;
+ if(i.regions.some(r=>!/(서울\s*(제외|불가)|전국\s*제외|서울\s*근교)/.test(r)&&(/^(서울(?:특별시|시)?|전국)(?:$|[\s·(])/.test(r)||DISTRICTS.includes(r))))return true;
  return !i.regions.length&&['seoul','culture','seoul_lifelong','kt','retail','convenience','seven','emart24'].includes(i.source);
 }
 const body=(i:Benefit)=>[i.title,i.summary,i.conditions,...Object.values(i.labels)].join(' ');

@@ -2,12 +2,14 @@
 import {computed,nextTick,onMounted,onUnmounted,ref,watch} from 'vue';
 import BenefitCard from './BenefitCard.vue';
 import type {Benefit} from './benefits';
-import {DISTRICTS,TOPICS,INTEREST_IDS,CARRIERS,emptyBeta,loadBeta,saveBeta,clearBeta,recordEvent,recentEvents,topicsFor,summarizeEvents,searchTopics} from './beta';
-import type {Action,BetaState,TopicId} from './beta';
+import {DISTRICTS,TOPICS,INTEREST_IDS,CARRIERS,BETA_KEY,emptyBeta,loadBeta,saveBeta,clearBeta,recordEvent,recentEvents,topicsFor,summarizeEvents,searchTopics} from './beta';
+import type {Action,BetaState,TopicId,Profile} from './beta';
 const props=defineProps<{items:Benefit[];now:number;query:string}>();
 let storage:Storage|null=null;try{storage=window.localStorage;}catch{}
 const state=ref(loadBeta(storage,props.now));
-const form=ref(JSON.parse(JSON.stringify(state.value.profile))),ageInput=ref(state.value.profile.age===null?'':String(state.value.profile.age));
+let consentStopped=false;
+function stored(){const value=loadBeta(storage,props.now);return consentStopped?{...value,consent:false,events:[]}:value;}
+const form=ref<Profile>(JSON.parse(JSON.stringify(state.value.profile))),ageInput=ref(state.value.profile.age===null?'':String(state.value.profile.age));
 const opened=ref(false),selected=ref<TopicId|null>(null),notice=ref(''),root=ref<HTMLElement|null>(null);
 const topics=computed(()=>topicsFor(props.items,state.value.profile,state.value.consent?state.value.events:[],props.now));
 // Explicit profile interests stay visible; up to two discovery topics rotate by local aggregate evidence.
@@ -19,23 +21,32 @@ function persist(next:BetaState):boolean {
  state.value=next;return true;
 }
 function saveProfile(){
- const age=ageInput.value.trim()===''?null:Number(ageInput.value);
+ const age=String(ageInput.value).trim()===''?null:Number(ageInput.value);
  if(age!==null&&(!Number.isInteger(age)||age<14||age>120)){notice.value='만 나이는 14~120 사이 정수로 입력하거나 비워 주세요.';return;}
  const profile={...form.value,areas:[...form.value.areas],interests:[...form.value.interests],age};
- if(persist({...state.value,profile})){notice.value='이 브라우저에 설정을 저장했습니다. 신청 자격은 공식 조건을 확인하세요.';selected.value=null;}
+ if(persist({...stored(),profile})){notice.value='이 브라우저에 설정을 저장했습니다. 신청 자격은 공식 조건을 확인하세요.';selected.value=null;}
 }
 function event(topic:TopicId,action:Action){
  if(!state.value.consent)return false;
- return persist(recordEvent(state.value,topic,action,props.now));
+ const latest=stored();
+ if(!latest.consent){state.value=latest;return false;}
+ return persist(recordEvent(latest,topic,action,props.now));
 }
 function consentChange(e:Event){
  const enabled=(e.target as HTMLInputElement).checked;
- if(persist({...state.value,consent:enabled,events:[]})){seen.clear();notice.value=enabled?'이 기기의 행동 기록을 시작합니다. 외부로 전송하지 않습니다.':'행동 기록을 중단하고 저장된 기록을 삭제했습니다.';void observe();}
+ if(!enabled){
+  consentStopped=true;
+  state.value={...state.value,consent:false,events:[]};observer?.disconnect();seen.clear();
+  const saved=saveBeta(storage,state.value)||clearBeta(storage);
+  notice.value=saved?'행동 기록을 중단하고 저장된 기록을 삭제했습니다.':'기록은 중단했지만 저장소 삭제에 실패했습니다. 브라우저 사이트 데이터를 삭제해 주세요.';
+  return;
+ }
+ if(persist({...loadBeta(storage,props.now),consent:true,events:[]})){consentStopped=false;seen.clear();notice.value='이 기기의 행동 기록을 시작합니다. 외부로 전송하지 않습니다.';void observe();}
  else (e.target as HTMLInputElement).checked=state.value.consent;
 }
 function reset(){
  // Stop learning in memory even if the browser refuses deletion.
- state.value=emptyBeta();form.value=JSON.parse(JSON.stringify(state.value.profile));ageInput.value='';selected.value=null;seen.clear();
+ consentStopped=true;state.value=emptyBeta();form.value=JSON.parse(JSON.stringify(state.value.profile));ageInput.value='';selected.value=null;seen.clear();
  notice.value=clearBeta(storage)?'개인화 설정과 기록을 삭제했습니다.':'기록은 중단했지만 저장소 삭제에 실패했습니다. 브라우저 사이트 데이터를 삭제해 주세요.';
 }
 async function choose(id:TopicId){selected.value=id;event(id,'click');await nextTick();document.getElementById('beta-related')?.focus();}
@@ -60,13 +71,19 @@ watch(()=>displayed.value.map(t=>t.id).join(','),()=>void observe());
 watch(()=>props.query,(query)=>{if(state.value.consent)for(const id of searchTopics(query))event(id,'search');});
 // Purge expired local records on access and as time advances, not merely from aggregates.
 watch(()=>Math.floor(props.now/60000),()=>{
- const events=state.value.consent?recentEvents(state.value.events,props.now):[];
- if(events.length!==state.value.events.length)persist({...state.value,events});
+ const latest=stored();const events=latest.consent?recentEvents(latest.events,props.now):[];
+ if(events.length!==state.value.events.length){state.value={...latest,events};if(storage)saveBeta(storage,state.value);}
 });
-onMounted(()=>{if(storage?.getItem){try{if(storage.getItem('benefit-monitor:beta:v1'))persist(state.value);}catch{}}
+function syncStorage(e:StorageEvent){
+ if(e.key!==null&&e.key!==BETA_KEY)return;
+ state.value=stored();form.value=JSON.parse(JSON.stringify(state.value.profile));ageInput.value=state.value.profile.age===null?'':String(state.value.profile.age);
+ void observe();
+}
+onMounted(()=>{if(storage?.getItem){try{if(storage.getItem(BETA_KEY))persist(loadBeta(storage,props.now));}catch{}}
+ window.addEventListener('storage',syncStorage);
  document.addEventListener('visibilitychange',observe);
 });
-onUnmounted(()=>{observer?.disconnect();document.removeEventListener('visibilitychange',observe);});
+onUnmounted(()=>{window.removeEventListener('storage',syncStorage);observer?.disconnect();document.removeEventListener('visibilitychange',observe);});
 </script>
 <template>
 <section id="beta" ref="root" class="beta-panel" aria-label="서울 개인화 베타">

@@ -54,3 +54,24 @@ test('storage denial and expiry never remove basic discovery or fabricate recomm
  await expect(page.locator('#beta .topic-button')).toHaveCount(0);
  await expect(page.locator('#beta')).toContainText('현재 표시할 수 있는 주제가 없습니다');
 });
+test('revocation stops learning even if persistence fails',async({page})=>{
+ await setup(page);await page.getByLabel('이 기기의 행동 기록에 동의').check();
+ await page.evaluate(()=>{Storage.prototype.setItem=()=>{throw new Error('quota');};Storage.prototype.removeItem=()=>{throw new Error('blocked');};});
+ await page.getByLabel('이 기기의 행동 기록에 동의').uncheck();
+ await expect(page.getByLabel('이 기기의 행동 기록에 동의')).not.toBeChecked();
+ await expect(page.locator('#beta')).toContainText('기록은 중단했지만');
+ await page.getByRole('button',{name:/저녁 산책·야간 문화 ·/}).click();
+ await page.getByRole('button',{name:'관심 있어요',exact:true}).click();
+ await expect(page.locator('#beta')).toContainText('선택 사항인 행동 기록에 동의');
+});
+test('another tab cannot resurrect withdrawn consent or deleted settings',async({page,context})=>{
+ await setup(page);await page.getByLabel('이 기기의 행동 기록에 동의').check();
+ const other=await context.newPage();await setup(other);
+ await page.getByLabel('이 기기의 행동 기록에 동의').uncheck();
+ await expect(other.getByLabel('이 기기의 행동 기록에 동의')).not.toBeChecked();
+ await other.getByRole('button',{name:/저녁 산책·야간 문화 ·/}).click();
+ expect(await other.evaluate(()=>JSON.parse(localStorage.getItem('benefit-monitor:beta:v1')!).events)).toEqual([]);
+ await page.getByRole('button',{name:'개인화 설정·기록 삭제',exact:true}).click();
+ await other.getByRole('button',{name:'관심 있어요',exact:true}).click();
+ expect(await other.evaluate(()=>localStorage.getItem('benefit-monitor:beta:v1'))).toBeNull();
+});
