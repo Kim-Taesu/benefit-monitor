@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source",
+    "url",
+    "title",
+    "summary"
+  ],
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "conditions": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "string"
+    },
+    "valid_from": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "valid_until": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "published_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "verified_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "needs_recheck": {
+      "type": "boolean",
+      "default": true
+    },
+    "districts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "review_notes": {
+      "type": "string"
+    },
+    "fee_status": {
+      "type": "string",
+      "enum": [
+        "free",
+        "paid",
+        "mixed",
+        "unknown"
+      ]
+    },
+    "validity_kind": {
+      "type": "string",
+      "enum": [
+        "fixed",
+        "ongoing"
+      ],
+      "default": "fixed"
+    },
+    "deadline_at": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "excluded_reason": {
+      "type": "string"
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Display labels copied from the official notice; omit unknown keys.",
+      "properties": {
+        "category": {
+          "enum": [
+            "문화·체험",
+            "할인·적립",
+            "생활지원",
+            "교육·강좌",
+            "공모·참여"
+          ]
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "action": {
+          "enum": [
+            "신청·예약 필요",
+            "미션 참여",
+            "응모",
+            "바로 이용",
+            "결제 시 적용",
+            "구매 후 사용"
+          ]
+        }
+      }
+    }
+  }
+}

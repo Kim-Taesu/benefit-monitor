@@ -1,0 +1,251 @@
+import json
+import tempfile
+import unittest
+from datetime import timedelta
+from pathlib import Path
+
+from benefit_monitor import publish
+from benefit_monitor.store import save
+from test_pipeline import benefit, SOURCE, NOW
+
+
+class PublishTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.item = benefit(fee_status="paid", conditions="입장료 5,000원").data()
+        save(self.root / "sources.yaml", dict(sources=[SOURCE], max_age_days=7))
+        self.report = dict(verified_at=NOW.isoformat(), complete=False,
+                           new=[self.item], needs_recheck=[],
+                           collection=dict(online=True, successful_sources=["test"], successful_districts=0))
+        save(self.root / "report.json", self.report)
+        self.release(self.item)
+
+    def release(self, *items):
+        save(self.root / "public/verified.json",
+             [dict(i, public_release=True) for i in items])
+
+    def run_export(self, now=NOW):
+        return publish.run(self.root, now=now)
+
+    def test_labels_render_as_facts_filters_summary_and_markdown(self):
+        item = dict(self.item, labels=dict(category="교육·강좌", audience="19~39세 청년", region="서울 관악구", action="신청·예약 필요"))
+        self.report["new"] = [item]
+        save(self.root / "report.json", self.report)
+        self.release(item)
+        result = self.run_export()
+        self.assertEqual(result["items"][0]["labels"]["region"], "서울 관악구")
+        page = (self.root / "delivery/public/index.html").read_text()
+        self.assertIn('data-category="교육·강좌"', page)
+        self.assertIn('data-filter="교육·강좌"', page)
+        self.assertIn("<span>대상</span> 19~39세 청년", page)
+        self.assertIn("<b>공개 1건</b>", page)
+        self.assertIn("<details><summary>수집 현황: 출처 1/1곳 성공", page)
+        text = (self.root / "delivery/public/briefing.md").read_text()
+        self.assertIn("분야: 교육·강좌 · 대상: 19~39세 청년 · 지역: 서울 관악구 · 이용 방법: 신청·예약 필요", text)
+
+    def test_unknown_label_values_are_rejected(self):
+        from benefit_monitor.validation import validate
+        sources = {SOURCE["id"]: SOURCE}
+        for labels in (dict(category="추천"), dict(action="자동 지급 보장"), dict(region=""), dict(price="무료")):
+            with self.subTest(labels=labels), self.assertRaises(ValueError):
+                validate(dict(self.item, labels=labels), sources, NOW)
+
+    def test_coverage_shows_unconnected_sources_and_all_registered_districts(self):
+        save(self.root / "districts.json", {"districts": [{"name": "강서구"}, {"name": "강남구"}]})
+        other = dict(SOURCE, id="other", name="추가 출처", html_url="https://official.example/")
+        save(self.root / "sources.yaml", dict(sources=[SOURCE, other], max_age_days=7))
+        self.report["district_coverage"] = [dict(district="강서구", status="checked", mode="cached", checked_at=NOW.isoformat(), candidates_count=2)]
+        save(self.root / "report.json", self.report)
+        result = self.run_export()
+        self.assertEqual([d["status"] for d in result["coverage"]["districts"]], ["cached", "not_checked"])
+        self.assertEqual(result["coverage"]["sources"][1]["status"], "failed")
+        page = (self.root / "delivery/public/index.html").read_text()
+        self.assertIn("강남구", page)
+        self.assertIn("추가 출처", page)
+        self.assertNotIn("detail", result["coverage"]["districts"][0])
+
+    def test_long_public_identifier_is_not_a_phone_number(self):
+        self.item["url"] = "https://official.example/?id=S261027101819597947"
+        self.release(self.item)
+        publish.prepare_import(self.root, now=NOW)
+
+    def test_phone_numbers_still_block_public_release(self):
+        for phone in ("01012345678", "010-1234-5678", "연락010 1234 5678"):
+            self.item["conditions"] = phone
+            self.release(self.item)
+            with self.assertRaises(ValueError):
+                publish.prepare_import(self.root, now=NOW)
+
+    def test_export_contains_only_projected_operational_state(self):
+        save(self.root / "cache/operational_state.json", dict(schema_version=1, items={}, profile="private"))
+        result=self.run_export()
+        self.assertEqual(result["operational_state"], dict(schema_version=1, items={}, sources={}))
+        self.assertNotIn("private", json.dumps(result))
+
+    def test_one_early_deadline_does_not_expire_whole_document(self):
+        early=dict(self.item, valid_until="2026-10-26", deadline_at="2026-10-26T09:00:00+09:00")
+        later=dict(self.item, url="https://official.example/later", valid_until="2026-10-30")
+        self.release(early,later)
+        self.report["new"]=[early,later]
+        save(self.root/"report.json",self.report)
+        result=self.run_export()
+        self.assertEqual(result["valid_through"],"2026-10-27T00:00:00+09:00")
+        deadlines={i["url"]:i["display_until"] for i in result["items"]}
+        self.assertEqual(deadlines[early["url"]],"2026-10-26T09:00:00+09:00")
+        self.assertEqual(deadlines[later["url"]],"2026-10-31T00:00:00+09:00")
+        at_ten=self.run_export(now=NOW+timedelta(hours=2))
+        self.assertEqual([i["url"] for i in at_ten["items"]],[later["url"]])
+
+    def test_human_dates_are_consistent_without_changing_json_timestamps(self):
+        item=dict(self.item,valid_until="2026-11-04",deadline_at="2026-11-04T18:00:00+09:00")
+        self.release(item);self.report["new"]=[item];save(self.root/"report.json",self.report)
+        result=self.run_export()
+        self.assertEqual(result["items"][0]["deadline_at"],"2026-11-04T18:00:00+09:00")
+        for filename in ("index.html","briefing.md"):
+            text=(self.root/"delivery/public"/filename).read_text()
+            self.assertIn("2026.11.04 18:00 (KST)",text)
+            self.assertIn("2026.10.26 07:00 (KST)",text)
+            self.assertIn("시작일 미확인",text)
+            self.assertNotIn("공식 확인: 2026-10-26T",text)
+
+    def test_release_keeps_fees_and_times_but_drops_private_fields(self):
+        self.item.update(evidence="internal verification evidence", review_notes="private note")
+        self.release(self.item)
+        self.report.update(new=[self.item], profile={"birthdate": "1900-01-01"})
+        save(self.root / "report.json", self.report)
+        result = self.run_export()
+        self.assertEqual(result["items"][0]["fee_status"], "paid")
+        self.assertEqual(result["items"][0]["conditions"], "입장료 5,000원")
+        self.assertEqual(result["source_report_at"], NOW.isoformat())
+        self.assertEqual(result["items"][0]["verified_at"], self.item["verified_at"])
+        output = (self.root / "delivery/public/briefing.json").read_text()
+        for secret in ("private note", "internal verification evidence", "1900-01-01", "profile"):
+            self.assertNotIn(secret, output)
+        self.assertEqual({p.name for p in (self.root / "delivery/public").iterdir()},
+                         {"index.html", "briefing.json", "briefing.md"})
+
+    def test_no_release_does_not_publish_internal_items_or_claim_no_benefits(self):
+        self.release()
+        result = self.run_export()
+        self.assertEqual(result["items"], [])
+        self.assertEqual(result["status"], "awaiting_verification")
+        self.assertIn("혜택이 없다는 뜻은 아닙니다", result["message"])
+
+    def test_unapproved_release_fails_closed(self):
+        save(self.root / "public/verified.json", [self.item])
+        with self.assertRaises(ValueError):
+            self.run_export()
+
+    def test_release_terms_must_match_verified_report(self):
+        self.release(dict(self.item, conditions="무료"))
+        self.assertEqual(self.run_export()["items"], [])
+
+    def test_blocked_and_unverified_and_expired_are_withheld(self):
+        for updates in (dict(needs_recheck=True), dict(valid_until="2026-10-20"),
+                        dict(excluded_reason="ended"), dict(evidence="")):
+            item = dict(self.item, **updates)
+            self.release(self.item)
+            save(self.root / "report.json", dict(self.report, new=[item]))
+            self.assertEqual(self.run_export()["items"], [])
+
+    def test_prior_date_or_old_report_is_rejected(self):
+        for now in (NOW + timedelta(days=1), NOW + timedelta(hours=3)):
+            with self.assertRaises(ValueError):
+                self.run_export(now)
+
+    def test_missing_report_is_rejected(self):
+        (self.root / "report.json").unlink()
+        with self.assertRaises(ValueError):
+            self.run_export()
+
+    def test_complete_collection_failure_is_not_an_empty_success(self):
+        save(self.root / "report.json", dict(self.report, district_coverage=[
+            {"status": "error"}], browser_handoffs=[{"source": "seoul"}],
+            verification_limits=[{"source": "seoul"}],
+            collection=dict(online=True, successful_sources=[], successful_districts=0)))
+        result = self.run_export()
+        self.assertEqual(result["status"], "collection_failed")
+        self.assertEqual(result["items"], [])
+
+    def test_public_sensitive_strings_and_token_urls_rejected(self):
+        for updates in (dict(conditions="생년월일 1900-01-01"),
+                        dict(summary="contact secret@example.com"),
+                        dict(url="https://official.example/a?token=secret")):
+            self.release(dict(self.item, **updates))
+            with self.assertRaises(ValueError):
+                self.run_export()
+
+    def test_html_escapes_text_and_link_attributes(self):
+        item = dict(self.item, summary='<img src=x onerror="alert(1)">')
+        self.release(item)
+        save(self.root / "report.json", dict(self.report, new=[item]))
+        self.run_export()
+        page = (self.root / "delivery/public/index.html").read_text()
+        self.assertNotIn('<img src=x', page)
+        self.assertIn('&lt;img', page)
+        self.assertIn("요금: 유료", page)
+
+    def test_failure_page_replaces_previous_recommendations_without_details(self):
+        self.run_export()
+        publish.run(self.root, now=NOW, failure=True)
+        data = json.loads((self.root / "delivery/public/briefing.json").read_text())
+        self.assertEqual(data["status"], "collection_failed")
+        self.assertIsNone(data["source_report_at"])
+        self.assertEqual(data["items"], [])
+        self.assertNotIn(self.item["summary"], (self.root / "delivery/public/index.html").read_text())
+
+    def test_prepare_import_removes_release_marker_and_rejects_profile_fields(self):
+        path = publish.prepare_import(self.root, NOW)
+        self.assertEqual(json.loads(path.read_text()), [self.item])
+        self.release(dict(self.item, profile="private"))
+        with self.assertRaises((ValueError, TypeError)):
+            publish.prepare_import(self.root, NOW)
+
+    def test_offline_report_cannot_be_published_as_a_collection_success(self):
+        save(self.root / "report.json", dict(self.report, collection=dict(online=False)))
+        self.assertEqual(self.run_export()["status"], "collection_failed")
+
+    def test_online_pipeline_records_actual_source_success(self):
+        from unittest.mock import patch
+        from benefit_monitor.cli import run
+        source = dict(SOURCE, html_url="https://official.example/")
+        save(self.root / "sources.yaml", dict(sources=[source], max_age_days=7))
+        with patch("benefit_monitor.cli.collect_html", return_value=[]):
+            report = run(self.root, online=True, now=NOW)
+        self.assertEqual(report["collection"], dict(online=True, successful_sources=["test"], successful_districts=0))
+        self.assertEqual(self.run_export()["status"], "awaiting_verification")
+
+    def test_cli_returns_failure_for_offline_collection_status(self):
+        import subprocess
+        import sys
+        from datetime import datetime
+        from benefit_monitor.briefing import SEOUL
+        now = datetime.now(SEOUL)
+        item = dict(self.item, verified_at=now.isoformat(), valid_until=(now + timedelta(days=10)).date().isoformat())
+        self.release(item)
+        save(self.root / "report.json", dict(self.report, verified_at=now.isoformat(), new=[item], collection=dict(online=False)))
+        result = subprocess.run([sys.executable, "-m", "benefit_monitor.publish", "--root", str(self.root)],
+                                capture_output=True, text=True)
+        self.assertNotEqual(result.returncode, 0)
+        data = json.loads((self.root / "delivery/public/briefing.json").read_text())
+        self.assertEqual(data["status"], "collection_failed")
+
+    def test_naive_generation_time_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.run_export(NOW.replace(tzinfo=None))
+
+    def test_markdown_keeps_upcoming_start_and_exact_deadline(self):
+        item = dict(self.item, valid_from="2026-10-28", valid_until="2026-10-29",
+                    deadline_at="2026-10-29T12:00:00+09:00")
+        self.release(item)
+        save(self.root / "report.json", dict(self.report, new=[item]))
+        self.run_export()
+        text = (self.root / "delivery/public/briefing.md").read_text()
+        for expected in ("시작 예정", "2026.10.28", "2026.10.29 12:00 (KST)"):
+            self.assertIn(expected, text)
+
+
+if __name__ == "__main__":
+    unittest.main()
