@@ -9,6 +9,23 @@ def digest(text):
     return sha256(' '.join(text.split()).encode()).hexdigest()
 
 
+BODY_HASH_VERSION=2
+# Page chrome after the article body: related lists, comments, popularity rankings.
+BODY_END_MARKERS=('이 자료는 텍스트에 한하여 공공누리','기사 관련 태그','댓글은 자유로운',
+                  '최근 본 서비스','다른 이용자가 함께 본 서비스','실시간 인기뉴스')
+# Counters that change on every visit without any change to the official facts.
+VOLATILE=(r'조회\s*[\d,]+',r'좋아요\s*[\d,]+',r'공감수\s*[\d,]+',r'\(\s*[\d,]+\s*건\s*\)')
+
+
+def article_text(content):
+    """Text used for change detection: drop trailing page chrome and view/like counters."""
+    import re
+    cuts=[i for i in (content.find(m) for m in BODY_END_MARKERS) if i>0]
+    if cuts:content=content[:min(cuts)]
+    for pattern in VOLATILE:content=re.sub(pattern,' ',content)
+    return ' '.join(content.split())
+
+
 def observe(state, incoming, approved, now):
     stamp=now.isoformat()
     records=state.setdefault('items',{})
@@ -108,7 +125,11 @@ def check_bodies(state,items,sources,now,limit):
             parser=Text();parser.feed(rss.fetch(target,source['domains']).decode('utf-8'))
             content=' '.join(' '.join(parser.parts).split())
             if len(content)<80:raise ValueError('insufficient_text')
-            hashed=digest(content)
+            hashed=digest(article_text(content))
+            if row.get('body_hash_version')!=BODY_HASH_VERSION:
+                # Hashes from an older normalization are not comparable; re-baseline without a hold.
+                row.pop('body_hash',None)
+            row['body_hash_version']=BODY_HASH_VERSION
             if row.get('body_hash') and row['body_hash']!=hashed:
                 row.update(hold_at=now.isoformat(),hold_reason='body_changed')
             row.update(body_hash=hashed,body_checked_at=now.isoformat(),body_status='checked')
@@ -158,6 +179,7 @@ def sanitize(state,source_ids,now):
                 out[field]=date.isoformat()
         if row.get('hold_reason') in ('title_changed','body_changed'):out['hold_reason']=row['hold_reason']
         if row.get('body_status') in ('checked','failed'):out['body_status']=row['body_status']
+        if type(row.get('body_hash_version')) is int and 1<=row['body_hash_version']<=99:out['body_hash_version']=row['body_hash_version']
         if row.get('pending_reason') in ('title_changed','body_changed','verification_expired','manual_review'):
             out['pending_reason']=row['pending_reason']
             if row.get('pending_deadline'):
