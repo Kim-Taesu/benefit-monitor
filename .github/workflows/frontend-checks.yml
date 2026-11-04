@@ -23,6 +23,8 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
+      - name: Check frontend source policy
+        run: python scripts/generate_source_policy.py --check
       - name: Python regression suite
         run: python -m unittest discover -s tests -v
       - name: Frontend dependencies, unit tests and build
