@@ -45,3 +45,10 @@ Python 수집/승인/공개 JSON·MD·미러 로직 변경 없음. JSON schema_v
 첫 PR CI에서 Python/Node/Vue 타입 검사/Vite 빌드 통과. 번들 JS 86.99kB (gzip 34.15kB).
 Playwright 1.56.1이 ubuntu-latest의 Ubuntu 26.04를 지원하지 않아 브라우저 설치가 실패했으며,
 검증 job을 지원되는 표준 ubuntu-24.04 runner로 고정했습니다. 실제 브라우저 결과는 후속 실행으로 확인합니다.
+
+가나다순은 카드에 실제 표시된 summary 기준입니다. 원문 title은 상세에 보존합니다.
+
+검증 CI 41764062478: Vue 타입 검사·Vite 빌드·브라우저 16개 및 axe 검사 통과.
+360/390/768/1440px, 상세 및 상태별 PNG 13개와 HTML 보고서 생성.
+https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41764062478
+브라우저와 단위 테스트 추가 후 최종 head를 다시 확인합니다.
