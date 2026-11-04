@@ -45,7 +45,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "region": "온라인(알라딘 북플)",
+      "action": "미션 참여"
+    }
   },
   {
     "source": "seongnam",
@@ -67,7 +72,13 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "audience": "19세 이상",
+      "region": "성남시 수정·중원구 대상 상점",
+      "action": "미션 참여"
+    }
   },
   {
     "source": "seongnam",
@@ -131,7 +142,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "region": "전국 참여 유통업체",
+      "action": "결제 시 적용"
+    }
   },
   {
     "source": "seoul",
@@ -176,7 +192,12 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "생활지원",
+      "region": "서울 청계광장~광장시장",
+      "action": "바로 이용"
+    }
   },
   {
     "source": "seoul",
@@ -198,7 +219,11 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울시립과학관"
+    }
   },
   {
     "source": "seoul",
@@ -243,7 +268,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "교육·강좌",
+      "region": "서울시민대학 4개 캠퍼스",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "seoul",
@@ -362,7 +392,13 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "생활지원",
+      "audience": "서울 생활권 19~39세 청년",
+      "region": "서울 성북구",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "seoul",
@@ -472,7 +508,13 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "생활지원",
+      "audience": "성북구 1인 가구",
+      "region": "서울 성북구",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "seoul",
@@ -516,7 +558,11 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 은평구 은평한옥마을"
+    }
   },
   {
     "source": "seoul",
@@ -538,7 +584,12 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 강서구 서울물재생체험관",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "seoul",
@@ -582,7 +633,12 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "region": "서울 야간명소·25개 구 코스",
+      "action": "미션 참여"
+    }
   },
   {
     "source": "seoul",
@@ -604,7 +660,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 대한민국역사박물관",
+      "action": "바로 이용"
+    }
   },
   {
     "source": "seoul",
@@ -626,7 +687,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "region": "서울 한강공원 17개 배달존",
+      "action": "결제 시 적용"
+    }
   },
   {
     "source": "seoul",
@@ -648,7 +714,12 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "생활지원",
+      "region": "서울 월드컵경기장역",
+      "action": "바로 이용"
+    }
   },
   {
     "source": "seoul",
@@ -692,7 +763,13 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "audience": "65세 이상",
+      "region": "서울 용산구 숙대 앞",
+      "action": "결제 시 적용"
+    }
   },
   {
     "source": "seoul",
@@ -736,7 +813,13 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "생활지원",
+      "audience": "서울 3개월 이상 거주 임산부",
+      "region": "서울",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "seoul",
@@ -780,7 +863,11 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 강서구 서울식물원"
+    }
   },
   {
     "source": "seoul",
@@ -829,7 +916,12 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "region": "서울 6개 야간 상권",
+      "action": "구매 후 사용"
+    }
   },
   {
     "source": "seoul",
@@ -849,7 +941,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 강남구 등 사찰·문화공간",
+      "action": "바로 이용"
+    }
   },
   {
     "source": "seoul",
@@ -869,7 +966,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 남산공원",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "seoul",
@@ -911,7 +1013,11 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 도봉구 서울창포원"
+    }
   },
   {
     "source": "seoul",
@@ -931,7 +1037,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "공모·참여",
+      "region": "서울(온라인 접수)",
+      "action": "응모"
+    }
   },
   {
     "source": "seoul",
@@ -971,7 +1082,12 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "region": "서울",
+      "action": "결제 시 적용"
+    }
   },
   {
     "source": "seoul",
@@ -991,7 +1107,13 @@
     "validity_kind": "fixed",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "교육·강좌",
+      "audience": "서울시민·생활권자",
+      "region": "서울 관악구 다시가는 캠퍼스",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "retail",
@@ -1171,7 +1293,13 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "audience": "KT·T멤버십 회원",
+      "region": "전국 CU(일부 점포 제외)",
+      "action": "결제 시 적용"
+    }
   },
   {
     "source": "culture",
@@ -1193,7 +1321,13 @@
     "fee_status": "paid",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "audience": "초등학생 이상 자녀 동반 가족",
+      "region": "서울로봇인공지능과학관",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "culture",
@@ -1215,7 +1349,13 @@
     "fee_status": "free",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "audience": "20~100명 단체",
+      "region": "서울역사박물관",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "culture",
@@ -1237,7 +1377,13 @@
     "fee_status": "free",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "audience": "7세 이상",
+      "region": "서울 도봉구 평화문화진지",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "culture",
@@ -1281,7 +1427,12 @@
     "fee_status": "free",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "region": "서울 샛강 서울교~여의도",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "culture",
@@ -1303,7 +1454,13 @@
     "fee_status": "free",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "문화·체험",
+      "audience": "어린이 동반 가족(권장 7~10세)",
+      "region": "서울기록원",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "culture",
@@ -1413,7 +1570,13 @@
     "fee_status": "free",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "교육·강좌",
+      "audience": "19~39세 1인가구 청년",
+      "region": "서울 관악구",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "culture",
@@ -1435,7 +1598,13 @@
     "fee_status": "free",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "교육·강좌",
+      "audience": "19~39세 1인가구 청년",
+      "region": "서울 관악구",
+      "action": "신청·예약 필요"
+    }
   },
   {
     "source": "culture",
@@ -1477,7 +1646,13 @@
     "fee_status": "paid",
     "validity_kind": "ongoing",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "audience": "T멤버십·현대카드 M포인트 보유자",
+      "region": "전국 세븐일레븐(일부 제외)",
+      "action": "결제 시 적용"
+    }
   },
   {
     "source": "seven",
@@ -1497,7 +1672,13 @@
     "fee_status": "paid",
     "validity_kind": "ongoing",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "audience": "L.POINT 회원",
+      "region": "전국 세븐일레븐(참여 점포)",
+      "action": "결제 시 적용"
+    }
   },
   {
     "source": "seoul_lifelong",
@@ -1517,7 +1698,12 @@
     "fee_status": "unknown",
     "validity_kind": "fixed",
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "공모·참여",
+      "region": "온라인(서울시 평생학습포털)",
+      "action": "응모"
+    }
   },
   {
     "source": "seoul_lifelong",
@@ -1557,6 +1743,12 @@
     "validity_kind": "ongoing",
     "deadline_at": null,
     "excluded_reason": "",
-    "public_release": true
+    "public_release": true,
+    "labels": {
+      "category": "할인·적립",
+      "audience": "KT멤버십·현대카드 M포인트 보유자",
+      "region": "전국 이마트24",
+      "action": "결제 시 적용"
+    }
   }
 ]

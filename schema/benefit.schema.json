@@ -94,6 +94,42 @@
     },
     "excluded_reason": {
       "type": "string"
+    },
+    "labels": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Display labels copied from the official notice; omit unknown keys.",
+      "properties": {
+        "category": {
+          "enum": [
+            "문화·체험",
+            "할인·적립",
+            "생활지원",
+            "교육·강좌",
+            "공모·참여"
+          ]
+        },
+        "audience": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "action": {
+          "enum": [
+            "신청·예약 필요",
+            "미션 참여",
+            "응모",
+            "바로 이용",
+            "결제 시 적용",
+            "구매 후 사용"
+          ]
+        }
+      }
     }
   }
 }

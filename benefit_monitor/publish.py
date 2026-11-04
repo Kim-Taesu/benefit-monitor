@@ -10,12 +10,12 @@ from urllib.parse import parse_qsl, urlsplit
 
 from .briefing import SEOUL, FEES, aware_time, build, identity
 from .store import load, save, save_text
-from .validation import validate
+from .validation import validate, LABEL_CATEGORIES
 from . import operations
 
 PUBLIC_FIELDS = ("source", "url", "title", "summary", "conditions", "districts",
                  "verified_at", "valid_from", "valid_until", "deadline_at",
-                 "validity_kind", "fee_status", "needs_recheck", "payment_terms")
+                 "validity_kind", "fee_status", "needs_recheck", "payment_terms", "labels")
 
 
 def releases(root, config, now):
@@ -159,6 +159,8 @@ def page(data):
                "scheduled_refresh":"GitHub 정기 실행에서 생성한 결과입니다.",
                "unknown_trigger":"실행 유형 미확인", "unavailable":"수집 실행 결과 확인 불가"}.get(context.get("status"),"")
     now = aware_time(data["generated_at"])
+    cov = data.get("coverage", {})
+    source_names = {row["source"]: row["name"] for row in cov.get("sources", [])}
     cards, urgent = [], []
     for index, item in enumerate(data["items"]):
         info = timing(item, now)
@@ -167,30 +169,49 @@ def page(data):
         if hot:
             urgent.append((info["days"], index, '<li data-valid-until="' + until + '"><a href="#item-' + str(index) + '">'
                            + esc(item["summary"]) + '</a> · <b>' + esc(info["badge"]) + '</b></li>'))
+        labels = item.get("labels") or {}
+        chips = [("출처", source_names.get(item["source"], item["source"]))] + [
+            (name, labels[key]) for key, name in (("audience", "대상"), ("region", "지역"), ("action", "이용 방법")) if labels.get(key)]
         cards.append(
-            '<article id="item-' + str(index) + '" data-valid-until="' + until + '"><p class="badge' + (' hot' if hot else '') + '">'
-            + esc(info["badge"]) + '</p><h2>' + esc(item["summary"]) + '</h2><p>요금: ' + FEES[item["fee_status"]]
+            '<article id="item-' + str(index) + '" data-valid-until="' + until + '" data-category="' + esc(labels.get("category", "기타")) + '"><p class="badge' + (' hot' if hot else '') + '">'
+            + esc(info["badge"]) + '</p>' + (' <p class="badge">' + esc(labels["category"]) + '</p>' if labels.get("category") else '')
+            + '<h2>' + esc(item["summary"]) + '</h2><ul class="facts">'
+            + ''.join('<li><span>' + esc(n) + '</span> ' + esc(v) + '</li>' for n, v in chips) + '</ul><p>요금: ' + FEES[item["fee_status"]]
             + '</p><p>' + esc(item["conditions"]) + '</p>'
             + ('<p><b>' + esc(info["apply"]) + '</b></p>' if info["apply"] else '')
             + '<p>' + esc(info["period"]) + '</p><p>공식 확인: ' + esc(display_date(item["verified_at"]))
             + '</p><a rel="noopener noreferrer" href="' + esc(item["url"]) + '">공식 안내</a>' + (' · <a rel="noopener noreferrer" href="' + esc(item['payment_terms']['evidence_url']) + '">결제조건 원문</a>' if item.get('payment_terms') else '') + '</article>')
     head = []
     if data["items"]:
+        failed = [row["name"] for row in cov.get("sources", []) if row["status"] == "failed"]
+        pending = (data.get("withheld") or {}).get("pending", 0)
+        head.append('<p class="summary"><b>공개 ' + str(len(data["items"])) + '건</b> · 7일 안 마감 ' + str(len(urgent))
+                    + '건 · 재검증 대기 ' + str(pending) + '건' + (' · 수집 실패 ' + esc(', '.join(failed)) if failed else '') + '</p>')
         head.append('<section id="soon"><h2>오늘·7일 안에 마감</h2>')
         if urgent:
             head.append('<ul>' + ''.join(row for _, _, row in sorted(urgent)) + '</ul>')
         else:
             head.append('<p>7일 안에 끝나는 공개 항목이 없습니다.</p>')
         head.append('<p><small>상태는 공식 안내의 날짜로만 계산했습니다. 잔여석·재고·조기 마감은 반영하지 않습니다.</small></p></section><h2>전체 항목</h2>')
+        present = [c for c in LABEL_CATEGORIES if any((i.get("labels") or {}).get("category") == c for i in data["items"])]
+        if present:
+            head.append('<nav id="filters" aria-label="분야 필터"><button type="button" data-filter="" aria-pressed="true">전체</button>'
+                        + ''.join('<button type="button" data-filter="' + esc(c) + '" aria-pressed="false">' + esc(c) + '</button>' for c in present) + '</nav>')
     cards = head + cards
-    sections = ['<section><h2>분야별 수집 현황</h2><ul>']
-    cov = data.get("coverage", {})
+    checked = sum(row["status"] in ("checked", "cached") for row in cov.get("sources", []))
+    failed_names = [row["name"] for row in cov.get("sources", []) if row["status"] == "failed"]
+    districts_ok = sum(row["status"] in ("checked", "cached") for row in cov.get("districts", []))
+    sections = ['<section><details><summary>수집 현황: 출처 ' + str(checked) + '/' + str(len(cov.get("sources", []))) + '곳 성공'
+                + (' · 실패 ' + esc(', '.join(failed_names)) if failed_names else '')
+                + (' · 자동 수집 미연결 ' + str(sum(row["status"] == "not_connected" for row in cov.get("sources", []))) + '곳'
+                   if any(row["status"] == "not_connected" for row in cov.get("sources", [])) else '')
+                + ' · 서울 자치구 ' + str(districts_ok) + '/' + str(len(cov.get("districts", []))) + '곳 확인</summary><h2>분야별 수집 현황</h2><ul>']
     for row in cov.get("sources", []):
         sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 공개 검증 ' + str(row["verified_count"]) + '건' + (' · ' + esc(row.get("scope", "")) if row.get("scope") else '') + '</li>')
     sections.append('</ul><h2>서울 25개 지역구</h2><p>' + esc(cov.get("scope", "")) + '</p><ul>')
     for row in cov.get("districts", []):
         sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 후보 ' + str(row["candidates_count"]) + '건 · 공개 검증 ' + str(row["verified_count"]) + '건</li>')
-    sections.append('</ul><p>0건은 혜택이 없다는 뜻이 아닙니다. 미검증 후보는 추천에 포함하지 않습니다.</p></section>')
+    sections.append('</ul><p>0건은 혜택이 없다는 뜻이 아닙니다. 미검증 후보는 추천에 포함하지 않습니다.</p></details></section>')
     if data.get("review_queue"):
         reasons={"title_changed":"제목 변경", "body_changed":"본문 변경", "verification_expired":"검증 유효기간 경과", "manual_review":"조건 확인 필요"}
         names={row["source"]:row["name"] for row in cov.get("sources",[])}
@@ -208,7 +229,7 @@ def page(data):
     return '''<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>생활 혜택 브리핑</title>
-<style>body{font:17px/1.7 system-ui,sans-serif;margin:auto;max-width:850px;padding:32px 20px;background:#f5f6f8;color:#182333}h1{line-height:1.3}article{background:white;border:1px solid #dce1e8;border-radius:14px;padding:20px;margin:20px 0}h2{font-size:21px}a{color:#185acb}#notice{padding:16px;border-left:4px solid #b35d00;background:#fff2de}.badge{display:inline-block;margin:0;padding:2px 10px;border-radius:999px;background:#e8edf5;font-size:14px}.badge.hot{background:#ffe1d6;color:#8a2400;font-weight:600}#soon{background:white;border:1px solid #dce1e8;border-radius:14px;padding:4px 20px;margin:20px 0}small{color:#48586e}#offers{display:none}</style></head><body>
+<style>body{font:17px/1.7 system-ui,sans-serif;margin:auto;max-width:850px;padding:32px 20px;background:#f5f6f8;color:#182333}h1{line-height:1.3}article{background:white;border:1px solid #dce1e8;border-radius:14px;padding:20px;margin:20px 0}h2{font-size:21px}a{color:#185acb}#notice{padding:16px;border-left:4px solid #b35d00;background:#fff2de}.badge{display:inline-block;margin:0;padding:2px 10px;border-radius:999px;background:#e8edf5;font-size:14px}.badge.hot{background:#ffe1d6;color:#8a2400;font-weight:600}#soon{background:white;border:1px solid #dce1e8;border-radius:14px;padding:4px 20px;margin:20px 0}small{color:#48586e}#offers{display:none}.facts{list-style:none;padding:0;margin:8px 0;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px}.facts span{color:#5a6a80}.summary{font-size:16px}#filters{display:flex;flex-wrap:wrap;gap:8px}#filters button{font:inherit;font-size:15px;padding:4px 14px;border:1px solid #c5cdd8;border-radius:999px;background:white;cursor:pointer}#filters button[aria-pressed=true]{background:#182333;color:white;border-color:#182333}details summary{cursor:pointer;font-weight:600}</style></head><body>
 <header><small>공식 출처 · 검증된 공개 정보</small><h1>생활 혜택 브리핑</h1></header>
 <p>생성: ''' + esc(display_date(data["generated_at"])) + '''<br>수집 기준: ''' + esc(display_date(data["source_report_at"], "확인 실패")) + '''</p>
 <p>''' + esc(run_label) + '''</p>
@@ -219,14 +240,21 @@ def page(data):
 <footer><a href="briefing.json">JSON</a> · <a href="briefing.md">텍스트</a><p>부분 수집이며 미검증 후보는 추천하지 않습니다.</p></footer>
 <script>
 const until = ''' + json.dumps(data["valid_through"]) + ''';
+let filter = '';
 function refresh() {
   const fresh = until && Date.now() < Date.parse(until);
   document.getElementById('offers').style.display = fresh ? 'block' : 'none';
   document.querySelectorAll('article[data-valid-until],li[data-valid-until]').forEach(card => {
-    card.hidden = !fresh || Date.now() >= Date.parse(card.dataset.validUntil);
+    card.hidden = !fresh || Date.now() >= Date.parse(card.dataset.validUntil)
+      || (card.tagName === 'ARTICLE' && filter !== '' && card.dataset.category !== filter);
   });
   if (!fresh && until) document.getElementById('notice').textContent = '최신 결과 확인 필요: 표시 기한이 지났습니다. 이전 파일을 오늘의 브리핑으로 사용하지 마세요.';
 }
+document.querySelectorAll('#filters button').forEach(button => button.addEventListener('click', () => {
+  filter = button.dataset.filter;
+  document.querySelectorAll('#filters button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+  refresh();
+}));
 refresh();setInterval(refresh, 60000);
 </script></body></html>'''
 
@@ -294,7 +322,9 @@ def run(root, now=None, failure=False):
              "표시 기한: " + display_date(data["valid_through"]), "최신성과 항목별 마감은 briefing.json을 확인하세요. 종료된 항목은 추천에서 제외해야 합니다."]
     from .briefing import md_text
     for item in data["items"]:
-        lines += ["", "## " + md_text(item["summary"]), "요금: " + FEES[item["fee_status"]],
+        labels = item.get("labels") or {}
+        tag = " · ".join(name + ": " + md_text(labels[key]) for key, name in (("category", "분야"), ("audience", "대상"), ("region", "지역"), ("action", "이용 방법")) if labels.get(key))
+        lines += ["", "## " + md_text(item["summary"])] + ([tag] if tag else []) + ["요금: " + FEES[item["fee_status"]],
                   md_text(item["conditions"]), "공식 확인: " + display_date(item["verified_at"]),
                   "시작" + (" 예정: " if item["valid_from"] and item["valid_from"] > now.date().isoformat() else ": ")
                   + display_date(item["valid_from"], "시작일 미확인"),

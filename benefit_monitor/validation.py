@@ -7,6 +7,10 @@ def official(url, domains):
     u = urlsplit(url)
     return u.scheme == "https" and u.hostname in domains and not u.username and not u.password and u.port in (None, 443)
 
+LABEL_CATEGORIES = ("문화·체험", "할인·적립", "생활지원", "교육·강좌", "공모·참여")
+LABEL_ACTIONS = ("신청·예약 필요", "미션 참여", "응모", "바로 이용", "결제 시 적용", "구매 후 사용")
+
+
 def validate(data, sources, now):
     item = Benefit(**data)
     if item.source not in sources or not official(item.url, sources[item.source]["domains"]):
@@ -19,6 +23,12 @@ def validate(data, sources, now):
             raise ValueError("Payment review requires method, funding, exclusions, minimum spend, limit and evidence; mark unknown explicitly")
         if not official(item.payment_terms["evidence_url"],sources[item.source]["domains"]):
             raise ValueError("Official payment evidence required")
+    if not isinstance(item.labels, dict) or not set(item.labels) <= {"category", "audience", "region", "action"}:
+        raise ValueError("labels allow only category, audience, region and action")
+    if any(not isinstance(v, str) or not v.strip() or len(v) > 40 for v in item.labels.values()):
+        raise ValueError("labels must be short non-empty text taken from the official notice")
+    if item.labels.get("category", LABEL_CATEGORIES[0]) not in LABEL_CATEGORIES or item.labels.get("action", LABEL_ACTIONS[0]) not in LABEL_ACTIONS:
+        raise ValueError("Unknown label category or action")
     if not item.title.strip() or not item.summary.strip():
         raise ValueError("Title and summary required")
     if not isinstance(item.districts, list) or any(not isinstance(d, str) for d in item.districts):
