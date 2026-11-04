@@ -54,11 +54,11 @@ function parseBenefitValue(value:unknown,source:string,target:string):BenefitVal
  if(typeof amount!=='number'||!Number.isFinite(amount)||amount<=0||amount>(rate?100:999999999999)||(rate?Number(amount.toFixed(2))!==amount:!Number.isSafeInteger(amount)))throw new Error('Invalid benefit number');
  for(const [key,limit]of [['conditions',1000],['evidence_quote',500],['evidence_url',4096]] as const)if(typeof v[key]!=='string'||!v[key].trim()||v[key].length>limit)throw new Error('Missing value evidence');
  if(!safeOfficial(v.evidence_url,source)||v.evidence_url!==target||[...new URL(text(v.evidence_url)).searchParams.keys()].some(key=>/token|secret|password|auth|session|api.?key/i.test(key)))throw new Error('Unobserved value evidence');
- const unit=rate?'%':v.kind==='reward_points'?'포인트':'원';
  const numbers=[0,1,2].filter(d=>Number(amount.toFixed(d))===amount).flatMap(d=>[amount.toFixed(d),new Intl.NumberFormat('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}).format(amount)]);
  const escape=(s:string)=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
- const literal=numbers.map(n=>escape(n+unit)).join('|'),quote=text(v.evidence_quote).replace(/\s/g,'');
- if(!quote.includes(valueLabels[v.kind as BenefitValue['kind']].split(' ').at(-1)!)||!new RegExp('(?<![0-9.,])(?:'+literal+')(?![0-9.])').test(quote)||quote.includes('최대')!==(v.qualifier==='up_to'))throw new Error('Quoted number or qualifier mismatch');
+ const phrase=valueLabels[v.kind as BenefitValue['kind']].replace(/\s/g,'');
+ const literal=numbers.map(n=>escape(n+phrase)).join('|'),quote=text(v.evidence_quote).replace(/\s/g,'');
+ if(!new RegExp('^'+(v.qualifier==='up_to'?'최대':'')+'(?:'+literal+')$').test(quote))throw new Error('Quote must be a complete benefit phrase');
  return {kind:v.kind as BenefitValue['kind'],value:amount,qualifier:v.qualifier as BenefitValue['qualifier'],conditions:text(v.conditions),evidence_url:text(v.evidence_url),evidence_quote:text(v.evidence_quote)};
 }
 export function benefitValueLabel(value:BenefitValue):string {

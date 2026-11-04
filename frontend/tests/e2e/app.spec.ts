@@ -159,8 +159,8 @@ test('all favorites can be cleared even when the stored record is corrupt',async
  await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'즐겨찾기 모두 해제'}).click();
  expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:favorites:v1'))).toBeNull();await expect(page.locator('article')).toHaveCount(6);
 });
-const reviewedValue={kind:'discount_rate',value:10,qualifier:'up_to',conditions:'[테스트] 최소 결제와 지정 재원 조건을 확인하세요.',evidence_url:'https://mediahub.seoul.go.kr/archives/1',evidence_quote:'[테스트] 최대 10% 할인 <img src=x onerror=alert(1)>'};
-test('reviewed numerical benefit shows its qualifier, conditions and safely escaped official quote',async({page})=>{
+const reviewedValue={kind:'discount_rate',value:10,qualifier:'up_to',conditions:'[테스트] 최소 결제와 지정 재원 조건을 확인하세요. <img src=x onerror=alert(1)>',evidence_url:'https://mediahub.seoul.go.kr/archives/1',evidence_quote:'최대 10% 할인'};
+test('reviewed numerical benefit shows its qualifier, conditions and safely escaped conditions',async({page})=>{
  await page.setViewportSize({width:390,height:844});await setup(page,snapshot([item({benefit_value:reviewedValue})]));await page.goto('./');
  const card=page.locator('article');await expect(card.locator('.benefit-highlight strong')).toHaveText('최대 10% 할인');await expect(card).toContainText('유료');
  await card.locator('summary').click();await expect(card.locator('.value-evidence')).toContainText(reviewedValue.conditions);await expect(card.locator('.value-evidence')).toContainText('<img src=x onerror=alert(1)>');await expect(card.locator('img')).toHaveCount(0);

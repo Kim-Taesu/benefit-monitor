@@ -45,11 +45,13 @@ def validate_benefit_value(item, domains):
     numbers = {format(amount, f",.{digits}f") for digits in range(3)
                if Decimal(format(amount, f".{digits}f")) == Decimal(str(amount))}
     numbers |= {n.replace(",", "") for n in numbers}
-    unit = "%" if rate else "포인트" if claim["kind"] == "reward_points" else "원"
-    literal = "(?:" + "|".join(re.escape(n + unit) for n in numbers) + ")"
+    phrase = VALUE_LABELS[claim["kind"]].replace(" ", "")
+    literal = "(?:" + "|".join(re.escape(n + phrase) for n in numbers) + ")"
     quote = re.sub(r"\s", "", claim["evidence_quote"])
-    if VALUE_LABELS[claim["kind"]].split()[-1] not in quote or not re.search(r"(?<![0-9.,])" + literal + r"(?![0-9.])", quote) or ("최대" in quote) != (claim["qualifier"] == "up_to"):
-        raise ValueError("Supplied number, unit and maximum qualifier must match the literal quote")
+    prefix = "최대" if claim["qualifier"] == "up_to" else ""
+    if not re.fullmatch(prefix + literal, quote):
+        raise ValueError("Quote must be the complete literal benefit phrase, not a spend condition")
+
 
 
 def benefit_value_label(claim):

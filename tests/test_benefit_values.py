@@ -12,11 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def value(**updates):
-    claim=dict(kind='discount_rate',value=10,qualifier='up_to',conditions='테스트 자료: 지정 결제수단과 한도 확인 필요',evidence_url='https://official.example/')
+    claim=dict(kind='discount_rate',value=10,qualifier='up_to',conditions='테스트 자료: 지정 결제수단과 한도 확인 필요 <테스트>',evidence_url='https://official.example/')
     claim.update(updates)
     number=str(claim['value'])
     suffix={'discount_rate':'% 할인','discount_amount':'원 할인','grant_amount':'원 지원','refund_amount':'원 환급','reward_points':'포인트 적립'}.get(claim['kind'],'원')
-    claim.setdefault('evidence_quote',('최대 ' if claim['qualifier']=='up_to' else '')+number+suffix+' <테스트>')
+    claim.setdefault('evidence_quote',('최대 ' if claim['qualifier']=='up_to' else '')+number+suffix)
     return claim
 
 
@@ -64,6 +64,10 @@ class BenefitValueTests(unittest.TestCase):
     def test_quote_must_be_part_of_internal_review_evidence(self):
         with self.assertRaises(ValueError):validate(dict(record(),evidence='다른 확인 근거'),{SOURCE['id']:SOURCE},NOW)
 
+    def test_payment_threshold_and_signed_figures_are_not_benefit_values(self):
+        for claim in [value(kind='discount_amount',value=5000,evidence_quote='최대 5,000원 결제 시 10% 할인'),value(kind='grant_amount',value=5000,evidence_quote='최대 5,000원 할인, 지원 대상 확인'),value(qualifier='exact',evidence_quote='-10% 할인')]:
+            with self.subTest(claim=claim),self.assertRaises(ValueError):validate(record(claim),{SOURCE['id']:SOURCE},NOW)
+
     def test_schema_covers_model_fields_and_typed_claim_contract(self):
         schema=json.loads((ROOT/'schema/benefit.schema.json').read_text())
         self.assertLessEqual(set(benefit().data()),set(schema['properties']))
@@ -103,8 +107,8 @@ class BenefitValuePublicationTests(unittest.TestCase):
         result=self.export(benefit().data())
         self.assertEqual(len(result['items']),1);self.assertNotIn('benefit_value',result['items'][0])
 
-    def test_private_quote_is_rejected_before_publication(self):
-        item=record(value(evidence_quote='연락 010-1234-5678'));item['evidence']='연락 010-1234-5678'
+    def test_private_value_conditions_are_rejected_before_publication(self):
+        item=record(value(conditions='연락 010-1234-5678'))
         with self.assertRaises(ValueError):self.export(item)
 
     def test_value_payment_evidence_cannot_publish_credential_query_parameters(self):
@@ -112,3 +116,8 @@ class BenefitValuePublicationTests(unittest.TestCase):
         terms=dict(method='테스트',funding_source='테스트',excluded_methods='미확인',minimum_spend='미확인',limit='미확인',evidence_url=target)
         item=dict(record(value(evidence_url=target)),payment_terms=terms)
         with self.assertRaises(ValueError):self.export(item)
+
+    def test_new_value_is_not_publicly_approved_by_a_legacy_or_empty_value_release(self):
+        item=record();legacy=dict(item);legacy.pop('benefit_value')
+        self.assertEqual(self.export(item,approved=legacy)['items'],[])
+        self.assertEqual(self.export(item,approved=dict(item,benefit_value={}))['items'],[])
