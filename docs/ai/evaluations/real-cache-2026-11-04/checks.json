@@ -1,0 +1,12 @@
+{
+  "mode": "cached_real_offline",
+  "documents": 30,
+  "claims": 60,
+  "exact_quote_matches": 60,
+  "baseline_nonempty_conditions": 0,
+  "semantic_accuracy": "not a human-labeled gold-set metric",
+  "critical_omission_rate": "not measured; only 2 claims requested per article",
+  "new_link_research": "not tested; DNS failure before HTTP",
+  "paid_model_quality": "not tested",
+  "additional_api_spending": 0
+}
