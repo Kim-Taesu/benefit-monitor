@@ -120,6 +120,37 @@ def display_date(value, missing="미확인"):
     return date.fromisoformat(value).strftime("%Y.%m.%d")
 
 
+def timing(item, now):
+    """Date-only status from official dates; never reflects seats, stock or early closure."""
+    now = now.astimezone(SEOUL)
+    today = now.date()
+    deadline = aware_time(item["deadline_at"]) if item.get("deadline_at") else None
+    start = date.fromisoformat(item["valid_from"]) if item.get("valid_from") else None
+    end = date.fromisoformat(item["valid_until"]) if item.get("valid_until") else None
+    if deadline:
+        days = (deadline.date() - today).days
+        badge = "오늘 신청 마감" if days <= 0 else f"신청 마감 D-{days}" if days <= 7 else "신청 접수 기간"
+        apply_line = "신청 마감: " + display_date(item["deadline_at"]) + (f" (D-{days})" if days > 0 else " (오늘)")
+        # valid_until equal to the deadline date usually records the application close, not the use period.
+        period = ("이용·운영 기간: " + display_date(item["valid_from"], "시작일 미확인") + " ~ "
+                  + (display_date(item["valid_until"]) if end and end != deadline.date() else "종료일은 공식 안내에서 확인"))
+        return dict(badge=badge, apply=apply_line, period=period, days=days)
+    if start and start > today:
+        days = (start - today).days
+        badge = f"시작 전 D-{days}"
+    elif end:
+        days = (end - today).days
+        badge = "오늘 종료" if days <= 0 else f"종료 D-{days}" if days <= 7 else "진행 중"
+    else:
+        days = None
+        badge = "상시 운영" if item.get("validity_kind") == "ongoing" else "기간 미확인"
+    if end or start:
+        period = "기간: " + display_date(item["valid_from"], "시작일 미확인") + " ~ " + display_date(item["valid_until"], "종료일 미확인")
+    else:
+        period = "기간: 상시 운영" if item.get("validity_kind") == "ongoing" else "기간: 공식 안내에서 확인"
+    return dict(badge=badge, apply="", period=period, days=days if end and not (start and start > today) else None)
+
+
 def page(data):
     esc = lambda value: html.escape(str(value), quote=True)
     context=data.get("run_context",{})
@@ -127,14 +158,31 @@ def page(data):
                "manual_refresh":"수동 실행으로 갱신한 결과입니다. 정기 실행 성공을 뜻하지 않습니다.",
                "scheduled_refresh":"GitHub 정기 실행에서 생성한 결과입니다.",
                "unknown_trigger":"실행 유형 미확인", "unavailable":"수집 실행 결과 확인 불가"}.get(context.get("status"),"")
-    cards = []
-    for item in data["items"]:
+    now = aware_time(data["generated_at"])
+    cards, urgent = [], []
+    for index, item in enumerate(data["items"]):
+        info = timing(item, now)
+        until = esc(item.get("display_until", data["valid_through"]))
+        hot = info["days"] is not None and info["days"] <= 7
+        if hot:
+            urgent.append((info["days"], index, '<li data-valid-until="' + until + '"><a href="#item-' + str(index) + '">'
+                           + esc(item["summary"]) + '</a> · <b>' + esc(info["badge"]) + '</b></li>'))
         cards.append(
-            '<article data-valid-until="' + esc(item.get("display_until", data["valid_through"])) + '"><h2>' + esc(item["summary"]) + '</h2><p>요금: ' + FEES[item["fee_status"]]
-            + '</p><p>' + esc(item["conditions"]) + '</p><p>공식 확인: ' + esc(display_date(item["verified_at"]))
-            + '</p><p>기간: ' + esc(display_date(item["valid_from"], "시작일 미확인")) + ' ~ '
-            + esc(display_date(item["deadline_at"] or item["valid_until"], "상시 안내"))
+            '<article id="item-' + str(index) + '" data-valid-until="' + until + '"><p class="badge' + (' hot' if hot else '') + '">'
+            + esc(info["badge"]) + '</p><h2>' + esc(item["summary"]) + '</h2><p>요금: ' + FEES[item["fee_status"]]
+            + '</p><p>' + esc(item["conditions"]) + '</p>'
+            + ('<p><b>' + esc(info["apply"]) + '</b></p>' if info["apply"] else '')
+            + '<p>' + esc(info["period"]) + '</p><p>공식 확인: ' + esc(display_date(item["verified_at"]))
             + '</p><a rel="noopener noreferrer" href="' + esc(item["url"]) + '">공식 안내</a>' + (' · <a rel="noopener noreferrer" href="' + esc(item['payment_terms']['evidence_url']) + '">결제조건 원문</a>' if item.get('payment_terms') else '') + '</article>')
+    head = []
+    if data["items"]:
+        head.append('<section id="soon"><h2>오늘·7일 안에 마감</h2>')
+        if urgent:
+            head.append('<ul>' + ''.join(row for _, _, row in sorted(urgent)) + '</ul>')
+        else:
+            head.append('<p>7일 안에 끝나는 공개 항목이 없습니다.</p>')
+        head.append('<p><small>상태는 공식 안내의 날짜로만 계산했습니다. 잔여석·재고·조기 마감은 반영하지 않습니다.</small></p></section><h2>전체 항목</h2>')
+    cards = head + cards
     sections = ['<section><h2>분야별 수집 현황</h2><ul>']
     cov = data.get("coverage", {})
     for row in cov.get("sources", []):
@@ -160,7 +208,7 @@ def page(data):
     return '''<!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow"><title>생활 혜택 브리핑</title>
-<style>body{font:17px/1.7 system-ui,sans-serif;margin:auto;max-width:850px;padding:32px 20px;background:#f5f6f8;color:#182333}h1{line-height:1.3}article{background:white;border:1px solid #dce1e8;border-radius:14px;padding:20px;margin:20px 0}h2{font-size:21px}a{color:#185acb}#notice{padding:16px;border-left:4px solid #b35d00;background:#fff2de}small{color:#48586e}#offers{display:none}</style></head><body>
+<style>body{font:17px/1.7 system-ui,sans-serif;margin:auto;max-width:850px;padding:32px 20px;background:#f5f6f8;color:#182333}h1{line-height:1.3}article{background:white;border:1px solid #dce1e8;border-radius:14px;padding:20px;margin:20px 0}h2{font-size:21px}a{color:#185acb}#notice{padding:16px;border-left:4px solid #b35d00;background:#fff2de}.badge{display:inline-block;margin:0;padding:2px 10px;border-radius:999px;background:#e8edf5;font-size:14px}.badge.hot{background:#ffe1d6;color:#8a2400;font-weight:600}#soon{background:white;border:1px solid #dce1e8;border-radius:14px;padding:4px 20px;margin:20px 0}small{color:#48586e}#offers{display:none}</style></head><body>
 <header><small>공식 출처 · 검증된 공개 정보</small><h1>생활 혜택 브리핑</h1></header>
 <p>생성: ''' + esc(display_date(data["generated_at"])) + '''<br>수집 기준: ''' + esc(display_date(data["source_report_at"], "확인 실패")) + '''</p>
 <p>''' + esc(run_label) + '''</p>
@@ -174,7 +222,7 @@ const until = ''' + json.dumps(data["valid_through"]) + ''';
 function refresh() {
   const fresh = until && Date.now() < Date.parse(until);
   document.getElementById('offers').style.display = fresh ? 'block' : 'none';
-  document.querySelectorAll('article[data-valid-until]').forEach(card => {
+  document.querySelectorAll('article[data-valid-until],li[data-valid-until]').forEach(card => {
     card.hidden = !fresh || Date.now() >= Date.parse(card.dataset.validUntil);
   });
   if (!fresh && until) document.getElementById('notice').textContent = '최신 결과 확인 필요: 표시 기한이 지났습니다. 이전 파일을 오늘의 브리핑으로 사용하지 마세요.';

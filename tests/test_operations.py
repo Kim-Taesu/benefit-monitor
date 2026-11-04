@@ -61,6 +61,35 @@ class OperationsTests(unittest.TestCase):
             errors=operations.check_bodies({},[self.item],{'test':SOURCE},NOW,1)
         self.assertEqual(errors[0]['category'],'robots_denied')
 
+    def test_view_counters_and_trailing_lists_do_not_hold(self):
+        from benefit_monitor import operations, cost_policy
+        state={};cost_policy.reset(60)
+        page='<main>조회 10,855 좋아요 17 '+'Public conditions '*10+'Fee 1000 기사 관련 태그 최신 뉴스 {}</main>'
+        body=page.format('A').encode()
+        def response(url,domains):
+            return b'User-agent: *\nAllow: /' if url.endswith('/robots.txt') else body
+        with patch('benefit_monitor.collectors.rss.fetch',side_effect=response):
+            operations.check_bodies(state,[self.item],{'test':SOURCE},NOW,1)
+            body=page.format('B').replace('10,855','10,990').replace('17','18').encode()
+            operations.check_bodies(state,[self.item],{'test':SOURCE},NOW+timedelta(hours=1),1)
+        self.assertNotIn('hold_reason',state['items'][self.item.id])
+        self.assertFalse(operations.observe(state,[],[self.item],NOW+timedelta(hours=1))[0].needs_recheck)
+
+    def test_old_hash_version_rebaselines_without_hold(self):
+        from benefit_monitor import operations, cost_policy
+        cost_policy.reset(60)
+        state={'items':{self.item.id:dict(source='test',body_hash='0'*64,body_target_hash=operations.digest(self.item.url))}}
+        body=b'<main>'+b'Public conditions '*10+b'</main>'
+        def response(url,domains):
+            return b'User-agent: *\nAllow: /' if url.endswith('/robots.txt') else body
+        with patch('benefit_monitor.collectors.rss.fetch',side_effect=response):
+            operations.check_bodies(state,[self.item],{'test':SOURCE},NOW,1)
+        row=state['items'][self.item.id]
+        self.assertNotIn('hold_reason',row)
+        self.assertEqual(row['body_hash_version'],operations.BODY_HASH_VERSION)
+        clean=operations.sanitize(dict(schema_version=1,items=state['items']),{'test'},NOW)
+        self.assertEqual(clean['items'][self.item.id]['body_hash_version'],operations.BODY_HASH_VERSION)
+
     def test_body_budget_zero_does_not_claim_checked(self):
         from benefit_monitor import operations
         state={}
