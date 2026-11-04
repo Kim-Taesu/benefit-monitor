@@ -1,0 +1,831 @@
+{
+  "schema_version": "district-research-map-v1",
+  "coverage": "25 district news seeds, NOT 25 verified district government crawlers",
+  "districts": [
+    {
+      "district": "종로구",
+      "code": "110",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=110&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "중구",
+      "code": "140",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=140&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "용산구",
+      "code": "170",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=170&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "성동구",
+      "code": "200",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=200&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "광진구",
+      "code": "215",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=215&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "동대문구",
+      "code": "230",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=230&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "중랑구",
+      "code": "260",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=260&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "성북구",
+      "code": "290",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=290&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "강북구",
+      "code": "305",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=305&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "도봉구",
+      "code": "320",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=320&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "노원구",
+      "code": "350",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=350&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "은평구",
+      "code": "380",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=380&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "configured_homepage_board_unverified",
+          "url": "https://www.ep.go.kr/",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "서대문구",
+      "code": "410",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=410&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "마포구",
+      "code": "440",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=440&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "양천구",
+      "code": "470",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=470&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "강서구",
+      "code": "500",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=500&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "configured_homepage_board_unverified",
+          "url": "https://www.gangseo.seoul.kr/",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "구로구",
+      "code": "530",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=530&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "금천구",
+      "code": "545",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=545&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "영등포구",
+      "code": "560",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=560&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "동작구",
+      "code": "590",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=590&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "관악구",
+      "code": "620",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=620&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "서초구",
+      "code": "650",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=650&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "강남구",
+      "code": "680",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=680&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "송파구",
+      "code": "710",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=710&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    },
+    {
+      "district": "강동구",
+      "code": "740",
+      "existing_scope": "seoul_publications_first_page",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsListAjax.do?search_pageNo=1&search_orderBy=articlePubDt&search_articleArea=740&search_isNews=Y&search_isCorresNews=N&newsListType=thumbnail",
+      "live_access": "unverified_this_phase",
+      "expansion_slots": [
+        {
+          "type": "district_notices",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "culture_sports",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "youth_single_household",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        },
+        {
+          "type": "library_lifelong_learning",
+          "status": "discovery_pending",
+          "url": null,
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+        }
+      ]
+    }
+  ]
+}

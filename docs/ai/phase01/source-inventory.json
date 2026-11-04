@@ -1,0 +1,275 @@
+{
+  "schema_version": "research-source-inventory-v1",
+  "provenance": "sources.yaml; configuration is not access verification",
+  "sources_sha256": "6c5c668fec0781b2f2a00e9881ff1db1dad636a5eed671c8262c6c20c152668d",
+  "sources": [
+    {
+      "id": "seoul",
+      "name": "서울시",
+      "domains": [
+        "mediahub.seoul.go.kr",
+        "www.seoul.go.kr",
+        "mkt.naver.com"
+      ],
+      "seed_urls": [
+        "https://mediahub.seoul.go.kr/"
+      ],
+      "current_method": "html_links",
+      "current_scope": "공식 목록의 제목·URL 후보",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "gangseo",
+      "name": "강서구",
+      "domains": [
+        "www.gangseo.seoul.kr",
+        "gangseo.seoul.kr",
+        "mediahub.seoul.go.kr"
+      ],
+      "seed_urls": [
+        "https://www.gangseo.seoul.kr/",
+        "https://mediahub.seoul.go.kr/"
+      ],
+      "current_method": "district_news",
+      "current_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "eunpyeong",
+      "name": "은평구",
+      "domains": [
+        "www.ep.go.kr",
+        "mediahub.seoul.go.kr"
+      ],
+      "seed_urls": [
+        "https://www.ep.go.kr/",
+        "https://mediahub.seoul.go.kr/"
+      ],
+      "current_method": "district_news",
+      "current_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "seongnam",
+      "name": "성남시",
+      "domains": [
+        "www.seongnam.go.kr",
+        "snvision.seongnam.go.kr"
+      ],
+      "seed_urls": [
+        "https://www.seongnam.go.kr/",
+        "https://snvision.seongnam.go.kr/"
+      ],
+      "current_method": "rss",
+      "current_scope": "피드 제목·URL 후보",
+      "live_access": "unverified_this_phase",
+      "expansion": "서울 적용 전국 혜택만 선별; 성남 지역 전용은 제외",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "government",
+      "name": "정부",
+      "domains": [
+        "www.mss.go.kr",
+        "www.korea.kr"
+      ],
+      "seed_urls": [
+        "https://www.mss.go.kr/",
+        "https://www.korea.kr/"
+      ],
+      "current_method": "html_links",
+      "current_scope": "공식 목록의 제목·URL 후보",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "culture",
+      "name": "문화·예약",
+      "domains": [
+        "yeyak.seoul.go.kr",
+        "mediahub.seoul.go.kr"
+      ],
+      "seed_urls": [
+        "https://yeyak.seoul.go.kr/web/main.do",
+        "https://mediahub.seoul.go.kr/"
+      ],
+      "current_method": "html_links",
+      "current_scope": "서울 공공서비스예약 첫 화면 공개 목록 · 잔여석·예약 성공 미확인",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "kt",
+      "name": "KT",
+      "domains": [
+        "membership.kt.com"
+      ],
+      "seed_urls": [
+        "https://membership.kt.com/"
+      ],
+      "current_method": "manual_only",
+      "current_scope": "자동 수집기 없음",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "retail",
+      "name": "마트",
+      "domains": [
+        "my.homeplus.co.kr",
+        "eapp.emart.com",
+        "www.shinsegaegroupnewsroom.com"
+      ],
+      "seed_urls": [
+        "https://my.homeplus.co.kr/leaflet",
+        "https://eapp.emart.com/",
+        "https://www.shinsegaegroupnewsroom.com/family/emart/"
+      ],
+      "current_method": "html_links",
+      "current_scope": "신세계그룹 공식 이마트 뉴스 · 홈플러스 전단 자동 수집 미연결",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "convenience",
+      "name": "편의점 공식 제휴",
+      "domains": [
+        "membership.kt.com",
+        "pay.naver.com",
+        "www.gsretail.com",
+        "cu.bgfretail.com"
+      ],
+      "seed_urls": [
+        "https://membership.kt.com/",
+        "https://pay.naver.com/",
+        "https://cu.bgfretail.com/service/credit_info.do?category=service&depth2=2&sf=N",
+        "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1"
+      ],
+      "current_method": "html_links",
+      "current_scope": "CU 공식 제휴 멤버십 안내 · 다른 편의점·앱 전용 행사 미포함",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "seoul_lifelong",
+      "name": "서울시 평생학습포털",
+      "domains": [
+        "sll.seoul.go.kr"
+      ],
+      "seed_urls": [
+        "https://sll.seoul.go.kr/lms/simin_course/courseRequest/doListView.do?main_se=ssu&simin_yn=M%2CDC%2CMD%2CO%2CR%2CRG&mnid=202501604868"
+      ],
+      "current_method": "html_links",
+      "current_scope": "평생학습포털 첫 화면 공식 이벤트 · 강좌 전체 수집 아님",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "seven",
+      "name": "세븐일레븐 공식 제휴",
+      "domains": [
+        "www.7-eleven.co.kr"
+      ],
+      "seed_urls": [
+        "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2"
+      ],
+      "current_method": "html_links",
+      "current_scope": "세븐일레븐 공식 카드 제휴 · 이미지 행사·앱 잔량 미포함",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "emart24",
+      "name": "이마트24 공식 제휴",
+      "domains": [
+        "emart24.co.kr",
+        "www.emart24.co.kr"
+      ],
+      "seed_urls": [
+        "https://emart24.co.kr/service/alliance"
+      ],
+      "current_method": "html_links",
+      "current_scope": "공식 제휴 서비스 안내 · 행사 전체·앱 잔량 미포함",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "sh",
+      "name": "SH 주택 공고",
+      "domains": [
+        "www.i-sh.co.kr"
+      ],
+      "seed_urls": [
+        "https://www.i-sh.co.kr/app/lay2/program/S1T294C297/www/brd/m_247/list.do?multi_itm_seq=2"
+      ],
+      "current_method": "sh_notice",
+      "current_scope": "SH 주택임대·분양 공고 게시판 첫 페이지 · 제목 기준 후보, 신청 자격·접수 상태 미확인",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "eshare",
+      "name": "공유누리 공공시설",
+      "domains": [
+        "www.eshare.go.kr"
+      ],
+      "seed_urls": [
+        "https://www.eshare.go.kr/UserPortal/adv/unifdSearch/UnifiedSearchMainView.do"
+      ],
+      "current_method": "eshare",
+      "current_scope": "공유누리 서울 인터넷 예약 자원 검색 첫 페이지 · 이용료 제한 없음 · 실시간 예약 가능 여부 미확인",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    },
+    {
+      "id": "heritage",
+      "name": "국가유산 행사",
+      "domains": [
+        "www.khs.go.kr",
+        "royal.khs.go.kr",
+        "www.heritage.go.kr",
+        "www.chf.or.kr",
+        "www.kh.or.kr"
+      ],
+      "seed_urls": [
+        "https://www.khs.go.kr/cha/openapi/selectEventListOpenapi.do"
+      ],
+      "current_method": "heritage_events",
+      "current_scope": "국가유산청 월별 행사 공개 목록(이번 달·다음 달, 서울) · 행사별 예약·잔여석 미확인",
+      "live_access": "unverified_this_phase",
+      "expansion": "주관기관 상세 공고→신청/약관→첨부→정정 추적",
+      "refresh_plan": "목록 24시간, 마감 7일 이내 변경 후보 우선; 구별 캐시 최소6시간/실패15분",
+      "status": "configured_not_live_verified"
+    }
+  ]
+}

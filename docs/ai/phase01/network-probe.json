@@ -1,0 +1,24 @@
+{
+  "schema_version": "research-probe-v1",
+  "checked_at": "2026-11-04T14:26:12.184725+00:00",
+  "status": "blocked",
+  "request_limit": 6,
+  "request_attempts": 1,
+  "responses": 0,
+  "documents_read": 0,
+  "events": [
+    {
+      "url": "https://mediahub.seoul.go.kr/robots.txt",
+      "role": "robots",
+      "status": "failed",
+      "stage": "dns",
+      "error": "<urlopen error [Errno 8] nodename nor servname provided, or not known>"
+    }
+  ],
+  "external_llm_calls": 0,
+  "redirects_followed": 0,
+  "retry_count": 0,
+  "mode": "read_only_research",
+  "reason": "<urlopen error [Errno 8] nodename nor servname provided, or not known>",
+  "failure_stage": "dns"
+}
