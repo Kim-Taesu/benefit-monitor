@@ -292,10 +292,9 @@
       "collector": "sh_notice",
       "boards": [
         "rent",
-        "sale",
-        "purchase"
+        "sale"
       ],
-      "collection_scope": "SH 주택임대·분양·매입 공고 게시판 첫 페이지 · 제목 기준 후보, 신청 자격·접수 상태 미확인"
+      "collection_scope": "SH 주택임대·분양 공고 게시판 첫 페이지 · 제목 기준 후보, 신청 자격·접수 상태 미확인"
     },
     {
       "id": "eshare",
