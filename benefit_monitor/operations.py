@@ -9,7 +9,7 @@ def digest(text):
     return sha256(' '.join(text.split()).encode()).hexdigest()
 
 
-BODY_HASH_VERSION=2
+BODY_HASH_VERSION=3
 # Page chrome after the article body: related lists, comments, popularity rankings.
 BODY_END_MARKERS=('이 자료는 텍스트에 한하여 공공누리','기사 관련 태그','댓글은 자유로운',
                   '최근 본 서비스','다른 이용자가 함께 본 서비스','실시간 인기뉴스')
@@ -18,7 +18,7 @@ VOLATILE=(r'조회\s*[\d,]+',r'좋아요\s*[\d,]+',r'공감수\s*[\d,]+',r'\(\s*
 
 
 def article_text(content):
-    """Text used for change detection: drop trailing page chrome and view/like counters."""
+    """Legacy v2 normalization, used only to compare during migration."""
     import re
     cuts=[i for i in (content.find(m) for m in BODY_END_MARKERS) if i>0]
     if cuts:content=content[:min(cuts)]
@@ -87,6 +87,7 @@ def check_bodies(state,items,sources,now,limit):
     from urllib.parse import urlsplit
     from urllib.error import HTTPError
     from .collectors import rss
+    from .collectors.body import extract_body
     from .robots import allowed
     from . import cost_policy
     class Text(HTMLParser):
@@ -109,6 +110,7 @@ def check_bodies(state,items,sources,now,limit):
         if cost_policy.budget.limit-cost_policy.budget.used<4:break
         row=records.setdefault(item.id,dict(source=item.source,first_seen_at=now.isoformat()))
         row['body_attempted_at']=now.isoformat()
+        row.pop('body_comparison',None)
         try:
             source=sources[item.source]
             target=item.payment_terms.get('evidence_url',item.url)
@@ -122,17 +124,24 @@ def check_bodies(state,items,sources,now,limit):
                 if e.code!=404:raise
                 robot=''
             if not allowed(robot,target,rss.AGENT):raise ValueError('robots_denied')
-            parser=Text();parser.feed(rss.fetch(target,source['domains']).decode('utf-8'))
-            content=' '.join(' '.join(parser.parts).split())
+            page=rss.fetch(target,source['domains']).decode('utf-8')
+            content,mode=extract_body(page)
             if len(content)<80:raise ValueError('insufficient_text')
-            hashed=digest(article_text(content))
-            if row.get('body_hash_version')!=BODY_HASH_VERSION:
-                # Hashes from an older normalization are not comparable; re-baseline without a hold.
-                row.pop('body_hash',None)
-            row['body_hash_version']=BODY_HASH_VERSION
-            if row.get('body_hash') and row['body_hash']!=hashed:
+            hashed=digest(content)
+            comparison='baseline'
+            if row.get('body_hash'):
+                if row.get('body_hash_version')==BODY_HASH_VERSION:
+                    comparison='same' if row['body_hash']==hashed else 'changed'
+                elif row.get('body_hash_version')==2:
+                    # Preserve v2's known comparison during the first v3 snapshot.
+                    legacy=Text();legacy.feed(page)
+                    old_text=' '.join(' '.join(legacy.parts).split())
+                    if row['body_hash']!=digest(article_text(old_text)):
+                        comparison='changed'
+            if comparison=='changed':
                 row.update(hold_at=now.isoformat(),hold_reason='body_changed')
-            row.update(body_hash=hashed,body_checked_at=now.isoformat(),body_status='checked')
+            row.update(body_hash=hashed,body_hash_version=BODY_HASH_VERSION,body_parse_mode=mode,
+                       body_comparison=comparison,body_checked_at=now.isoformat(),body_status='checked')
         except Exception as error:
             row['body_status']='failed'
             errors.append(dict(source=item.source,item_id=item.id,**error_info(error)))
@@ -179,6 +188,8 @@ def sanitize(state,source_ids,now):
                 out[field]=date.isoformat()
         if row.get('hold_reason') in ('title_changed','body_changed'):out['hold_reason']=row['hold_reason']
         if row.get('body_status') in ('checked','failed'):out['body_status']=row['body_status']
+        if row.get('body_parse_mode') in ('main','article','document'):out['body_parse_mode']=row['body_parse_mode']
+        if row.get('body_comparison') in ('baseline','same','changed'):out['body_comparison']=row['body_comparison']
         if type(row.get('body_hash_version')) is int and 1<=row['body_hash_version']<=99:out['body_hash_version']=row['body_hash_version']
         if row.get('pending_reason') in ('title_changed','body_changed','verification_expired','manual_review'):
             out['pending_reason']=row['pending_reason']

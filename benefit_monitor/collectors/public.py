@@ -163,8 +163,7 @@ def collect_eshare(source):
     for query in source.get("queries", []):
         payload = dict(searchWrd=query["keyword"], sort="RANK", order="DESC", pageIndex="1",
                        collection="resource_cate1", viewType="UnitPage", ctrd=query.get("ctrd", "11"))
-        if query.get("free"):
-            payload["free_yn"] = "Y"
+        # Infrastructure is free; resource participation fees do not restrict discovery.
         if query.get("reservable"):
             payload["intnet_rsrv_psbl_yn"] = "Y"
         for row in parse_eshare(_post(opener, ESHARE_SEARCH, payload, source["domains"], ESHARE_BOOTSTRAP)):
