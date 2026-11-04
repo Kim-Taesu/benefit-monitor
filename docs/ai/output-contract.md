@@ -1,6 +1,6 @@
 # 조사 및 주제 출력 계약
 
-버전: draft-v1. 이 계약은 **제안용 명세**이며 아직 런타임 스키마/검증기는 구현되지 않았다. 아래 필드를 기존 Benefit 객체에 직접 추가하거나 briefing.json에 그대로 게시하지 않는다.
+버전: draft-v1. 조사/주제 출력 JSON Schema와 Python 표준 라이브러리 검증기를 구현했다. [검증 실행과 한계](validation.md)를 함께 따른다. 운영 승인·변환 연결은 아직 구현하지 않았다. 아래 필드를 기존 Benefit 객체에 직접 추가하거나 briefing.json에 그대로 게시하지 않는다.
 
 시험 결과의 바깥 봉투와 오류 반환은 [실행 계약](execution.md)을 따른다. 관측 메타데이터가 없는 실패를 성공 객체의 null ID로 대신하지 않는다.
 
@@ -62,3 +62,9 @@ URL·해시·조회 시각·성공 여부는 **도구가 관측한 값으로 호
 | audit | 모델·프롬프트 버전 등 호스트 기록 |
 
 AI가 목록에 없는 item ID나 URL을 생성하면 거부한다. 기존 데이터 검증 게이트를 통과한 항목만 화면 연결 가능하다. 건수는 AI 출력에 의존하지 않고 렌더링 시 유효 ID의 중복 제거 후 계산한다. confidence 점수로 자동 승인하지 않는다.
+
+## 현재 검증기에서 지원하는 범위
+
+`audit`은 모델 출력에서 null만 허용한다. 호스트 실행 기록은 별도 보고서에 보관한다. `proposed_fields`의 `labels`, `payment_terms`, `benefit_value`는 구조가 확정될 때까지 null만 허용하고 상세 사실은 claims에 둔다. 임의 객체를 기존 공개 필드에 주입하지 않는다. 주제 profile_conditions는 district/participation/carrier의 eq 또는 age의 between만 허용한다. 스키마 밖 필드는 거부한다.
+
+`research_status`와 `stop_reason`은 모델의 작업 종료 보고다. 공개 준비도 선언이 아니다. 검증기는 별도 assessments에 execution_status와 evidence_readiness를 기록한다. ready_for_human_review도 사람 검토 대상일 뿐 승인 상태가 아니다.
