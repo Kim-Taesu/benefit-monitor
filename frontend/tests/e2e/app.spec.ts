@@ -98,3 +98,29 @@ test('open tab gates the whole file when valid_through passes',async({page})=>{
  await setup(page,snapshot(items,{valid_through:'2026-11-04T12:00:03+09:00'}));await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
  await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.getByText('최신 브리핑을 기다리고 있어요',{exact:true})).toBeVisible();
 });
+test('remembered interests persist locally, shared URLs win, and stored defaults can be deleted',async({page})=>{
+ await setup(page);await page.goto('./');
+ await page.getByLabel('지역',{exact:true}).selectOption('강서구');await page.getByLabel('분야',{exact:true}).selectOption('문화·체험');
+ await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역·분야 저장'}).click();
+ await expect(page.getByText('이 브라우저에 지역·분야를 저장했습니다.',{exact:true})).toBeVisible();
+ await page.goto('./');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('강서구');await expect(page.locator('article')).toHaveCount(1);
+ await expect(page).toHaveURL(/region=/);
+ await page.goto('./?q=생활지원');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('');await expect(page.locator('article')).toHaveCount(1);
+ await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'저장값 삭제'}).click();
+ await expect(page.getByText('저장값을 삭제했습니다. 현재 검색 필터는 유지됩니다.',{exact:true})).toBeVisible();
+ await page.goto('./');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('');await expect(page.locator('article')).toHaveCount(6);
+});
+test('blocked localStorage preserves discovery and announces save failure',async({page})=>{
+ await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('Blocked','SecurityError');}}));
+ await setup(page);await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
+ await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역·분야 저장'}).click();
+ await expect(page.getByText('저장하지 못했습니다.',{exact:false})).toBeVisible();await expect(page.locator('article')).toHaveCount(6);
+});
+
+test('corrupt stored preferences can still be explicitly deleted',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('benefit-monitor:interests:v1','broken'));
+ await setup(page);await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
+ await page.locator('.interest-settings summary').click();await expect(page.getByText('저장한 관심 설정이 없습니다.',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'저장값 삭제'}).click();
+ expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:interests:v1'))).toBeNull();
+});

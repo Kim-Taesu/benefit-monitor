@@ -2,3 +2,5 @@
 
 /* Keep the first benefit headline within the initial mobile viewport. */
 @media(max-width:767px){.hero{padding:22px 0 20px}.hero h1{font-size:30px;margin-bottom:10px}.hero .mobile-break{display:none}.hero .eyebrow{margin-bottom:10px}.overview{grid-template-columns:1fr 1fr 1.5fr;gap:0;padding-bottom:14px;margin-bottom:18px}.overview>div{padding:0 10px}.overview>div:nth-child(2){border-right:1px solid var(--line)}.overview>div.last-verified{padding:0 0 0 10px;grid-column:auto;display:block}.overview .last-verified strong{font-size:10px;margin-top:6px}.metric-label,.last-verified .metric-label{font-size:10px}.card-conditions{font-size:14px}.official-link{font-size:14px}}
+
+.interest-settings{margin-top:12px}.preference-actions{display:flex;flex-wrap:wrap;gap:8px}.preference-actions button{font-size:13px}
