@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import BenefitCard from './BenefitCard.vue';
-import { adapt, select, timing, categories, coverageLabels, readFilters, filterUrl, formatDate, timestamp } from './benefits';
+import { adapt, select, timing, categories, coverageLabels, readFilters, filterUrl, formatDate, timestamp, regionOptions } from './benefits';
 const raw=ref<unknown>(null),loading=ref(true),error=ref(''),now=ref(Date.now());
 const filters=reactive(readFilters(location.search));
 const draft=ref(filters.q);let debounce:ReturnType<typeof setTimeout>|undefined;
@@ -9,7 +9,7 @@ let interval:ReturnType<typeof setInterval>|undefined;let controller:AbortContro
 const data=computed(()=>{if(raw.value===null)return null;try{return adapt(raw.value,now.value);}catch{return null;}});
 const all=computed(()=>data.value?.items||[]);
 const results=computed(()=>select(all.value,filters,now.value));
-const regions=computed(()=>[...new Set(all.value.flatMap(i=>i.regions).concat(all.value.some(i=>i.source==='seoul'||i.regions.some(r=>r.endsWith('구')))?['서울']:[]))].sort((a,b)=>a.localeCompare(b,'ko')));
+const regions=computed(()=>regionOptions(all.value));
 const availableCategories=computed(()=>categories.filter(c=>all.value.some(i=>i.category===c)));
 const urgent=computed(()=>all.value.filter(i=>timing(i,now.value).urgent).length);
 const newest=computed(()=>all.value.length?all.value.reduce((a,b)=>timestamp(a.verified_at)>timestamp(b.verified_at)?a:b).verified_at:null);

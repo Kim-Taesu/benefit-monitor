@@ -25,8 +25,8 @@ async function setup(page,body:unknown=snapshot(items)){
 async function capture(page,name:string){mkdirSync(shots,{recursive:true});await page.screenshot({path:`${shots}/${name}.png`,fullPage:true});}
 for(const width of [360,390,768,1440])test(`responsive ${width}px, semantics, axe and keyboard`,async({page})=>{
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
- await page.setViewportSize({width,height:900});await setup(page);await page.goto('./');
- await expect(page.locator('article')).toHaveCount(6);
+ await page.setViewportSize({width,height:900});await setup(page);const started=Date.now();await page.goto('./');
+ await expect(page.locator('article')).toHaveCount(6);expect(Date.now()-started).toBeLessThan(10000);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.addScriptTag({path:axePath});
  const accessibility=await page.evaluate(async()=>await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));

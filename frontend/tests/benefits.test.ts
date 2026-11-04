@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { adapt, select, timing, readFilters, filterUrl, safeOfficial } from '../src/benefits.ts';
+import { adapt, select, timing, readFilters, filterUrl, safeOfficial, regionOptions } from '../src/benefits.ts';
 import { item, snapshot, NOW } from './fixtures.ts';
 
 test('valid approved paid and free records are preserved without invented amounts', () => {
@@ -73,4 +73,15 @@ test('recent verification filter is a rolling 24h window; unknown region stays e
  assert.equal(select(rows,{...readFilters(''),status:'new'},NOW).length,0);
  assert.equal(select(rows,{...readFilters(''),region:'전국'},NOW).length,0);
  assert.equal(select(rows,{...readFilters(''),region:'서울·경기'},NOW).length,1);
+});
+test('Seoul aggregate option follows exact Seoul policy rather than any city ending in 구',()=>{
+ const rows=adapt(snapshot([item({source:'government',url:'https://www.korea.kr/briefing/pressReleaseView.do?newsId=1',districts:[],labels:{region:'대구'}})]),NOW).items;
+ assert.equal(rows.length,1);assert.equal(regionOptions(rows).includes('서울'),false);
+ const seoul=adapt(snapshot([item({districts:[],labels:{region:'서울시'}})]),NOW).items;
+ assert.equal(regionOptions(seoul).includes('서울'),true);
+});
+
+test('alphabetic ordering uses the displayed card headline, not the original official headline',()=>{
+ const rows=adapt(snapshot([item({title:'가 원문',summary:'하 카드'}),item({url:'https://mediahub.seoul.go.kr/archives/2',title:'하 원문',summary:'가 카드'})]),NOW).items;
+ assert.equal(select(rows,{...readFilters(''),sort:'title'},NOW)[0].summary,'가 카드');
 });

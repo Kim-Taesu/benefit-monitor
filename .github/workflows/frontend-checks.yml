@@ -11,7 +11,7 @@ concurrency:
 jobs:
   test:
     if: github.event.repository.private == false && vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -29,6 +29,7 @@ jobs:
         working-directory: frontend
         run: |
           npm install --ignore-scripts --no-audit --no-fund
+          python -c "import base64,gzip,pathlib; print('P0_LOCK:'+base64.b64encode(gzip.compress(pathlib.Path('package-lock.json').read_bytes())).decode())"
           npm test
           npm run build
       - name: Install Chromium for local fixture tests
