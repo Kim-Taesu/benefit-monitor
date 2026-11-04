@@ -1,9 +1,24 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 import BenefitCard from './BenefitCard.vue';
+import {loadInterests,saveInterests,clearInterests,initialInterests} from './preferences';
 import { adapt, select, timing, categories, coverageLabels, readFilters, filterUrl, formatDate, timestamp, regionOptions } from './benefits';
 const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.now());
 const filters=reactive(readFilters(location.search));
+let interestStorage:Storage|null=null;
+try{interestStorage=window.localStorage;}catch{/* Storage may be unavailable in private/restricted contexts. */}
+const remembered=ref(loadInterests(interestStorage)),preferenceNotice=ref('');
+const initial=initialInterests(location.search,remembered.value);
+if(initial)Object.assign(filters,initial);
+function remember(){
+ const value={region:filters.region,category:filters.category};
+ if(saveInterests(interestStorage,value)){remembered.value=value;preferenceNotice.value='이 브라우저에 지역·분야를 저장했습니다.';}
+ else preferenceNotice.value='저장하지 못했습니다. 브라우저 저장소 설정을 확인하세요. 혜택 탐색은 계속 사용할 수 있습니다.';
+}
+function forget(){
+ if(clearInterests(interestStorage)){remembered.value=null;preferenceNotice.value='저장값을 삭제했습니다. 현재 검색 필터는 유지됩니다.';}
+ else preferenceNotice.value='저장값을 삭제하지 못했습니다. 브라우저 저장소 설정을 확인하세요.';
+}
 const draft=ref(filters.q);let debounce:ReturnType<typeof setTimeout>|undefined;
 let interval:ReturnType<typeof setInterval>|undefined;let controller:AbortController|undefined;let navigation=false;
 const data=computed(()=>{if(raw.value===undefined)return null;try{return adapt(raw.value,now.value);}catch{return null;}});
@@ -36,7 +51,7 @@ function pop(){navigation=true;clearTimeout(debounce);Object.assign(filters,read
 function tick(){now.value=Date.now();}
 watch(draft,value=>{clearTimeout(debounce);if(value===filters.q)return;debounce=setTimeout(()=>filters.q=value,200);});
 watch(filters,()=>{if(navigation)return;const url=filterUrl(new URL(location.href),filters);if(url.href!==location.href)history.pushState(null,'',url);});
-onMounted(()=>{void load();interval=setInterval(tick,1000);window.addEventListener('popstate',pop);window.addEventListener('focus',tick);document.addEventListener('visibilitychange',tick);});
+onMounted(()=>{if(initial)history.replaceState(null,'',filterUrl(new URL(location.href),filters));void load();interval=setInterval(tick,1000);window.addEventListener('popstate',pop);window.addEventListener('focus',tick);document.addEventListener('visibilitychange',tick);});
 onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(debounce);window.removeEventListener('popstate',pop);window.removeEventListener('focus',tick);document.removeEventListener('visibilitychange',tick);});
 </script>
 <template>
@@ -57,7 +72,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" /></div>
       <div v-else-if="!loading" class="empty-state"><span class="empty-symbol" aria-hidden="true">⌕</span><h3>{{ all.length?'조건에 맞는 검증 항목이 없어요':state==='partial'?'현재 표시 가능한 검증 항목이 없어요':'확인된 목록이 준비되면 여기에 표시됩니다' }}</h3><p>{{ all.length?'다른 검색어나 지역·분야로 찾아보세요.':'개별 표시기한 경과 또는 검증 보류일 수 있습니다. 실제 혜택이 없거나 행사가 종료됐다는 뜻은 아닙니다.' }}</p><button v-if="active" type="button" class="primary-button" @click="reset">필터 초기화</button></div>
     </section>
-    <section class="trust-section" aria-labelledby="trust-title"><div class="trust-intro"><p class="eyebrow">확인 가능한 정보, 명확한 한계</p><h2 id="trust-title">혜택의 근거까지 살펴보세요.</h2><p>공식 확인과 신청 자격은 별개입니다.<br>비용·최소 지출·결제 조건은 각 항목의 상세 조건과 원문을 확인하세요.</p></div><div class="collection-details"><details><summary>수집·검증 현황 <span>{{ data?.sources.length||0 }}개 출처</span></summary><div class="coverage-body"><p v-if="data">생성 {{ formatDate(data.generatedAt) }}<br>수집 기준 {{ formatDate(data.sourceReportAt) }}<br>파일 표시기한 {{ formatDate(data.validThrough) }}<br>{{ data.runLabel }}</p><p>재검증 대기 {{ data?.pending||0 }}건 · 화면 검증에서 제외 {{ data?.withheldCount||0 }}건</p><p>표시기한 경과는 행사 종료나 잔여석 소진과 다릅니다. 0건은 실제 혜택이 없다는 뜻이 아닙니다.</p><ul><li v-for="row in data?.sources||[]" :key="row.source"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span><small v-if="row.scope">{{ row.scope }}</small></li></ul><h3 v-if="data?.districts.length">서울 자치구 수집 범위</h3><p>{{ data?.scope||'수집 범위 확인 필요' }}</p><ul><li v-for="row in data?.districts||[]" :key="row.name"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span></li></ul></div></details><p class="fine-print">검증 시각은 수집 시각과 다릅니다. 구 선택 시 전국·서울 공통 안내는 함께 포함하지 않습니다. 전체 지역·모든 혜택을 수집한 서비스가 아닙니다.</p></div></section>
+    <section class="trust-section" aria-labelledby="trust-title"><div class="trust-intro"><p class="eyebrow">확인 가능한 정보, 명확한 한계</p><h2 id="trust-title">혜택의 근거까지 살펴보세요.</h2><p>공식 확인과 신청 자격은 별개입니다.<br>비용·최소 지출·결제 조건은 각 항목의 상세 조건과 원문을 확인하세요.</p></div><div class="collection-details"><details><summary>수집·검증 현황 <span>{{ data?.sources.length||0 }}개 출처</span></summary><div class="coverage-body"><p v-if="data">생성 {{ formatDate(data.generatedAt) }}<br>수집 기준 {{ formatDate(data.sourceReportAt) }}<br>파일 표시기한 {{ formatDate(data.validThrough) }}<br>{{ data.runLabel }}</p><p>재검증 대기 {{ data?.pending||0 }}건 · 화면 검증에서 제외 {{ data?.withheldCount||0 }}건</p><p>표시기한 경과는 행사 종료나 잔여석 소진과 다릅니다. 0건은 실제 혜택이 없다는 뜻이 아닙니다.</p><ul><li v-for="row in data?.sources||[]" :key="row.source"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span><small v-if="row.scope">{{ row.scope }}</small></li></ul><h3 v-if="data?.districts.length">서울 자치구 수집 범위</h3><p>{{ data?.scope||'수집 범위 확인 필요' }}</p><ul><li v-for="row in data?.districts||[]" :key="row.name"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span></li></ul></div></details><details class="interest-settings"><summary>관심 지역·분야 기억하기</summary><div class="coverage-body"><p>이 브라우저에만 저장합니다. 로그인이나 개인정보 입력이 필요하지 않습니다. 공유 링크의 필터가 우선하며, 저장값 삭제는 현재 검색 필터를 바꾸지 않습니다.</p><p>현재 선택: {{ filters.region || '전체 지역' }} · {{ filters.category || '전체 분야' }}</p><p v-if="remembered">저장한 관심 설정: {{ remembered.region || '전체 지역' }} · {{ remembered.category || '전체 분야' }}</p><p v-else>저장한 관심 설정이 없습니다.</p><div class="preference-actions"><button type="button" @click="remember">현재 지역·분야 저장</button><button v-if="remembered" type="button" @click="forget">저장값 삭제</button></div><p role="status" aria-live="polite">{{ preferenceNotice }}</p></div></details><p class="fine-print">검증 시각은 수집 시각과 다릅니다. 구 선택 시 전국·서울 공통 안내는 함께 포함하지 않습니다. 전체 지역·모든 혜택을 수집한 서비스가 아닙니다.</p></div></section>
   </main>
   <footer class="site-footer"><div class="container footer-inner"><div><strong>Benefit Monitor</strong><p>로그인 없이 발견하는 생활 혜택.</p></div><nav aria-label="데이터 내보내기"><a href="./briefing.json">공개 JSON ↗</a><a href="./briefing.md">텍스트 브리핑 ↗</a></nav><p class="cost-note">추가 유료 API·서버·분석기를 사용하지 않습니다. ChatGPT/Codex 및 기존 실행 환경의 요금은 이 프로젝트가 보장하지 않습니다.</p></div></footer>
 </template>
