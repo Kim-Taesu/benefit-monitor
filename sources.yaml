@@ -277,10 +277,79 @@
         "제휴"
       ],
       "collection_scope": "공식 제휴 서비스 안내 · 행사 전체·앱 잔량 미포함"
+    },
+    {
+      "id": "sh",
+      "name": "SH 주택 공고",
+      "tier": "A",
+      "domains": [
+        "www.i-sh.co.kr"
+      ],
+      "routes": [
+        "https://www.i-sh.co.kr/app/lay2/program/S1T294C297/www/brd/m_247/list.do?multi_itm_seq=2"
+      ],
+      "feed_url": null,
+      "collector": "sh_notice",
+      "boards": [
+        "rent",
+        "sale",
+        "purchase"
+      ],
+      "collection_scope": "SH 주택임대·분양·매입 공고 게시판 첫 페이지 · 제목 기준 후보, 신청 자격·접수 상태 미확인"
+    },
+    {
+      "id": "eshare",
+      "name": "공유누리 공공시설",
+      "tier": "B",
+      "domains": [
+        "www.eshare.go.kr"
+      ],
+      "routes": [
+        "https://www.eshare.go.kr/UserPortal/adv/unifdSearch/UnifiedSearchMainView.do"
+      ],
+      "feed_url": null,
+      "collector": "eshare",
+      "queries": [
+        {
+          "keyword": "체험",
+          "ctrd": "11",
+          "free": true,
+          "reservable": true
+        },
+        {
+          "keyword": "강좌",
+          "ctrd": "11",
+          "free": true,
+          "reservable": true
+        }
+      ],
+      "collection_scope": "공유누리 서울 무료·인터넷 예약 자원 검색 첫 페이지 · 실시간 예약 가능 여부 미확인"
+    },
+    {
+      "id": "heritage",
+      "name": "국가유산 행사",
+      "tier": "A",
+      "domains": [
+        "www.khs.go.kr",
+        "royal.khs.go.kr",
+        "www.heritage.go.kr",
+        "www.chf.or.kr",
+        "www.kh.or.kr"
+      ],
+      "routes": [
+        "https://www.khs.go.kr/cha/openapi/selectEventListOpenapi.do"
+      ],
+      "feed_url": null,
+      "collector": "heritage_events",
+      "regions": [
+        "서울"
+      ],
+      "include_next_month": true,
+      "collection_scope": "국가유산청 월별 행사 공개 목록(이번 달·다음 달, 서울) · 행사별 예약·잔여석 미확인"
     }
   ],
   "seoul_district_coverage": true,
-  "max_http_requests": 60,
+  "max_http_requests": 75,
   "cost_policy": {
     "mode": "free_public_only",
     "paid_services_allowed": false
