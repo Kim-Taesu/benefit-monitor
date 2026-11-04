@@ -1,4 +1,6 @@
 from datetime import date, datetime
+from decimal import Decimal
+import re
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 from .models import Benefit
@@ -9,6 +11,52 @@ def official(url, domains):
 
 LABEL_CATEGORIES = ("문화·체험", "할인·적립", "생활지원", "교육·강좌", "공모·참여")
 LABEL_ACTIONS = ("신청·예약 필요", "미션 참여", "응모", "바로 이용", "결제 시 적용", "구매 후 사용")
+
+
+
+VALUE_LABELS = {"discount_rate": "% 할인", "discount_amount": "원 할인", "grant_amount": "원 지원",
+                "refund_amount": "원 환급", "reward_points": "포인트 적립"}
+
+
+def validate_benefit_value(item, domains):
+    claim = item.benefit_value
+    if not isinstance(claim, dict):
+        raise ValueError("benefit_value must be an object")
+    if not claim:
+        return
+    required = {"kind", "value", "qualifier", "conditions", "evidence_url", "evidence_quote"}
+    if set(claim) != required or not isinstance(claim.get("kind"), str) or claim.get("kind") not in VALUE_LABELS or claim.get("qualifier") not in ("exact", "up_to"):
+        raise ValueError("Unknown or incomplete benefit_value")
+    amount = claim["value"]
+    rate = claim["kind"] == "discount_rate"
+    if type(amount) not in (int, float) or not 0 < amount <= (100 if rate else 999_999_999_999):
+        raise ValueError("A positive finite benefit value is required")
+    if rate and Decimal(str(amount)).as_tuple().exponent < -2 or not rate and type(amount) is not int:
+        raise ValueError("Rates allow two decimal places; KRW and points require integers")
+    for key, limit in (("conditions", 1000), ("evidence_quote", 500), ("evidence_url", 4096)):
+        if not isinstance(claim[key], str) or not claim[key].strip() or len(claim[key]) > limit:
+            raise ValueError("Benefit value requires bounded conditions and official evidence")
+    target = item.payment_terms.get("evidence_url", item.url)
+    if not official(claim["evidence_url"], domains) or claim["evidence_url"] != target:
+        raise ValueError("Value evidence must use the already observed official body URL")
+    if not item.verified_at or not isinstance(item.evidence, str) or claim["evidence_quote"] not in item.evidence:
+        raise ValueError("Value quote must be part of the human verification evidence")
+    # Check the supplied figure against a literal quote; never extract or calculate a new value.
+    numbers = {format(amount, f",.{digits}f") for digits in range(3)
+               if Decimal(format(amount, f".{digits}f")) == Decimal(str(amount))}
+    numbers |= {n.replace(",", "") for n in numbers}
+    unit = "%" if rate else "포인트" if claim["kind"] == "reward_points" else "원"
+    literal = "(?:" + "|".join(re.escape(n + unit) for n in numbers) + ")"
+    quote = re.sub(r"\s", "", claim["evidence_quote"])
+    if VALUE_LABELS[claim["kind"]].split()[-1] not in quote or not re.search(r"(?<![0-9.,])" + literal + r"(?![0-9.])", quote) or ("최대" in quote) != (claim["qualifier"] == "up_to"):
+        raise ValueError("Supplied number, unit and maximum qualifier must match the literal quote")
+
+
+def benefit_value_label(claim):
+    if not claim:
+        return ""
+    amount = f"{claim['value']:,.2f}".rstrip("0").rstrip(".")
+    return ("최대 " if claim["qualifier"] == "up_to" else "") + amount + VALUE_LABELS[claim["kind"]]
 
 
 def validate(data, sources, now):
@@ -23,6 +71,7 @@ def validate(data, sources, now):
             raise ValueError("Payment review requires method, funding, exclusions, minimum spend, limit and evidence; mark unknown explicitly")
         if not official(item.payment_terms["evidence_url"],sources[item.source]["domains"]):
             raise ValueError("Official payment evidence required")
+    validate_benefit_value(item, sources[item.source]["domains"])
     if not isinstance(item.labels, dict) or not set(item.labels) <= {"category", "audience", "region", "action"}:
         raise ValueError("labels allow only category, audience, region and action")
     if any(not isinstance(v, str) or not v.strip() or len(v) > 40 for v in item.labels.values()):

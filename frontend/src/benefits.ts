@@ -4,11 +4,13 @@ export const categories=['할인·적립','생활지원','문화·체험','교�
 export const fees: Record<string,string>={free:'무료',paid:'유료',mixed:'일부 유료',unknown:'비용 미확인'};
 export const coverageLabels: Record<string,string>={checked:'목록 수집 성공 · 본문 검증 별도',cached:'6시간 내 목록 캐시 · 본문 검증 별도',failed:'이번 수집 실패',not_connected:'자동 수집 미연결',not_checked:'이번 실행 미확인'};
 export interface Filters { q:string; region:string; category:string; sort:string; status:string }
+export const valueLabels={discount_rate:'% 할인',discount_amount:'원 할인',grant_amount:'원 지원',refund_amount:'원 환급',reward_points:'포인트 적립'};
+export interface BenefitValue {kind:keyof typeof valueLabels;value:number;qualifier:'exact'|'up_to';conditions:string;evidence_url:string;evidence_quote:string}
 export interface Benefit {
  source:string; sourceName:string; url:string; title:string; summary:string; conditions:string;
  districts:string[]; regions:string[]; category:string; labels:Record<string,string>;
  verified_at:string; display_until:string; valid_from:string|null; valid_until:string|null;
- deadline_at:string|null; validity_kind:string; fee_status:string; payment_terms:Record<string,string>;
+ deadline_at:string|null; validity_kind:string; fee_status:string; payment_terms:Record<string,string>; benefitValue:BenefitValue|null;
 }
 export interface Coverage { name:string; source?:string; status:string; scope?:string; verified_count?:number }
 export interface Briefing {
@@ -42,6 +44,26 @@ export function safeOfficial(url:unknown,source:string):boolean {
  try {const u=new URL(text(url));return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&!!sources[source]?.domains.includes(u.hostname);}
  catch{return false;}
 }
+function parseBenefitValue(value:unknown,source:string,target:string):BenefitValue|null {
+ if(value===undefined)return null;
+ if(!value||typeof value!=='object'||Array.isArray(value))throw new Error('Invalid benefit_value');
+ const v=object(value),keys=['kind','value','qualifier','conditions','evidence_url','evidence_quote'];
+ if(Object.keys(v).length===0)return null;
+ if(Object.keys(v).length!==keys.length||!keys.every(k=>Object.hasOwn(v,k))||typeof v.kind!=='string'||!Object.hasOwn(valueLabels,v.kind)||!['exact','up_to'].includes(text(v.qualifier)))throw new Error('Invalid value contract');
+ const rate=v.kind==='discount_rate',amount=v.value;
+ if(typeof amount!=='number'||!Number.isFinite(amount)||amount<=0||amount>(rate?100:999999999999)||(rate?Number(amount.toFixed(2))!==amount:!Number.isSafeInteger(amount)))throw new Error('Invalid benefit number');
+ for(const [key,limit]of [['conditions',1000],['evidence_quote',500],['evidence_url',4096]] as const)if(typeof v[key]!=='string'||!v[key].trim()||v[key].length>limit)throw new Error('Missing value evidence');
+ if(!safeOfficial(v.evidence_url,source)||v.evidence_url!==target||[...new URL(text(v.evidence_url)).searchParams.keys()].some(key=>/token|secret|password|auth|session|api.?key/i.test(key)))throw new Error('Unobserved value evidence');
+ const unit=rate?'%':v.kind==='reward_points'?'포인트':'원';
+ const numbers=[0,1,2].filter(d=>Number(amount.toFixed(d))===amount).flatMap(d=>[amount.toFixed(d),new Intl.NumberFormat('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}).format(amount)]);
+ const escape=(s:string)=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const literal=numbers.map(n=>escape(n+unit)).join('|'),quote=text(v.evidence_quote).replace(/\s/g,'');
+ if(!quote.includes(valueLabels[v.kind as BenefitValue['kind']].split(' ').at(-1)!)||!new RegExp('(?<![0-9.,])(?:'+literal+')(?![0-9.])').test(quote)||quote.includes('최대')!==(v.qualifier==='up_to'))throw new Error('Quoted number or qualifier mismatch');
+ return {kind:v.kind as BenefitValue['kind'],value:amount,qualifier:v.qualifier as BenefitValue['qualifier'],conditions:text(v.conditions),evidence_url:text(v.evidence_url),evidence_quote:text(v.evidence_quote)};
+}
+export function benefitValueLabel(value:BenefitValue):string {
+ return (value.qualifier==='up_to'?'최대 ':'')+new Intl.NumberFormat('ko-KR',{maximumFractionDigits:2}).format(value.value)+valueLabels[value.kind];
+}
 export function timing(item:Record<string,unknown>|Benefit,now:number) {
  const application=timestamp(item.deadline_at);
  const end=dateValue(item.valid_until);
@@ -68,6 +90,9 @@ export function adapt(value:unknown,now=Date.now()):Briefing {
  const seen=new Set<string>();
  for(const raw of d.items) {
   const i=object(raw);const source=text(i.source);const verified=timestamp(i.verified_at),display=timestamp(i.display_until);
+  let benefitValue:BenefitValue|null;
+  try{benefitValue=parseBenefitValue(i.benefit_value,source,text(object(i.payment_terms).evidence_url)||text(i.url));}
+  catch{result.withheldCount++;continue;}
   const info=timing(i,now);
   const badDate=['valid_from','valid_until'].some(k=>i[k]!=null&&!Number.isFinite(dateValue(i[k]))) || i.deadline_at!=null&&!Number.isFinite(timestamp(i.deadline_at));
   const valid= i.needs_recheck===false && !i.excluded_reason && text(i.title).trim() && text(i.summary).trim() && typeof i.conditions==='string' && Array.isArray(i.districts) && i.districts.every(v=>typeof v==='string') && safeOfficial(i.url,source) && Number.isFinite(verified)&&verified<=now&&now<verified+policy.maxAgeDays*DAY&&Number.isFinite(display)&&display>now&&info.cutoff>now&&!badDate && Object.hasOwn(fees,text(i.fee_status)) && ['fixed','ongoing'].includes(text(i.validity_kind)) && (i.validity_kind==='ongoing' || i.valid_until!=null || i.deadline_at!=null);
@@ -81,7 +106,7 @@ export function adapt(value:unknown,now=Date.now()):Briefing {
   const payment=object(i.payment_terms);const paymentTerms:Record<string,string>={};
   for(const k of ['method','funding_source','excluded_methods','minimum_spend','limit'])if(typeof payment[k]==='string')paymentTerms[k]=payment[k];
   if(safeOfficial(payment.evidence_url,source))paymentTerms.evidence_url=text(payment.evidence_url);
-  result.items.push({source,sourceName:sources[source].name,url:text(i.url),title:text(i.title),summary:text(i.summary),conditions:text(i.conditions),districts,regions,category:categories.includes(labels.category)?labels.category:'기타',labels,verified_at:text(i.verified_at),display_until:text(i.display_until),valid_from:text(i.valid_from)||null,valid_until:text(i.valid_until)||null,deadline_at:text(i.deadline_at)||null,validity_kind:text(i.validity_kind),fee_status:text(i.fee_status),payment_terms:paymentTerms});
+  result.items.push({benefitValue,source,sourceName:sources[source].name,url:text(i.url),title:text(i.title),summary:text(i.summary),conditions:text(i.conditions),districts,regions,category:categories.includes(labels.category)?labels.category:'기타',labels,verified_at:text(i.verified_at),display_until:text(i.display_until),valid_from:text(i.valid_from)||null,valid_until:text(i.valid_until)||null,deadline_at:text(i.deadline_at)||null,validity_kind:text(i.validity_kind),fee_status:text(i.fee_status),payment_terms:paymentTerms});
  }
  return result;
 }

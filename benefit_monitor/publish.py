@@ -6,16 +6,16 @@ import re
 import os
 from datetime import datetime, timedelta, time, date, timezone
 from pathlib import Path
-from urllib.parse import parse_qsl, urlsplit
+from urllib.parse import parse_qsl, urlsplit, quote
 
 from .briefing import SEOUL, FEES, aware_time, build, identity
 from .store import load, save, save_text
-from .validation import validate, LABEL_CATEGORIES
+from .validation import validate, LABEL_CATEGORIES, benefit_value_label
 from . import operations
 
 PUBLIC_FIELDS = ("source", "url", "title", "summary", "conditions", "districts",
                  "verified_at", "valid_from", "valid_until", "deadline_at",
-                 "validity_kind", "fee_status", "needs_recheck", "payment_terms", "labels")
+                 "validity_kind", "fee_status", "needs_recheck", "payment_terms", "labels", "benefit_value")
 
 
 def releases(root, config, now):
@@ -29,13 +29,14 @@ def releases(root, config, now):
             raise ValueError("Explicit public_release=true required")
         item = validate({k: v for k, v in entry.items() if k != "public_release"}, sources, now)
         data = item.data()
-        public = {k: data[k] for k in PUBLIC_FIELDS}
+        public = {k: data[k] for k in PUBLIC_FIELDS if k != "benefit_value" or data[k]}
         text = json.dumps(public, ensure_ascii=False)
         # Defense in depth; explicit review is still required for freeform text.
         if re.search(r"생년월일|거주지|집주소|개인조건|비밀키|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<!\d)01[016789][- ]?\d{3,4}[- ]?\d{4}(?!\d)", text):
             raise ValueError("Possible private information in public release")
+        urls = [item.url] + [v["evidence_url"] for v in (item.payment_terms, item.benefit_value) if v]
         if any(re.search(r"token|secret|password|auth|session|api.?key", key, re.I)
-               for key, _ in parse_qsl(urlsplit(item.url).query)):
+               for url in urls for key, _ in parse_qsl(urlsplit(url).query)):
             raise ValueError("Credential-like query parameter in public URL")
         if identity(data) in result:
             raise ValueError("Duplicate public release")
@@ -169,13 +170,17 @@ def page(data):
         if hot:
             urgent.append((info["days"], index, '<li data-valid-until="' + until + '"><a href="#item-' + str(index) + '">'
                            + esc(item["summary"]) + '</a> · <b>' + esc(info["badge"]) + '</b></li>'))
+        claim = item.get("benefit_value") or {}
+        value_html = ('<p><b>' + esc(benefit_value_label(claim)) + '</b></p><p>' + esc(claim["conditions"])
+                      + '</p><p>근거 문구: ' + esc(claim["evidence_quote"]) + '</p><a rel="noopener noreferrer" href="'
+                      + esc(claim["evidence_url"]) + '">금액 근거 원문</a>') if claim else ''
         labels = item.get("labels") or {}
         chips = [("출처", source_names.get(item["source"], item["source"]))] + [
             (name, labels[key]) for key, name in (("audience", "대상"), ("region", "지역"), ("action", "이용 방법")) if labels.get(key)]
         cards.append(
             '<article id="item-' + str(index) + '" data-valid-until="' + until + '" data-category="' + esc(labels.get("category", "기타")) + '"><p class="badge' + (' hot' if hot else '') + '">'
             + esc(info["badge"]) + '</p>' + (' <p class="badge">' + esc(labels["category"]) + '</p>' if labels.get("category") else '')
-            + '<h2>' + esc(item["summary"]) + '</h2><ul class="facts">'
+            + '<h2>' + esc(item["summary"]) + '</h2>' + value_html + '<ul class="facts">'
             + ''.join('<li><span>' + esc(n) + '</span> ' + esc(v) + '</li>' for n, v in chips) + '</ul><p>요금: ' + FEES[item["fee_status"]]
             + '</p><p>' + esc(item["conditions"]) + '</p>'
             + ('<p><b>' + esc(info["apply"]) + '</b></p>' if info["apply"] else '')
@@ -285,7 +290,7 @@ def run(root, now=None, failure=False):
                 for item in briefing[group]:
                     release = approved.get(identity(item))
                     if release and all(item[k] == v for k, v in release.items()):
-                        items[identity(item)] = {k: item[k] for k in PUBLIC_FIELDS}
+                        items[identity(item)] = {k: item[k] for k in PUBLIC_FIELDS if k != "benefit_value" or item[k]}
             data.update(source_report_at=report_time.isoformat(), items=list(items.values()),
                         coverage_incomplete=briefing["coverage_incomplete"],
                         withheld=briefing["withheld"],
@@ -329,6 +334,10 @@ def run(root, now=None, failure=False):
                   "시작" + (" 예정: " if item["valid_from"] and item["valid_from"] > now.date().isoformat() else ": ")
                   + display_date(item["valid_from"], "시작일 미확인"),
                   "종료/마감: " + display_date(item["deadline_at"] or item["valid_until"], "상시 안내"), item["url"]]
+        claim = item.get("benefit_value") or {}
+        if claim:
+            lines += ["혜택 수치: " + md_text(benefit_value_label(claim)), "수치 적용 조건: " + md_text(claim["conditions"]),
+                      "근거 문구: " + md_text(claim["evidence_quote"]), "금액 근거 원문: " + quote(claim["evidence_url"], safe=":/?&=;%+#")]
     lines += ["", "실행 유형: " + data["run_context"]["trigger"], "정기 실행 확인: " + ("확인" if data["run_context"]["scheduled_run_confirmed"] else "미확인") ]
     cov = data.get("coverage", {})
     for group in ("sources", "districts"):
