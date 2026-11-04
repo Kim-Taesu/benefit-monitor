@@ -87,12 +87,14 @@ class PublicCollectorTests(unittest.TestCase):
         class Opener:
             def open(self, request, timeout):
                 calls.append((request.full_url, request.data))
-                return Response(ESHARE_FRAGMENT.encode() if request.data else b'<html></html>')
+                return Response(ESHARE_FRAGMENT.replace('무료', '이용료 10,000원').encode() if request.data else b'<html></html>')
         with patch('benefit_monitor.collectors.public.fetch', return_value=ALLOW), \
                 patch('benefit_monitor.collectors.public.urllib.request.build_opener', return_value=Opener()):
             items = public.collect(ESHARE, NOW)
         self.assertEqual(calls[0][0], public.ESHARE_BOOTSTRAP)
-        self.assertIn(b'free_yn=Y', calls[1][1])
+        self.assertNotIn(b'free_yn', calls[1][1])
+        self.assertTrue(items[0]['needs_recheck'])
+        self.assertNotIn('fee_status', items[0])
         self.assertEqual(items[0]['title'], '[공유누리] 서울 목공 체험 · 서울 은평구 연서로 1')
         self.assertEqual(cost_policy.budget.used, 2)  # bootstrap + search; robots is mocked
 

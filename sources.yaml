@@ -312,17 +312,15 @@
         {
           "keyword": "체험",
           "ctrd": "11",
-          "free": true,
           "reservable": true
         },
         {
           "keyword": "강좌",
           "ctrd": "11",
-          "free": true,
           "reservable": true
         }
       ],
-      "collection_scope": "공유누리 서울 무료·인터넷 예약 자원 검색 첫 페이지 · 실시간 예약 가능 여부 미확인"
+      "collection_scope": "공유누리 서울 인터넷 예약 자원 검색 첫 페이지 · 이용료 제한 없음 · 실시간 예약 가능 여부 미확인"
     },
     {
       "id": "heritage",
