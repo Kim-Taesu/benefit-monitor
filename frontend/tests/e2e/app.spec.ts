@@ -25,17 +25,19 @@ async function setup(page,body:unknown=snapshot(items)){
 async function capture(page,name:string){mkdirSync(shots,{recursive:true});await page.screenshot({path:`${shots}/${name}.png`,fullPage:true});}
 for(const width of [360,390,768,1440])test(`responsive ${width}px, semantics, axe and keyboard`,async({page})=>{
  const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
- await page.setViewportSize({width,height:900});await setup(page);const started=Date.now();await page.goto('./');
+ await page.setViewportSize({width,height:width<768?844:900});await setup(page);const started=Date.now();await page.goto('./');
  await expect(page.locator('article')).toHaveCount(6);expect(Date.now()-started).toBeLessThan(10000);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  await page.addScriptTag({path:axePath});
  const accessibility=await page.evaluate(async()=>await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));
  expect(accessibility.violations).toEqual([]);
+ const headline=await page.locator('article h3').first().boundingBox();if(width<768)expect(headline!.y+headline!.height).toBeLessThan(844);
+ await capture(page,`home-${width}`);
  await page.keyboard.press('Tab');await expect(page.getByRole('link',{name:'혜택 목록으로 건너뛰기'})).toBeFocused();
  await page.keyboard.press('Enter');await expect(page.locator('#results')).toBeFocused();
  const details=page.locator('article').first().locator('summary');await details.focus();await page.keyboard.press('Enter');await expect(page.locator('article').first().locator('details')).toHaveAttribute('open','');
  await page.keyboard.press('Enter');
- await capture(page,`home-${width}`);expect(errors).toEqual([]);
+ expect(errors).toEqual([]);
 });
 test('search, combined filters, sort, URL reload, back and reset',async({page})=>{
  await setup(page);await page.goto('./');
@@ -66,6 +68,7 @@ for(const [name,body,title]of [
  ['expired-items',snapshot([item({display_until:'2026-11-04T12:00:00+09:00'})]),'현재 표시 가능한 검증 항목이 없어요'],
  ['unverified',snapshot([item({needs_recheck:true})]),'현재 표시 가능한 검증 항목이 없어요'],
  ['invalid',snapshot(items,{schema_version:99}),'공개 데이터 확인이 필요합니다'],
+ ['null-json',null,'공개 데이터 확인이 필요합니다'],
 ] as const)test(`state ${name}`,async({page})=>{
  await setup(page,body);await page.setViewportSize({width:390,height:844});await page.goto('./');
  await expect(page.locator('article')).toHaveCount(0);

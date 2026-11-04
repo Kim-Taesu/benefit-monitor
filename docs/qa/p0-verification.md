@@ -52,3 +52,8 @@ Playwright 1.56.1이 ubuntu-latest의 Ubuntu 26.04를 지원하지 않아 브라
 360/390/768/1440px, 상세 및 상태별 PNG 13개와 HTML 보고서 생성.
 https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41764062478
 브라우저와 단위 테스트 추가 후 최종 head를 다시 확인합니다.
+
+CI 41764290727: npm ci 잠금 파일 설치, 실제 운영 번들+실패 공개 출력 조립 smoke test,
+브라우저 17개 테스트 통과. 생성된 390px/1440px PNG를 직접 살펴보았고, 모바일에서 첫 카드가
+낮게 배치되는 점을 개선하도록 상단 밀도를 줄였습니다. 최종 검사는 첫 제목이 844px 화면 안에 드는지도 확인합니다.
+JSON null은 로딩 전 상태와 분리해 데이터 오류 안내로 처리하도록 추가 점검합니다.
