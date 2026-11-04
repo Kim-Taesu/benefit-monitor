@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "topic trial result v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "trial-result-v1"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "offline_fixture",
+        "read_only_research"
+      ]
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "partial",
+        "blocked",
+        "failed"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "enum": [
+              "missing_input",
+              "policy_blocked",
+              "environment_unavailable",
+              "tool_failure",
+              "budget_exhausted"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "candidate_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "candidate_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "enum": [
+              "topic-draft-v1"
+            ]
+          },
+          "topic_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "item_links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "item_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence_claim_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "match_type": {
+                  "enum": [
+                    "explicit",
+                    "contextual"
+                  ]
+                }
+              },
+              "required": [
+                "item_id",
+                "evidence_claim_ids",
+                "reason",
+                "match_type"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "profile_conditions": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "enum": [
+                        "district",
+                        "participation",
+                        "carrier"
+                      ]
+                    },
+                    "operator": {
+                      "enum": [
+                        "eq"
+                      ]
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "scope": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "operator",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "enum": [
+                        "age"
+                      ]
+                    },
+                    "operator": {
+                      "enum": [
+                        "between"
+                      ]
+                    },
+                    "min": {
+                      "type": "integer"
+                    },
+                    "max": {
+                      "type": "integer"
+                    },
+                    "basis": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "reference_date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "operator",
+                    "min",
+                    "max",
+                    "basis",
+                    "reference_date"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "excluded_items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "item_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "item_id",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "snapshot_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "audit": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "schema_version",
+          "topic_id",
+          "title",
+          "item_links",
+          "profile_conditions",
+          "excluded_items",
+          "snapshot_id",
+          "audit"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "excluded_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "item_id",
+          "reason"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "mode",
+    "status",
+    "errors",
+    "topics",
+    "excluded_items"
+  ],
+  "additionalProperties": false
+}
