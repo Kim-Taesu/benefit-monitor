@@ -1,0 +1,52 @@
+[
+  {
+    "id": "real-02",
+    "check": "coupon",
+    "expected": "한강 배달존 지정 + 25,000원 이상 주문 시 3,000원 쿠폰; 환급과 구분"
+  },
+  {
+    "id": "real-08",
+    "check": "authority",
+    "expected": "시민 체험 기사에 있는 임산부 자격을 최신 기관 확정 사실처럼 게시하면 안 됨"
+  },
+  {
+    "id": "real-10",
+    "check": "completion",
+    "expected": "18시 이후 방문, GPS 인증, 3곳 방문 뒤 완료 버튼 필요; 최대1만P를 이 챌린지 확정액으로 사용 금지"
+  },
+  {
+    "id": "real-11",
+    "check": "eligibility",
+    "expected": "공고일 무주택, 소득130%/맞벌이200%, 자산3억6200만원; 접수 종료"
+  },
+  {
+    "id": "real-16",
+    "check": "internal_conflict",
+    "expected": "본문 2026년 만19~39세와 1986~2007년 출생 표기 불일치 가능; 원기관 정정 확인 필요"
+  },
+  {
+    "id": "real-19",
+    "check": "maximum",
+    "expected": "15%는 조건부 조합이며 모두에게 보장 안 됨; 추가5%와 구별"
+  },
+  {
+    "id": "real-20",
+    "check": "mixed_dates",
+    "expected": "사진전11월1~30일과 체험11월7~8일, 활쏘기11월14일의 접수일을 섞지 않음"
+  },
+  {
+    "id": "real-22",
+    "check": "audience",
+    "expected": "40~50대는 주 대상층이고 연령 제한이라고 단정하면 안 됨"
+  },
+  {
+    "id": "real-25",
+    "check": "scope",
+    "expected": "형한나미용실 65세이상10%를 전체90상점 공통 할인으로 확대 금지"
+  },
+  {
+    "id": "real-26",
+    "check": "exception",
+    "expected": "비서울 소재 참여대학은 본인 또는 직계존속 서울거주 증빙 필요; 이미 종료된 모집"
+  }
+]
