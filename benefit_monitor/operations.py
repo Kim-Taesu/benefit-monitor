@@ -9,7 +9,7 @@ def digest(text):
     return sha256(' '.join(text.split()).encode()).hexdigest()
 
 
-BODY_HASH_VERSION=3
+BODY_HASH_VERSION=4
 # Page chrome after the article body: related lists, comments, popularity rankings.
 BODY_END_MARKERS=('이 자료는 텍스트에 한하여 공공누리','기사 관련 태그','댓글은 자유로운',
                   '최근 본 서비스','다른 이용자가 함께 본 서비스','실시간 인기뉴스')
@@ -125,15 +125,18 @@ def check_bodies(state,items,sources,now,limit):
                 robot=''
             if not allowed(robot,target,rss.AGENT):raise ValueError('robots_denied')
             page=rss.fetch(target,source['domains']).decode('utf-8')
-            content,mode=extract_body(page)
+            content,mode=extract_body(page,target)
             if len(content)<80:raise ValueError('insufficient_text')
             hashed=digest(content)
             comparison='baseline'
             if row.get('body_hash'):
                 if row.get('body_hash_version')==BODY_HASH_VERSION:
                     comparison='same' if row['body_hash']==hashed else 'changed'
+                elif row.get('body_hash_version')==3:
+                    if row['body_hash']!=digest(extract_body(page)[0]):
+                        comparison='changed'
                 elif row.get('body_hash_version')==2:
-                    # Preserve v2's known comparison during the first v3 snapshot.
+                    # Preserve v2's known comparison during the first v4 snapshot.
                     legacy=Text();legacy.feed(page)
                     old_text=' '.join(' '.join(legacy.parts).split())
                     if row['body_hash']!=digest(article_text(old_text)):
@@ -188,7 +191,7 @@ def sanitize(state,source_ids,now):
                 out[field]=date.isoformat()
         if row.get('hold_reason') in ('title_changed','body_changed'):out['hold_reason']=row['hold_reason']
         if row.get('body_status') in ('checked','failed'):out['body_status']=row['body_status']
-        if row.get('body_parse_mode') in ('main','article','document'):out['body_parse_mode']=row['body_parse_mode']
+        if row.get('body_parse_mode') in ('seoul_news','main','article','document'):out['body_parse_mode']=row['body_parse_mode']
         if row.get('body_comparison') in ('baseline','same','changed'):out['body_comparison']=row['body_comparison']
         if type(row.get('body_hash_version')) is int and 1<=row['body_hash_version']<=99:out['body_hash_version']=row['body_hash_version']
         if row.get('pending_reason') in ('title_changed','body_changed','verification_expired','manual_review'):

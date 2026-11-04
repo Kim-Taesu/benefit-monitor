@@ -23,3 +23,28 @@ class BodyTextTests(unittest.TestCase):
 
     def test_deep_markup_is_bounded(self):
         with self.assertRaises(ValueError):extract_body('<div>'*300+'text'+'</div>'*300)
+
+
+class SeoulBodyScopeTests(unittest.TestCase):
+    URL = 'https://mediahub.seoul.go.kr/archives/2019868'
+
+    def test_verified_host_and_article_path_use_unique_official_body_class(self):
+        page = '<main>조회 99<div class="extra news_detail_cont"><p>조회 5회 이상 · 지원 1,000원</p><header>신청 (1건)</header></div>다른 추천 기사</main>'
+        self.assertEqual(extract_body(page, self.URL), ('조회 5회 이상 · 지원 1,000원 신청 (1건)', 'seoul_news'))
+
+    def test_same_class_on_other_hosts_or_routes_is_not_trusted(self):
+        page = '<main>공통 조건<div class="news_detail_cont">일부 조건</div></main>'
+        for url in ['https://other.example/archives/1', 'https://mediahub.seoul.go.kr/search', 'https://mediahub.seoul.go.kr/archives/1/extra', None]:
+            with self.subTest(url=url):
+                self.assertEqual(extract_body(page, url), ('공통 조건 일부 조건', 'main'))
+
+    def test_duplicate_or_unclosed_official_scopes_keep_whole_document(self):
+        for page in ['밖 조건<main><div class="news_detail_cont">A</div><div class="news_detail_cont">B</div></main>', '밖 조건<main><div class="news_detail_cont">A</main>']:
+            text, mode = extract_body(page, self.URL)
+            self.assertEqual(mode, 'document')
+            self.assertIn('밖 조건', text)
+            self.assertIn('A', text)
+
+    def test_legacy_mode_still_reproduces_v3_hash_input(self):
+        page = '<main>조회 99<div class="news_detail_cont">조건 1,000원</div></main>'
+        self.assertEqual(extract_body(page), ('조회 99 조건 1,000원', 'main'))
