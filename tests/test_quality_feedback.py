@@ -17,7 +17,7 @@ class QualityFeedbackTests(unittest.TestCase):
         d['payment_terms']['evidence_url']='https://evil.example/event'
         with self.assertRaises(ValueError):validate(d,SOURCES,NOW)
     def test_manual_snapshot_never_proves_scheduled_run(self):
-        context=publish.run_context(NOW, NOW.replace(hour=1), 'workflow_dispatch')
+        context=publish.run_context(NOW, NOW.replace(hour=0, minute=30), 'workflow_dispatch')
         self.assertEqual(context['status'],'pre_schedule_snapshot')
         self.assertFalse(context['scheduled_run_confirmed'])
         context=publish.run_context(NOW, NOW, 'workflow_dispatch')

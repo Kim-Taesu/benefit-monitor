@@ -11,7 +11,7 @@ from benefit_monitor.store import save
 
 class ScheduleTests(unittest.TestCase):
     def test_workflow_is_the_single_daily_schedule_source(self):
-        self.assertEqual(publish.collection_time(), time(6))
+        self.assertEqual(publish.collection_time(), time(1))
         with tempfile.TemporaryDirectory() as directory:
             workflow = Path(directory) / 'workflow.yml'
             workflow.write_text("on:\n  schedule:\n    - cron: '15 22 * * *'\n  workflow_dispatch:\n")
@@ -20,14 +20,14 @@ class ScheduleTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 publish.collection_time(workflow)
 
-    def test_six_am_boundary_and_trigger(self):
-        now = datetime.fromisoformat('2026-10-29T06:00:00+09:00')
+    def test_scheduled_boundary_and_trigger(self):
+        now = datetime.fromisoformat('2026-10-29T01:00:00+09:00')
         for event, expected in [('schedule', True), ('workflow_dispatch', False), ('push', False), ('', False)]:
             with self.subTest(event=event):
                 context = publish.run_context(now, now, event)
                 self.assertEqual(context['expected_collection_at'], now.isoformat())
                 self.assertEqual(context['scheduled_run_confirmed'], expected)
-        before = now.replace(hour=5, minute=59)
+        before = now.replace(hour=0, minute=59)
         context = publish.run_context(before, before, 'schedule')
         self.assertEqual(context['status'], 'pre_schedule_snapshot')
         self.assertFalse(context['scheduled_run_confirmed'])

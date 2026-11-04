@@ -1,8 +1,9 @@
 name: Daily benefit briefing
 on:
   schedule:
-    # 06:00 Asia/Seoul (UTC+9); GitHub may delay scheduled runs.
-    - cron: '0 21 * * *'
+    # 01:00 Asia/Seoul (UTC+9). Observed GitHub delays reached ~6h, so start
+    # early to aim for completion before 07:00 KST. Not guaranteed.
+    - cron: '0 16 * * *'
   workflow_dispatch:
   push:
     branches: [main]
