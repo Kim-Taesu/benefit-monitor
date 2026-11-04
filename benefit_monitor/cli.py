@@ -9,6 +9,7 @@ from .diff import classify
 from .collectors.rss import collect
 from .collectors.html import collect as collect_html
 from .collectors.districts import collect as collect_districts
+from .collectors.public import collect as collect_public
 from . import cost_policy
 from . import operations
 from .briefing import build as build_briefing, write as write_briefing
@@ -51,9 +52,9 @@ def run(root, imports=None, online=False, now=None):
                     successful_sources.append(s["id"])
                     continue
                 failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
-            if online and (s.get("feed_url") or s.get("html_url")):
+            if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
                 try:
-                    incoming.extend(collect(s) if s.get("feed_url") else collect_html(s))
+                    incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))
                     successful_sources.append(s["id"])
                     continue
                 except Exception as e:

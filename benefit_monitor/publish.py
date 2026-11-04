@@ -61,7 +61,7 @@ def coverage(root, config, report, items):
     sources = []
     observed = {d["district"]: d for d in report.get("district_coverage", []) if "district" in d}
     for source in config["sources"]:
-        connected = bool(source.get("feed_url") or source.get("html_url"))
+        connected = bool(source.get("feed_url") or source.get("html_url") or source.get("collector"))
         status = "checked" if source["id"] in success else "failed" if connected else "not_connected"
         district = source.get("district_feed")
         if district:
