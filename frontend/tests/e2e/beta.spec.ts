@@ -13,7 +13,7 @@ async function setup(page){
    item({url:'https://mediahub.seoul.go.kr/archives/3',summary:'[테스트] 성남 야경',districts:['성남시'],labels:{region:'성남시'}})
   ])});return route.continue();
  });
- await page.goto('./');await page.locator('#beta summary').first().click();
+ await page.goto('./');await page.locator('.beta-settings > summary').click();
 }
 test('profile and topic navigation, optional local consent, feedback, revoke and reset',async({page})=>{
  await setup(page);
@@ -26,9 +26,9 @@ test('profile and topic navigation, optional local consent, feedback, revoke and
  await page.getByRole('button',{name:'개인화 설정 저장',exact:true}).click();
  await expect(page.locator('#beta')).toContainText('이 브라우저에 설정을 저장했습니다');
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('benefit-monitor:beta:v1')!).events)).toEqual([]);
- await page.getByRole('button',{name:/저녁 산책·야간 문화 ·/}).click();
- await expect(page.locator('#beta-related article')).toHaveCount(1);
- await expect(page.locator('#beta-related')).not.toContainText('성남');
+ await page.locator('[data-topic="night"]').click();
+ await expect(page.locator('#results article')).toHaveCount(1);
+ await expect(page.locator('#results')).not.toContainText('성남');
  await page.getByLabel('이 기기의 행동 기록에 동의').check();
  await page.getByRole('button',{name:'관심 있어요',exact:true}).click();
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('benefit-monitor:beta:v1')!).events.some(e=>e.action==='like'))).toBe(true);
@@ -39,7 +39,7 @@ test('profile and topic navigation, optional local consent, feedback, revoke and
 });
 for(const width of [390,1440])test(`beta accessibility and screenshot ${width}`,async({page})=>{
  await page.setViewportSize({width,height:900});await setup(page);
- await page.getByRole('button',{name:/저녁 산책·야간 문화 ·/}).click();
+ await page.locator('[data-topic="night"]').click();
  await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
  expect(await page.evaluate(async()=>(await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}})).violations)).toEqual([]);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -60,7 +60,7 @@ test('revocation stops learning even if persistence fails',async({page})=>{
  await page.getByLabel('이 기기의 행동 기록에 동의').uncheck();
  await expect(page.getByLabel('이 기기의 행동 기록에 동의')).not.toBeChecked();
  await expect(page.locator('#beta')).toContainText('기록은 중단했지만');
- await page.getByRole('button',{name:/저녁 산책·야간 문화 ·/}).click();
+ await page.locator('[data-topic="night"]').click();
  await page.getByRole('button',{name:'관심 있어요',exact:true}).click();
  await expect(page.locator('#beta')).toContainText('선택 사항인 행동 기록에 동의');
 });
@@ -69,9 +69,20 @@ test('another tab cannot resurrect withdrawn consent or deleted settings',async(
  const other=await context.newPage();await setup(other);
  await page.getByLabel('이 기기의 행동 기록에 동의').uncheck();
  await expect(other.getByLabel('이 기기의 행동 기록에 동의')).not.toBeChecked();
- await other.getByRole('button',{name:/저녁 산책·야간 문화 ·/}).click();
+ await other.locator('[data-topic="night"]').click();
  expect(await other.evaluate(()=>JSON.parse(localStorage.getItem('benefit-monitor:beta:v1')!).events)).toEqual([]);
  await page.getByRole('button',{name:'개인화 설정·기록 삭제',exact:true}).click();
  await other.getByRole('button',{name:'관심 있어요',exact:true}).click();
  expect(await other.evaluate(()=>localStorage.getItem('benefit-monitor:beta:v1'))).toBeNull();
+});
+test('top topics filter the single discovery list and collection notice is at bottom',async({page})=>{
+ await setup(page);
+ await page.locator('[data-topic="night"]').click();
+ await expect(page.locator('#results article')).toHaveCount(1);
+ await expect(page.locator('#results')).toContainText('은평 야간 전시');
+ await expect(page.locator('#beta article')).toHaveCount(0);
+ const positions=await page.evaluate(()=>({topic:document.getElementById('beta')!.offsetTop,results:document.getElementById('results')!.offsetTop,notice:document.getElementById('collection-notice')?.offsetTop??0}));
+ expect(positions.topic).toBeLessThan(positions.results);expect(positions.notice).toBeGreaterThan(positions.results);
+ await page.getByRole('button',{name:'전체 주제 보기',exact:true}).click();
+ await expect(page.locator('#results article')).toHaveCount(2);
 });

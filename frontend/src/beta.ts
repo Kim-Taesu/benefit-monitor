@@ -1,9 +1,9 @@
 import policy from './source-policy.json' with {type:'json'};
 import type {Benefit} from './benefits.ts';
 export const DISTRICTS:readonly string[]=policy.districts;
-export const TOPICS={local:'내 생활권 소식',night:'저녁 산책·야간 문화',culture:'전시·문화 체험',learning:'배움과 취미',shopping:'생활 할인',carrier:'내 통신사 관련 혜택',age:'내 연령 관련 안내'} as const;
+export const TOPICS={local:'내 생활권 소식',night:'저녁 산책·야간 문화',culture:'전시·문화 체험',learning:'배움과 취미',shopping:'생활 할인',vouchers:'서울페이·상품권 알뜰하게',convenience:'편의점 갈 때 챙길 혜택',outdoors:'걷고 뛰며 즐기는 서울',family:'아이와 함께 가볼 곳',housing:'주거·입주 모집 살펴보기',career:'일자리·면접 준비하기',carrier:'내 통신사 관련 혜택',age:'내 연령 관련 안내'} as const;
 export type TopicId=keyof typeof TOPICS;
-export const INTEREST_IDS:TopicId[]=['night','culture','learning','shopping'];
+export const INTEREST_IDS:TopicId[]=['night','culture','learning','shopping','vouchers','convenience','outdoors','family','housing','career'];
 export const CARRIERS=['','KT','SKT','LG U+','알뜰폰'] as const;
 export interface Profile {residence:string;areas:string[];age:number|null;carrier:string;interests:TopicId[]}
 export type Action='view'|'click'|'search'|'like'|'hide'|'wrong'|'official';
@@ -19,7 +19,7 @@ export const emptyBeta=():BetaState=>({version:1,profile:{residence:'',areas:[],
 function object(x:unknown):x is Record<string,unknown>{return !!x&&typeof x==='object'&&!Array.isArray(x);}
 function validProfile(p:unknown):p is Profile {
  if(!object(p)||Object.keys(p).sort().join(',')!=='age,areas,carrier,interests,residence')return false;
- return typeof p.residence==='string'&&(!p.residence||DISTRICTS.includes(p.residence))&&Array.isArray(p.areas)&&p.areas.length<=25&&p.areas.every(x=>typeof x==='string'&&DISTRICTS.includes(x))&&new Set(p.areas).size===p.areas.length&&(p.age===null||typeof p.age==='number'&&Number.isInteger(p.age)&&p.age>=14&&p.age<=120)&&typeof p.carrier==='string'&&(CARRIERS as readonly string[]).includes(p.carrier)&&Array.isArray(p.interests)&&p.interests.length<=4&&p.interests.every(x=>INTEREST_IDS.includes(x))&&new Set(p.interests).size===p.interests.length;
+ return typeof p.residence==='string'&&(!p.residence||DISTRICTS.includes(p.residence))&&Array.isArray(p.areas)&&p.areas.length<=25&&p.areas.every(x=>typeof x==='string'&&DISTRICTS.includes(x))&&new Set(p.areas).size===p.areas.length&&(p.age===null||typeof p.age==='number'&&Number.isInteger(p.age)&&p.age>=14&&p.age<=120)&&typeof p.carrier==='string'&&(CARRIERS as readonly string[]).includes(p.carrier)&&Array.isArray(p.interests)&&p.interests.length<=INTEREST_IDS.length&&p.interests.every(x=>INTEREST_IDS.includes(x))&&new Set(p.interests).size===p.interests.length;
 }
 function validEvent(e:unknown):e is LocalEvent{return object(e)&&Object.keys(e).sort().join(',')==='action,at,topic'&&isTopic(e.topic)&&actions.includes(e.action as Action)&&typeof e.at==='number'&&Number.isFinite(e.at)&&e.at>0;}
 function validState(s:unknown):s is BetaState{return object(s)&&Object.keys(s).sort().join(',')==='consent,events,profile,version'&&s.version===1&&validProfile(s.profile)&&typeof s.consent==='boolean'&&Array.isArray(s.events)&&s.events.length<=MAX_EVENTS&&s.events.every(validEvent);}
@@ -36,7 +36,7 @@ export function recordEvent(state:BetaState,topic:TopicId,action:Action,now:numb
  const event={topic,action,at:now};if(!validEvent(event))return state;
  return {...state,events:[...recentEvents(state.events,now),event].slice(-MAX_EVENTS)};
 }
-const keywords:Partial<Record<TopicId,RegExp>>={night:/야간|밤길|밤 산책|저녁|야경|빛 축제/,culture:/전시|공연|문화|체험|축제/,learning:/교육|강좌|수업|학습|클래스/,shopping:/할인|적립|환급|상품권|장보기|세일/};
+const keywords:Partial<Record<TopicId,RegExp>>={night:/야간|밤길|밤 산책|저녁|야경|빛 축제/,culture:/전시|공연|문화|체험|축제/,learning:/교육|강좌|수업|학습|클래스/,shopping:/할인|적립|환급|상품권|장보기|세일/,vouchers:/상품권|서울페이/,convenience:/\bCU\b|편의점|이마트24|세븐일레븐|GS25/i,outdoors:/걷기|러너|러닝|둘레길|공원/,family:/가족|어린이|육아/,housing:/입주자|매입임대|분양주택|사회주택/,career:/면접|사무지원|희망돌보미|취업/};
 export function searchTopics(query:string):TopicId[]{return INTEREST_IDS.filter(id=>keywords[id]?.test(query));}
 export function summarizeEvents(events:LocalEvent[],now:number) {
  const recent=recentEvents(events,now);
@@ -62,12 +62,13 @@ export function topicsFor(items:Benefit[],profile:Profile,events:LocalEvent[],no
  const carrierPattern=profile.carrier==='KT'?/\bKT\b/i:profile.carrier==='SKT'?/\bSKT\b|T멤버십|T 멤버십/i:profile.carrier==='LG U+'?/LG\s*U\+|유플러스/i:null;
  const result:Topic[]=[];
  for(const id of Object.keys(TOPICS) as TopicId[]){
-  const rows=eligible.filter(i=>id==='local'?areas.some(a=>i.regions.includes(a)):id==='age'?ageCandidate(i,profile.age):id==='carrier'?!!carrierPattern?.test(body(i)):!!keywords[id]?.test(body(i)));
+  const rows=eligible.filter(i=>id==='local'?areas.some(a=>i.regions.includes(a)):id==='age'?ageCandidate(i,profile.age):id==='carrier'?!!carrierPattern?.test(body(i)):!!keywords[id]?.test(['vouchers','convenience','outdoors','family','housing','career'].includes(id)?i.summary:body(i)));
   if(!rows.length)continue;
   const pinned=profile.interests.includes(id)||(id==='local'&&areas.length>0)||(id==='carrier'&&!!profile.carrier)||(id==='age'&&profile.age!==null),s=stats.find(x=>x.id===id)!;
   const learned=s.views>=20?Math.min(5,s.likes+s.official+Math.min(2,s.searches/3)+s.clicks/Math.max(1,s.views)*5)-Math.min(5,s.hides)+(s.decision==='교체 검토'?-3:0):0;
   const reason=id==='local'?'선택한 거주·관심 지역과 연결된 안내입니다. 주민 자격은 별도 확인':id==='carrier'?`${profile.carrier} 관련 문구가 있는 안내입니다. 등급·제외 조건 별도 확인`:id==='age'?`${profile.age}세가 원문의 연령 범위에 포함된 후보입니다. 기준일·예외·다른 자격 별도 확인`:pinned?'직접 선택한 관심사와 관련된 문구가 있습니다. 이용 조건 별도 확인':'새로운 관심사를 발견할 수 있는 주제입니다. 이용 조건 별도 확인';
-  result.push({id,title:TOPICS[id],reason,items:rows,pinned,score:(pinned?100:0)+learned});
+  const title=id==='local'?(profile.residence?`${profile.residence}에서 누릴 혜택`:'관심 지역에서 누릴 혜택'):id==='carrier'?`내 ${profile.carrier} 멤버십 활용하기`:id==='age'?`${profile.age}세인 내가 확인할 혜택`:id==='night'?'저녁 산책에 즐거움 더하기':TOPICS[id];
+  result.push({id,title,reason,items:rows,pinned,score:(pinned?100:0)+learned});
  }
  return result.sort((a,b)=>b.score-a.score||Object.keys(TOPICS).indexOf(a.id)-Object.keys(TOPICS).indexOf(b.id));
 }

@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import {computed,nextTick,onMounted,onUnmounted,ref,watch} from 'vue';
-import BenefitCard from './BenefitCard.vue';
 import type {Benefit} from './benefits';
 import {DISTRICTS,TOPICS,INTEREST_IDS,CARRIERS,BETA_KEY,emptyBeta,loadBeta,saveBeta,clearBeta,recordEvent,recentEvents,topicsFor,summarizeEvents,searchTopics} from './beta';
-import type {Action,BetaState,TopicId,Profile} from './beta';
+import type {Action,BetaState,TopicId,Profile,Topic} from './beta';
 const props=defineProps<{items:Benefit[];now:number;query:string}>();
+const emit=defineEmits<{selectTopic:[topic:Topic|null]}>();
+const icons:Record<TopicId,string>={local:'🏡',night:'🌙',culture:'🎨',learning:'📚',shopping:'🛍️',carrier:'📱',age:'🎯',vouchers:'🎟️',convenience:'🏪',outdoors:'👟',family:'🧸',housing:'🔑',career:'💼'};
+const descriptions:Record<TopicId,string>={local:'지역 프로그램·행사·생활 지원',night:'야간 개장·빛 축제·야외 문화 행사',culture:'이번 주 둘러볼 전시와 문화 체험',learning:'새로 시작하는 교육·강좌·취미',shopping:'장보기·결제 할인·적립 안내',carrier:'멤버십 등급·요일·결제 조건 확인',age:'연령 조건이 있는 지원·교육·문화 안내',vouchers:'상품권 할인·결제 페이백',convenience:'멤버십 할인·포인트 적립',outdoors:'걷기 챌린지·러너 공간·공원',family:'어린이 관람·가족 체험',housing:'임대·분양·사회주택 모집',career:'채용 공고·면접 지원 공간'};
 let storage:Storage|null=null;try{storage=window.localStorage;}catch{}
 const state=ref(loadBeta(storage,props.now));
 let consentStopped=false;
 function stored(){const value=loadBeta(storage,props.now);return consentStopped?{...value,consent:false,events:[]}:value;}
 const form=ref<Profile>(JSON.parse(JSON.stringify(state.value.profile))),ageInput=ref(state.value.profile.age===null?'':String(state.value.profile.age));
-const opened=ref(false),selected=ref<TopicId|null>(null),notice=ref(''),root=ref<HTMLElement|null>(null);
+const selected=ref<TopicId|null>(null),notice=ref(''),root=ref<HTMLElement|null>(null);
 const topics=computed(()=>topicsFor(props.items,state.value.profile,state.value.consent?state.value.events:[],props.now));
-// Explicit profile interests stay visible; up to two discovery topics rotate by local aggregate evidence.
-const displayed=computed(()=>[...topics.value.filter(t=>t.pinned),...topics.value.filter(t=>!t.pinned).slice(0,2)]);
+// Explicit interests stay visible; discovery slots rank by local aggregate evidence.
+const showAll=ref(false);
+const displayed=computed(()=>{const pinned=topics.value.filter(t=>t.pinned);return [...pinned,...topics.value.filter(t=>!t.pinned).slice(0,showAll.value?undefined:Math.max(0,8-pinned.length))];});
 const current=computed(()=>topics.value.find(t=>t.id===selected.value));
 const stats=computed(()=>summarizeEvents(state.value.events,props.now).filter(s=>s.views||s.clicks||s.likes||s.hides||s.searches||s.wrong||s.official));
 function persist(next:BetaState):boolean {
@@ -49,7 +52,7 @@ function reset(){
  consentStopped=true;state.value=emptyBeta();form.value=JSON.parse(JSON.stringify(state.value.profile));ageInput.value='';selected.value=null;seen.clear();
  notice.value=clearBeta(storage)?'개인화 설정과 기록을 삭제했습니다.':'기록은 중단했지만 저장소 삭제에 실패했습니다. 브라우저 사이트 데이터를 삭제해 주세요.';
 }
-async function choose(id:TopicId){selected.value=id;event(id,'click');await nextTick();document.getElementById('beta-related')?.focus();}
+async function choose(id:TopicId){selected.value=id;event(id,'click');await nextTick();document.getElementById('results')?.focus();document.getElementById('results')?.scrollIntoView({block:'start',behavior:'smooth'});}
 function feedback(action:Action){
  if(!current.value)return;
  if(!state.value.consent){notice.value='피드백을 기록하려면 선택 사항인 행동 기록에 동의해 주세요. 혜택은 계속 볼 수 있습니다.';return;}
@@ -59,14 +62,17 @@ let observer:IntersectionObserver|undefined;
 const seen=new Set<TopicId>();
 async function observe(){
  await nextTick();observer?.disconnect();
- if(!opened.value||!state.value.consent||document.visibilityState!=='visible')return;
+ if(!state.value.consent||document.visibilityState!=='visible')return;
  observer=new IntersectionObserver(entries=>{for(const entry of entries){
   const id=(entry.target as HTMLElement).dataset.topic as TopicId;
-  if(entry.isIntersecting&&entry.intersectionRatio>=0.5&&!seen.has(id)&&opened.value&&document.visibilityState==='visible'&&state.value.consent){seen.add(id);event(id,'view');}
+  if(entry.isIntersecting&&entry.intersectionRatio>=0.5&&!seen.has(id)&&document.visibilityState==='visible'&&state.value.consent){seen.add(id);event(id,'view');}
  }},{threshold:0.5});
  root.value?.querySelectorAll('[data-topic]').forEach(el=>observer!.observe(el));
 }
-function toggle(e:Event){opened.value=(e.target as HTMLDetailsElement).open;void observe();}
+function clearSelection(){selected.value=null;}
+function officialClick(){if(current.value)event(current.value.id,'official');}
+defineExpose({clearSelection,officialClick});
+watch([selected,current],()=>emit('selectTopic',selected.value?(current.value||{id:selected.value,title:TOPICS[selected.value],reason:'현재 표시 가능한 항목이 없습니다.',items:[],pinned:false,score:0}):null),{immediate:true});
 watch(()=>displayed.value.map(t=>t.id).join(','),()=>void observe());
 watch(()=>props.query,(query)=>{if(state.value.consent)for(const id of searchTopics(query))event(id,'search');});
 // Purge expired local records on access and as time advances, not merely from aggregates.
@@ -81,16 +87,23 @@ function syncStorage(e:StorageEvent){
 }
 onMounted(()=>{if(storage?.getItem){try{if(storage.getItem(BETA_KEY))persist(loadBeta(storage,props.now));}catch{}}
  window.addEventListener('storage',syncStorage);
- document.addEventListener('visibilitychange',observe);
+ document.addEventListener('visibilitychange',observe);void observe();
 });
 onUnmounted(()=>{window.removeEventListener('storage',syncStorage);observer?.disconnect();document.removeEventListener('visibilitychange',observe);});
 </script>
 <template>
-<section id="beta" ref="root" class="beta-panel" aria-label="서울 개인화 베타">
- <details @toggle="toggle"><summary>서울 개인화 베타 · 나에게 맞는 주제 찾기</summary>
+<section id="beta" ref="root" class="beta-panel" aria-labelledby="topics-title">
+ <div class="topics-heading"><div><p class="eyebrow">나를 위한 발견</p><h2 id="topics-title">어떤 혜택을 찾아볼까요?</h2></div><button v-if="selected" type="button" class="reset" @click="clearSelection">전체 주제 보기</button></div>
+ <div v-if="displayed.length" class="topic-grid">
+  <button v-for="topic in displayed" :key="topic.id" :data-topic="topic.id" type="button" class="topic-button" :class="'topic-'+topic.id" :aria-pressed="selected===topic.id" aria-controls="results" @click="choose(topic.id)"><span class="topic-icon" aria-hidden="true">{{icons[topic.id]}}</span><strong>{{topic.title}}</strong><small>{{descriptions[topic.id]}}</small><span class="topic-count">{{topic.items.length}}개 혜택 <span aria-hidden="true">↗</span></span></button>
+ </div>
+ <p v-else class="fine-print">현재 표시할 수 있는 주제가 없습니다. 수집·검증 대기일 수 있으며 실제 혜택이 없다는 뜻은 아닙니다.</p>
+ <button v-if="topics.length>8" class="topic-more" type="button" :aria-expanded="showAll" @click="showAll=!showAll">{{showAll?'주제 접기':'다른 주제 더 보기'}} <span aria-hidden="true">{{showAll?'−':'+'}}</span></button>
+ <div v-if="current" class="beta-feedback" aria-label="선택한 주제 피드백"><span>이 주제가 마음에 드나요?</span><button type="button" @click="feedback('like')">관심 있어요</button><button type="button" @click="feedback('hide')">관심 없어요</button><button type="button" @click="feedback('wrong')">주제·정보가 맞지 않아요</button></div>
+ <p v-if="notice" class="action-notice" role="status" aria-live="polite">{{notice}}</p>
+ <details class="beta-settings"><summary>내 지역·통신사·관심사 설정</summary>
  <div class="beta-body">
-  <h2>내 생활에 맞는 서울 혜택</h2>
-  <p>서울 25개 구와 서울에서 이용할 수 있는 공통 안내를 탐색합니다. AI 연결 전 규칙 기반 시험이며, 모든 구의 혜택을 빠짐없이 수집한 것은 아닙니다.</p>
+  <p>선택한 정보로 주제를 구성합니다. 설정은 이 브라우저에만 저장되며, 신청 자격을 확정하지 않습니다.</p>
   <form @submit.prevent="saveProfile">
    <div class="beta-fields">
     <label>거주 자치구<select v-model="form.residence"><option value="">선택 안 함</option><option v-for="area in DISTRICTS" :key="area">{{area}}</option></select></label>
@@ -107,18 +120,7 @@ onUnmounted(()=>{window.removeEventListener('storage',syncStorage);observer?.dis
    <p class="fine-print">선택 사항입니다. 주제 노출·클릭·검색 주제·피드백·공식 링크 이동과 시각을 이 브라우저에 최대 30일·500건 저장합니다. 검색어 원문과 프로필은 행동 기록에 넣지 않으며 서버·AI로 전송하지 않습니다. 동의를 해제하면 기록을 삭제합니다. 방문하지 않는 동안 남은 기록은 다음 방문 시 정리됩니다.</p>
    <button type="button" @click="reset">개인화 설정·기록 삭제</button>
   </div>
-  <p class="action-notice" role="status" aria-live="polite">{{notice}}</p>
-  <div v-if="displayed.length" class="topic-grid">
-   <button v-for="topic in displayed" :key="topic.id" :data-topic="topic.id" type="button" class="topic-button" :aria-pressed="selected===topic.id" aria-controls="beta-related" @click="choose(topic.id)"><strong>{{topic.title}} · {{topic.items.length}}건</strong><span>{{topic.pinned?'내 설정으로 선택':'새로운 발견'}}</span><small>{{topic.reason}}</small></button>
-  </div>
-  <p v-else>현재 표시할 수 있는 주제가 없습니다. 수집·검증 대기일 수 있으며 실제 혜택이 없다는 뜻은 아닙니다.</p>
-  <section id="beta-related" tabindex="-1" aria-label="선택한 주제의 혜택">
-   <template v-if="current"><h3>{{current.title}}</h3><p>{{current.reason}}</p><p class="fine-print">원문 문구를 기준으로 연결한 후보입니다. 제외 조건·기준일·소득·거주 요건 등을 모두 판정한 결과가 아닙니다.</p>
-    <div class="beta-feedback"><button type="button" @click="feedback('like')">관심 있어요</button><button type="button" @click="feedback('hide')">관심 없어요</button><button type="button" @click="feedback('wrong')">주제·정보가 맞지 않아요</button></div>
-    <div class="card-grid"><BenefitCard v-for="item in current.items" :key="item.source+item.url" :item="item" :now="now" :hide-favorite="true" @official-click="event(current!.id,'official')" /></div>
-   </template><p v-else-if="selected">선택한 주제의 표시 가능한 항목이 없어졌습니다. 다른 주제를 선택하세요.</p>
-  </section>
-  <details class="beta-stats"><summary>이 기기의 주제 반응 확인</summary><p>전체 사용자 통계가 아닙니다. 보이는 주제만 방문당 한 번 노출로 기록하며, 20회 미만은 자료 부족으로 처리합니다. 반응이 적은 자동 주제는 순위를 낮추고 다른 주제를 보여줍니다. 직접 선택한 주제는 유지합니다. 클릭은 실제 이용이나 절약을 의미하지 않습니다.</p><div class="beta-table"><table><caption>최근 30일 로컬 반응 · 시험 기준</caption><thead><tr><th scope="col">주제</th><th scope="col">노출</th><th scope="col">클릭</th><th scope="col">검색</th><th scope="col">판단</th></tr></thead><tbody><tr v-for="s in stats" :key="s.id"><th scope="row">{{TOPICS[s.id]}}</th><td>{{s.views}}</td><td>{{s.clicks}}</td><td>{{s.searches}}</td><td>{{s.decision}}</td></tr></tbody></table></div><p v-if="!stats.length">저장된 행동 기록이 없습니다.</p></details>
+  <details class="beta-stats"><summary>이 기기의 주제 반응 확인</summary><p>전체 사용자 통계가 아닙니다. 화면에 보이는 주제만 방문당 한 번 노출로 기록하며, 20회 미만은 자료 부족으로 처리합니다. 직접 선택한 주제는 유지하고 자동 주제 순위를 반응에 따라 조정합니다. 클릭은 실제 이용이나 절약을 의미하지 않습니다.</p><div class="beta-table"><table><caption>최근 30일 로컬 반응 · 시험 기준</caption><thead><tr><th scope="col">주제</th><th scope="col">노출</th><th scope="col">클릭</th><th scope="col">검색</th><th scope="col">판단</th></tr></thead><tbody><tr v-for="s in stats" :key="s.id"><th scope="row">{{TOPICS[s.id]}}</th><td>{{s.views}}</td><td>{{s.clicks}}</td><td>{{s.searches}}</td><td>{{s.decision}}</td></tr></tbody></table></div><p v-if="!stats.length">저장된 행동 기록이 없습니다.</p></details>
  </div></details>
 </section>
 </template>

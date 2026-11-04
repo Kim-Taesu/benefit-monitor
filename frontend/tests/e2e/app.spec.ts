@@ -31,7 +31,7 @@ for(const width of [360,390,768,1440])test(`responsive ${width}px, semantics, ax
  await page.addScriptTag({path:axePath});
  const accessibility=await page.evaluate(async()=>await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));
  expect(accessibility.violations).toEqual([]);
- const headline=await page.locator('article h3').first().boundingBox();if(width<768)expect(headline!.y+headline!.height).toBeLessThan(844);
+ const topic=await page.locator('.topic-button').first().boundingBox();if(width<768)expect(topic!.y+topic!.height).toBeLessThan(844);
  await capture(page,`home-${width}`);
  await page.keyboard.press('Tab');await expect(page.getByRole('link',{name:'혜택 목록으로 건너뛰기'})).toBeFocused();
  await page.keyboard.press('Enter');await expect(page.locator('#results')).toBeFocused();
