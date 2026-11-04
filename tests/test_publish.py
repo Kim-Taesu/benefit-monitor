@@ -29,6 +29,29 @@ class PublishTests(unittest.TestCase):
     def run_export(self, now=NOW):
         return publish.run(self.root, now=now)
 
+    def test_labels_render_as_facts_filters_summary_and_markdown(self):
+        item = dict(self.item, labels=dict(category="교육·강좌", audience="19~39세 청년", region="서울 관악구", action="신청·예약 필요"))
+        self.report["new"] = [item]
+        save(self.root / "report.json", self.report)
+        self.release(item)
+        result = self.run_export()
+        self.assertEqual(result["items"][0]["labels"]["region"], "서울 관악구")
+        page = (self.root / "delivery/public/index.html").read_text()
+        self.assertIn('data-category="교육·강좌"', page)
+        self.assertIn('data-filter="교육·강좌"', page)
+        self.assertIn("<span>대상</span> 19~39세 청년", page)
+        self.assertIn("<b>공개 1건</b>", page)
+        self.assertIn("<details><summary>수집 현황: 출처 1/1곳 성공", page)
+        text = (self.root / "delivery/public/briefing.md").read_text()
+        self.assertIn("분야: 교육·강좌 · 대상: 19~39세 청년 · 지역: 서울 관악구 · 이용 방법: 신청·예약 필요", text)
+
+    def test_unknown_label_values_are_rejected(self):
+        from benefit_monitor.validation import validate
+        sources = {SOURCE["id"]: SOURCE}
+        for labels in (dict(category="추천"), dict(action="자동 지급 보장"), dict(region=""), dict(price="무료")):
+            with self.subTest(labels=labels), self.assertRaises(ValueError):
+                validate(dict(self.item, labels=labels), sources, NOW)
+
     def test_coverage_shows_unconnected_sources_and_all_registered_districts(self):
         save(self.root / "districts.json", {"districts": [{"name": "강서구"}, {"name": "강남구"}]})
         other = dict(SOURCE, id="other", name="추가 출처", html_url="https://official.example/")
