@@ -1,0 +1,13 @@
+{
+  "schema_version": "trial-result-v1",
+  "mode": "read_only_research",
+  "status": "blocked",
+  "records": [],
+  "errors": [
+    {
+      "code": "environment_unavailable",
+      "message": "robots.txt 확인을 위한 첫 요청 준비 중 DNS 해석 실패(gaierror: [Errno 8] nodename nor servname provided, or not known). robots 허용 여부를 확인하지 못했으므로 원문 및 보조 문서를 열지 않았으며 동일 호스트 요청을 중단했다. HTTP 전송 및 본문 읽기 성공 0건.",
+      "candidate_id": "553a6c9f04a25c7f30e5944d"
+    }
+  ]
+}

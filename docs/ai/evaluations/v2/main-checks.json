@@ -1,0 +1,39 @@
+{
+  "records": 5,
+  "supported_claims": 23,
+  "exact_quote_checks": 25,
+  "topic_links": [
+    [
+      "local",
+      "fixture-normal"
+    ],
+    [
+      "age",
+      "fixture-normal"
+    ],
+    [
+      "night",
+      "fixture-normal"
+    ],
+    [
+      "outdoors",
+      "fixture-normal"
+    ],
+    [
+      "culture",
+      "fixture-injection"
+    ],
+    [
+      "family",
+      "fixture-injection"
+    ]
+  ],
+  "contract_errors": [],
+  "record_statuses": {
+    "fixture-normal": "completed",
+    "fixture-expired": "completed",
+    "fixture-conflict": "partial",
+    "fixture-attachment": "partial",
+    "fixture-injection": "completed"
+  }
+}
