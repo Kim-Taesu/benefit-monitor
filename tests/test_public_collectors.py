@@ -50,6 +50,15 @@ class PublicCollectorTests(unittest.TestCase):
         self.assertTrue(items[0]['needs_recheck'])
         self.assertIn('[SH 주택임대] 2026년 청년 매입임대주택 입주자 모집공고', items[0]['title'])
 
+    def test_sh_skips_cross_posted_and_business_notices(self):
+        extra = SH_LIST.replace('</tbody>', """<tr><td>1</td><td><a onclick="getDetailView('304380')">2026년 청년 매입임대주택 입주자 모집공고</a></td><td>a</td><td>b</td><td>1</td></tr>
+<tr><td>2</td><td><a onclick="getDetailView('311948')">2026년 제1차 건설약정방식 매입임대주택 매입공고</a></td><td>a</td><td>b</td><td>1</td></tr></tbody>""")
+        def response(url, domains):
+            return ALLOW if url.endswith('/robots.txt') else extra.encode()
+        with patch('benefit_monitor.collectors.public.fetch', side_effect=response):
+            items = public.collect(dict(SH, boards=['rent', 'sale']), NOW)
+        self.assertEqual(len(items), 1)
+
     def test_sh_unexpected_markup_fails_closed(self):
         with patch('benefit_monitor.collectors.public.fetch', side_effect=[ALLOW, b'<html>maintenance</html>']):
             with self.assertRaises(ValueError):

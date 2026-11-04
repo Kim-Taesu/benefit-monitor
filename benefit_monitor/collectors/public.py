@@ -49,7 +49,7 @@ SH_BOARDS = {
     "sale": ("/app/lay2/program/S1T294C296/www/brd/m_244", "1", "주택분양"),
     "purchase": ("/app/lay2/program/S1T294C3379/www/brd/m_247", "512", "주택매입"),
 }
-SH_CLOSED = re.compile(r"당첨|발표|마감|계약결과|결과|완료|종료|취소")
+SH_CLOSED = re.compile(r"당첨|발표|마감|계약결과|결과|완료|종료|취소|매입공고|유효기간 연장")
 SH_OPEN = re.compile(r"모집|신청|접수|공고")
 
 
@@ -81,15 +81,17 @@ def parse_sh_list(page, board):
 def collect_sh(source):
     boards = source.get("boards", ["rent"])
     robot = _robots(SH_BASE + "/", source["domains"])
-    result = []
+    result, seen = [], set()
     for board in boards:
         route = sh_list_url(board)
         _require_allowed(robot, route)
         for row in parse_sh_list(fetch(route, source["domains"]).decode("utf-8", "replace"), board):
             title = row["title"]
             # Title words decide only whether a notice is worth reviewing; status stays unverified.
-            if not title or SH_CLOSED.search(title) or not SH_OPEN.search(title):
+            # The same notice is cross-posted on several boards; keep the first board's URL.
+            if not title or row["seq"] in seen or SH_CLOSED.search(title) or not SH_OPEN.search(title):
                 continue
+            seen.add(row["seq"])
             url = sh_detail_url(board, row["seq"])
             if official(url, source["domains"]) and allowed(robot, url, AGENT):
                 result.append(dict(source=source["id"], url=url, title=f"[SH {SH_BOARDS[board][2]}] {title}"[:240],
