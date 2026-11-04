@@ -1,9 +1,14 @@
 import type {Benefit,Filters} from './benefits.ts';
-import {filterUrl} from './benefits.ts';
+import {filterUrl,safeOfficial} from './benefits.ts';
 export const FAVORITES_KEY='benefit-monitor:favorites:v1';
 type FavoriteStorage=Pick<Storage,'getItem'|'setItem'|'removeItem'>;
 export const benefitKey=(item:Pick<Benefit,'source'|'url'>)=>item.source+'\n'+item.url;
-function validIds(ids:unknown):ids is string[]{return Array.isArray(ids)&&ids.length<=200&&ids.every(id=>typeof id==='string'&&id.length>0&&id.length<=4096);}
+function validIds(ids:unknown):ids is string[]{
+ return Array.isArray(ids)&&ids.length<=200&&ids.every(id=>{
+  if(typeof id!=='string'||id.length>4096)return false;
+  const parts=id.split('\n');return parts.length===2&&safeOfficial(parts[1],parts[0]);
+ });
+}
 export function loadFavorites(storage:FavoriteStorage|null):string[]{
  try{const v=JSON.parse(storage?.getItem(FAVORITES_KEY)||'null');return v&&Object.keys(v).length===2&&v.version===1&&validIds(v.ids)?[...new Set<string>(v.ids)]:[];}catch{return [];}
 }
