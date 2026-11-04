@@ -25,3 +25,19 @@
 .beta-feedback{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.beta-stats{margin-top:24px}.beta-stats summary,.beta-areas summary{padding:12px 0;cursor:pointer;font-weight:600}.beta-table{overflow:auto}.beta-table table{border-collapse:collapse;width:100%;font-size:14px}.beta-table th,.beta-table td{padding:10px;text-align:left;border-bottom:1px solid #cbd5e1}.beta-table caption{text-align:left;padding:12px 0}
 #beta-related{scroll-margin-top:30px;margin-top:24px}#beta-related:focus{outline:2px solid #176354;outline-offset:4px}
 @media(max-width:600px){.beta-fields,.topic-grid{grid-template-columns:1fr}.beta-body{padding:0 14px 20px}.beta-panel>details>summary{padding:16px}.beta-body .card-grid{grid-template-columns:1fr}}
+/* Topic-first discovery: one shared results list, optional settings below cards. */
+.beta-panel{margin:8px 0 28px;border:0;border-radius:0;background:transparent;overflow:visible}
+.topics-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}.topics-heading .eyebrow{margin:0 0 6px}.topics-heading h2{margin:0;font-size:24px;letter-spacing:-.7px}
+.topic-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.topic-button{position:relative;padding:20px;min-height:196px;border:1px solid #d9e4df;background:#f1f7f3;transition:border-color .15s,background .15s;box-shadow:0 3px 10px #173c2905}
+.topic-button:hover{border-color:#4a8065;background:#e8f2eb}.topic-button[aria-pressed=true]{border:2px solid #176354;padding:19px;background:#e0efe7}
+.topic-button .topic-icon{font-size:27px;line-height:1.2}.topic-button strong{font-size:17px;line-height:1.45;letter-spacing:-.4px}.topic-button small{color:#485b54;font-size:13px;line-height:1.55}.topic-button .topic-count{margin-top:auto;display:flex;justify-content:space-between;align-items:center;width:100%;font-weight:700;color:#235c43}
+.topic-night{background:#f1f0fa;border-color:#dfdbed}.topic-night:hover{background:#eae8f7}.topic-carrier{background:#eef5fc;border-color:#d8e5ef}.topic-age{background:#fff5e9;border-color:#eddfce}
+.beta-settings{margin-top:16px;background:#fff;border:1px solid #dce4df;border-radius:12px}.beta-settings>summary{padding:14px 18px;font-weight:600;cursor:pointer;color:#325648}.beta-settings .beta-body{padding:0 18px 18px}
+.beta-feedback{align-items:center;font-size:13px}.beta-feedback button{padding:8px 12px;min-height:44px}.topic-result-reason{font-size:14px;color:#475950;line-height:1.7;margin:0 0 20px}
+#collection-notice{margin:24px 0 32px}#results{scroll-margin-top:24px}
+@media(max-width:900px){.topic-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.topics-heading h2{font-size:21px}.topic-grid{gap:10px}.topic-button{padding:15px;min-height:190px}.topic-button[aria-pressed=true]{padding:14px}.topic-button strong{font-size:15px}.topic-button small{font-size:12px}.topic-button .topic-icon{font-size:24px}.beta-panel{margin-bottom:22px}}
+
+/* Compact topic cards keep the subject and count easy to scan. */
+.topic-grid{gap:10px}.topic-button{min-height:124px;padding:14px 16px;gap:5px;border-radius:12px}.topic-button[aria-pressed=true]{padding:13px 15px}.topic-button .topic-icon{font-size:21px;line-height:1}.topic-button strong{font-size:15px;line-height:1.35}.topic-button small{font-size:12px;line-height:1.4}.topic-button .topic-count{font-size:12px;margin-top:3px}.topics-heading{margin-bottom:12px}.topic-more{display:block;margin:10px auto 0;padding:8px 16px;min-height:44px;color:#315747;border:1px solid #cbdcd2;border-radius:20px;background:#fff;font-size:13px}
+@media(max-width:600px){.topic-grid{gap:8px}.topic-button{min-height:126px;padding:12px;gap:5px}.topic-button[aria-pressed=true]{padding:11px}.topic-button strong{font-size:14px}.topic-button .topic-icon{font-size:20px}.topic-button small{font-size:11px}}

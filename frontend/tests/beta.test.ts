@@ -93,3 +93,15 @@ test('future events and unexpected payload fields cannot enter the local store',
  b.events=[{topic:'night',action:'click',at:NOW+100}];saveBeta(s,b);assert.deepEqual(loadBeta(s,NOW).events,[]);
  (b.events[0] as any).query='personal query';assert.equal(saveBeta(s,b),false);
 });
+test('additional themes are backed by notice subjects, not unrelated eligibility text',()=>{
+ const rows=adapt(snapshot([
+ item({summary:'서울사랑상품권 추가 페이백'}),
+ item({url:'https://mediahub.seoul.go.kr/archives/2',summary:'CU KT 멤버십 할인'}),
+ item({url:'https://mediahub.seoul.go.kr/archives/3',summary:'월드컵경기장역 러너 지원 공간'}),
+ item({url:'https://mediahub.seoul.go.kr/archives/4',summary:'어린이 기록체험실 가족 관람'}),
+ item({url:'https://mediahub.seoul.go.kr/archives/5',summary:'청년 매입임대 입주자 모집'}),
+ item({url:'https://mediahub.seoul.go.kr/archives/6',summary:'청년 화상면접실 이용',conditions:'임대주택 거주자도 가능'})
+ ]),NOW).items;
+ const topics=topicsFor(rows,emptyBeta().profile,[],NOW);
+ for(const id of ['vouchers','convenience','outdoors','family','housing','career'])assert.equal(topics.find(t=>t.id===id)?.items.length,1,id);
+});

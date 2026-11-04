@@ -56,3 +56,5 @@ Files: docs/qa/seoul-beta.md, docs/p0-backlog.md.
 - Ruling: retain existing collectors/exports unchanged and scope only web display to Seoul; backend scope migration remains separate to preserve briefing consumers.
 - Ruling: local feedback is not operator delivery; clearly label local-only until server integration is authorized.
 - Ruling: use 20 exposures as an experimental threshold, not a validated recommendation model.
+
+- User UI revision: always show compact topic cards above discovery, filter the existing results on selection, and move partial-collection notice to the bottom. Show eight topics initially with expansion, preserving pinned interests. Added six topics grounded in existing summaries; local Node 47, Python 189 and Chrome 37 tests pass.
