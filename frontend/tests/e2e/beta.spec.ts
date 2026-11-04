@@ -86,3 +86,21 @@ test('top topics filter the single discovery list and collection notice is at bo
  await page.getByRole('button',{name:'전체 주제 보기',exact:true}).click();
  await expect(page.locator('#results article')).toHaveCount(2);
 });
+
+for(const width of [390,1290])test(`topic survives every dialog dismissal at ${width}px`,async({page})=>{
+ await page.setViewportSize({width,height:900});await setup(page);
+ await page.locator('[data-topic="night"]').click();
+ const topic=page.locator('[data-topic="night"]');
+ for(const action of ['backdrop','close','escape','back']){
+  await page.locator('.card-open').first().click();await expect(page.getByRole('dialog')).toBeVisible();
+  if(action==='backdrop')await page.mouse.click(2,2);
+  else if(action==='close')await page.getByRole('button',{name:'상세 조건 닫기'}).click();
+  else if(action==='escape')await page.keyboard.press('Escape');
+  else await page.goBack();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect.poll(()=>page.evaluate(()=>history.state?.benefitDialog)).toBeFalsy();
+  await expect(topic).toHaveAttribute('aria-pressed','true');
+  await expect(page.locator('#results article')).toHaveCount(1);
+  await expect(page.locator('#results-title')).toContainText('저녁 산책');
+ }
+});
