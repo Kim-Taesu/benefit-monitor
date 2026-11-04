@@ -35,6 +35,15 @@ jobs:
           python-version: '3.12'
       - name: Test
         run: python -m unittest discover -s tests -v
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Install frontend build dependencies
+        working-directory: frontend
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Frontend test and build
+        working-directory: frontend
+        run: npm test && npm run build
       - name: Collect and export public briefing
         if: github.event_name != 'push'
         id: briefing
@@ -76,10 +85,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BRIEFING_REPOSITORY: ${{ github.repository }}
         run: python -m benefit_monitor.mirror --repository "$BRIEFING_REPOSITORY"
+      - name: Assemble static frontend with unchanged public data
+        if: github.event_name != 'push'
+        run: python scripts/assemble_pages.py
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         if: github.event_name != 'push'
         with:
-          path: delivery/public
+          path: delivery/site
           retention-days: 1
 
   deploy:

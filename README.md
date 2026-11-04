@@ -238,3 +238,71 @@ https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-t
 출처 실패 시 기존 승인값은 원래 verified_at·항목 기한·14일 검증 유효기간(`sources.yaml`의 `max_age_days`) 안에서만 남을 수 있습니다.
 수집 실패를 성공으로 바꾸거나 캐시 재사용으로 검증시각을 갱신하지 않습니다.
 KT 직접 연결과 CU/이마트24 공식 제휴 페이지에 포함된 KT 혜택은 별개 범위입니다.
+
+## Benefit Monitor 2.0 P0 프런트엔드
+
+Vue 3 + TypeScript + Vite 정적 앱은 `frontend/`에서 기존 **공개용** `briefing.json`만 읽습니다.
+수집기와 검증기는 계속 Python 표준 라이브러리를 사용합니다. 프런트엔드 빌드 의존성은 무료 오픈소스이며,
+새 서버·유료 API·로그인·위치 권한·추적 분석을 추가하지 않습니다. ChatGPT/Codex 및 기존 실행 환경의 요금은
+이 프로젝트가 보장하지 않습니다. 이 변경 자체는 운영 배포나 main 병합을 실행하지 않습니다.
+
+Node.js 22.18 이상, Python 3.11 이상에서:
+
+```sh
+cd frontend
+npm ci --ignore-scripts --no-audit --no-fund
+npm test
+npm run build
+npx playwright install chromium
+npm run test:e2e
+cd ..
+python -m unittest discover -s tests -v
+```
+
+브라우저 테스트는 명백히 `[테스트]`로 표시된 합성 자료만 로컬 요청에 주입하고 외부 통신을 차단합니다.
+실제 혜택 데이터로 배포하지 않습니다. 360/390/768/1440px 화면과 상태별 스크린샷은
+`docs/qa/screenshots/`에 생성됩니다. PR의 `Frontend P0 checks` 실행은 기존 무과금 게이트가 확인된
+공개 저장소에서만 실행되며, 스크린샷과 HTML 검사 보고서를 `frontend-p0-qa` artifact로 하루 보관합니다.
+게이트에 의해 skipped 된 실행은 검증 성공이 아닙니다.
+
+운영과 동일하게 확인하려면 기존 승인·수집 절차로 먼저 `delivery/public`을 생성한 뒤:
+
+```sh
+python scripts/assemble_pages.py
+# 로컬에서 Pages 하위 경로까지 재현
+mkdir -p delivery/preview
+cp -R delivery/site delivery/preview/benefit-monitor
+python -m http.server 4173 --bind 127.0.0.1 --directory delivery/preview
+```
+
+`http://127.0.0.1:4173/benefit-monitor/`를 엽니다. 개발 서버(`cd frontend && npm run dev`)는
+UI 편집용이며 공개 JSON을 자동 수집하거나 개인 루트 `briefing.json`을 제공하지 않습니다.
+공개 JSON이 없으면 데이터 로딩 실패 안내가 정상입니다. E2E에서는 요청을 로컬 테스트 자료로 대체합니다.
+
+### 표시 및 검색 규칙
+
+- 검색은 제목·요약·조건·출처명·공개 라벨·지역에 한글 부분 문자열을 적용합니다. 공백으로 나눈 검색어와
+  지역·분야·상태는 AND입니다. 200ms 검색 지연, URL 상태 저장, 새로고침·뒤로가기 복원을 제공합니다.
+- 지역은 공개 라벨·자치구의 명시값을 사용합니다. `서울`은 서울 출처 및 명시된 서울 자치구를 포함합니다.
+  `전국`은 명시적인 전국 라벨이 있을 때만 적용합니다. 빈 자치구 목록은 전국을 뜻하지 않습니다.
+  특정 구를 고르면 전국/서울 공통 항목을 자동 포함하지 않습니다. 안내 범위는 신청 자격과 다릅니다.
+- 분야는 승인된 `labels.category`만 사용하며 없는 값은 `기타`입니다. 혜택 금액을 정규식으로 추정하지 않습니다.
+- 마감은 신청 마감·종료 날짜를 구분하고 KST 날짜 경계로 계산합니다. 검증 만료는 행사 종료로 표현하지 않습니다.
+- 파일 만료·수집 실패·검증 대기 때는 추천을 노출하지 않습니다. 개별 만료·재검증·잘못된 공식 URL은 항목별 제외합니다.
+  1초마다 그리고 탭 복귀 시 재검사합니다. 유료 여부로 우선순위를 바꾸지 않습니다.
+- 출처 정책은 `frontend/src/source-policy.json`에 현재 `sources.yaml`의 호스트·검증 유효기간을 복제하며
+  Python 회귀 테스트가 불일치를 차단합니다. 출처 설정 변경 시 이 파일도 함께 갱신해야 합니다.
+
+### 배포 호환성과 롤백
+
+기존 수집 일정(`0 16 * * *`, 01:00 KST), 공개 저장소/`BENEFIT_PAGES_ZERO_SPEND` 게이트,
+승인 목록과 원문 검증, `delivery/public/briefing.json`, `briefing.md`, `briefing-data` 미러는 유지합니다.
+프런트엔드 빌드 후 Python 공개 출력이 생성되면 `scripts/assemble_pages.py`가 **정확히 같은 JSON/MD 바이트**를
+`delivery/site`로 복사합니다. Pages artifact만 이 별도 폴더를 사용합니다. 원본 보고서·캐시·입력·개인 자료는 복사하지 않습니다.
+기존 Python `index.html` 생성은 그대로 유지되어 독립적으로 사용할 수 있습니다.
+
+롤백: 이 PR을 revert하거나, 기존 Pages workflow에서 프런트엔드 설치/빌드/조립 단계를 제거하고
+artifact 경로를 `delivery/public`으로 되돌립니다. 검증된 기존 배포 버전을 복원하는 운영 조치는 별도 승인 후 진행합니다.
+프런트엔드 빌드 실패 시 새 배포를 중단하며, 정적 사이트가 이미 배포되어 있더라도 자체 파일·항목 만료 검사를 유지합니다.
+
+후속 범위와 검증 기록은 `docs/p0-backlog.md`, `docs/qa/p0-verification.md`를 참고하세요.
