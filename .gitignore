@@ -29,3 +29,11 @@ __pycache__/
 build/
 dist/
 .pytest_cache/
+
+# Frontend dependencies, build and local validation
+node_modules/
+frontend/dist/
+frontend/test-results/
+frontend/playwright-report/
+.*.log
+.tools/
