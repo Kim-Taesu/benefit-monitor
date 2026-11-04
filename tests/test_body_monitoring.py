@@ -41,7 +41,7 @@ class BodyMonitoringTests(unittest.TestCase):
                 row=dict(source='test',body_hash=operations.digest(operations.article_text(text)),body_hash_version=2,body_target_hash=operations.digest(self.item.url))
                 state={'items':{self.item.id:row}}
                 self.check(state,'<main>'+text.replace('1,000','2,000' if changed else '1,000')+'</main>')
-                self.assertEqual(row['body_hash_version'],3)
+                self.assertEqual(row['body_hash_version'],operations.BODY_HASH_VERSION)
                 self.assertEqual(row['body_comparison'],'changed' if changed else 'baseline')
                 self.assertEqual(row.get('hold_reason'),'body_changed' if changed else None)
 
@@ -67,3 +67,27 @@ class BodyMonitoringTests(unittest.TestCase):
         with patch('benefit_monitor.collectors.rss.fetch') as fetch:
             self.assertEqual(operations.check_bodies({},[self.item],{'test':SOURCE},NOW,1),[])
         fetch.assert_not_called()
+
+    def test_v3_migration_checks_old_scope_then_tracks_seoul_body(self):
+        from benefit_monitor.collectors.body import extract_body
+        self.item=benefit(url='https://mediahub.seoul.go.kr/archives/2019868')
+        source=dict(SOURCE,domains=['mediahub.seoul.go.kr'])
+        before='<div>조회 10</div><div class="news_detail_cont">'+self.padding+'지원 1,000원</div>'
+        for changed in [False,True]:
+            with self.subTest(changed=changed):
+                row=dict(source='test',body_hash=operations.digest(extract_body(before)[0]),body_hash_version=3,body_target_hash=operations.digest(self.item.url))
+                state={'items':{self.item.id:row}}
+                current=before.replace('1,000','2,000') if changed else before
+                def fetch(url,domains):
+                    return b'User-agent: *\nAllow: /' if url.endswith('/robots.txt') else current.encode()
+                with patch('benefit_monitor.collectors.rss.fetch',side_effect=fetch):
+                    operations.check_bodies(state,[self.item],{'test':source},NOW,1)
+                    self.assertEqual(row['body_comparison'],'changed' if changed else 'baseline')
+                    self.assertEqual(row['body_parse_mode'],'seoul_news')
+                    self.assertEqual(row['body_hash_version'],operations.BODY_HASH_VERSION)
+                    current=current.replace('조회 10','조회 99')
+                    operations.check_bodies(state,[self.item],{'test':source},NOW+timedelta(hours=1),1)
+                    self.assertEqual(row['body_comparison'],'same')
+                self.assertEqual(row.get('hold_reason'),'body_changed' if changed else None)
+                clean=operations.sanitize(state|{'schema_version':1},{'test'},NOW+timedelta(hours=1))
+                self.assertEqual(clean['items'][self.item.id]['body_parse_mode'],'seoul_news')

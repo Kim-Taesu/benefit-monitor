@@ -1,5 +1,8 @@
 """Conservative text scopes for change detection; no facts or numbers are inferred."""
 from html.parser import HTMLParser
+import re
+from urllib.parse import urlsplit
+from ..validation import official
 
 
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'param', 'source', 'track', 'wbr'}
@@ -7,20 +10,24 @@ SKIP = {'script', 'style', 'nav', 'footer'}
 
 
 class BodyText(HTMLParser):
-    def __init__(self):
+    def __init__(self, seoul_scope=False):
         super().__init__()
         self.frames = []
         self.parts = []
-        self.regions = {'main': [], 'article': []}
+        self.regions = {'seoul_news': [], 'main': [], 'article': []}
+        self.seoul_scope = seoul_scope
 
     def handle_starttag(self, tag, attrs):
         if len(self.frames) >= 256:
             raise ValueError('Body markup nesting exceeds limit')
         skip = tag in SKIP or bool(self.frames and self.frames[-1][1])
         region = None
-        if tag in self.regions and not skip:
+        key = tag if tag in ('main', 'article') else None
+        if self.seoul_scope and tag == 'div' and 'news_detail_cont' in (dict(attrs).get('class') or '').split():
+            key = 'seoul_news'
+        if key and not skip:
             region = {'parts': [], 'closed': False}
-            self.regions[tag].append(region)
+            self.regions[key].append(region)
         if tag not in VOID:
             self.frames.append((tag, skip, region))
 
@@ -43,7 +50,7 @@ class BodyText(HTMLParser):
 
     def result(self):
         # Multiple/unclosed scopes are ambiguous: compare the full document instead.
-        for tag in ('main', 'article'):
+        for tag in ('seoul_news', 'main', 'article'):
             regions = self.regions[tag]
             if regions:
                 if len(regions) == 1 and regions[0]['closed']:
@@ -52,8 +59,10 @@ class BodyText(HTMLParser):
         return ' '.join(' '.join(self.parts).split()), 'document'
 
 
-def extract_body(page):
-    parser = BodyText()
+def extract_body(page, target=''):
+    seoul_scope = bool(target and official(target, ['mediahub.seoul.go.kr'])
+                       and re.fullmatch(r'/archives/[0-9]+', urlsplit(target).path))
+    parser = BodyText(seoul_scope)
     parser.feed(page)
     parser.close()
     return parser.result()
