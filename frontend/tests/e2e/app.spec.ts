@@ -43,10 +43,10 @@ test('search, combined filters, sort, URL reload, back and reset',async({page})=
  await setup(page);await page.goto('./');
  await page.getByLabel('혜택·조건·지역·기관 검색').fill('문화 회원');
  await page.getByLabel('지역',{exact:true}).selectOption('강서구');
- await page.getByLabel('분야',{exact:true}).selectOption('문화·체험');
+
  await page.getByLabel('혜택 정렬').selectOption('verified');
- await expect(page.locator('article')).toHaveCount(1);
- await expect(page).toHaveURL(/q=/);await page.reload();await expect(page.locator('article')).toHaveCount(1);
+ await expect(page.locator('article')).toHaveCount(2);
+ await expect(page).toHaveURL(/q=/);await page.reload();await expect(page.locator('article')).toHaveCount(2);
  await expect(page.getByLabel('혜택 정렬')).toHaveValue('verified');
  await page.getByLabel('혜택 정렬').selectOption('title');await page.goBack();await expect(page.getByLabel('혜택 정렬')).toHaveValue('verified');
  await page.getByRole('button',{name:'필터 초기화',exact:true}).first().click();await expect(page.locator('article')).toHaveCount(6);
@@ -100,10 +100,10 @@ test('open tab gates the whole file when valid_through passes',async({page})=>{
 });
 test('remembered interests persist locally, shared URLs win, and stored defaults can be deleted',async({page})=>{
  await setup(page);await page.goto('./');
- await page.getByLabel('지역',{exact:true}).selectOption('강서구');await page.getByLabel('분야',{exact:true}).selectOption('문화·체험');
- await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역·분야 저장'}).click();
- await expect(page.getByText('이 브라우저에 지역·분야를 저장했습니다.',{exact:true})).toBeVisible();
- await page.goto('./');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('강서구');await expect(page.locator('article')).toHaveCount(1);
+ await page.getByLabel('지역',{exact:true}).selectOption('강서구');
+ await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역 저장'}).click();
+ await expect(page.getByText('이 브라우저에 지역을 저장했습니다.',{exact:true})).toBeVisible();
+ await page.goto('./');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('강서구');await expect(page.locator('article')).toHaveCount(2);
  await expect(page).toHaveURL(/region=/);
  await page.goto('./?q=생활지원');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('');await expect(page.locator('article')).toHaveCount(1);
  await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'저장값 삭제'}).click();
@@ -113,7 +113,7 @@ test('remembered interests persist locally, shared URLs win, and stored defaults
 test('blocked localStorage preserves discovery and announces save failure',async({page})=>{
  await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('Blocked','SecurityError');}}));
  await setup(page);await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
- await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역·분야 저장'}).click();
+ await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역 저장'}).click();
  await expect(page.getByText('저장하지 못했습니다.',{exact:false})).toBeVisible();await expect(page.locator('article')).toHaveCount(6);
 });
 
@@ -176,4 +176,14 @@ test('numerical highlight disappears with item validity rather than surviving as
  await setup(page,snapshot([item({benefit_value:reviewedValue,display_until:'2026-11-04T12:00:03+09:00'})]));await page.goto('./');
  await expect(page.locator('.benefit-highlight strong')).toHaveText('최대 10% 할인');await page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true}).click();
  await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.locator('.benefit-highlight')).toHaveCount(0);
+});
+
+test('compact header and Seoul-only filters ignore legacy hidden categories',async({page})=>{
+ await setup(page);await page.goto('./?region=서울%206개%20야간%20상권&category=문화·체험');
+ await expect(page.locator('#region option')).toHaveCount(26);
+ await expect(page.locator('#region option').first()).toHaveText('서울시 전체');
+ await expect(page.locator('#category')).toHaveCount(0);
+ await expect(page.locator('article')).toHaveCount(6);
+ await expect(page.locator('header .overview')).toContainText('공개 혜택');
+ await expect(page).not.toHaveURL(/category=/);
 });

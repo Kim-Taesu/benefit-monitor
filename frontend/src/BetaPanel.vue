@@ -6,7 +6,6 @@ import type {Action,BetaState,TopicId,Profile,Topic} from './beta';
 const props=defineProps<{items:Benefit[];now:number;query:string}>();
 const emit=defineEmits<{selectTopic:[topic:Topic|null]}>();
 const icons:Record<TopicId,string>={local:'🏡',night:'🌙',culture:'🎨',learning:'📚',shopping:'🛍️',carrier:'📱',age:'🎯',vouchers:'🎟️',convenience:'🏪',outdoors:'👟',family:'🧸',housing:'🔑',career:'💼'};
-const descriptions:Record<TopicId,string>={local:'지역 프로그램·행사·생활 지원',night:'야간 개장·빛 축제·야외 문화 행사',culture:'이번 주 둘러볼 전시와 문화 체험',learning:'새로 시작하는 교육·강좌·취미',shopping:'장보기·결제 할인·적립 안내',carrier:'멤버십 등급·요일·결제 조건 확인',age:'연령 조건이 있는 지원·교육·문화 안내',vouchers:'상품권 할인·결제 페이백',convenience:'멤버십 할인·포인트 적립',outdoors:'걷기 챌린지·러너 공간·공원',family:'어린이 관람·가족 체험',housing:'임대·분양·사회주택 모집',career:'채용 공고·면접 지원 공간'};
 let storage:Storage|null=null;try{storage=window.localStorage;}catch{}
 const state=ref(loadBeta(storage,props.now));
 let consentStopped=false;
@@ -95,7 +94,7 @@ onUnmounted(()=>{window.removeEventListener('storage',syncStorage);observer?.dis
 <section id="beta" ref="root" class="beta-panel" aria-labelledby="topics-title">
  <div class="topics-heading"><div><p class="eyebrow">나를 위한 발견</p><h2 id="topics-title">어떤 혜택을 찾아볼까요?</h2></div><button v-if="selected" type="button" class="reset" @click="clearSelection">전체 주제 보기</button></div>
  <div v-if="displayed.length" class="topic-grid">
-  <button v-for="topic in displayed" :key="topic.id" :data-topic="topic.id" type="button" class="topic-button" :class="'topic-'+topic.id" :aria-pressed="selected===topic.id" aria-controls="results" @click="choose(topic.id)"><span class="topic-icon" aria-hidden="true">{{icons[topic.id]}}</span><strong>{{topic.title}}</strong><small>{{descriptions[topic.id]}}</small><span class="topic-count">{{topic.items.length}}개 혜택 <span aria-hidden="true">↗</span></span></button>
+  <button v-for="topic in displayed" :key="topic.id" :data-topic="topic.id" type="button" class="topic-button" :class="'topic-'+topic.id" :aria-pressed="selected===topic.id" aria-controls="results" @click="choose(topic.id)"><span class="topic-icon" aria-hidden="true">{{icons[topic.id]}}</span><strong>{{topic.title}}</strong><span class="topic-count">{{topic.items.length}}개 혜택</span></button>
  </div>
  <p v-else class="fine-print">현재 표시할 수 있는 주제가 없습니다. 수집·검증 대기일 수 있으며 실제 혜택이 없다는 뜻은 아닙니다.</p>
  <button v-if="topics.length>8" class="topic-more" type="button" :aria-expanded="showAll" @click="showAll=!showAll">{{showAll?'주제 접기':'다른 주제 더 보기'}} <span aria-hidden="true">{{showAll?'−':'+'}}</span></button>
