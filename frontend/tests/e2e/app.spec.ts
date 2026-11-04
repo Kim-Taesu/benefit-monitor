@@ -159,3 +159,21 @@ test('all favorites can be cleared even when the stored record is corrupt',async
  await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'즐겨찾기 모두 해제'}).click();
  expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:favorites:v1'))).toBeNull();await expect(page.locator('article')).toHaveCount(6);
 });
+const reviewedValue={kind:'discount_rate',value:10,qualifier:'up_to',conditions:'[테스트] 최소 결제와 지정 재원 조건을 확인하세요. <img src=x onerror=alert(1)>',evidence_url:'https://mediahub.seoul.go.kr/archives/1',evidence_quote:'최대 10% 할인'};
+test('reviewed numerical benefit shows its qualifier, conditions and safely escaped conditions',async({page})=>{
+ await page.setViewportSize({width:390,height:844});await setup(page,snapshot([item({benefit_value:reviewedValue})]));await page.goto('./');
+ const card=page.locator('article');await expect(card.locator('.benefit-highlight strong')).toHaveText('최대 10% 할인');await expect(card).toContainText('유료');
+ await card.locator('summary').click();await expect(card.locator('.value-evidence')).toContainText(reviewedValue.conditions);await expect(card.locator('.value-evidence')).toContainText('<img src=x onerror=alert(1)>');await expect(card.locator('img')).toHaveCount(0);
+ const link=card.getByRole('link',{name:'금액 근거 원문 (새 창)',exact:true});await expect(link).toHaveAttribute('href',reviewedValue.evidence_url);await expect(link).toHaveAttribute('rel','noopener noreferrer');
+ await page.addScriptTag({path:axePath});const a11y=await page.evaluate(async()=>await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));expect(a11y.violations).toEqual([]);
+ await capture(page,'benefit-value-details');
+});
+test('invalid or contradictory numerical benefits withhold their card',async({page})=>{
+ await setup(page,snapshot([item({benefit_value:{...reviewedValue,value:1000}})]));await page.goto('./');
+ await expect(page.getByText('현재 표시 가능한 검증 항목이 없어요',{exact:true})).toBeVisible();await expect(page.locator('article')).toHaveCount(0);await expect(page.locator('.benefit-highlight')).toHaveCount(0);
+});
+test('numerical highlight disappears with item validity rather than surviving as a saved snapshot',async({page})=>{
+ await setup(page,snapshot([item({benefit_value:reviewedValue,display_until:'2026-11-04T12:00:03+09:00'})]));await page.goto('./');
+ await expect(page.locator('.benefit-highlight strong')).toHaveText('최대 10% 할인');await page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true}).click();
+ await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.locator('.benefit-highlight')).toHaveCount(0);
+});

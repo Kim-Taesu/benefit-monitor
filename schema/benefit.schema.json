@@ -130,6 +130,135 @@
           ]
         }
       }
+    },
+    "benefit_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Human-reviewed benefit figure, never an inferred saving or participation fee. Evidence uses the already observed official body URL.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "discount_amount",
+            "discount_rate",
+            "grant_amount",
+            "refund_amount",
+            "reward_points"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 999999999999
+        },
+        "qualifier": {
+          "enum": [
+            "exact",
+            "up_to"
+          ]
+        },
+        "conditions": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "evidence_url": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096,
+          "format": "uri"
+        },
+        "evidence_quote": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      },
+      "anyOf": [
+        {
+          "maxProperties": 0
+        },
+        {
+          "required": [
+            "kind",
+            "value",
+            "qualifier",
+            "conditions",
+            "evidence_url",
+            "evidence_quote"
+          ],
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "discount_rate"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "type": "number",
+                "exclusiveMinimum": 0,
+                "maximum": 100,
+                "multipleOf": 0.01
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "value": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 999999999999
+              }
+            }
+          }
+        }
+      ]
+    },
+    "payment_terms": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "funding_source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "excluded_methods": {
+          "type": "string",
+          "minLength": 1
+        },
+        "minimum_spend": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_url": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "anyOf": [
+        {
+          "maxProperties": 0
+        },
+        {
+          "required": [
+            "method",
+            "funding_source",
+            "excluded_methods",
+            "minimum_spend",
+            "limit",
+            "evidence_url"
+          ]
+        }
+      ]
     }
   }
 }

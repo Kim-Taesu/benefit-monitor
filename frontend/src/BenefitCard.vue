@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Benefit } from './benefits';
-import { fees, timing, formatDate } from './benefits';
+import { fees, timing, formatDate, benefitValueLabel } from './benefits';
 const props=defineProps<{item:Benefit;now:number;saved?:boolean}>();
 const emit=defineEmits<{toggleFavorite:[]}>();
 const status=computed(()=>timing(props.item,props.now));
@@ -11,6 +11,7 @@ const paymentNames:Record<string,string>={method:'결제 방식',funding_source:
   <article class="benefit-card">
     <div class="card-meta"><span class="category">{{ item.category }}</span><span class="timing" :class="{urgent:status.urgent}">{{ status.label }}</span></div>
     <h3>{{ item.summary }}</h3>
+    <div v-if="item.benefitValue" class="benefit-highlight"><strong>{{ benefitValueLabel(item.benefitValue) }}</strong><p>{{ item.benefitValue.conditions }}</p></div>
     <p class="card-source">{{ item.sourceName }}<span aria-hidden="true"> · </span>{{ item.regions.join(' · ') || '지역 조건 확인 필요' }}</p>
     <div class="card-tags"><span v-if="item.labels.audience">{{ item.labels.audience }}</span><span v-if="item.labels.action">{{ item.labels.action }}</span><span>{{ fees[item.fee_status] }}</span></div>
     <p class="card-conditions">{{ item.conditions || '대상과 이용 조건은 공식 안내에서 확인하세요.' }}</p>
@@ -20,6 +21,7 @@ const paymentNames:Record<string,string>={method:'결제 방식',funding_source:
       <summary>상세 조건<span aria-hidden="true">＋</span></summary>
       <div class="details-body">
         <p v-if="item.title!==item.summary" class="original-title">원문 제목: {{ item.title }}</p>
+        <section v-if="item.benefitValue" class="value-evidence" aria-label="혜택 수치 근거"><p><strong>{{ benefitValueLabel(item.benefitValue) }}</strong></p><p>수치 적용 조건: {{ item.benefitValue.conditions }}</p><p>근거 문구: {{ item.benefitValue.evidence_quote }}</p><a :href="item.benefitValue.evidence_url" target="_blank" rel="noopener noreferrer">금액 근거 원문<span class="sr-only"> (새 창)</span></a><p class="fine-print">공식 확인 시점의 조건부 수치이며 개인별 수령·절약액을 보장하지 않습니다. 참여 비용·최소 지출·결제 한도와 구분하세요.</p></section>
         <dl>
           <dt>적용기간</dt><dd>{{ formatDate(item.valid_from) }} ~ {{ item.validity_kind==='ongoing'?'상시 안내':formatDate(item.valid_until) }}</dd>
           <dt>신청 마감</dt><dd>{{ formatDate(item.deadline_at) }}</dd>
