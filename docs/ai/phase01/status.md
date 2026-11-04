@@ -31,3 +31,18 @@ python3 -m unittest discover -s tests -v
 자료: [출처 지도](source-map.md), [비교 계획](benchmark-plan.md), [표본 등록부](case-register.csv).
 
 Phase 1의 ‘출처별 접근 가능 여부 확인’은 Phase 0 연결 복구에 의존하므로 전체 완료로 표시하지 않는다. 다음은 공식 진입점에서 기관 연결을 확인하고 URL·robots·파서 방식·실제 접근 결과를 채우는 작업이다. 승인된 비용 정책을 유지하며 그 후 Phase2 신규 발견 시험에 들어간다.
+
+## 추가 진단: 실행 환경 네트워크 비활성 확인
+
+후속 진단에서 비밀정보가 아닌 실행 플래그 `CODEX_SANDBOX_NETWORK_DISABLED=1`을 확인했다. `github.com`도 동일한 DNS 오류이고, macOS `scutil --dns`는 `No DNS configuration available`을 반환했다. localhost 해석과 소켓 생성 자체는 가능했다. 외부 IP 직결이나 DNS 변경은 시도하지 않았다.
+
+따라서 현재 실행기의 네트워크 비활성이 확인된 차단 요인이다. Mac 전체의 인터넷이나 서울시 서버가 고장났다고 판단하지 않는다. 이 세션은 네트워크 제한 상태이며 권한 확장 요청도 허용되지 않아 코드 변경만으로 복구할 수 없다. 해당 플래그를 삭제하는 것은 권한 복구 방법이 아니므로 하지 않는다.
+
+재개 방법은 네트워크가 허용된 Codex 환경에서 같은 저장소를 열거나, 사용자 일반 Mac 터미널에서 기존 진단기를 실행하는 것이다. 새 서비스나 API 결제는 필요 없다.
+
+```sh
+cd /Users/user/personal/benefit-monitor/.maintenance/p0-source
+python3 -m benefit_monitor.research_probe
+```
+
+직전 실패 후 15분 이내면 cooldown으로 종료한다. 출력 JSON의 status=passed 및 documents_read=2를 확인해야 Phase0 통과다. 다른 오류라면 그 오류를 먼저 해결한다. 이후 출처 실사도 같은 허용 환경에서 진행해야 한다. 사용자 터미널의 연결 성공만으로 이 제한된 세션의 네트워크가 복구되지는 않는다.
