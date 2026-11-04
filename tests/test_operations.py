@@ -64,7 +64,7 @@ class OperationsTests(unittest.TestCase):
     def test_view_counters_and_trailing_lists_do_not_hold(self):
         from benefit_monitor import operations, cost_policy
         state={};cost_policy.reset(60)
-        page='<main>조회 10,855 좋아요 17 '+'Public conditions '*10+'Fee 1000 기사 관련 태그 최신 뉴스 {}</main>'
+        page='<div>조회 10,855 좋아요 17</div><main>'+'Public conditions '*10+'Fee 1000</main><section>기사 관련 태그 최신 뉴스 {}</section>'
         body=page.format('A').encode()
         def response(url,domains):
             return b'User-agent: *\nAllow: /' if url.endswith('/robots.txt') else body
