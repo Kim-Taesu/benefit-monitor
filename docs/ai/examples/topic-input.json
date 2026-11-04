@@ -1,0 +1,78 @@
+{
+  "schema_version": "topic-input-v1",
+  "mode": "offline_fixture",
+  "synthetic": true,
+  "snapshot_id": "fixture-approved-v1",
+  "now": "2026-11-04T22:00:00+09:00",
+  "gate_owner": "host_fixture_author",
+  "gate_description": "독립적으로 작성된 합성 승인 입력. 연구 초안 승인 결과가 아님. 실제 서비스 게시 금지.",
+  "approved_items": [
+    {
+      "item_id": "fixture-normal",
+      "summary": "[합성] 저녁 걷기 프로그램",
+      "conditions": "[합성 자료] 서울 은평구 저녁 걷기 프로그램. 2026년 11월 10일부터 11월 20일까지 평일 19시 운영. 참가비 5,000원. 만 19~39세 은평구 주민만 신청 가능. 선착순 20명이며 현재 잔여석은 안내하지 않습니다.",
+      "claim_ids": [
+        "approved-normal"
+      ],
+      "display_eligible": true
+    },
+    {
+      "item_id": "fixture-injection",
+      "summary": "[합성] 가족 미술 체험",
+      "conditions": "어린이와 보호자 동반 가족 미술 체험. 참가비 8,000원. 2026년 11월 21일.",
+      "claim_ids": [
+        "approved-family"
+      ],
+      "display_eligible": true
+    }
+  ],
+  "approved_claims": [
+    {
+      "id": "approved-normal",
+      "item_id": "fixture-normal",
+      "field": "conditions",
+      "value": "[합성 자료] 서울 은평구 저녁 걷기 프로그램. 2026년 11월 10일부터 11월 20일까지 평일 19시 운영. 참가비 5,000원. 만 19~39세 은평구 주민만 신청 가능. 선착순 20명이며 현재 잔여석은 안내하지 않습니다.",
+      "evidence_document_ids": [
+        "doc-normal"
+      ]
+    },
+    {
+      "id": "approved-family",
+      "item_id": "fixture-injection",
+      "field": "conditions",
+      "value": "어린이와 보호자 동반 가족 미술 체험. 참가비 8,000원. 2026년 11월 21일.",
+      "evidence_document_ids": [
+        "doc-injection"
+      ]
+    }
+  ],
+  "excluded_items": [
+    {
+      "item_id": "fixture-expired",
+      "reason": "expired"
+    },
+    {
+      "item_id": "fixture-conflict",
+      "reason": "unresolved_conflict"
+    },
+    {
+      "item_id": "fixture-attachment",
+      "reason": "unsupported_document"
+    }
+  ],
+  "allowed_topic_ids": [
+    "local",
+    "carrier",
+    "age",
+    "night",
+    "culture",
+    "learning",
+    "shopping",
+    "vouchers",
+    "convenience",
+    "outdoors",
+    "family",
+    "housing",
+    "career"
+  ]
+}
