@@ -2,7 +2,8 @@
 import { computed } from 'vue';
 import type { Benefit } from './benefits';
 import { fees, timing, formatDate } from './benefits';
-const props=defineProps<{item:Benefit;now:number}>();
+const props=defineProps<{item:Benefit;now:number;saved?:boolean}>();
+const emit=defineEmits<{toggleFavorite:[]}>();
 const status=computed(()=>timing(props.item,props.now));
 const paymentNames:Record<string,string>={method:'결제 방식',funding_source:'결제 재원',excluded_methods:'제외 수단',minimum_spend:'최소 지출',limit:'혜택 한도'};
 </script>
@@ -14,6 +15,7 @@ const paymentNames:Record<string,string>={method:'결제 방식',funding_source:
     <div class="card-tags"><span v-if="item.labels.audience">{{ item.labels.audience }}</span><span v-if="item.labels.action">{{ item.labels.action }}</span><span>{{ fees[item.fee_status] }}</span></div>
     <p class="card-conditions">{{ item.conditions || '대상과 이용 조건은 공식 안내에서 확인하세요.' }}</p>
     <p class="verified">공식 확인 <time :datetime="item.verified_at">{{ formatDate(item.verified_at) }}</time></p>
+    <button class="favorite-toggle" type="button" :aria-pressed="Boolean(saved)" :aria-label="item.summary+' 즐겨찾기'" @click="emit('toggleFavorite')"><span aria-hidden="true">{{ saved?'★':'☆' }}</span> {{ saved?'저장됨':'즐겨찾기 저장' }}</button>
     <details class="card-details">
       <summary>상세 조건<span aria-hidden="true">＋</span></summary>
       <div class="details-body">
