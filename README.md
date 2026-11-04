@@ -222,6 +222,6 @@ https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-t
 기존 항목의 빈 payment_terms는 결제 조건의 구조화 검토를 완료했다는 뜻이 아닙니다.
 이 필드가 있는 항목의 본문 변경 감지는 결제조건 운영주체 URL을 우선합니다.
 
-출처 실패 시 기존 승인값은 원래 verified_at·항목 기한·7일 검증 유효기간 안에서만 남을 수 있습니다.
+출처 실패 시 기존 승인값은 원래 verified_at·항목 기한·14일 검증 유효기간(`sources.yaml`의 `max_age_days`) 안에서만 남을 수 있습니다.
 수집 실패를 성공으로 바꾸거나 캐시 재사용으로 검증시각을 갱신하지 않습니다.
 KT 직접 연결과 CU/이마트24 공식 제휴 페이지에 포함된 KT 혜택은 별개 범위입니다.
