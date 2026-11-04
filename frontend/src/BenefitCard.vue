@@ -1,24 +1,32 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, useId, onMounted, onBeforeUnmount } from 'vue';
 import type { Benefit } from './benefits';
 import { fees, timing, formatDate, benefitValueLabel } from './benefits';
 const props=defineProps<{item:Benefit;now:number;saved?:boolean;hideFavorite?:boolean}>();
 const emit=defineEmits<{toggleFavorite:[];officialClick:[]}>();
+const dialog=ref<HTMLDialogElement|null>(null),titleId=useId();
+const opener=ref<HTMLButtonElement|null>(null);
+let previousOverflow='',returnFocus=false;
+function openDetails(){if(dialog.value?.open)return;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';returnFocus=true;history.pushState({...history.state,benefitDialog:titleId},'');dialog.value?.showModal();}
+function closeDetails(){if(!dialog.value?.open)return;dialog.value.close();document.body.style.overflow=previousOverflow;if(history.state?.benefitDialog===titleId)history.back();}
+function popDetails(){if(dialog.value?.open){dialog.value.close();document.body.style.overflow=previousOverflow;}if(returnFocus){returnFocus=false;setTimeout(()=>opener.value?.focus({preventScroll:true}),0);}}
+function backdrop(event:MouseEvent){const element=dialog.value;if(!element||event.target!==element)return;const r=element.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeDetails();}
+onMounted(()=>window.addEventListener('popstate',popDetails));
+onBeforeUnmount(()=>{window.removeEventListener('popstate',popDetails);if(dialog.value?.open){document.body.style.overflow=previousOverflow;dialog.value.close();if(history.state?.benefitDialog===titleId){const state={...history.state};delete state.benefitDialog;history.replaceState(state,'');}}});
 const status=computed(()=>timing(props.item,props.now));
 const paymentNames:Record<string,string>={method:'결제 방식',funding_source:'결제 재원',excluded_methods:'제외 수단',minimum_spend:'최소 지출',limit:'혜택 한도'};
 </script>
 <template>
   <article class="benefit-card">
     <div class="card-meta"><span class="category">{{ item.category }}</span><span class="timing" :class="{urgent:status.urgent}">{{ status.label }}</span></div>
-    <h3>{{ item.summary }}</h3>
-    <div v-if="item.benefitValue" class="benefit-highlight"><strong>{{ benefitValueLabel(item.benefitValue) }}</strong><p>{{ item.benefitValue.conditions }}</p></div>
+    <h3><button ref="opener" class="card-open" type="button" aria-haspopup="dialog" @click="openDetails">{{ item.summary }}</button></h3>
     <p class="card-source">{{ item.sourceName }}<span aria-hidden="true"> · </span>{{ item.regions.join(' · ') || '지역 조건 확인 필요' }}</p>
     <div class="card-tags"><span v-if="item.labels.audience">{{ item.labels.audience }}</span><span v-if="item.labels.action">{{ item.labels.action }}</span><span>{{ fees[item.fee_status] }}</span></div>
-    <p class="card-conditions">{{ item.conditions || '대상과 이용 조건은 공식 안내에서 확인하세요.' }}</p>
     <p class="verified">공식 확인 <time :datetime="item.verified_at">{{ formatDate(item.verified_at) }}</time></p>
     <button v-if="!hideFavorite" class="favorite-toggle" type="button" :aria-pressed="Boolean(saved)" :aria-label="item.summary+' 즐겨찾기'" @click="emit('toggleFavorite')"><span aria-hidden="true">{{ saved?'★':'☆' }}</span> {{ saved?'저장됨':'즐겨찾기 저장' }}</button>
-    <details class="card-details">
-      <summary>상세 조건<span aria-hidden="true">＋</span></summary>
+    <dialog ref="dialog" class="benefit-modal" :aria-labelledby="titleId" @cancel.prevent="closeDetails" @click="backdrop">
+      <div class="modal-heading"><h2 :id="titleId">{{ item.summary }}</h2><button type="button" class="modal-close" aria-label="상세 조건 닫기" autofocus @click="closeDetails">닫기 ✕</button></div>
+      <p class="modal-source">{{ item.sourceName }} · 공식 확인 {{ formatDate(item.verified_at) }}</p>
       <div class="details-body">
         <p v-if="item.title!==item.summary" class="original-title">원문 제목: {{ item.title }}</p>
         <section v-if="item.benefitValue" class="value-evidence" aria-label="혜택 수치 근거"><p><strong>{{ benefitValueLabel(item.benefitValue) }}</strong></p><p>수치 적용 조건: {{ item.benefitValue.conditions }}</p><p>근거 문구: {{ item.benefitValue.evidence_quote }}</p><a :href="item.benefitValue.evidence_url" target="_blank" rel="noopener noreferrer">금액 근거 원문<span class="sr-only"> (새 창)</span></a><p class="fine-print">공식 확인 시점의 조건부 수치이며 개인별 수령·절약액을 보장하지 않습니다. 참여 비용·최소 지출·결제 한도와 구분하세요.</p></section>
@@ -36,7 +44,8 @@ const paymentNames:Record<string,string>={method:'결제 방식',funding_source:
         <a v-if="item.payment_terms.evidence_url" :href="item.payment_terms.evidence_url" target="_blank" rel="noopener noreferrer">결제조건 원문 <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a>
         <p class="fine-print">개인 자격·잔여석·재고·조기 마감은 확인하지 않았습니다. 신청 마감과 실제 이용 기간은 다를 수 있습니다.</p>
       </div>
-    </details>
+
     <a @click="emit('officialClick')" class="official-link" :href="item.url" target="_blank" rel="noopener noreferrer" :aria-label="item.summary+' 공식 안내 보기 (새 창)'">공식 안내 보기 <span aria-hidden="true">↗</span></a>
+    </dialog>
   </article>
 </template>

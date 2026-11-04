@@ -74,7 +74,7 @@ async function load(){
  finally{clearTimeout(timeout);if(controller===request)loading.value=false;}
 }
 function reset(){topicPanel.value?.clearSelection();savedOnly.value=false;clearTimeout(debounce);draft.value='';Object.assign(filters,pageFilters(''));}
-function pop(){topicPanel.value?.clearSelection();navigation=true;clearTimeout(debounce);Object.assign(filters,pageFilters(location.search));draft.value=filters.q;queueMicrotask(()=>navigation=false);}
+function pop(){if(JSON.stringify(pageFilters(location.search))===JSON.stringify({...filters}))return;topicPanel.value?.clearSelection();navigation=true;clearTimeout(debounce);Object.assign(filters,pageFilters(location.search));draft.value=filters.q;queueMicrotask(()=>navigation=false);}
 function tick(){now.value=Date.now();}
 watch(draft,value=>{clearTimeout(debounce);if(value===filters.q)return;debounce=setTimeout(()=>filters.q=value,200);});
 watch(filters,()=>{if(navigation)return;const url=filterUrl(new URL(location.href),filters);if(url.href!==location.href)history.pushState(null,'',url);});

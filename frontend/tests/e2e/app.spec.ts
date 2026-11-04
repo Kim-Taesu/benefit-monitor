@@ -35,8 +35,8 @@ for(const width of [360,390,768,1440])test(`responsive ${width}px, semantics, ax
  await capture(page,`home-${width}`);
  await page.keyboard.press('Tab');await expect(page.getByRole('link',{name:'혜택 목록으로 건너뛰기'})).toBeFocused();
  await page.keyboard.press('Enter');await expect(page.locator('#results')).toBeFocused();
- const details=page.locator('article').first().locator('summary');await details.focus();await page.keyboard.press('Enter');await expect(page.locator('article').first().locator('details')).toHaveAttribute('open','');
- await page.keyboard.press('Enter');
+ const details=page.locator('article').first().locator('.card-open');await details.focus();await page.keyboard.press('Enter');await expect(page.getByRole('dialog')).toBeVisible();
+ await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(details).toBeFocused();
  expect(errors).toEqual([]);
 });
 test('search, combined filters, sort, URL reload, back and reset',async({page})=>{
@@ -55,7 +55,7 @@ test('search, combined filters, sort, URL reload, back and reset',async({page})=
 test('official links and complete detail conditions',async({page})=>{
  await setup(page);await page.goto('./');
  const card=page.locator('article').filter({hasText:'[테스트] 결제 시 할인 안내'});
- await card.locator('summary').click();await expect(card).toContainText('테스트 충전금');
+ await card.locator('.card-open').click();await expect(card).toContainText('테스트 충전금');
  for(const link of await card.locator('a').all()){
   await expect(link).toHaveAttribute('rel','noopener noreferrer');await expect(link).toHaveAttribute('href',/^https:\/\/mediahub.seoul.go.kr\//);
  }
@@ -162,8 +162,8 @@ test('all favorites can be cleared even when the stored record is corrupt',async
 const reviewedValue={kind:'discount_rate',value:10,qualifier:'up_to',conditions:'[테스트] 최소 결제와 지정 재원 조건을 확인하세요. <img src=x onerror=alert(1)>',evidence_url:'https://mediahub.seoul.go.kr/archives/1',evidence_quote:'최대 10% 할인'};
 test('reviewed numerical benefit shows its qualifier, conditions and safely escaped conditions',async({page})=>{
  await page.setViewportSize({width:390,height:844});await setup(page,snapshot([item({benefit_value:reviewedValue})]));await page.goto('./');
- const card=page.locator('article');await expect(card.locator('.benefit-highlight strong')).toHaveText('최대 10% 할인');await expect(card).toContainText('유료');
- await card.locator('summary').click();await expect(card.locator('.value-evidence')).toContainText(reviewedValue.conditions);await expect(card.locator('.value-evidence')).toContainText('<img src=x onerror=alert(1)>');await expect(card.locator('img')).toHaveCount(0);
+ const card=page.locator('article');await expect(card.locator('.benefit-highlight')).toHaveCount(0);await expect(card).toContainText('유료');
+ await card.locator('.card-open').click();await expect(card.locator('.value-evidence')).toContainText(reviewedValue.conditions);await expect(card.locator('.value-evidence')).toContainText('<img src=x onerror=alert(1)>');await expect(card.locator('img')).toHaveCount(0);
  const link=card.getByRole('link',{name:'금액 근거 원문 (새 창)',exact:true});await expect(link).toHaveAttribute('href',reviewedValue.evidence_url);await expect(link).toHaveAttribute('rel','noopener noreferrer');
  await page.addScriptTag({path:axePath});const a11y=await page.evaluate(async()=>await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));expect(a11y.violations).toEqual([]);
  await capture(page,'benefit-value-details');
@@ -174,8 +174,8 @@ test('invalid or contradictory numerical benefits withhold their card',async({pa
 });
 test('numerical highlight disappears with item validity rather than surviving as a saved snapshot',async({page})=>{
  await setup(page,snapshot([item({benefit_value:reviewedValue,display_until:'2026-11-04T12:00:03+09:00'})]));await page.goto('./');
- await expect(page.locator('.benefit-highlight strong')).toHaveText('최대 10% 할인');await page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true}).click();
- await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.locator('.benefit-highlight')).toHaveCount(0);
+ await page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true}).click();await page.locator('.card-open').click();await expect(page.locator('.value-evidence strong')).toHaveText('최대 10% 할인');
+ await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.getByRole('dialog')).toHaveCount(0);expect(await page.evaluate(()=>document.body.style.overflow)).not.toBe('hidden');
 });
 
 test('compact header and Seoul-only filters ignore legacy hidden categories',async({page})=>{
@@ -186,4 +186,14 @@ test('compact header and Seoul-only filters ignore legacy hidden categories',asy
  await expect(page.locator('article')).toHaveCount(6);
  await expect(page.locator('header .overview')).toContainText('공개 혜택');
  await expect(page).not.toHaveURL(/category=/);
+});
+
+test('card dialog hides conditions until opened and supports close and browser back',async({page})=>{
+ await setup(page);await page.goto('./');const card=page.locator('article').first();
+ await expect(card.locator('.full-conditions')).not.toBeVisible();await expect(card.locator('.card-conditions')).toHaveCount(0);
+ await card.locator('.card-open').click();await expect(page.getByRole('dialog')).toBeVisible();await expect(card.locator('.full-conditions')).toBeVisible();
+ await page.getByRole('button',{name:'상세 조건 닫기'}).click();await expect(page.getByRole('dialog')).toHaveCount(0);
+ await expect.poll(()=>page.evaluate(()=>history.state?.benefitDialog)).toBeFalsy();
+ await card.locator('.card-open').click();await page.goBack();await expect(page.getByRole('dialog')).toHaveCount(0);
+ expect(await page.evaluate(()=>document.body.style.overflow)).not.toBe('hidden');
 });
