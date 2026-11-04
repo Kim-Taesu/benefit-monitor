@@ -93,6 +93,7 @@ export function matchesRegion(i:Benefit,region:string):boolean {
 export function select(items:Benefit[],f:Filters,now=Date.now()):Benefit[] {
  const terms=f.q.toLocaleLowerCase('ko').trim().split(/\s+/).filter(Boolean);
  return items.filter(i=>matchesRegion(i,f.region)&&(!f.category||i.category===f.category)&&(!f.status||(f.status==='urgent'?timing(i,now).urgent:now-timestamp(i.verified_at)<=DAY))&&terms.every(t=>[i.title,i.summary,i.conditions,i.sourceName,...i.regions,...Object.values(i.labels)].join(' ').toLocaleLowerCase('ko').includes(t))).sort((a,b)=>{
+  // The card headline is summary; title is the original official notice headline.
   const title=a.summary.localeCompare(b.summary,'ko');
   if(f.sort==='title')return title;
   if(f.sort==='verified')return timestamp(b.verified_at)-timestamp(a.verified_at)||title;
@@ -108,4 +109,7 @@ export function filterUrl(current:URL,filters:Filters):URL {
  const url=new URL(current);
  for(const [key,value]of Object.entries(filters))if(value && !(key==='sort'&&value==='deadline'))url.searchParams.set(key,value);else url.searchParams.delete(key);
  return url;
+}
+export function regionOptions(items:Benefit[]):string[] {
+ return [...new Set(items.flatMap(i=>i.regions).concat(items.some(i=>matchesRegion(i,'서울'))?['서울']:[]))].sort((a,b)=>a.localeCompare(b,'ko'));
 }

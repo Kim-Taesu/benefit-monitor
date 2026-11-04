@@ -8,7 +8,7 @@
 
 - 기존 Python 기준선: 149 tests, OK.
 - Python 회귀 + 정적 배포/출처 정책 테스트: 153 tests, OK.
-- Node 내장 TypeScript 어댑터 테스트: 14 tests, pass.
+- Node 내장 TypeScript 어댑터 테스트: 16 tests, pass.
 - `git diff --check`: pass.
 - 로컬 npm 설치: DNS `ENOTFOUND registry.npmjs.org`. GitHub CLI 직접 연결도 불가.
   기존 설치 캐시에 Vue 3가 없어 로컬 빌드·브라우저 검증은 아직 실행하지 못했습니다.
@@ -37,3 +37,11 @@ Python 수집/승인/공개 JSON·MD·미러 로직 변경 없음. JSON schema_v
 
 미검증: 실제 운영 배포, 실기기·스크린리더 수동 평가, 전체 혜택 원문 재검증.
 이 PR은 UI 변경이며 새 혜택을 확인했다고 주장하지 않습니다. main 병합 및 운영 배포는 실행하지 않습니다.
+
+독립 코드 리뷰에서 정상 공개 출력 기준 치명적/중요 결함은 발견되지 않았습니다. 서울 필터 선택지 생성의
+지역 판정 불일치를 회귀 테스트로 수정했습니다. 가나다순은 화면에 표시하는 summary(카드 제목)를 정렬하는 것으로
+명시했으며 원문 title과 순서가 다른 테스트를 추가했습니다. 중복 identity의 충돌은 현재 공개 exporter가 차단합니다.
+
+첫 PR CI에서 Python/Node/Vue 타입 검사/Vite 빌드 통과. 번들 JS 86.99kB (gzip 34.15kB).
+Playwright 1.56.1이 ubuntu-latest의 Ubuntu 26.04를 지원하지 않아 브라우저 설치가 실패했으며,
+검증 job을 지원되는 표준 ubuntu-24.04 runner로 고정했습니다. 실제 브라우저 결과는 후속 실행으로 확인합니다.
