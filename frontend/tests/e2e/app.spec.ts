@@ -124,3 +124,38 @@ test('corrupt stored preferences can still be explicitly deleted',async({page})=
  await page.getByRole('button',{name:'저장값 삭제'}).click();
  expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:interests:v1'))).toBeNull();
 });
+test('favorites persist, remain filterable and return focus after removal',async({page})=>{
+ await setup(page);await page.goto('./');const card=page.locator('article').filter({has:page.getByRole('heading',{name:'[테스트] 문화 체험 안내',exact:true})});
+ await card.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true}).click();
+ await expect(card.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true})).toHaveAttribute('aria-pressed','true');
+ await page.reload();await page.getByRole('button',{name:/즐겨찾기만 보기/}).click();await expect(page.locator('article')).toHaveCount(1);
+ await page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true}).click();await expect(page.locator('article')).toHaveCount(0);await expect(page.locator('#results')).toBeFocused();
+ await page.getByRole('button',{name:'필터 초기화',exact:true}).last().click();await expect(page.locator('article')).toHaveCount(6);
+});
+test('saved items disappear when their display cutoff expires',async({page})=>{
+ await setup(page,snapshot([item({display_until:'2026-11-04T12:00:03+09:00'})]));await page.goto('./');
+ await page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true}).click();await page.getByRole('button',{name:/즐겨찾기만 보기/}).click();await expect(page.locator('article')).toHaveCount(1);
+ await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.getByText(/현재 유효성을 확인할 수 없는 저장 항목 1건/)).toBeVisible();
+});
+test('blocked favorite storage never shows a false saved state',async({page})=>{
+ await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('Blocked','SecurityError');}}));
+ await setup(page);await page.goto('./');const button=page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true});await button.click();
+ await expect(button).toHaveAttribute('aria-pressed','false');await expect(page.getByText('저장하지 못했습니다. 최대 200개 한도와 브라우저 저장소 설정을 확인하세요.',{exact:true})).toBeVisible();
+});
+test('sharing flushes pending search and copies only current search filters',async({page})=>{
+ await page.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async(value:string)=>{(window as any).__copiedSearch=value;}}}));
+ await setup(page);await page.goto('./?tracking=private#results');await page.getByLabel('혜택·조건·지역·기관 검색').fill('문화 회원');await page.getByRole('button',{name:'검색 조건 공유'}).click();
+ await expect(page.getByText('검색 조건 링크를 복사했습니다. 즐겨찾기는 공유되지 않습니다.',{exact:true})).toBeVisible();
+ const copied=await page.evaluate(()=>(window as any).__copiedSearch);const url=new URL(copied);expect(url.searchParams.get('q')).toBe('문화 회원');expect(url.searchParams.has('tracking')).toBe(false);expect(url.searchParams.get('sort')).toBe('deadline');expect(url.hash).toBe('');
+});
+test('clipboard denial leaves a selectable read-only share link',async({page})=>{
+ await page.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw new DOMException('Denied','NotAllowedError');}}}));
+ await setup(page);await page.goto('./');await page.getByRole('button',{name:'검색 조건 공유'}).click();
+ await expect(page.getByText('자동 복사를 사용할 수 없습니다. 아래 링크를 선택해 직접 복사하세요.',{exact:true})).toBeVisible();
+ const link=page.getByLabel('공유할 검색 링크');await expect(link).toHaveAttribute('readonly','');await link.focus();expect(await link.evaluate((input:HTMLInputElement)=>input.selectionEnd!-input.selectionStart!)).toBe((await link.inputValue()).length);
+});
+test('all favorites can be cleared even when the stored record is corrupt',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('benefit-monitor:favorites:v1','broken'));await setup(page);await page.goto('./');
+ await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'즐겨찾기 모두 해제'}).click();
+ expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:favorites:v1'))).toBeNull();await expect(page.locator('article')).toHaveCount(6);
+});
