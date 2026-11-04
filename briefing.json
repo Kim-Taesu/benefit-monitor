@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-04T10:02:38.065473+09:00",
-  "source_report_at": "2026-11-04T10:00:25.581262+09:00",
+  "generated_at": "2026-11-04T10:13:15.993821+09:00",
+  "source_report_at": "2026-11-04T10:10:32.197459+09:00",
   "valid_through": "2026-11-05T00:00:00+09:00",
   "status": "partial",
   "items": [
@@ -133,6 +133,23 @@
       "display_until": "2026-11-14T17:00:00+09:00"
     },
     {
+      "source": "government",
+      "url": "https://www.korea.kr/news/policyNewsView.do?newsId=148974363",
+      "title": "코리아 그랜드 페스티벌 할인 일정",
+      "summary": "전국 소비행사: 한우·수산물·상품권 등 품목별 할인 예정",
+      "conditions": "통합 행사 기간 10월29일~11월15일. 한우는 10월28일~11월8일 최대50%, 모바일 농할상품권은 11월2~15일 20% 할인 판매 안내. 품목별·매장별 가격과 기간이 다르며 모든 상품에 최대 할인율이 적용되지 않음. 구매비용 발생. 판매처·한도·결제조건·재고는 개별 공식 행사 안내에서 추가 확인 필요. 자료출처: 대한민국 정책브리핑.",
+      "districts": [],
+      "verified_at": "2026-11-04T10:09:55.303287+09:00",
+      "valid_from": "2026-10-29",
+      "valid_until": "2026-11-15",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false,
+      "payment_terms": {},
+      "display_until": "2026-11-16T00:00:00+09:00"
+    },
+    {
       "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019868",
       "title": "최대 15% 할인! 서울사랑상품권 '코.그.페' 행사",
@@ -226,6 +243,25 @@
       "display_until": "2026-11-18T09:59:35.615876+09:00"
     },
     {
+      "source": "seongnam",
+      "url": "https://snvision.seongnam.go.kr/23521",
+      "title": "성남 산성대로 미션투어",
+      "summary": "성남 관광·소비 미션 충족 시 모바일 상품권 최대 3만 원",
+      "conditions": "19세 이상. 관광지 등 대상 장소 2곳 이상 방문, 본인이 포함된 사진·영상과 해시태그를 넣은 SNS 후기 필요. 수정·중원구 대상 상점에서 5만 원 이상 소비 시 1만5천 원, 10만 원 이상 소비 시 3만 원. 후기 작성 후 7일 안에 통합예약 홈페이지에서 지급 신청. 대형마트·편의점·주유 경비 제외. 공고 세부 기준·예산 잔액·개인 자격·지급 성공은 별도 확인 필요.",
+      "districts": [
+        "성남시"
+      ],
+      "verified_at": "2026-10-27T23:17:50.018485+09:00",
+      "valid_from": null,
+      "valid_until": "2026-11-30",
+      "deadline_at": null,
+      "validity_kind": "fixed",
+      "fee_status": "paid",
+      "needs_recheck": false,
+      "payment_terms": {},
+      "display_until": "2026-11-10T23:17:50.018485+09:00"
+    },
+    {
       "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019606",
       "title": "가을 한강 나들이 필수 팁! 서울배달+땡겨요 배달 할인, 상품권 환급까지",
@@ -245,23 +281,21 @@
       "display_until": "2026-11-18T09:59:35.615876+09:00"
     },
     {
-      "source": "seongnam",
-      "url": "https://snvision.seongnam.go.kr/23521",
-      "title": "성남 산성대로 미션투어",
-      "summary": "성남 관광·소비 미션 충족 시 모바일 상품권 최대 3만 원",
-      "conditions": "19세 이상. 관광지 등 대상 장소 2곳 이상 방문, 본인이 포함된 사진·영상과 해시태그를 넣은 SNS 후기 필요. 수정·중원구 대상 상점에서 5만 원 이상 소비 시 1만5천 원, 10만 원 이상 소비 시 3만 원. 후기 작성 후 7일 안에 통합예약 홈페이지에서 지급 신청. 대형마트·편의점·주유 경비 제외. 공고 세부 기준·예산 잔액·개인 자격·지급 성공은 별도 확인 필요.",
-      "districts": [
-        "성남시"
-      ],
-      "verified_at": "2026-10-27T23:17:50.018485+09:00",
-      "valid_from": null,
-      "valid_until": "2026-11-30",
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019869",
+      "title": "제철 차, 명상 배워요! 웰니스 학습라운지 '다감' 개관…무료 교육",
+      "summary": "웰니스 학습라운지 다감: 무료 시범 프로그램 신청",
+      "conditions": "10월28일9:30 선착순 신청 개시, 11월9일~12월5일16개 프로그램106회 무료 운영. 서울시민·생활권자 대상, 사전 신청 후 확정. 일요일 휴관. 잔여석·신청 성공 미확인.",
+      "districts": [],
+      "verified_at": "2026-11-04T10:09:55.303287+09:00",
+      "valid_from": "2026-10-28",
+      "valid_until": "2026-12-05",
       "deadline_at": null,
       "validity_kind": "fixed",
-      "fee_status": "paid",
+      "fee_status": "free",
       "needs_recheck": false,
       "payment_terms": {},
-      "display_until": "2026-11-10T23:17:50.018485+09:00"
+      "display_until": "2026-11-18T10:09:55.303287+09:00"
     },
     {
       "source": "seoul",
@@ -468,6 +502,44 @@
     },
     {
       "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019568",
+      "title": "서울의 밤 걸으며, 건강과 포인트 챙겨요! 손목닥터9988 야간걷기 챌린지",
+      "summary": "손목닥터9988 야간 걷기 챌린지 포인트 안내",
+      "conditions": "10월1일부터 예산 소진 시까지. 앱 챌린지 등록·18시 이후 GPS 인증·완료 버튼 등 조건 필요. 야간명소 3곳 인증 선착순1만명 1천P, 2인3천보 선착순1만명 1인500P, 25개 구 코스 선착순1천명 1만P. 지급은 종료 후. 현재 예산·잔량·개인 지급 여부와 별도 참가비는 미확인.",
+      "districts": [
+        "서대문구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": "2026-10-01",
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "unknown",
+      "needs_recheck": false,
+      "payment_terms": {},
+      "display_until": "2026-11-10T23:46:28.922319+09:00"
+    },
+    {
+      "source": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019619",
+      "title": "무거운 가방 맡기고 가볍게 달리자! 월드컵경기장역 '러너지원공간'",
+      "summary": "월드컵경기장역 러너 지원 공간 무료 이용",
+      "conditions": "매일5:30~23시 지하철 운영 연계. 네이버 QR 인증 입장, 탈의실·보관함·세면대 무료. 자판기 구매는 별도 비용. 빈 보관함·현장 운영 변경 여부는 미확인.",
+      "districts": [
+        "마포구"
+      ],
+      "verified_at": "2026-10-27T23:46:28.922319+09:00",
+      "valid_from": null,
+      "valid_until": null,
+      "deadline_at": null,
+      "validity_kind": "ongoing",
+      "fee_status": "free",
+      "needs_recheck": false,
+      "payment_terms": {},
+      "display_until": "2026-11-10T23:46:28.922319+09:00"
+    },
+    {
+      "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019670",
       "title": "어르신께 10% 할인! 숙대 앞 '시니어 동행상점' 미용실 가보니",
       "summary": "시니어 동행상점: 형한나미용실 65세 이상 10% 할인",
@@ -549,44 +621,6 @@
       "display_until": "2026-11-18T09:59:35.615876+09:00"
     },
     {
-      "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019568",
-      "title": "서울의 밤 걸으며, 건강과 포인트 챙겨요! 손목닥터9988 야간걷기 챌린지",
-      "summary": "손목닥터9988 야간 걷기 챌린지 포인트 안내",
-      "conditions": "10월1일부터 예산 소진 시까지. 앱 챌린지 등록·18시 이후 GPS 인증·완료 버튼 등 조건 필요. 야간명소 3곳 인증 선착순1만명 1천P, 2인3천보 선착순1만명 1인500P, 25개 구 코스 선착순1천명 1만P. 지급은 종료 후. 현재 예산·잔량·개인 지급 여부와 별도 참가비는 미확인.",
-      "districts": [
-        "서대문구"
-      ],
-      "verified_at": "2026-10-27T23:46:28.922319+09:00",
-      "valid_from": "2026-10-01",
-      "valid_until": null,
-      "deadline_at": null,
-      "validity_kind": "ongoing",
-      "fee_status": "unknown",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "display_until": "2026-11-10T23:46:28.922319+09:00"
-    },
-    {
-      "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019619",
-      "title": "무거운 가방 맡기고 가볍게 달리자! 월드컵경기장역 '러너지원공간'",
-      "summary": "월드컵경기장역 러너 지원 공간 무료 이용",
-      "conditions": "매일5:30~23시 지하철 운영 연계. 네이버 QR 인증 입장, 탈의실·보관함·세면대 무료. 자판기 구매는 별도 비용. 빈 보관함·현장 운영 변경 여부는 미확인.",
-      "districts": [
-        "마포구"
-      ],
-      "verified_at": "2026-10-27T23:46:28.922319+09:00",
-      "valid_from": null,
-      "valid_until": null,
-      "deadline_at": null,
-      "validity_kind": "ongoing",
-      "fee_status": "free",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "display_until": "2026-11-10T23:46:28.922319+09:00"
-    },
-    {
       "source": "seven",
       "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
       "title": "할인 카드",
@@ -624,7 +658,7 @@
   "coverage_incomplete": true,
   "message": "공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다.",
   "withheld": {
-    "pending": 72,
+    "pending": 71,
     "expired": 29,
     "excluded": 2,
     "invalid_or_conflicting": 0
@@ -636,7 +670,7 @@
         "name": "서울시",
         "status": "checked",
         "scope": "",
-        "verified_count": 20
+        "verified_count": 21
       },
       {
         "source": "gangseo",
@@ -664,7 +698,7 @@
         "name": "정부",
         "status": "checked",
         "scope": "",
-        "verified_count": 0
+        "verified_count": 1
       },
       {
         "source": "culture",
@@ -720,175 +754,175 @@
       {
         "name": "종로구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 4,
         "verified_count": 2
       },
       {
         "name": "중구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 5,
         "verified_count": 1
       },
       {
         "name": "용산구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "성동구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "광진구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "동대문구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "중랑구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "성북구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 3,
         "verified_count": 2
       },
       {
         "name": "강북구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "도봉구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 4,
         "verified_count": 4
       },
       {
         "name": "노원구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "은평구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 2,
         "verified_count": 3
       },
       {
         "name": "서대문구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "마포구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "양천구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "강서구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 4,
         "verified_count": 2
       },
       {
         "name": "구로구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "금천구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "영등포구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 4,
         "verified_count": 2
       },
       {
         "name": "동작구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "관악구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 4,
         "verified_count": 4
       },
       {
         "name": "서초구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강남구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "송파구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강동구",
         "status": "checked",
-        "checked_at": "2026-11-04T10:00:25.581262+09:00",
+        "checked_at": "2026-11-04T10:10:32.197459+09:00",
         "candidates_count": 0,
         "verified_count": 0
       }
@@ -905,7 +939,7 @@
         "approved_hash": "4a606614debce81e51add515056d6262b873eb8ef5bc96087138e1bb0fec2277",
         "body_target_hash": "708d1d807738f868282b1be17f3323eb3b697bb448faf20da030a3e1acddba49",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-01T08:50:53.057696+09:00",
         "body_checked_at": "2026-11-01T08:50:53.057696+09:00",
         "body_status": "checked"
@@ -931,7 +965,7 @@
         "approved_hash": "48b39171d9b5f7d09a2088d17dc6deeff83887eb6e6ffea639d2de77227a2018",
         "body_target_hash": "f026de2c1ea602a0e61d1cb3f52f350539825c368da39bbc55f6e3a27e2ced4c",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-02T09:00:35.110991+09:00",
         "body_checked_at": "2026-11-02T09:00:35.110991+09:00",
         "body_status": "checked"
@@ -940,7 +974,7 @@
         "source": "seoul",
         "title_hash": "2aeba427a19dabd9ea1bdd8506016e29502623d8c6033f6b1e70e75e0fe6b6f9",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "416e1b422a93549688cd08e4": {
         "source": "seoul",
@@ -948,7 +982,7 @@
         "approved_hash": "934ad51f73316dad3633bc2c5b6a9e7e4e0be409098b2ff0b05bd0ca032c5c40",
         "body_target_hash": "9159601e1908bf9dce441a812bf0ef708289c2fe349f51ebb140992cdb3e030f",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-01T08:50:53.057696+09:00",
         "body_status": "failed"
       },
@@ -958,7 +992,7 @@
         "approved_hash": "17b8f4724ca9300a90cd7b92637f44d52e18b2e4338af44259577ee269f72154",
         "body_target_hash": "54cce75ee48b91149b531769a699498b84b0b06156cb94a9e5912c50c80026f6",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-10-28T09:09:53.989836+09:00",
         "body_status": "failed"
       },
@@ -969,7 +1003,7 @@
         "approved_hash": "59dd8c80667df99c29a94d046c7935b72b0a3c0d388b52711c02e9158bdfc9f8",
         "body_target_hash": "19f1c1a59f5a5793ec33cd3bf8cfb1ae94a0654b7d7f3f1fd3f331877114fdae",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-10-28T09:09:53.989836+09:00",
         "body_checked_at": "2026-10-28T09:09:53.989836+09:00",
         "body_status": "checked"
@@ -977,32 +1011,33 @@
       "0946939ee45fee9df0f4a786": {
         "source": "seoul",
         "title_hash": "30082f602dfc9b5fd906adbbf109992a00f2f706f15189862aa06d45ce19d484",
-        "body_hash": "a57f954553d09f36db56eb90733986cc19330830cf861b549e352534724f2713",
+        "body_hash": "a90bd273c8bdd6a01ef3496d02c6633c1c7469b4d6530f19d3ddf1611cd08cbb",
         "approved_hash": "483723da78aefb04bd6cbf6a4e092e5463dad550bf0e9ebb5b0ee32f996ec0be",
         "body_target_hash": "36a07039ed7c5cfe733fc893b091920ff435a244cf2dd394090893209e27d4cf",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
-        "body_attempted_at": "2026-10-31T09:14:51.413309+09:00",
-        "body_checked_at": "2026-10-31T09:14:51.413309+09:00",
-        "body_status": "checked"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_attempted_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_checked_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_status": "checked",
+        "body_hash_version": 2
       },
       "2bde305feed0159ac182eb17": {
         "source": "seoul",
         "title_hash": "855aefd19fcf44059e2d89c9a6719acf478cbce3d67a53d75c5d53e2dc6f24fa",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "5f3758ba6d292afa004d701e": {
         "source": "seoul",
         "title_hash": "139c4e3ba3465883eadff912708418ea02642aa12a828e4df9b6ec0b3aa30322",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "40b46f3a59ef2e5d593a28ca": {
         "source": "seoul",
         "title_hash": "e641b7d2ac4a2b442fee58f5ff6b2eef589bd1098039bf805ea0fadd4e4325b5",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "b6cbbaff8b1f6407aa44154e": {
         "source": "seoul",
@@ -1011,7 +1046,7 @@
         "approved_hash": "8f53c41ae9be1707586005b376dbc5b652fb82dbbaabd57f9465f9a528c661be",
         "body_target_hash": "31f6274b4bbf1a4821354e01b7e5eb276a05c74b5c2e28ab24b0cbb9a4b2d48f",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-02T09:00:35.110991+09:00",
         "body_checked_at": "2026-11-02T09:00:35.110991+09:00",
         "body_status": "checked"
@@ -1023,7 +1058,7 @@
         "approved_hash": "cb5ce5e15ff72e609a3b8c3efa62aa2c11d8833b81142f47fa5eb77b77a0dfe4",
         "body_target_hash": "d9d2ae18de79903a79b3bb54edfc1d96af2e6c0f9ee1f534482dfc6ea9038172",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-01T08:50:53.057696+09:00",
         "body_checked_at": "2026-11-01T08:50:53.057696+09:00",
         "body_status": "checked"
@@ -1031,18 +1066,21 @@
       "e1183dc6e446326a3a8fade3": {
         "source": "seoul",
         "title_hash": "327f173e4c64d2d4f371917f45bd7c940f39621feace6d1cb4f21ac19a79f275",
+        "body_hash": "8169b17957a5a5ba085fb9b4da358acbed13074e1cf557ac7f65d630500195f3",
         "approved_hash": "e88e52b78064618772b13f48f2f396fad70090816147df397c37877b8af743bf",
         "body_target_hash": "5ec67180b6c97ed1b145b09121a0d0d7d2b841f13a053c012865e3f08e4a6842",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
-        "body_attempted_at": "2026-10-30T09:29:34.210829+09:00",
-        "body_status": "failed"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_attempted_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_checked_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_status": "checked",
+        "body_hash_version": 2
       },
       "0c972aef73a0bd1b0fb9c6aa": {
         "source": "seoul",
         "title_hash": "2ec4ffd4a4dd661a5a03dcccbdbc84ee01940641479a6af15d11a7bb7e5bf619",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "1e4e2435c837e4d20dff4285": {
         "source": "seoul",
@@ -1057,7 +1095,7 @@
         "approved_hash": "50ddb040e92f56d7db6da4d52eb5806a39098d6fc2555ddfc5ea9e12f1942ec1",
         "body_target_hash": "01413367932b7b9126f6a826c321caee008e034302bc796606e2bf67c1906c01",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-04T09:48:33.765405+09:00",
         "body_checked_at": "2026-11-04T09:48:33.765405+09:00",
         "body_status": "checked"
@@ -1066,7 +1104,7 @@
         "source": "seoul",
         "title_hash": "3060e349efb5b599926e5b669f3652053eb5ed3b41e9f8e5ad20d23f8d7220e6",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "292824d541bc0a2d8291f93e": {
         "source": "seoul",
@@ -1075,7 +1113,7 @@
         "approved_hash": "54225a5fe4bc2080964b19acc21a4ceffb78e29a9a073ba0fa5dafc0b727164f",
         "body_target_hash": "e62f85505dd9adae172c4392866d7b89cd8df8aa90794dea2e24952f32953f9f",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-01T08:50:53.057696+09:00",
         "body_checked_at": "2026-11-01T08:50:53.057696+09:00",
         "body_status": "checked"
@@ -1087,7 +1125,7 @@
         "approved_hash": "94595abc93cde9314d6e4a2be58c7c522c6cb3f94bad675008340a8c73261bfe",
         "body_target_hash": "972423851bf0f4eac0d540b84ae611e18e16dab882946fe8d84c089b1318cffe",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-03T11:42:39.903514+09:00",
         "body_checked_at": "2026-11-03T11:42:39.903514+09:00",
         "body_status": "checked"
@@ -1099,7 +1137,7 @@
         "approved_hash": "d43dee78d5a92aa2e896de0881bd6826f63693b02cf7fe217183cea49eb76925",
         "body_target_hash": "1937e8ea796711089f5161ec37baf6834f8451aa7b674667a0c0768358f376b2",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-01T08:50:53.057696+09:00",
         "body_checked_at": "2026-11-01T08:50:53.057696+09:00",
         "body_status": "checked"
@@ -1111,7 +1149,7 @@
         "approved_hash": "60e2c0bc24d23f423404efd815b267081a7fe12e1cae501479bffe03a9203968",
         "body_target_hash": "e21daff08c5c32c2b4d78d7ffda3d69470f7d1a1214e336f25aad82edfeb89c4",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-03T11:42:39.903514+09:00",
         "body_checked_at": "2026-11-03T11:42:39.903514+09:00",
         "body_status": "checked"
@@ -1120,19 +1158,20 @@
         "source": "seoul",
         "title_hash": "2fd7c643f7caf6f0f83e8f3b5d0a60940f458333df3325776e24f1e13262a660",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "69277c9a1f849c711c83c6fa": {
         "source": "seoul",
         "title_hash": "7aa437580953666d85fdf292eaa9187c36fc6168db56fbae34b070eb89a8c105",
-        "body_hash": "dcbb26a4cd0985b48fa20ca221d2e2fcc3fbf90689dffcbe3d6d4523a9589bb7",
+        "body_hash": "734a46a30f89de1e7629e77510c65ce3051cadfaa9862d0e7176f6a6b0265456",
         "approved_hash": "61a7cf0fb602d4de30b9785af8f2b34e19bf95e4dc64c8a335bc20665c4fe30a",
         "body_target_hash": "2f8467d04281b7d27cc3e8e803fab79dd8e7a10bc76f47007a83732526ec314e",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
-        "body_attempted_at": "2026-10-31T09:14:51.413309+09:00",
-        "body_checked_at": "2026-10-31T09:14:51.413309+09:00",
-        "body_status": "checked"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_attempted_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_checked_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_status": "checked",
+        "body_hash_version": 2
       },
       "dbf2b3afef1a3ddc43b3dc35": {
         "source": "seoul",
@@ -1141,7 +1180,7 @@
         "approved_hash": "0604b3b73bb65f906620a5ceeeff0ac63c64ace10952474c441ec32782a49a47",
         "body_target_hash": "364e8ebfaec059ae0784fd305055884477d0e61bf51a81df77b9df1349472797",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-02T09:00:35.110991+09:00",
         "body_checked_at": "2026-11-02T09:00:35.110991+09:00",
         "body_status": "checked"
@@ -1153,7 +1192,7 @@
         "approved_hash": "dd5dec971249c0eb537811cdc1b3eb9b77d363caa60e27e97d613f4a6c6b4802",
         "body_target_hash": "841adac4487b9d3e982ed4f893f2656801efb6df6b23f98b6582dad7327b12cf",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-10-28T09:09:53.989836+09:00",
         "body_checked_at": "2026-10-28T09:09:53.989836+09:00",
         "body_status": "checked"
@@ -1165,7 +1204,7 @@
         "approved_hash": "b370a7f91aca0c3c9d5ae81669b353bfe5938e1a2f175292150ebd552fa12198",
         "body_target_hash": "f22e81811956ddc31b87f4db865be5ff300e5be5a4e4e10497e2fb606eb141f7",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-10-28T09:09:53.989836+09:00",
         "body_checked_at": "2026-10-28T09:09:53.989836+09:00",
         "body_status": "checked"
@@ -1177,7 +1216,7 @@
         "approved_hash": "b888418e14fbab62ad074423c4832d977d1e03b2c74262bc90cdac5460c08b8e",
         "body_target_hash": "09b443639897ca49b4a36657f7b4221964c99e035292878d7ed3612c1de09e38",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-04T10:00:25.581262+09:00",
         "body_checked_at": "2026-11-04T10:00:25.581262+09:00",
         "body_status": "checked"
@@ -1186,19 +1225,19 @@
         "source": "seoul",
         "title_hash": "140545213e3a3ac7946b691c8d799e267d1e345e02580c51fe80a9fb92bddeae",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "864360fabf2c6c60ce0c9909": {
         "source": "seoul",
         "title_hash": "1a830be47579bba63b1655ac11e1a56d7560bdb9edde2cdba148a55b9400214b",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "c5b86e7e112d6e5edccbcc52": {
         "source": "seoul",
         "title_hash": "9669cb40dda3bbabc7ffd3518f03691c0ac43d9519e85104bb039e9e18e198fc",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "141cdea7ef4424b37216b336": {
         "source": "seoul",
@@ -1207,7 +1246,7 @@
         "approved_hash": "5cd5100b95de973c71c363c9408270f37ca84946d4ae1217e5f40e4e77fa1425",
         "body_target_hash": "b3d7e35ab4db48d219a75160006f252799877751e3e3afad2c751c8b964f0e45",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-04T09:48:33.765405+09:00",
         "body_checked_at": "2026-11-04T09:48:33.765405+09:00",
         "body_status": "checked"
@@ -1228,17 +1267,13 @@
         "source": "seoul",
         "title_hash": "a4670a7d2e72d3c2a40043e7339f53759ec822e7cfde7b9a09270bbd3fd8cf4d",
         "body_hash": "19412ede2ed02a20f39c58ed7be5add88654afab840b7bd65773216d244f76f4",
-        "approved_hash": "fea37e1c441721ebbce16d396b6ef34a951740582854b40d817299c832e0c216",
+        "approved_hash": "23b74b07910c0b3916f3a57fb23afe7264ce8b3c4bbda1e08f3f2ccfce13632f",
         "body_target_hash": "88ff814701ba06af4cd337a1cede1fb95b47c7de114cc248f8397f70d4b8f2d5",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
         "last_seen_at": "2026-10-29T09:30:58.764066+09:00",
         "body_attempted_at": "2026-11-04T10:00:25.581262+09:00",
         "body_checked_at": "2026-11-04T10:00:25.581262+09:00",
-        "hold_at": "2026-11-04T10:00:25.581262+09:00",
-        "hold_reason": "body_changed",
-        "body_status": "checked",
-        "pending_reason": "body_changed",
-        "pending_deadline": "2026-12-05"
+        "body_status": "checked"
       },
       "915d04f9b0defdd000fae863": {
         "source": "seoul",
@@ -1271,14 +1306,15 @@
       "f020f634e275ec72f310dcd9": {
         "source": "seoul",
         "title_hash": "dfcf48ec3455e571783ff1ca79b8d7a7c02c58e3e942e1b7dcf736f1286f0ac7",
-        "body_hash": "66b6cdcba28eecea848ce7e1a262acc178c9bc9b6ca25e4a2503b46492e550f1",
+        "body_hash": "88a2236e3f58e9c64f782168426ca43801632d6bd7934af25defc67aeccebfd2",
         "approved_hash": "002c0ee8301b24c34da8f30effa1ea87317c746916c3b0c2261d21654c1aa71a",
         "body_target_hash": "7143bbc00c9d61f198c50b1dd7790f30cb816b23dcd34a21d2bd7a625bb0eb63",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
         "last_seen_at": "2026-11-02T09:00:35.110991+09:00",
-        "body_attempted_at": "2026-10-30T09:29:34.210829+09:00",
-        "body_checked_at": "2026-10-30T09:29:34.210829+09:00",
-        "body_status": "checked"
+        "body_attempted_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_checked_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_status": "checked",
+        "body_hash_version": 2
       },
       "c6da1e2a0e2008b2cce055ab": {
         "source": "seoul",
@@ -1324,17 +1360,13 @@
         "source": "government",
         "title_hash": "364af1d2fc011f843ee31ef650b33c79a143d19193c4f1c73b5246ff4261c3a4",
         "body_hash": "7b4bf7aa5bd97791f9341ba49b372a772a212ee031b8df999302b3d3e6667a08",
-        "approved_hash": "31059819cc8e22c638a3ab8191ca6e7d31797fe3ca52a427be629c075cae0c9b",
+        "approved_hash": "ab56e2b17acc091a903645759ebac97a852b4463ba8c3272fef03ab700217059",
         "body_target_hash": "b68e55da1173db00bc30fea9b42926415775e1bb6005763547ea7a16cf33e980",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
         "last_seen_at": "2026-11-03T11:42:39.903514+09:00",
         "body_attempted_at": "2026-11-04T10:00:25.581262+09:00",
         "body_checked_at": "2026-11-04T10:00:25.581262+09:00",
-        "hold_at": "2026-11-04T10:00:25.581262+09:00",
-        "hold_reason": "body_changed",
-        "body_status": "checked",
-        "pending_reason": "body_changed",
-        "pending_deadline": "2026-11-15"
+        "body_status": "checked"
       },
       "3e3ec29f70b50ce6deee0dd0": {
         "source": "culture",
@@ -1351,14 +1383,15 @@
       "080550205e1c548d6596d473": {
         "source": "culture",
         "title_hash": "99d7ea48a77e8ba30438f4db32b840da65366f16c146119010fbb8ca11b2dcd8",
-        "body_hash": "f488fba1e39c327022b2a5b69f7d70288325b6482c3bec8683f659ab5c596e51",
+        "body_hash": "10fba2c258fa1a19f7d3f2ea78872176bfaec2b9e09d09823662cdb5d55d2a79",
         "approved_hash": "4a3e36e6878e70125acb1f9b76f0f4b41e31f7417fac8bdc7c7c3211a2b4e66a",
         "body_target_hash": "135217521c6856cc7d1986593871cb136080068020d26df617116561e3f39918",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
         "last_seen_at": "2026-11-03T11:42:39.903514+09:00",
-        "body_attempted_at": "2026-10-31T09:14:51.413309+09:00",
-        "body_checked_at": "2026-10-31T09:14:51.413309+09:00",
-        "body_status": "checked"
+        "body_attempted_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_checked_at": "2026-11-04T10:10:32.197459+09:00",
+        "body_status": "checked",
+        "body_hash_version": 2
       },
       "c151626c64591436b01fa895": {
         "source": "culture",
@@ -1387,7 +1420,7 @@
         "approved_hash": "f626bbfd222dd9e10a582f08d4604c063c23a57c7a02859c1096601c1bc45f60",
         "body_target_hash": "f5d907c1e4ac3e5c1e54a29f871d3f87ff22ce2db189bcedf1643c04b0f6f734",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-03T11:42:39.903514+09:00",
         "body_checked_at": "2026-11-03T11:42:39.903514+09:00",
         "body_status": "checked"
@@ -1472,7 +1505,7 @@
         "body_hash": "c9fd36de617862025c0d0f6cad1a4e5a862c08ba5a8d4239bcfbbae0946fd698",
         "approved_hash": "e86129aa5a5462a65002d97dd99c1295fd6753dd2341ac85b1a4501080afd2e5",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-10-28T01:37:57.274635+09:00",
         "body_checked_at": "2026-10-28T01:37:57.274635+09:00",
         "body_status": "checked"
@@ -1481,13 +1514,13 @@
         "source": "retail",
         "title_hash": "84289c44b42f0f220edcebd8939c0ac56f019a2b264afa61b401a2efd13669ba",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "ead80c79c226bf4af00310a8": {
         "source": "retail",
         "title_hash": "180f03c63e6127f73c2f34391701ff3d618e9640eecd8b8cf1886ef7155e137c",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "849122a68abb10f8117aaeb7": {
         "source": "retail",
@@ -1495,7 +1528,7 @@
         "body_hash": "5c86a349188cea04cf483185c8d379aa20a804682dfc18179e6b46d1cb037eed",
         "approved_hash": "d4cd11bdc2f9f29fbd7f3e9c4d8a2b11c853471056b7d0b2d6560fdec6df7f85",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-10-28T01:37:57.274635+09:00",
         "body_checked_at": "2026-10-28T01:37:57.274635+09:00",
         "body_status": "checked"
@@ -1525,7 +1558,7 @@
         "approved_hash": "3b6152d74cf9b38c53cb451e2f82e000c3d199cfd0b52ce6b05591bd13730b08",
         "body_target_hash": "3768a51feed7ee48a244f88e4ff63eca6633955f1d6e2b63b162704b49273f29",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-02T09:00:35.110991+09:00",
         "body_checked_at": "2026-11-02T09:00:35.110991+09:00",
         "body_status": "checked"
@@ -1537,7 +1570,7 @@
         "approved_hash": "26adfd4db75495eaf11f7e54fd8e748ffc0fcff37cdf0f13e11699d43bc78fec",
         "body_target_hash": "8184aa7d4cc222d6b376ee785abfc4301cda2e0a58298251ad396080c9f1b30a",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-11-04T09:41:40.268742+09:00",
         "body_checked_at": "2026-11-04T09:41:40.268742+09:00",
         "body_status": "checked"
@@ -1555,7 +1588,7 @@
         "approved_hash": "7aa82f739e4dc2f283ab214344bfa06bdcc7de046fe020d8d02816169ee65d9c",
         "body_target_hash": "a0b5e65f3c38cc7ab41ce3f9297f695cfb3b40fc4259c6b7fe67d6dc19988b02",
         "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "body_attempted_at": "2026-10-31T09:14:51.413309+09:00",
         "body_checked_at": "2026-10-31T09:14:51.413309+09:00",
         "body_status": "checked"
@@ -1677,7 +1710,7 @@
         "source": "retail",
         "title_hash": "4f8f2f37e89d20c4b12423e797bfa893857ea47d69516c360b4fac7769f78d95",
         "first_seen_at": "2026-10-29T08:16:59.499545+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "07e83525d1034d8f23910596": {
@@ -1691,7 +1724,7 @@
         "source": "seoul",
         "title_hash": "78c4f093597f14e56d03cb5785fe928d87ecc3246b80cf851b318b3e69c5e5d3",
         "first_seen_at": "2026-10-30T09:29:34.210829+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "2584c66420623d8d9c57fbe8": {
@@ -1712,7 +1745,7 @@
         "source": "seoul",
         "title_hash": "d3fa7468f9b49b4ec78c15ef628d95aefbb4dd301d27ea8d434769080d708acf",
         "first_seen_at": "2026-10-30T09:29:34.210829+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "7a567e617b7c66c9b5e8f464": {
@@ -1754,21 +1787,21 @@
         "source": "retail",
         "title_hash": "f09dd7c7cad6af1b9f4899340e3f269fc6e668ad922f0b51016ba41acdd3c420",
         "first_seen_at": "2026-10-30T09:29:34.210829+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "e1154eebcf0a5aeab3b76710": {
         "source": "seoul",
         "title_hash": "b1b58a93a4168ae991cc8c606c944d4216eecff4985e80df81b7e6f34882515c",
         "first_seen_at": "2026-10-31T09:14:51.413309+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "193a46ea23752bae0e9259ea": {
         "source": "seoul",
         "title_hash": "578fcf5bfce58a8c144224f97b5f3abe60b99de0739b7b15cde7b709e5700f12",
         "first_seen_at": "2026-10-31T09:14:51.413309+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "408a2c3abd4f80d5427a63ae": {
@@ -1789,7 +1822,7 @@
         "source": "seoul",
         "title_hash": "d41b50c80e5819ae5f81654a413c58d8cb1a7171e554a949fb8102f98030f6d9",
         "first_seen_at": "2026-10-31T09:14:51.413309+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "1c2b3b3979b51805c5c6a711": {
@@ -1859,35 +1892,35 @@
         "source": "seoul_lifelong",
         "title_hash": "2c2de998b77dfaf6b66ef4580e3995cc34ec98b26188e29267d874f1965864f1",
         "first_seen_at": "2026-11-02T09:00:35.110991+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "b6926fd9f62f8f0ad914ec80": {
         "source": "seoul",
         "title_hash": "c3c17e92b9e3921a6bec8a1cba8355b20608bf2c1417d8b61242f51a2de0679b",
         "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "4824b480f9e206c7958fa698": {
         "source": "seoul",
         "title_hash": "7830eb071a8f8a999846e2df3e65754afe02e7fa7610fa8384bec124e8145eaa",
         "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "c3d51d68c6d585fcf267db6d": {
         "source": "seoul",
         "title_hash": "c768e03736b24a3e089038d2bdf611d2389beb07976ab36b31ed7cf12bf8a64a",
         "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "83d46f4c8cf59839c8e8b4c5": {
         "source": "seoul",
         "title_hash": "b0934cef528b23c63e6403488c87e714eec9a03525c551fef823d3f00d4a3394",
         "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "7b5a0385c3883828eba58768": {
@@ -1936,84 +1969,84 @@
         "source": "retail",
         "title_hash": "8e305809ef89fea4e180cb5869f6891fb7dfa0c80548e8dfa41f87dc19be7cad",
         "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "f00687266148147a5ef42f43": {
         "source": "seoul",
         "title_hash": "4944130257ca2b1fe56dca3c48da3e04bc9c697849e8b0b95eebe0d088b8a877",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "13729da628936932c2b8fad6": {
         "source": "seoul",
         "title_hash": "2e4a00fd7ed91bf209ad1dfd1a08c4447a67330f91434664059d6b0bfc584043",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "a496dd8d80f929476b8dd26c": {
         "source": "seoul",
         "title_hash": "1ff0ee9c7816c1f65509cc0b73922291d2545cb1443c6926ba72adb7f40c13e4",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "e02c475ea7c592316eaaa5a8": {
         "source": "government",
         "title_hash": "83c900f6648e76bda7e8fc5b8afd47f22a0f3853f2418be34919460559efa5eb",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "e9d6e773e5e7a18203d54e4a": {
         "source": "culture",
         "title_hash": "010e0a80531ac155f2ffd09992d135e58a5e9a7a9c9f39521f77e904306ccb1f",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "a0640c2ea3480598826b37e2": {
         "source": "culture",
         "title_hash": "6195e133a66a8bff4e6721495d67e4c6a024b4662887d498d8a3085b134b0d97",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "ca5a7e0a510e3cc0420b5350": {
         "source": "culture",
         "title_hash": "88c3e9fdc8170992c503a3aa71b22c06cb35094786a24236a623dbc4e8b578eb",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "620a0273a70125896c5b798f": {
         "source": "culture",
         "title_hash": "27fda2cb69816836c20c788e31d0bcb55a61a4b4ba025b8637b554d2420c0687",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "69d9aee2485f2bdb52f9975c": {
         "source": "culture",
         "title_hash": "a1b721aa5b71609cdf03c9a63472b8156566dc511db01af84c3502be1f5c3991",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "0335d42cd69407d51756aca9": {
         "source": "culture",
         "title_hash": "ed50c3459b7d8e6bf86be08d2c0773fb152f00bb7be5e62f8980204fa9cb0bae",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "32c0f361a977ced892bb5010": {
         "source": "culture",
         "title_hash": "5afd78af0e7a4b21fd5f612a0e571f767ca0099f7f41a79675ad7356c6bc7627",
         "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "bc34025fdc1f8232c3c5947e": {
@@ -2041,7 +2074,7 @@
         "source": "culture",
         "title_hash": "d893ac230e2b6781c58ffa3939b4bceb7863f9f3771201a8252e75ca4ba4b08b",
         "first_seen_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
         "pending_reason": "manual_review"
       },
       "355c25d57d45b3bdd70750fe": {
@@ -2050,62 +2083,69 @@
         "first_seen_at": "2026-11-04T10:00:25.581262+09:00",
         "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
         "pending_reason": "manual_review"
+      },
+      "89f318c1dccbfa1899998d41": {
+        "source": "culture",
+        "title_hash": "fa4244eeb3c6438d023b5ec4f7e3e5f875a54eb24dfeef55d34120cf21886243",
+        "first_seen_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
+        "pending_reason": "manual_review"
       }
     },
     "sources": {
       "seoul": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "gangseo": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "eunpyeong": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "government": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "culture": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "retail": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "convenience": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "seoul_lifelong": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "emart24": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-        "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+        "last_success_at": "2026-11-04T10:10:32.197459+09:00"
       },
       "seongnam": {
-        "consecutive_failures": 13,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
+        "consecutive_failures": 14,
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
         "error_category": "tls"
       },
       "seven": {
-        "consecutive_failures": 13,
-        "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
+        "consecutive_failures": 14,
+        "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
         "error_category": "timeout"
       }
     }
@@ -2113,57 +2153,57 @@
   "source_health": {
     "seoul": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "gangseo": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "eunpyeong": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "government": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "culture": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "retail": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "convenience": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "seoul_lifelong": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "emart24": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_success_at": "2026-11-04T10:00:25.581262+09:00"
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_success_at": "2026-11-04T10:10:32.197459+09:00"
     },
     "seongnam": {
-      "consecutive_failures": 13,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
+      "consecutive_failures": 14,
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
       "error_category": "tls"
     },
     "seven": {
-      "consecutive_failures": 13,
-      "last_attempt_at": "2026-11-04T10:00:25.581262+09:00",
+      "consecutive_failures": 14,
+      "last_attempt_at": "2026-11-04T10:10:32.197459+09:00",
       "error_category": "timeout"
     }
   },
@@ -2173,7 +2213,7 @@
     "expected_collection_at": "2026-11-04T01:00:00+09:00",
     "scheduled_run_confirmed": false
   },
-  "run_id": "41750936851",
+  "run_id": "41752172614",
   "review_queue": [
     {
       "id": "3f44bb4299ee1f80f860e84a",
@@ -2182,14 +2222,6 @@
       "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
       "last_seen_at": "2026-10-28T09:48:19.139211+09:00",
       "deadline": "2026-11-04"
-    },
-    {
-      "id": "e080f76421c734a2e61a4486",
-      "source": "government",
-      "reason": "body_changed",
-      "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-      "last_seen_at": "2026-11-03T11:42:39.903514+09:00",
-      "deadline": "2026-11-15"
     },
     {
       "id": "2d40249e066a326d4e7543a8",
@@ -2230,14 +2262,6 @@
       "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
       "last_seen_at": "2026-10-30T09:29:34.210829+09:00",
       "deadline": "2026-11-30"
-    },
-    {
-      "id": "9fbb7918c5079e2d43aabdca",
-      "source": "seoul",
-      "reason": "body_changed",
-      "first_seen_at": "2026-10-28T01:37:57.274635+09:00",
-      "last_seen_at": "2026-10-29T09:30:58.764066+09:00",
-      "deadline": "2026-12-05"
     },
     {
       "id": "c7eba412e3ef9774798a29d5",
@@ -2316,7 +2340,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-10-29T08:16:59.499545+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2340,7 +2364,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-10-30T09:29:34.210829+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2380,7 +2404,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-10-30T09:29:34.210829+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2396,7 +2420,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-10-30T09:29:34.210829+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2428,7 +2452,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-10-31T09:14:51.413309+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2484,7 +2508,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-10-31T09:14:51.413309+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2508,7 +2532,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-10-31T09:14:51.413309+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2532,7 +2556,7 @@
       "source": "seoul_lifelong",
       "reason": "manual_review",
       "first_seen_at": "2026-11-02T09:00:35.110991+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2540,7 +2564,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2564,7 +2588,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2580,7 +2604,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2588,7 +2612,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2596,7 +2620,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-03T11:42:39.903514+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2628,7 +2652,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2636,7 +2660,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2644,7 +2668,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2652,7 +2676,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2660,7 +2684,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2668,7 +2692,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2676,7 +2700,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2692,7 +2716,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2700,7 +2724,7 @@
       "source": "government",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2708,7 +2732,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2716,7 +2740,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T09:41:40.268742+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     },
     {
@@ -2748,7 +2772,15 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-04T10:00:25.581262+09:00",
-      "last_seen_at": "2026-11-04T10:00:25.581262+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
+      "deadline": null
+    },
+    {
+      "id": "89f318c1dccbfa1899998d41",
+      "source": "culture",
+      "reason": "manual_review",
+      "first_seen_at": "2026-11-04T10:10:32.197459+09:00",
+      "last_seen_at": "2026-11-04T10:10:32.197459+09:00",
       "deadline": null
     }
   ]
