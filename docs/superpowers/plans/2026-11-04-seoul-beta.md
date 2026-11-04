@@ -49,3 +49,10 @@ Files: docs/qa/seoul-beta.md, docs/p0-backlog.md.
 - Local base a044815 has PR15 contents; remote main 2e672d7c699cb3381252eb1b82962c57f5f6d447.
 - User already authorized implementation; continue without another plan approval.
 - npm offline cache missing and online registry DNS unavailable; Node pure tests can run locally, build/browser checks use existing guarded GitHub CI.
+
+- Task 1 complete: Node tests progressed from missing beta module to 46 passed; includes automatic topic replacement, pinned topics, consent, 30-day retention and malformed payloads.
+- Task 2 implemented: Vue typecheck/build passed on CI head 8b22dde; 35/36 browser tests passed, including age input, mobile/desktop axe and screenshots. One test used check() while intentionally asserting failed consent stays unchecked; corrected to click().
+- Review fixes: numeric v-model normalization; fail-closed consent withdrawal; cross-tab storage synchronization and consent recheck; conservative Seoul/nationwide scope labels. Added regression tests.
+- Ruling: retain existing collectors/exports unchanged and scope only web display to Seoul; backend scope migration remains separate to preserve briefing consumers.
+- Ruling: local feedback is not operator delivery; clearly label local-only until server integration is authorized.
+- Ruling: use 20 exposures as an experimental threshold, not a validated recommendation model.

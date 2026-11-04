@@ -49,7 +49,7 @@ test('storage denial and expiry never remove basic discovery or fabricate recomm
  await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new Error('blocked');}}));
  await setup(page);await page.getByRole('button',{name:'개인화 설정 저장',exact:true}).click();
  await expect(page.locator('#beta')).toContainText('저장하지 못했습니다');
- await page.getByLabel('이 기기의 행동 기록에 동의').check();await expect(page.getByLabel('이 기기의 행동 기록에 동의')).not.toBeChecked();
+ await page.getByLabel('이 기기의 행동 기록에 동의').click();await expect(page.getByLabel('이 기기의 행동 기록에 동의')).not.toBeChecked();
  await page.clock.fastForward(13*3600000);
  await expect(page.locator('#beta .topic-button')).toHaveCount(0);
  await expect(page.locator('#beta')).toContainText('현재 표시할 수 있는 주제가 없습니다');

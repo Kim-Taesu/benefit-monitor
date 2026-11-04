@@ -76,3 +76,20 @@ test('real Seoul and nationwide scope labels remain eligible, other cities do no
   assert.equal(topicsFor(rows,p,[],NOW).length,0,region);
  }
 });
+test('aggregate feedback replaces automatic discovery slots while preserving explicit interests',()=>{
+ const rows=adapt(snapshot([
+  item({summary:'야간 행사'}),item({url:'https://mediahub.seoul.go.kr/archives/2',summary:'전시 체험'}),
+  item({url:'https://mediahub.seoul.go.kr/archives/3',summary:'교육 강좌'})
+ ]),NOW).items;
+ const p=emptyBeta().profile;
+ assert.deepEqual(topicsFor(rows,p,[],NOW).slice(0,2).map(t=>t.id),['night','culture']);
+ let b=emptyBeta();b.consent=true;
+ for(let n=0;n<20;n++)b=recordEvent(b,'night','view',NOW+n);
+ assert.deepEqual(topicsFor(rows,p,b.events,NOW+30).slice(0,2).map(t=>t.id),['culture','learning']);
+ p.interests=['night'];assert.equal(topicsFor(rows,p,b.events,NOW+30)[0].id,'night');
+});
+test('future events and unexpected payload fields cannot enter the local store',()=>{
+ const s=storage(),b=emptyBeta();b.consent=true;
+ b.events=[{topic:'night',action:'click',at:NOW+100}];saveBeta(s,b);assert.deepEqual(loadBeta(s,NOW).events,[]);
+ (b.events[0] as any).query='personal query';assert.equal(saveBeta(s,b),false);
+});
