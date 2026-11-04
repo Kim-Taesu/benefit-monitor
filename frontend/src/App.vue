@@ -27,6 +27,7 @@ async function shareSearch(){
  shareLink.value=searchShareUrl(new URL(location.href),filters).href;
  try{await navigator.clipboard.writeText(shareLink.value);shareNotice.value='검색 조건 링크를 복사했습니다. 즐겨찾기는 공유되지 않습니다.';}
  catch{shareNotice.value='자동 복사를 사용할 수 없습니다. 아래 링크를 선택해 직접 복사하세요.';}
+ await nextTick();document.getElementById('share-link')?.focus();
 }
 const initial=initialInterests(location.search,remembered.value);
 if(initial)Object.assign(filters,initial);
@@ -77,7 +78,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
 </script>
 <template>
   <a class="skip-link" href="#results">혜택 목록으로 건너뛰기</a>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="./" aria-label="Benefit Monitor 홈"><span class="brand-mark" aria-hidden="true">b<span>m</span></span>Benefit Monitor<span class="version">2.0</span></a><span class="login-note">가입 없이, 바로 발견</span></div></header>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="./" aria-label="Benefit Monitor 홈"><span class="brand-mark" aria-hidden="true">b<span>m</span></span>Benefit Monitor<span class="version">2.0</span></a><div class="header-actions"><span class="login-note">가입 없이, 바로 발견</span><button type="button" :aria-pressed="savedOnly" :aria-label="'즐겨찾기만 보기 '+savedItems.length" @click="savedOnly=!savedOnly"><span aria-hidden="true">{{ savedOnly?'★':'☆' }} {{ savedItems.length }}</span></button><button type="button" aria-label="검색 조건 공유" @click="shareSearch">공유</button></div></div></header>
   <main class="container">
     <section class="hero" aria-labelledby="hero-title"><p class="eyebrow"><span aria-hidden="true">●</span> 공식 출처에서 확인한 생활 혜택</p><h1 id="hero-title">오늘의 혜택,<br class="mobile-break"> <span>한눈에.</span></h1><p class="hero-description">내 지역의 지원부터 일상의 할인까지.<br class="mobile-break"> 필요한 조건을 확인하고 공식 안내로 이동하세요.</p></section>
     <section class="discovery" aria-label="혜택 검색 및 필터">
@@ -90,7 +91,6 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     <div v-else-if="notice" class="notice warning" role="status"><span aria-hidden="true">!</span><div><strong>{{ notice.title }}</strong><p>{{ notice.body }}</p><button type="button" @click="load">다시 불러오기</button></div></div>
     <div v-else class="notice" role="status"><span class="status-dot" aria-hidden="true"></span><div><strong>부분 수집 결과입니다<span v-if="failed"> · 수집 실패 {{ failed }}곳</span></strong><p>미검증 후보 제외 · 자격·재고·잔여석은 공식 안내에서 확인하세요.</p></div></div>
     <section id="results" class="results" aria-labelledby="results-title" tabindex="-1" :aria-busy="loading"><div class="results-heading"><h2 id="results-title">{{ filters.status==='urgent'?'마감 임박 혜택':'발견한 혜택' }} <span aria-live="polite" aria-atomic="true">{{ results.length }}건</span></h2><div class="sort-field"><label for="sort" class="sr-only">혜택 정렬</label><select id="sort" v-model="filters.sort"><option value="deadline">마감 임박순</option><option value="verified">최근 확인순</option><option value="title">제목 가나다순</option></select></div></div>
-      <div class="results-tools"><button type="button" :aria-pressed="savedOnly" @click="savedOnly=!savedOnly">즐겨찾기만 보기 {{ savedItems.length }}</button><button type="button" @click="shareSearch">검색 조건 공유</button></div>
       <p v-if="savedOnly" class="fine-print">이 브라우저에만 저장됩니다. 현재 표시 가능한 {{ savedItems.length }}건 · 현재 유효성을 확인할 수 없는 저장 항목 {{ Math.max(0,favorites.length-savedItems.length) }}건. 종료를 뜻하지 않습니다.</p>
       <p role="status" aria-live="polite" class="action-notice">{{ favoriteNotice }}</p><div v-if="shareLink" class="share-result"><p role="status" aria-live="polite">{{ shareNotice }}</p><label for="share-link">공유할 검색 링크</label><input id="share-link" :value="shareLink" readonly @focus="($event.target as HTMLInputElement).select()"><p class="fine-print">검색·지역·분야·정렬·상태만 포함합니다. 관심 설정과 즐겨찾기 목록은 공유하지 않습니다.</p></div>
       <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" :saved="favorites.includes(benefitKey(item))" @toggle-favorite="toggleFavorite(item)" /></div>
