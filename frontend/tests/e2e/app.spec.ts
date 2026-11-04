@@ -116,3 +116,11 @@ test('blocked localStorage preserves discovery and announces save failure',async
  await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역·분야 저장'}).click();
  await expect(page.getByText('저장하지 못했습니다.',{exact:false})).toBeVisible();await expect(page.locator('article')).toHaveCount(6);
 });
+
+test('corrupt stored preferences can still be explicitly deleted',async({page})=>{
+ await page.addInitScript(()=>localStorage.setItem('benefit-monitor:interests:v1','broken'));
+ await setup(page);await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
+ await page.locator('.interest-settings summary').click();await expect(page.getByText('저장한 관심 설정이 없습니다.',{exact:true})).toBeVisible();
+ await page.getByRole('button',{name:'저장값 삭제'}).click();
+ expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:interests:v1'))).toBeNull();
+});
