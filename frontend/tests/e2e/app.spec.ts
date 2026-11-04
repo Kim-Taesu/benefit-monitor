@@ -91,3 +91,7 @@ test('no JavaScript exposes dated text alternative',async({browser})=>{
  const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto('http://127.0.0.1:4173/benefit-monitor/');
  await expect(page.getByRole('link',{name:'텍스트 브리핑'})).toBeVisible();await context.close();
 });
+test('open tab gates the whole file when valid_through passes',async({page})=>{
+ await setup(page,snapshot(items,{valid_through:'2026-11-04T12:00:03+09:00'}));await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
+ await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.getByText('최신 브리핑을 기다리고 있어요',{exact:true})).toBeVisible();
+});

@@ -250,7 +250,7 @@ Node.js 22.18 이상, Python 3.11 이상에서:
 
 ```sh
 cd frontend
-npm install --ignore-scripts --no-audit --no-fund
+npm ci --ignore-scripts --no-audit --no-fund
 npm test
 npm run build
 npx playwright install chromium

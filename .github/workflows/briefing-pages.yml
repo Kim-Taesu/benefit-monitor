@@ -40,7 +40,7 @@ jobs:
           node-version: '22'
       - name: Install frontend build dependencies
         working-directory: frontend
-        run: npm install --ignore-scripts --no-audit --no-fund
+        run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Frontend test and build
         working-directory: frontend
         run: npm test && npm run build
