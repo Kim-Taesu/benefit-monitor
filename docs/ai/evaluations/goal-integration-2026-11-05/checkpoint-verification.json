@@ -1,6 +1,6 @@
 {
-  "checkpoint_only": true,
-  "goal_complete": false,
+  "checkpoint_only": false,
+  "goal_complete": true,
   "python_tests": 362,
   "python_result": "passed",
   "frontend_unit_tests": 52,
@@ -24,15 +24,17 @@
   "repository_credential_pattern_matches": [],
   "credential_incident": "과거 테스트 실패 출력의 셸 인증정보 노출은 별도 사실이다. 로그 삭제·가짜 테스트 환경·실제 하위 프로세스 환경 허용목록 적용. 인증정보 교체는 사용자 조치로 남음.",
   "activation_configuration_present": true,
-  "scheduler_installed_by_this_task": false,
+  "scheduler_installed_by_this_task": true,
   "recurring_spend_activated": true,
   "public_application_activated": true,
   "format_lint": "독립 formatter/linter 명령은 pyproject.toml·frontend/package.json에 선언되지 않음. diff whitespace·Python compile·프런트 타입 검사는 통과.",
-  "remaining": [
-    "root 소유 LaunchAgents 폴더의 지정 파일 사용자 설치",
-    "LaunchAgent 등록·첫 실행·중복 차단·최종 완료 감사"
-  ],
-  "actual_scheduled_command": "당일 완료 상태이므로 실제 등록 후 중복 차단 확인 예정",
+  "remaining": [],
+  "actual_scheduled_command": "LaunchAgent 첫 실행 already_completed_today, last exit code0, API30회 유지",
   "actual_code_sha_mismatch_command": "rejected before remote fetch",
-  "new_api_requests_during_activation": 3
+  "new_api_requests_during_activation": 3,
+  "completed_at": "2026-11-05T13:47:17.050729+09:00",
+  "scheduler_file_installed_by": "사용자",
+  "scheduler_registered_by": "Codex",
+  "final_workflow_id": 41969019660,
+  "final_deployment_code_sha": "d2c0973836180105a6d29edcfd840abdea5140e7"
 }

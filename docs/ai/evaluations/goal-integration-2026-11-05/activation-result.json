@@ -1,6 +1,6 @@
 {
-  "status": "공개 연결 검증 완료·정기 등록은 OS 파일 설치 대기",
-  "goal_complete": false,
+  "status": "승인된4일 한정 연결·활성화·검증 완료",
+  "goal_complete": true,
   "user_approval": "activation-approval.json",
   "trial_expires_at": "2026-11-09T13:09:12.753468+09:00",
   "max_daily_attempts": 4,
@@ -79,7 +79,9 @@
     "topic_cards_present": true,
     "topic_failure_fallback": "기존 화면 주제 규칙",
     "topic_count": 0,
-    "nonempty_ai_topic_cards": false
+    "nonempty_ai_topic_cards": false,
+    "latest_verified_workflow_id": 41969019660,
+    "latest_verified_deployment_code_sha": "d2c0973836180105a6d29edcfd840abdea5140e7"
   },
   "live_browser": {
     "url": "https://kim-taesu.github.io/benefit-monitor/",
@@ -184,11 +186,21 @@
     "behavior": "정기 AI 실행은 당일 main 정기 작업 완료를 먼저 확인한다. 미완료·미발견이면 과금·일일 시도 기록 전에 대기한다. main 코드·기존 정기 작업 변경 없음."
   },
   "scheduler": {
-    "installed": false,
-    "target": "/Users/user/Library/LaunchAgents/com.benefit-monitor.ai-daily.plist",
-    "reason": "상위 디렉터리가 root 소유0755로 현재 사용자501은 파일 생성 불가",
-    "user_manual_install_requested": true,
-    "registered": false
+    "label": "com.benefit-monitor.ai-daily",
+    "domain": "gui/501",
+    "path": "/Users/user/Library/LaunchAgents/com.benefit-monitor.ai-daily.plist",
+    "working_directory": "/Users/user/personal/benefit-monitor/.maintenance/p0-source",
+    "start_interval": 900,
+    "run_at_load": true,
+    "trial_expires_at": "2026-11-09T13:09:12.753468+09:00",
+    "installed": true,
+    "registered": true,
+    "runs": 1,
+    "last_exit_code": 0,
+    "startup_status": "already_completed_today",
+    "api_requests_before_startup": 30,
+    "api_requests_after_startup": 30,
+    "installed_by": "사용자가 승인된 지정 파일을 관리자 권한으로 설치, Codex가 내용·권한 검증 후 등록"
   },
   "local_python_tests": 362,
   "frontend_unit_tests": 52,
@@ -199,5 +211,28 @@
   "ledger_first19_preserved": true,
   "main_merged": false,
   "force_push": false,
-  "security_incident": "앞선 모의 테스트의 셸 인증정보 대화 노출은 별도 남은 사용자 교체 조치다. 해당 로그 삭제·환경 격리 완료."
+  "security_incident": "앞선 모의 테스트의 셸 인증정보 대화 노출은 별도 남은 사용자 교체 조치다. 해당 로그 삭제·환경 격리 완료.",
+  "completed_at": "2026-11-05T13:47:17.050729+09:00",
+  "final_ci": {
+    "workflow_id": 41969019660,
+    "workflow_url": "https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41969019660",
+    "code_sha": "d2c0973836180105a6d29edcfd840abdea5140e7",
+    "conclusion": "success",
+    "python_tests": 362,
+    "frontend_unit_tests": 52,
+    "frontend_build": "passed"
+  },
+  "final_pages_deployment": {
+    "deployment_id": 7565342259,
+    "sha": "d2c0973836180105a6d29edcfd840abdea5140e7",
+    "environment": "github-pages",
+    "state": "success",
+    "url": "https://kim-taesu.github.io/benefit-monitor/"
+  },
+  "configured_expiry_check": {
+    "status": "trial_expired",
+    "simulated_time": "2026-11-09T13:09:13.753468+09:00",
+    "actual_policy_expiry": "2026-11-09T13:09:12.753468+09:00",
+    "ledger_unchanged": true
+  }
 }

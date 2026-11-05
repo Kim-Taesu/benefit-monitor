@@ -15,7 +15,7 @@
   "work_branch": "docs/ai-research-playbook",
   "launch_agent_file": "/Users/user/Library/LaunchAgents/com.benefit-monitor.ai-daily.plist",
   "main_merge_authorized": false,
-  "status": "승인됨·활성화 검증 중",
+  "status": "승인 범위 활성화·검증 완료",
   "policy_revisions": [
     {
       "recorded_at": "2026-11-05T13:22:41.146759+09:00",
@@ -23,5 +23,6 @@
       "current_sha256": "455554f65274cc1b91bc442fc9f6004f299c274908e04b3cbe036496dfe73806",
       "reason": "snapshot 전달 시 검증된 자치구 후보 수·조회시각 보존. 편집 범위·사실 승인·만료 변경 없음."
     }
-  ]
+  ],
+  "activation_verified_at": "2026-11-05T13:47:17.050729+09:00"
 }
