@@ -9,8 +9,12 @@ from pathlib import Path
 import re
 import stat
 
-CAP = 5_000_000  # microUSD, across all days and restarts
-MAX_REQUESTS = 40
+CAP = 5_000_000  # microUSD, across all days and restarts; unchanged by the 2026-11-05 revision
+# User approval 2026-11-05 "요청 200회, 실행 14일, $5 유지로 진행해". Ledgers created under the
+# original 40-request approval stay valid; their rows are never reset or rewritten.
+MAX_REQUESTS = 200
+LEGACY_MAX_REQUESTS = 40
+MAX_RUN_DAYS = 14
 
 
 def secure_open(path, flags):
@@ -48,7 +52,7 @@ class TrialBudget:
     def _validate(self, state):
         try:
             if (type(state['cap_microdollars']) is not int or state['cap_microdollars'] != CAP
-                    or state['max_requests'] != MAX_REQUESTS or state['version'] != 1
+                    or state['max_requests'] not in (MAX_REQUESTS, LEGACY_MAX_REQUESTS) or state['version'] != 1
                     or type(state['halted']) is not bool
                     or (state['input_rate'], state['output_rate']) != ('0.10', '0.50')
                     or not re.fullmatch(r'claude-haiku-5-5(?:[-.][a-zA-Z0-9]+)*', state['model'])

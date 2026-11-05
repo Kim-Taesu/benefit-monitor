@@ -63,7 +63,7 @@ class ClaudeTrialTests(unittest.TestCase):
             self.budget.summary()
 
     def test_request_limit_includes_zero_cost_metadata(self):
-        for i in range(40):
+        for i in range(200):
             self.budget.reserve(f'{i:064x}', 0)
         with self.assertRaises(ValueError):
             self.budget.reserve('f'*64, 0)

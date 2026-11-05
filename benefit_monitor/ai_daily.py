@@ -8,6 +8,7 @@ from .cli import run as collect
 from .official_reader import project_path
 from .publish import run as publish_briefing, prepare_import
 from .store import load,save,lock
+from .trial_budget import MAX_RUN_DAYS
 from .topic_refresh import refresh
 from .remote_delivery import deliver,preceding_refresh
 
@@ -47,7 +48,7 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
         if day in state['days']:
             previous=state['days'][day]
             return {'status':'already_completed_today' if previous['status']=='completed' else 'previous_attempt_requires_review','day':day}
-        if len(state['days'])>=4:
+        if len(state['days'])>=MAX_RUN_DAYS:
             return {'status':'trial_run_limit'}
         if scheduled and publish and policy.get('remote_delivery_approved') is True:
             previous_refresh=preceding_refresh(root,now)

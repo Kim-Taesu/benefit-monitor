@@ -17,7 +17,7 @@ from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapsho
 from .mirror import run as mirror,restore as restore_mirror
 from .public_snapshot import validate
 from .store import load,save
-from .trial_budget import TrialBudget
+from .trial_budget import TrialBudget,CAP,MAX_REQUESTS,MAX_RUN_DAYS
 from scripts.install_age import safe_path
 
 
@@ -94,12 +94,14 @@ def cloud_run(root,now=None,check_only=True,store=None):
     if not check_only and os.environ.get('GITHUB_REF')!='refs/heads/main':raise ValueError('paid cloud execution requires main')
     store=store or GitHubStateStore(root,os.environ.get('GH_TOKEN',''),AgeState(root,safe_path(root,'.tools/cloud-state/identity.txt')))
     preflight=CloudSession.read_control(root,store)
+    # Trusted runner applies the approved limit revision once with its short-lived token.
+    revised=preflight.apply_limit_revision()
     if not check_only:
         if not preflight.control['active']:return {'status':'handoff_required'}
         control=preflight.control;budget=control['budget']
         stop=('trial_expired' if now>=datetime.fromisoformat(control['expires_at']) else
-              'trial_run_limit' if len(control['days'])>=4 else
-              'trial_budget_limit' if len(budget['requests'])>=40 or TrialBudget._exposure(budget)>=5_000_000 else None)
+              'trial_run_limit' if len(control['days'])>=MAX_RUN_DAYS else
+              'trial_budget_limit' if len(budget['requests'])>=MAX_REQUESTS or TrialBudget._exposure(budget)>=CAP else None)
         if stop:
             disable_workflow(store);return {'status':stop}
     session=CloudSession.restore(root,store)
@@ -115,7 +117,8 @@ def cloud_run(root,now=None,check_only=True,store=None):
         data['check']={'snapshot_sha256':snapshot_digest(data),'ref':os.environ.get('GITHUB_REF',''),
                        'code_sha':os.environ.get('GITHUB_SHA',''),'run_id':os.environ.get('GITHUB_RUN_ID','')}
         session._commit(data)  # Confirms contents:write without day or provider admission.
-        return dict(summary,status='check_passed')
+        return dict(summary,status='check_passed',limit_revision_applied=revised,expires_at=data['expires_at'],
+                    max_requests=data['budget']['max_requests'])
     if not session.control['active']:return {'status':'handoff_required'}
     if now.hour<6:return {'status':'not_due'}
     if day in session.control['days']:

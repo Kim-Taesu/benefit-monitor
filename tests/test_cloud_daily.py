@@ -51,6 +51,31 @@ class CloudDailyTests(unittest.TestCase):
             self.assertEqual(result['status'],'already_completed_today')
         self.assertEqual(len(json.loads(self.fixture.store().read('control')[0])['days']),1)
 
+    def test_limit_revision_upgrades_legacy_control_once_without_touching_rows(self):
+        from benefit_monitor.store import save
+        m=self.module()
+        legacy=json.loads(self.fixture.store().read('control')[0])
+        legacy['budget']['max_requests']=40;legacy.pop('limit_revision',None)
+        _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(legacy).encode(),sha)
+        # Without the approved policy revision nothing changes.
+        with patch.object(m,'daily',side_effect=AssertionError('must not collect')):
+            self.assertFalse(m.cloud_run(self.root,now=NOW,store=self.fixture.store())['limit_revision_applied'])
+        self.assertEqual(json.loads(self.fixture.store().read('control')[0])['budget']['max_requests'],40)
+        extended='2026-11-19T13:09:12.753468+09:00'
+        save(self.root/'public/ai-cloud-trial.json',dict(self.fixture.policy,expires_at=extended,limit_revision=1))
+        with patch.object(m,'daily',side_effect=AssertionError('must not collect')):
+            first=m.cloud_run(self.root,now=NOW,store=self.fixture.store())
+            second=m.cloud_run(self.root,now=NOW,store=self.fixture.store())
+        self.assertEqual((first['limit_revision_applied'],first['max_requests'],first['expires_at']),(True,200,extended))
+        self.assertFalse(second['limit_revision_applied'])
+        control=json.loads(self.fixture.store().read('control')[0])
+        self.assertEqual(control['budget']['requests'],legacy['budget']['requests'])
+        self.assertEqual((control['days'],control['budget']['halted']),(legacy['days'],legacy['budget']['halted']))
+        bad=dict(control);bad['budget']=dict(control['budget'],max_requests=40)
+        from benefit_monitor.cloud_state import validate_control
+        with self.assertRaises(ValueError):validate_control(self.root,bad)
+        with self.assertRaises(ValueError):validate_control(self.root,dict(control,expires_at='2026-11-20T00:00:00+09:00'))
+
     def test_bad_fingerprint_unsettled_and_halted_block(self):
         m=self.module()
         for kind in ('key','reserved','halted'):
@@ -137,9 +162,9 @@ class CloudDailyTests(unittest.TestCase):
         for kind in ('days','requests'):
             data=json.loads(json.dumps(base))
             if kind=='days':
-                for day in ('2026-11-02','2026-11-03','2026-11-04'):data['days'][day]={'status':'failed'}
+                for n in range(13):data['days'][f'2026-10-{n+10:02d}']={'status':'failed'}
             else:
-                data['budget']['requests'] += [{'id':f'{i:064x}','status':'failed','reserved_microdollars':100,'charged_microdollars':0} for i in range(100,110)]
+                data['budget']['requests'] += [{'id':f'{i:064x}','status':'failed','reserved_microdollars':100,'charged_microdollars':0} for i in range(100,270)]
             _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
             with patch.object(m,'disable_workflow') as disable,patch.object(m,'daily',side_effect=AssertionError('cap must stop paid work')):
                 self.assertIn(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],('trial_run_limit','trial_budget_limit'))
