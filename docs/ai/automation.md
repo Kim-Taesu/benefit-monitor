@@ -116,3 +116,13 @@ LaunchAgent 설치와 설정 활성화는 현재 하지 않았다. 사용자 요
 무과금 점검은 Actions의 Frontend P0 checks → Run workflow → 작업 브랜치 → check_ai_cloud=true로 실행한다. 이 경로는 등록된 Secret과 암복호화·원격 쓰기만 검증하며 당일 시도·Claude·배포를 수행하지 않는다. main 반영 후에는 AI daily trial의 check_only=true도 같은 검증을 수행한다.
 
 중단은 Actions의 AI daily trial에서 Disable workflow를 선택한다. 진행 중 작업까지 이미 지출한 비용을 되돌리지는 않는다. cloud 전환 후 Mac enabled를 임의로 다시 켜지 않는다. 최신 원격 원장과 미정산 예약을 복원·대조한 뒤 하나의 실행 주체만 재개해야 한다. 복구 명령은 `python3 scripts/ai_cloud_handoff.py restore`이며 미정산 예약도 보존해 검토할 수 있고 스케줄을 자동 재개하지 않는다.
+
+## 실험 한도 변경 — 2026-11-05
+
+사용자 승인으로 누적 요청 200회, 일일 실행 14회, 만료 2026-11-19 13:09:12 KST로 바꿨다. 금액 상한 $5, 하루 조사 최대 2건과 주제 1회는 그대로다.
+
+- 코드 상한: `trial_budget.MAX_REQUESTS=200`, `MAX_RUN_DAYS=14`, `cloud_state.MAX_EXPIRY`. 기존 40요청 원장도 그대로 읽는다.
+- 원격 control은 main 병합 뒤 첫 Actions 실행이 한 번만 갱신한다. `check_only` 실행도 같은 갱신을 하므로 과금 없이 확인할 수 있다. 결과의 `limit_revision_applied`, `max_requests`, `expires_at`으로 확인한다.
+- 기존 30회 기록과 실패 예약, 노출액 106,768 microUSD, 11/5 완료 기록은 바꾸지 않는다.
+- 하루 최대 3요청이라 14일을 다 써도 약 42회 수준이다. 200회는 상한일 뿐 목표 사용량이 아니다.
+- 주제 공개 정책 만료도 같은 시각으로 맞췄다.

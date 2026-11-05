@@ -13,7 +13,7 @@ from urllib.request import Request,build_opener
 from .age_state import AgeState,pack_runtime,restore_runtime
 from .research_probe import NoRedirect
 from .store import save,load
-from .trial_budget import TrialBudget,secure_open
+from .trial_budget import TrialBudget,secure_open,MAX_REQUESTS,MAX_RUN_DAYS
 from scripts.install_age import safe_path
 
 REPOSITORY='Kim-Taesu/benefit-monitor'
@@ -23,7 +23,9 @@ MAX_RESPONSE=2*1024*1024
 FILES={'control':'ai-control.age','runtime':'ai-runtime.age'}
 CONTEXT='.tools/cloud-state/context.json'
 BUDGET='.tools/claude-trial/live/budget.json'
-MAX_EXPIRY=datetime.fromisoformat('2026-11-09T13:09:12.753468+09:00')
+# Activation 2026-11-05 13:09:12 KST + 14 days, per the 2026-11-05 limit revision.
+MAX_EXPIRY=datetime.fromisoformat('2026-11-19T13:09:12.753468+09:00')
+LIMIT_REVISION=1
 
 
 def requests_digest(rows):
@@ -52,7 +54,9 @@ def validate_control(root,data):
         if (policy['model']!='claude-haiku-5-5' or budget['model']!=policy['model']
                 or len(budget['requests'])<30 or requests_digest(budget['requests'][:30])!=policy['baseline_requests_sha256']
                 or TrialBudget._exposure(budget)<policy['baseline_exposure_microdollars']):raise ValueError
-        if not isinstance(data['days'],dict) or len(data['days'])>4:raise ValueError
+        revision=data.get('limit_revision',0)
+        if revision not in (0,LIMIT_REVISION) or revision and budget['max_requests']!=MAX_REQUESTS:raise ValueError
+        if not isinstance(data['days'],dict) or len(data['days'])>MAX_RUN_DAYS:raise ValueError
         for day,row in data['days'].items():
             if datetime.fromisoformat(day).date().isoformat()!=day or row.get('status') not in ('attempted','failed','completed'):raise ValueError
         if policy['baseline_days'].get('2026-11-05')!='completed':raise ValueError
@@ -166,6 +170,16 @@ class CloudSession:
         sha=self.store.write('control',json.dumps(data,ensure_ascii=False,separators=(',',':')).encode(),self.sha)
         self.control,self.sha=data,sha;self._save_context()
 
+    def apply_limit_revision(self):
+        """One-way upgrade of limits only: request rows, reservations, halts and days stay as they are."""
+        if self.control.get('limit_revision',0)==LIMIT_REVISION:return False
+        policy=load(safe_path(self.root,'public/ai-cloud-trial.json'),{})
+        if policy.get('limit_revision')!=LIMIT_REVISION:return False
+        data=deepcopy(self.control)
+        data['expires_at']=policy['expires_at'];data['budget']['max_requests']=MAX_REQUESTS
+        data['limit_revision']=LIMIT_REVISION
+        self._commit(data);return True
+
     def checkpoint_budget(self,budget):
         self._reload();old=self.control['budget'];rows=budget['requests'];previous=old['requests']
         if len(rows)<len(previous) or len(rows)>len(previous)+1:raise ValueError('cloud budget history cannot be replaced')
@@ -180,7 +194,7 @@ class CloudSession:
 
     def mark_day(self,day):
         self._reload()
-        if day in self.control['days'] or len(self.control['days'])>=4:raise ValueError('cloud daily attempt already used')
+        if day in self.control['days'] or len(self.control['days'])>=MAX_RUN_DAYS:raise ValueError('cloud daily attempt already used')
         data=deepcopy(self.control);data['days'][day]={'status':'attempted'};self._commit(data)
 
     def finish(self,day,status):

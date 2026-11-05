@@ -81,11 +81,11 @@ class AIDailyTests(unittest.TestCase):
             result=self.run_daily(online=True,allow_spend=True)
         self.assertEqual(result['status'],'trial_expired')
 
-    def test_four_daily_attempts_stop_before_fifth_collection(self):
+    def test_fourteen_daily_attempts_stop_before_fifteenth_collection(self):
         from benefit_monitor.store import save
         save(self.root/'cache/ai_daily/days.json',{'days':{
-            f'2026-11-0{day}':{'status':'completed'} for day in range(1,5)}})
-        with patch('benefit_monitor.ai_daily.collect',side_effect=AssertionError('four attempts already used')):
+            f'2026-10-{day:02d}':{'status':'completed'} for day in range(1,15)}})
+        with patch('benefit_monitor.ai_daily.collect',side_effect=AssertionError('fourteen attempts already used')):
             self.assertEqual(self.run_daily(online=True)['status'],'trial_run_limit')
 
     def test_scheduled_public_delivery_waits_before_spending_for_existing_main_refresh(self):
