@@ -41,9 +41,15 @@ def _coverage(root,data,config):
     for row in raw.get('districts',[]):
         if row.get('name') not in names or row.get('status') not in STATUS:raise ValueError('unknown snapshot district status')
         status=row['status']
+        count=row.get('candidates_count',0)
+        if type(count)is not int or not 0<=count<=100000:raise ValueError('invalid district candidate count')
+        checked=row.get('checked_at')
+        if checked is not None:
+            checked=aware_time(checked)
+            if checked>aware_time(data['generated_at']):raise ValueError('future district observation')
         districts.append({'district':row['name'],'status':'checked' if status=='cached' else status,
-                          'mode':'cached' if status=='cached' else 'live','checked_at':None,
-                          'candidates_count':0})
+                          'mode':'cached' if status=='cached' else 'live','checked_at':checked.isoformat() if checked else None,
+                          'candidates_count':count})
     return {'online':True,'successful_sources':success,
             'successful_districts':sum(d['status']=='checked' and d['mode']=='live' for d in districts)},districts
 

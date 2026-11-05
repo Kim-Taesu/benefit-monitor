@@ -66,6 +66,20 @@ class PublicSnapshotTests(unittest.TestCase):
         failed=publish.payload(self.root,now=NOW,failure=True)
         self.assertEqual(self.stage(failed)['items'],[])
 
+    def test_snapshot_preserves_observed_district_count_and_time(self):
+        save(self.root/'districts.json',{'districts':[{'name':'강서구'}]})
+        report=json.loads((self.root/'report.json').read_text())
+        report['district_coverage']=[{'district':'강서구','status':'checked','mode':'live',
+                                     'checked_at':NOW.isoformat(),'candidates_count':7}]
+        save(self.root/'report.json',report)
+        raw=publish.payload(self.root,now=NOW)
+        row=self.stage(raw)['coverage']['districts'][0]
+        self.assertEqual(row['candidates_count'],7)
+        self.assertEqual(row['checked_at'],NOW.isoformat())
+        for bad in (-1,True,'7'):
+            changed=deepcopy(raw);changed['coverage']['districts'][0]['candidates_count']=bad
+            with self.assertRaises(ValueError):self.stage(changed)
+
     def test_import_requests_only_pinned_commit_and_never_an_llm(self):
         import base64,subprocess
         from unittest.mock import patch
