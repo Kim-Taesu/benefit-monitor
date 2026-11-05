@@ -21,6 +21,8 @@ class CloudDailyTests(unittest.TestCase):
         self.root=self.fixture.root
         self.fixture.control['api_key_sha256']=hashlib.sha256(KEY.encode()).hexdigest()
         self.fixture.session()
+        self.public_restore=patch('benefit_monitor.cloud_daily.restore_public')
+        self.public_restore.start();self.addCleanup(self.public_restore.stop)
         self.env=patch.dict(os.environ,ENV,clear=True);self.env.start();self.addCleanup(self.env.stop)
 
     def module(self):
@@ -86,6 +88,29 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(m,'daily',side_effect=AssertionError('no retry')):
             self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'previous_attempt_requires_review')
         self.assertEqual(json.loads(self.fixture.store().read('control')[0])['days']['2026-11-06']['status'],'failed')
+
+    def test_completed_free_refresh_is_imported_before_ai_attempt(self):
+        m=self.module();events=[]
+        def restored(*args):events.append('public_holds_restored')
+        def inner(*args,**kwargs):
+            self.assertEqual(events,['public_holds_restored'])
+            return {'status':'completed'}
+        with patch.object(m,'restore_public',side_effect=restored),patch.object(m,'preceding_refresh',return_value=True),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+
+    def test_global_daily_and_request_caps_stop_without_collection(self):
+        m=self.module()
+        base=json.loads(self.fixture.store().read('control')[0])
+        for kind in ('days','requests'):
+            data=json.loads(json.dumps(base))
+            if kind=='days':
+                for day in ('2026-11-02','2026-11-03','2026-11-04'):data['days'][day]={'status':'failed'}
+            else:
+                data['budget']['requests'] += [{'id':f'{i:064x}','status':'failed','reserved_microdollars':100,'charged_microdollars':0} for i in range(100,110)]
+            _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
+            with patch.object(m,'disable_workflow') as disable,patch.object(m,'daily',side_effect=AssertionError('cap must stop paid work')):
+                self.assertIn(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],('trial_run_limit','trial_budget_limit'))
+                disable.assert_called_once()
 
     def test_success_preserves_latest_child_budget_and_dispatch_is_not_deployment(self):
         m=self.module()

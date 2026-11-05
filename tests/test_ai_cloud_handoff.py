@@ -73,6 +73,20 @@ class HandoffTests(unittest.TestCase):
         with patch.object(m,'configured_key',return_value='fixture-api-key-123456'):
             with self.assertRaises(ValueError):m.capture_control(self.root,self.f.crypto)
 
+    def test_prepare_cannot_drop_remote_day_history(self):
+        m=self.module()
+        raw,sha=self.f.store().read('control');data=json.loads(raw)
+        data['days']['2026-11-06']={'status':'completed'}
+        self.f.store().write('control',json.dumps(data).encode(),sha)
+        with patch.object(m,'configured_key',return_value='fixture-api-key-123456'):
+            with self.assertRaises(ValueError):m.prepare_state(self.root,self.f.store())
+
+    def test_runtime_changes_after_staging_require_fresh_handoff(self):
+        m=self.stage();self.mark_checked(m)
+        save(self.root/'cache/ai_review/queue/new.json',{'review':'changed after staging'})
+        with patch.object(m,'local_loaded',return_value=False):
+            with self.assertRaises(ValueError):m.activate_checked(self.root,self.f.store(),'a'*40)
+
     def test_runner_failure_never_deletes_existing_identity(self):
         from scripts import run_ai_cloud
         identity=self.root/'.tools/cloud-state/identity.txt'

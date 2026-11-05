@@ -14,7 +14,7 @@ from .ai_daily import daily
 from .briefing import SEOUL
 from .claude_trial import configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
-from .mirror import run as mirror
+from .mirror import run as mirror,restore as restore_mirror
 from .public_snapshot import validate
 from .store import load,save
 from .trial_budget import TrialBudget
@@ -56,6 +56,17 @@ def preceding_refresh(store,now):
     return bool(rows) and all(row['status']=='completed' for row in rows)
 
 
+def runner_environment(store):
+    env={k:os.environ[k] for k in ('PATH','HOME','LANG','LC_ALL','TMPDIR') if k in os.environ}
+    env.update(GH_TOKEN=store.token,GH_HOST='github.com',GH_NO_UPDATE_NOTIFIER='1')
+    return env
+
+
+def restore_public(root,store,now):
+    # The preceding free run may have observed newer holds than the AI archive.
+    restore_mirror(root,REPOSITORY,now=now,env=runner_environment(store))
+
+
 def publish_snapshot(root,store,now,key):
     code=os.environ.get('GITHUB_SHA','')
     if os.environ.get('GITHUB_REF')!='refs/heads/main' or not re.fullmatch('[0-9a-f]{40}',code):
@@ -65,9 +76,7 @@ def publish_snapshot(root,store,now,key):
     data=load(safe_path(root,'delivery/public/briefing.json'),{})
     content=(json.dumps(validate(root,data,now),ensure_ascii=False,indent=2)+'\n').encode()
     if key.encode() in content or b'AGE-SECRET-KEY-' in content:raise ValueError('credential in public payload')
-    env={k:os.environ[k] for k in ('PATH','HOME','LANG','LC_ALL','TMPDIR') if k in os.environ}
-    env.update(GH_TOKEN=store.token,GH_HOST='github.com',GH_NO_UPDATE_NOTIFIER='1')
-    commit=mirror(root,REPOSITORY,env=env,content=content)
+    commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{
         'deploy_approved_snapshot':'true','snapshot_commit':commit,'expected_code_sha':code}})
@@ -105,6 +114,7 @@ def cloud_run(root,now=None,check_only=True,store=None):
     if day in session.control['days']:
         return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
     if not preceding_refresh(store,now):return {'status':'waiting_for_existing_refresh'}
+    restore_public(root,store,now)
     session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
          'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':2,

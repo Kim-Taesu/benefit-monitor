@@ -56,6 +56,10 @@ def prepare_state(root,store):
     data=capture_control(root,store.crypto)
     if old is not None:
         validate_control(root,old)
+        if old['budget']['halted'] or any(row['status']=='reserved' for row in old['budget']['requests']):
+            raise ValueError('unresolved remote reservation cannot be replaced')
+        if any(data['days'].get(day)!=row for day,row in old['days'].items()):
+            raise ValueError('remote day history cannot be discarded')
         if old['budget']['requests']!=data['budget']['requests'][:len(old['budget']['requests'])]:
             raise ValueError('local and remote ledgers diverged')
         data['generation']=old['generation']+1
@@ -65,9 +69,10 @@ def prepare_state(root,store):
         except ValueError as error:
             if str(error)!='GitHub state request failed: http_404':raise
             runtime_lease=None
-    data['runtime_sha']=store.write('runtime',pack_runtime(root),runtime_lease)
+    runtime=pack_runtime(root)
+    data['runtime_sha']=store.write('runtime',runtime,runtime_lease)
     sha=store.write('control',json.dumps(data,ensure_ascii=False).encode(),lease)
-    save(safe_path(root,RECEIPT),{'phase':'prepared','snapshot_sha256':snapshot_digest(data),'control_sha':sha})
+    save(safe_path(root,RECEIPT),{'phase':'prepared','snapshot_sha256':snapshot_digest(data),'control_sha':sha,'local_runtime_sha256':hashlib.sha256(runtime).hexdigest()})
     return {'status':'prepared_inactive','requests':len(data['budget']['requests'])}
 
 
@@ -111,6 +116,8 @@ def activate_checked(root,store,main_sha):
             or check.get('snapshot_sha256')!=snapshot_digest(data)
             or check.get('ref')!='refs/heads/main' or check.get('code_sha')!=main_sha):
         raise ValueError('latest staged main cloud validation required')
+    if hashlib.sha256(pack_runtime(root)).hexdigest()!=receipt.get('local_runtime_sha256'):
+        raise ValueError('local runtime changed since staging')
     # A local mutation after staging must never be silently discarded.
     if (load(safe_path(root,BUDGET),None)!=data['budget']
             or load(safe_path(root,'cache/ai_daily/days.json'),{}).get('days')!=data['days']):

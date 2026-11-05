@@ -46,7 +46,7 @@ def pack_runtime(root):
     output=io.BytesIO()
     with tarfile.open(fileobj=output,mode='w') as archive:
         for name,path in entries:archive.add(path,arcname=name,recursive=False)
-    return gzip.compress(output.getvalue())
+    return gzip.compress(output.getvalue(),mtime=0)
 
 
 def restore_runtime(root,raw):
