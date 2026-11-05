@@ -28,3 +28,9 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 개인 GitHub 계정 `Kim-Taesu`와 공개 저장소 `Kim-Taesu/benefit-monitor`만 사용한다. 기존 작업 브랜치 `docs/ai-research-playbook`의 양쪽 이력을 보존하는 결합·커밋·일반 push, 기존 `briefing-data` 공개 JSON 반영, 기존 Pages 환경에 작업 브랜치 허용 추가와 workflow 실행을 허용한다. 전역 계정 전환·강제 push·main 병합·새 자원·과금 설정 변경은 금지한다.
 
 프로젝트 밖 경로 예외는 `/Users/user/Library/LaunchAgents/com.benefit-monitor.ai-daily.plist` 한 파일 설치·등록·해제에 한정한다. 다른 전역 파일·회사 계정·서비스·인증정보는 접근하지 않는다. 로그·상태·임시 파일·키·원장은 프로젝트 내부에 둔다. 실제 활성화 시각·만료시각·검증 결과를 기록한다.
+
+## 승인된 GitHub Actions 전환 예외 — 2026-11-05
+
+사용자는 API Secret 등록 후 [전환 설계](docs/superpowers/specs/2026-11-05-ai-actions-migration-design.md)에 `설계대로 전환 진행`으로 승인했다. 기존 누적 비용·요청·4회 일일 시도·만료를 유지하며 GitHub Actions의 필요한 AI step에만 ANTHROPIC_API_KEY를 주입한다. Python 외부 패키지는 추가하지 않는다. 암호화에 한해 공식 release와 SHA256을 고정한 age 명령행 도구를 프로젝트 .tools 안에 설치하고, 복호화 identity를 Git 제외600 파일과 BENEFIT_AI_STATE_IDENTITY Secret에 저장하는 예외를 허용한다. 전역 설치는 금지한다.
+
+기존 briefing-data에 control/runtime 암호문만 저장하며 평문 원장·검토 대기·키는 Git/cache/artifact에 공개하지 않는다. 비용 예약은 Claude 전송 전에 원격에 영속 저장하며 손상·누락·미정산·저장 실패를 초기화나 재전송으로 바꾸지 않는다. 기존 개인 인증은 Secret 설정에만 쓰고 runner는 해당 저장소의 단기 GITHUB_TOKEN만 사용한다. main은 사용자가 머지한다. 실제 main 검증·최신 상태 handoff 전까지 로컬 스케줄을 유지하고, 최종 전환 시 기존 지정 job을 해제해 중복 실행을 막는다.
