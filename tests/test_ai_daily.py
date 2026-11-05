@@ -11,7 +11,7 @@ NOW=datetime(2026,11,5,7,tzinfo=ZoneInfo('Asia/Seoul'))
 
 class AIDailyTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory(dir=ROOT/'.tools');self.addCleanup(self.temp.cleanup)
+        self.temp=tempfile.TemporaryDirectory(dir=ROOT);self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.policy={'schema_version':1,'enabled':True,'recurring_spend_approved':False,'public_application_approved':False,
                      'hour_kst':6,'minute_kst':0,'max_ai_candidates_per_day':2}

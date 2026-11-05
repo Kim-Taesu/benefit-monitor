@@ -107,7 +107,7 @@ class PublicSnapshotTests(unittest.TestCase):
         self.prepare_draft()
         save(self.root/'public/topic-publication.json',dict(approved=True,mode='reviewed_policy',policy_sha256=policy_hash(self.root),expires_at=(NOW+timedelta(hours=2)).isoformat()))
         source=publish.run(self.root,now=NOW)
-        with tempfile.TemporaryDirectory(dir=ROOT/'.tools') as folder:
+        with tempfile.TemporaryDirectory(dir=ROOT) as folder:
             target=Path(folder)
             for name in ['sources.yaml','public/verified.json','public/topic-basis.json','public/topic-publication.json']:
                 path=target/name;path.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(self.root/name,path)

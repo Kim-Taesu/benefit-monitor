@@ -18,7 +18,7 @@ class Response(io.BytesIO):
 
 class AIReviewTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory(dir=ROOT/'.tools');self.addCleanup(self.temp.cleanup)
+        self.temp=tempfile.TemporaryDirectory(dir=ROOT);self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.config={'sources':[{'id':'seoul','domains':['www.seoul.go.kr'],'routes':[],'feed_url':None}]}
         (self.root/'sources.yaml').write_text(json.dumps(self.config))

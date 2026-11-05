@@ -12,7 +12,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class QualityReplayTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory(dir=ROOT/'.tools')
+        self.temp=tempfile.TemporaryDirectory(dir=ROOT)
         self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.rows=[]

@@ -8,7 +8,7 @@ ROOT=Path(__file__).resolve().parents[1]
 class AIActivationTests(unittest.TestCase):
     def test_activation_plan_is_reviewable_and_does_not_install_or_enable(self):
         from benefit_monitor.ai_activation import prepare
-        with tempfile.TemporaryDirectory(dir=ROOT/'.tools') as folder:
+        with tempfile.TemporaryDirectory(dir=ROOT) as folder:
             root=Path(folder)
             plan=prepare(root,root/'activation')
             config=__import__('json').loads((root/'activation/ai-automation.json').read_text())

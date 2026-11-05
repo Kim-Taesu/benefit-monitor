@@ -10,7 +10,7 @@ from test_pipeline import benefit,SOURCE,NOW,ROOT
 
 class PublicTopicsTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory(dir=ROOT/'.tools');self.addCleanup(self.temp.cleanup)
+        self.temp=tempfile.TemporaryDirectory(dir=ROOT);self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.item=benefit(fee_status='paid',conditions='입장료 5000원, 서울 문화 체험').data()
         save(self.root/'sources.yaml',dict(sources=[SOURCE],max_age_days=7))

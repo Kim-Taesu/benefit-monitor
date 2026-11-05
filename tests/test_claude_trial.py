@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 class ClaudeTrialTests(unittest.TestCase):
     def setUp(self):
         (ROOT / '.tools').mkdir(exist_ok=True)
-        self.temp = tempfile.TemporaryDirectory(dir=ROOT / '.tools')
+        self.temp = tempfile.TemporaryDirectory(dir=ROOT)
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.path = self.root / 'budget.json'

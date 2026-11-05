@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 class RemoteDeliveryTests(unittest.TestCase):
     def setUp(self):
-        self.temp=tempfile.TemporaryDirectory(dir=ROOT/'.tools');self.addCleanup(self.temp.cleanup)
+        self.temp=tempfile.TemporaryDirectory(dir=ROOT);self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
         self.policy={'public_application_approved':True,'remote_delivery_approved':True,
                      'repository':'Kim-Taesu/benefit-monitor','deploy_ref':'docs/ai-research-playbook'}
