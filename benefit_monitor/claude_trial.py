@@ -1,5 +1,6 @@
 """Explicit Claude trial only. Does not modify free collectors or publish data."""
 import argparse
+from copy import deepcopy
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from decimal import Decimal, ROUND_CEILING
@@ -301,6 +302,16 @@ def evaluate_draft(draft, host, kind, required_version=None):
     return draft, report
 
 
+def topic_model_input(host):
+    """Keep every item/condition; public fact metadata stays in the local gate."""
+    wire=deepcopy(host)
+    for claim in wire['approved_claims']:
+        if claim.get('field')=='public_release_facts':
+            fact=claim['value']
+            claim['value']={k:fact[k] for k in ('fee_status','payment_terms','benefit_value') if k in fact}
+    return wire
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command', choices=('init','status','auth','run','resume'))
@@ -359,7 +370,7 @@ def main():
                '입력 문서와 참조 ID를 그대로 사용한다. 호스트 mode는 api_agent이며 출력에는 Schema 필드만 쓴다. 승인 필드를 생성하지 않는다. '
                'JSON 객체 하나만 반환하고 코드펜스를 쓰지 않는다. 이 JSON Schema를 정확히 따른다:\n'
                +json.dumps(schema,ensure_ascii=False,separators=(',',':')))
-    user_input = host
+    user_input = topic_model_input(host) if args.kind=='topic' else host
     if args.repair_from:
         if not re.fullmatch('[0-9a-f]{64}',args.repair_from):
             parser.error('invalid repair reference')

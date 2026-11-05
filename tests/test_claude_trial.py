@@ -392,4 +392,21 @@ class ClaudeTrialTests(unittest.TestCase):
                 main()
         self.assertEqual(self.budget.summary()['request_count'],0)
 
+    def test_topic_wire_keeps_all_items_conditions_and_separate_payment_terms(self):
+        from copy import deepcopy
+        from benefit_monitor.claude_trial import topic_model_input
+        item={'item_id':'a','summary':'서울 문화 체험','conditions':'19~39세, 공휴일 제외',
+              'deadline_at':'2026-11-09T17:00:00+09:00','claim_ids':['ca'],'topic_basis':{'topic_ids':['culture']}}
+        value={'summary':item['summary'],'conditions':item['conditions'],'title':'중복 메타데이터',
+               'fee_status':'paid','payment_terms':{'minimum_spend':'10000원'},'benefit_value':{'conditions':'앱 결제 한정'}}
+        host={'approved_items':[item],'approved_claims':[{'id':'ca','item_id':'a','field':'public_release_facts','value':value}]}
+        original=deepcopy(host);wire=topic_model_input(host)
+        self.assertEqual(wire['approved_items'],host['approved_items'])
+        self.assertEqual(wire['approved_claims'][0]['id'],'ca')
+        self.assertEqual(wire['approved_claims'][0]['value']['payment_terms'],value['payment_terms'])
+        self.assertEqual(wire['approved_claims'][0]['value']['benefit_value'],value['benefit_value'])
+        self.assertEqual(wire['approved_claims'][0]['value']['fee_status'],'paid')
+        self.assertNotIn('title',wire['approved_claims'][0]['value'])
+        self.assertEqual(host,original)
+
 if __name__=='__main__':unittest.main()

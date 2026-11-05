@@ -1,6 +1,7 @@
 """One daily topic proposal from approved facts; private drafts and safe fallback."""
 from datetime import datetime
 from pathlib import Path
+import json
 from zoneinfo import ZoneInfo
 
 from .ai_review import invoke
@@ -8,7 +9,7 @@ from .claude_trial import evaluate_draft
 from .daily_topics import fallback
 from .official_reader import project_path
 from .public_topics import approved_snapshot
-from .store import load,save,lock
+from .store import load,save,save_text,lock
 
 
 def refresh(root,now=None,execute=False):
@@ -27,7 +28,7 @@ def refresh(root,now=None,execute=False):
         used_fallback=True
         if execute and host['approved_items'] and day not in state['days']:
             input_path=project_path(root,'.tools/ai-topic-inputs/'+day+'-'+host['snapshot_id']+'.json')
-            save(input_path,host)
+            save_text(input_path,json.dumps(host,ensure_ascii=False,separators=(',',':')))
             # Persist before calling: a crash cannot open another paid daily attempt.
             state['days'][day]={'input_file':str(input_path.relative_to(root)),'status':'attempted','snapshot_id':host['snapshot_id']}
             save(project_path(root,'cache/ai_topics/days.json'),state)

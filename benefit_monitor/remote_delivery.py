@@ -10,10 +10,23 @@ from .briefing import SEOUL
 from .mirror import run as mirror
 from .official_reader import project_path
 from .public_snapshot import REPOSITORY,validate
+from .trial_budget import secure_open
 
 
 def _run(args,**kwargs):
     return subprocess.run(args,check=True,capture_output=True,text=True,**kwargs).stdout.strip()
+
+
+def personal_token(root,env):
+    path=project_path(root,'.tools/personal-gh-auth/token.json')
+    if path.exists():
+        with os.fdopen(secure_open(path,os.O_RDONLY)) as stream:
+            raw=stream.read(4097)
+        if len(raw)>4096:raise ValueError('personal credential file too large')
+        data=json.loads(raw)
+        if data.get('login')!='Kim-Taesu':raise ValueError('personal credential identity mismatch')
+        return data['token']
+    return _run(['gh','auth','token','--hostname','github.com','--user','Kim-Taesu'],env=env)
 
 
 def deliver(root,policy,now=None):
@@ -37,7 +50,7 @@ def deliver(root,policy,now=None):
     env={k:os.environ[k] for k in allowed if k in os.environ}
     profile=project_path(root,'.tools/personal-gh-auth/hosts.yml')
     if profile.exists():env['GH_CONFIG_DIR']=str(profile.parent)
-    token=_run(['gh','auth','token','--hostname','github.com','--user','Kim-Taesu'],env=env)
+    token=personal_token(root,env)
     if not token or '\n' in token:raise ValueError('personal GitHub credential unavailable')
     env.update(GH_TOKEN=token,GH_HOST='github.com',GH_NO_UPDATE_NOTIFIER='1',GH_NO_EXTENSION_UPDATE_NOTIFIER='1')
     login=_run(['gh','api','--hostname','github.com','user','--jq','.login'],env=env)

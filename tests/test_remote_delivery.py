@@ -98,4 +98,14 @@ class RemoteDeliveryTests(unittest.TestCase):
         auth=next(kw for args,kw in self.events if args[:3]==['gh','auth','token'])
         self.assertTrue(auth['env'].get('GH_CONFIG_DIR')==str(profile),'project personal profile was not selected')
 
+    def test_project_token_avoids_the_older_named_keychain_credential(self):
+        from benefit_monitor.remote_delivery import deliver
+        profile=self.root/'.tools/personal-gh-auth';profile.mkdir(parents=True)
+        token=profile/'token.json';token.write_text(json.dumps({'login':'Kim-Taesu','token':'test-personal-token'}));token.chmod(0o600)
+        def process(args,**kw):
+            if args[:3]==['gh','auth','token']:raise AssertionError('must use the refreshed project token')
+            return self.process(args,**kw)
+        with patch('benefit_monitor.remote_delivery.subprocess.run',side_effect=process),patch('benefit_monitor.remote_delivery.mirror',return_value='2'*40),patch.dict('os.environ',{'PATH':'/usr/bin:/bin'},clear=True):
+            self.assertEqual(deliver(self.root,self.policy,now=self.now)['status'],'dispatched_not_yet_verified')
+
 if __name__=='__main__':unittest.main()
