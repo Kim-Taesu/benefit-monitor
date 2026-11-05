@@ -1,6 +1,6 @@
 # GitHub Actions 전환 검증
 
-상태: 구현·작업 브랜치 무과금 검증 완료, 전체 리뷰의 중요3건 수정·PR 준비 중. 사용자 main 머지와 최신 상태 handoff는 아직 수행하지 않았다. Mac 스케줄이 현재 실행 주체이며 cloud control은 active=false다.
+상태: 구현·작업 브랜치 무과금 검증 완료, 전체 리뷰의 중요3건 수정·최종 무과금 검증 완료, PR 준비 중. 사용자 main 머지와 최신 상태 handoff는 아직 수행하지 않았다. Mac 스케줄이 현재 실행 주체이며 cloud control은 active=false다.
 
 ## 승인 범위와 보존한 한도
 
@@ -16,9 +16,11 @@ API Secret은 ANTHROPIC_API_KEY, 상태 복호화 Secret은 BENEFIT_AI_STATE_IDE
 - 제어 상태와 검토 자료는 기존 briefing-data의 ai-control.age·ai-runtime.age에 암호문으로 보존했다. 매 예약·정산은 Contents 파일 SHA 조건으로 원격에 저장하고 확인한다. 저장 실패 시 Claude HTTP를 보내지 않는다.
 - 공개 JSON은 최초 복원 때의 파일 SHA로 CAS 저장해, 실행 중 다른 수집기가 게시한 보류를 덮지 않는다. 다른 control/runtime 파일의 branch 변경은 허용한다.
 - runtime 업로드와 control pointer 갱신 사이 중단은 이전 immutable blob을 복원한다. archive는 budget/days·링크·탈출 경로·credential 파일을 복원하지 않는다. control이 항상 원장·날짜의 권위다.
-- Linux runner의 Python393개·프런트52개·브라우저43개 검사가 성공했다. 이후 추가한 이관 경계와 최신 무료 수집 보류 복원 검사를 포함해 로컬 Python403개가 통과했다. 최종 HEAD 검증 결과는 별도 결과 JSON에 기록한다.
+- Linux runner의 Python393개·프런트52개·브라우저43개 검사가 성공했다. 이후 추가한 이관 경계와 최신 무료 수집 보류 복원 검사를 포함해 로컬 Python403개가 통과했다. [최종 코드 검증 결과](pre-merge-verification.json): 코드5842fde32c12b1872bd74705801289e4eab19167의 [runner41982221949](https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41982221949)에서 Python403개·프런트52개·브라우저43개와 Secret/암복호화 검증이 모두 성공했다.
 
 공식 조회의 robots·TLS·허용목록·HTTP75/hard cap100·구6시간 캐시·실패900초와 공개 승인·주제 의미 검사·화면 fallback은 유지한다. AI가 추출한 새 사실은 계속 비공개 사람 검토 대기다.
+
+로컬 Git 전체 refs의606개 blob·현재 tracked260개 파일·최종 실행2개 job log·artifact18개 파일·원격 암호문2개에서 실제 API 키/private identity 및 base64 표현의 일치가0이었다. Secret 값은 출력하지 않고 프로그램 메모리에서 비교했다. 이 검사는 명시한 범위의 검사 시점 결과이며 다른 대화·외부 계정까지 검사했다는 뜻은 아니다.
 
 ## 최종 전환 순서
 

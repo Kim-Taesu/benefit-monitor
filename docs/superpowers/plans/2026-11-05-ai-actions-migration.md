@@ -33,11 +33,11 @@
 
 **인터페이스:** install(root:Path, platform_name:str, machine:str)->Path; AgeState(root:Path, identity:Path), encrypt(raw:bytes)->bytes, decrypt(cipher:bytes)->bytes; pack_runtime(root:Path)->bytes, restore_runtime(root:Path, raw:bytes)->None. identity 파일은 Git 제외·600이며 외부 경로와 링크를 거절한다.
 
-- [ ] 거절 테스트: 잘못된 archive digest·지원하지 않는 플랫폼·symlink·경로 탈출·금지된 credential 경로·크기 초과를 거절한다. restore는 budget/days를 복원하지 않는다.
-- [ ] 위 테스트를 실행해 미구현 실패를 확인한다.
-- [ ] age1.3.2 공식 release만 허용한다. darwin-arm64 SHA256 `e2020b073c44f692685a24d6abc378817eb81ffaaf49fd0531ef8565f767f2f5`, linux-amd64 `cbe24006683f8eb669266162894b9a522a1af52f2665fbc63a4bb032ed26ac10`. 다운로드32MiB·압축해제128MiB 한도와 정확한 binary 파일2개만 허용한다. Mac 전역 설치는 하지 않는다.
-- [ ] 로컬 프로젝트에 설치하고 실제 임시 identity의 roundtrip·변조·잘못된 identity 거절을 확인한다. stdout/env로 private identity를 출력하지 않는다.
-- [ ] 관련 테스트·전체 Python 검사 후 태스크를 커밋한다.
+- [x] 거절 테스트: 잘못된 archive digest·지원하지 않는 플랫폼·symlink·경로 탈출·금지된 credential 경로·크기 초과를 거절한다. restore는 budget/days를 복원하지 않는다.
+- [x] 위 테스트를 실행해 미구현 실패를 확인한다.
+- [x] age1.3.2 공식 release만 허용한다. darwin-arm64 SHA256 `e2020b073c44f692685a24d6abc378817eb81ffaaf49fd0531ef8565f767f2f5`, linux-amd64 `cbe24006683f8eb669266162894b9a522a1af52f2665fbc63a4bb032ed26ac10`. 다운로드32MiB·압축해제128MiB 한도와 정확한 binary 파일2개만 허용한다. Mac 전역 설치는 하지 않는다.
+- [x] 로컬 프로젝트에 설치하고 실제 임시 identity의 roundtrip·변조·잘못된 identity 거절을 확인한다. stdout/env로 private identity를 출력하지 않는다.
+- [x] 관련 테스트·전체 Python 검사 후 태스크를 커밋한다.
 
 ### Task 2: 암호문 영속 control과 예약 checkpoint
 
@@ -45,11 +45,11 @@
 
 **인터페이스:** GitHubStateStore(root:Path, token:str, crypto:AgeState, opener=None), read(kind:str)->tuple[bytes,str], write(kind:str, raw:bytes, expected_sha:str|None)->str. 허용 파일은 ai-control.age/ai-runtime.age, 저장소·branch는 고정한다. CloudSession.restore/mark_day/checkpoint_budget/finish은 원격 SHA와 최신 로컬 context를 관리한다. TrialBudget은 cloud context가 명시된 경우 변경 트랜잭션만 checkpoint한다.
 
-- [ ] 가짜 원격 테스트: 저장 실패 후 provider 호출0, 두 writer의 stale SHA 거절, 최신 자식 budget 보존, control 부재/손상/다른 cap·모델 거절, runtime이 budget/day를 덮어쓰지 않음을 고정한다.
-- [ ] 미구현 실패를 확인한다.
-- [ ] GitHub HTTPS API에만 인증을 보내고 redirect를 따르지 않는다. ciphertext1MiB·응답2MiB 한도, JSON/base64와 blob SHA를 검증한다. control은 budget·days·trial 식별자·active·generation을 포함하고 이전 상태를 자동 재생성하지 않는다.
-- [ ] `_locked`에서 원본 상태와 비교해 변경 시만 로컬 fsync 후 원격 저장한다. 읽기는 업로드하지 않는다. hook 오류 시 예약/정산을 성공으로 반환하지 않는다.
-- [ ] 모든 회귀 검사 후 커밋한다.
+- [x] 가짜 원격 테스트: 저장 실패 후 provider 호출0, 두 writer의 stale SHA 거절, 최신 자식 budget 보존, control 부재/손상/다른 cap·모델 거절, runtime이 budget/day를 덮어쓰지 않음을 고정한다.
+- [x] 미구현 실패를 확인한다.
+- [x] GitHub HTTPS API에만 인증을 보내고 redirect를 따르지 않는다. ciphertext1MiB·응답2MiB 한도, JSON/base64와 blob SHA를 검증한다. control은 budget·days·trial 식별자·active·generation을 포함하고 이전 상태를 자동 재생성하지 않는다.
+- [x] `_locked`에서 원본 상태와 비교해 변경 시만 로컬 fsync 후 원격 저장한다. 읽기는 업로드하지 않는다. hook 오류 시 예약/정산을 성공으로 반환하지 않는다.
+- [x] 모든 회귀 검사 후 커밋한다.
 
 ### Task 3: cloud 키·일일 제어·공개 전달
 
@@ -57,11 +57,11 @@
 
 **인터페이스:** configured_key(root:Path)->str, cloud_run(root:Path, now=None, check_only=True)->dict. cloud mode는 명시적 env와 저장소/이벤트 검증을 요구하며 기본 로컬 loader는 바꾸지 않는다. 공개 전달은 고정 snapshot/code SHA로 기존 briefing-pages workflow를 dispatch한다.
 
-- [ ] cloud 환경키·누락·금지된 event/repository·잘못된 fingerprint·reserved/halting·만료·이미 처리한 날을 테스트한다. 과금 함수를 모의해 모두 호출0임을 검증한다.
-- [ ] 미구현 실패를 확인한다.
-- [ ] 최신 control을 복원한 다음에만 검사를 시작한다. 당일 main 정기 작업 미완료면 mark_day 전 대기한다. inner daily가 자기 로컬 day를 기록하기 전 control의 당일 시도를 먼저 원격 확정하되, inner daily에 사전 attempted를 넣어 스스로 차단하지 않도록 분리한다.
-- [ ] 기존 daily를 재사용해 수집·AI·공개 export를 처리한다. 개인 OAuth 사용자 API 대신 단기 GITHUB_TOKEN의 해당 저장소 contents/actions 권한만 사용한다. 원격 archive/control을 완료 처리할 때 최신 context budget을 다시 읽는다.
-- [ ] 실제 환경키를 출력하지 않고 공개 payload·로그에 포함되면 거절한다. 실패 시 이전 검토·예약을 유지한다. 실제 Claude 호출 없이 회귀 검사 후 커밋한다.
+- [x] cloud 환경키·누락·금지된 event/repository·잘못된 fingerprint·reserved/halting·만료·이미 처리한 날을 테스트한다. 과금 함수를 모의해 모두 호출0임을 검증한다.
+- [x] 미구현 실패를 확인한다.
+- [x] 최신 control을 복원한 다음에만 검사를 시작한다. 당일 main 정기 작업 미완료면 mark_day 전 대기한다. inner daily가 자기 로컬 day를 기록하기 전 control의 당일 시도를 먼저 원격 확정하되, inner daily에 사전 attempted를 넣어 스스로 차단하지 않도록 분리한다.
+- [x] 기존 daily를 재사용해 수집·AI·공개 export를 처리한다. 개인 OAuth 사용자 API 대신 단기 GITHUB_TOKEN의 해당 저장소 contents/actions 권한만 사용한다. 원격 archive/control을 완료 처리할 때 최신 context budget을 다시 읽는다.
+- [x] 실제 환경키를 출력하지 않고 공개 payload·로그에 포함되면 거절한다. 실패 시 이전 검토·예약을 유지한다. 실제 Claude 호출 없이 회귀 검사 후 커밋한다.
 
 ### Task 4: trusted workflow와 안전한 handoff 도구
 
@@ -69,18 +69,18 @@
 
 **인터페이스:** handoff prepare/check/activate/restore 명령은 개인 계정·고정 저장소·원장·등록된 job을 검사한다. Secret 생성·등록은 기존 개인 gh 설정과 stdin만 사용한다. 설계 승인으로 추가 identity Secret1개를 허용한다.
 
-- [ ] handoff 전 로컬 실행 보존, active cloud 이관 시 로컬 해제 선행, 오래된 snapshot 활성화 거절, 원장 기준 불일치·예약 잔존 거절을 테스트한다.
-- [ ] 미구현 실패를 확인한다.
-- [ ] workflow는 기본 branch schedule와 trusted dispatch만 허용한다. 매15분 KST06~23:45 점검, concurrency 하나, cancel-in-progress=false. 공개·무료 확인을 유지한다. 설치/checkout 단계에는 AI Secret을 주입하지 않는다.
-- [ ] contents:write/actions:write는 해당 job만 사용한다. 만료/실행 한도 도달 시 자기 workflow만 disable하며 실패해도 프로그램 gate는 유지한다. 개인 장기 token은 runner에 전달하지 않는다.
-- [ ] check_only 실제 branch dispatch에서 Secret fingerprint·복호화·이관된30요청/실패예약·11/5 중복 차단·storage 권한을 확인한다. 아직 로컬을 끄지 않는다.
-- [ ] 전체 검사·실제 무과금 cloud 검증 후 커밋한다.
+- [x] handoff 전 로컬 실행 보존, active cloud 이관 시 로컬 해제 선행, 오래된 snapshot 활성화 거절, 원장 기준 불일치·예약 잔존 거절을 테스트한다.
+- [x] 미구현 실패를 확인한다.
+- [x] workflow는 기본 branch schedule와 trusted dispatch만 허용한다. 매15분 KST06~23:45 점검, concurrency 하나, cancel-in-progress=false. 공개·무료 확인을 유지한다. 설치/checkout 단계에는 AI Secret을 주입하지 않는다.
+- [x] contents:write/actions:write는 해당 job만 사용한다. 만료/실행 한도 도달 시 자기 workflow만 disable하며 실패해도 프로그램 gate는 유지한다. 개인 장기 token은 runner에 전달하지 않는다.
+- [x] check_only 실제 branch dispatch에서 Secret fingerprint·복호화·이관된30요청/실패예약·11/5 중복 차단·storage 권한을 확인한다. 아직 로컬을 끄지 않는다.
+- [x] 전체 검사·실제 무과금 cloud 검증 후 커밋한다.
 
 ### Task 5: 문서·PR·사용자 머지 뒤 최종 전환
 
 **파일:** `README.md`, `docs/ai/automation.md`, 새 migration 결과 JSON/감사 문서. 기존 frozen 증거는 수정하지 않는다.
 
-- [ ] 전체 unittest·출처 정책·diff·현재 frontend CI를 확인하고 설계 범위 리뷰를 수행한다. 키/identity를 실제 값 메모리 대조로 공개 이력·로그·artifact에서 검사한다.
+- [x] 전체 unittest·출처 정책·diff·현재 frontend CI를 확인하고 설계 범위 리뷰를 수행한다. 키/identity를 실제 값 메모리 대조로 공개 이력·로그·artifact에서 검사한다.
 - [ ] 기존 branch의 새 PR을 작성해 누적 한도와 crypto 도구, 아직 로컬 활성 상태, 사용자 main 머지 필요를 명시한다. 자동 main 병합은 하지 않는다.
 - [ ] 사용자 머지 후 로컬 실행 중 여부 확인·job 해제·enabled=false·최신 상태 암호화/업로드·cloud active 전환을 순서대로 수행한다. 이때 실패하면 두 환경 동시 재개를 막고 최신 control 확인 후에만 복구한다.
 - [ ] 실제 main cloud 첫 실행의 복원·당일 중복 차단·API30회 유지·등록된 스케줄·Mac 해제를 확인한다. 확인된 배포와 dispatch를 구분해 기록한다. 다음 날 관측은 후속으로 남긴다.
