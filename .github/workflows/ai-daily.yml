@@ -19,6 +19,10 @@ on:
         description: '사람이 실패 원인을 확인한 뒤 실험 중단을 해제 (실패 기록은 유지)'
         type: boolean
         default: false
+      retry_rejected_day:
+        description: '오늘 요청이 모두 무과금 4xx 거절이었으면 오늘을 한 번 재시도 (check_only 꺼야 함)'
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -54,5 +58,6 @@ jobs:
           BENEFIT_AI_CLOUD: '1'
           CHECK_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.check_only && 'true' || 'false' }}
           RESUME_REVIEWED_HALT: ${{ github.event_name == 'workflow_dispatch' && inputs.resume_reviewed_halt && 'true' || 'false' }}
+          RETRY_REJECTED_DAY: ${{ github.event_name == 'workflow_dispatch' && inputs.retry_rejected_day && 'true' || 'false' }}
         run: |
           python scripts/run_ai_cloud.py

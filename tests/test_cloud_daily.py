@@ -259,4 +259,52 @@ class CloudDailyTests(unittest.TestCase):
         _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(reserved).encode(),sha)
         with self.assertRaisesRegex(ValueError,'inflight'):m.cloud_run(self.root,now=NOW,store=self.fixture.store(),resume=True)
 
+    def put_control(self,mutate):
+        control=json.loads(self.fixture.store().read('control')[0]);mutate(control)
+        _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(control).encode(),sha)
+        return control
+
+    def rejected_today(self,control,code='http_400',charged=0,status='failed'):
+        control['days']['2026-11-06']={'status':'completed'}
+        control['budget']['requests'].append({'id':'f'*64,'status':status,'reserved_microdollars':13012,'charged_microdollars':charged,
+                                              'started_at':'2026-11-05T23:02:15+00:00','error_code':code})
+
+    def test_rejected_day_is_retried_once_by_manual_dispatch_and_keeps_history(self):
+        m=self.module();seen=[]
+        before=self.put_control(lambda c:(self.rejected_today(c),c['budget'].update(halted=True)))
+        def inner(*args,**kwargs):
+            seen.append(load(self.root/'cache/ai_daily/days.json',{})['days'])
+            self.assertEqual(json.loads(self.fixture.store().read('control')[0])['days']['2026-11-06']['status'],'attempted')
+            return {'status':'completed'}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),\
+                patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'schedule'}),self.assertRaisesRegex(ValueError,'manual'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True,resume=True)
+            with self.assertRaisesRegex(ValueError,'not eligible'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
+            self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'already_completed_today')
+        self.assertEqual((result['status'],result['retried_day']),('completed',True))
+        self.assertFalse(json.loads(self.fixture.store().read('control')[0])['budget']['halted'])
+        self.assertNotIn('2026-11-06',seen[0])
+        remote=json.loads(self.fixture.store().read('control')[0])
+        day=remote['days']['2026-11-06']
+        self.assertEqual((day['status'],day['retry_of']['status'],day['retry_of']['request_ids']),('completed','completed',['f'*64]))
+        self.assertEqual(remote['budget']['requests'],before['budget']['requests'])
+        self.assertEqual(len(remote['days']),len(before['days']))
+
+    def test_retry_refuses_billed_or_non_rejection_days(self):
+        m=self.module()
+        base=json.loads(self.fixture.store().read('control')[0])
+        cases={'billed':dict(charged=5),'server error':dict(code='http_529'),'completed request':dict(status='completed',code='')}
+        for name,kwargs in cases.items():
+            with self.subTest(name=name):
+                self.put_control(lambda c:(c.clear(),c.update(json.loads(json.dumps(base))),self.rejected_today(c,**kwargs)))
+                with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=AssertionError('no paid work')),\
+                        self.assertRaisesRegex(ValueError,'rejected unbilled'):
+                    m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
+        self.put_control(lambda c:(c.clear(),c.update(json.loads(json.dumps(base)))))
+        with patch.object(m,'todays_refresh',return_value='ready'),self.assertRaisesRegex(ValueError,'not eligible'):
+            m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
+
 if __name__=='__main__':unittest.main()

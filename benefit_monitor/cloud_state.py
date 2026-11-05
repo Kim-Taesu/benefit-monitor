@@ -13,6 +13,7 @@ from urllib.request import Request,build_opener
 from .age_state import AgeState,pack_runtime,restore_runtime
 from .research_probe import NoRedirect
 from .store import save,load
+from .briefing import SEOUL
 from .trial_budget import TrialBudget,secure_open,CAP,MAX_REQUESTS,MAX_RUN_DAYS
 from scripts.install_age import safe_path
 
@@ -188,6 +189,22 @@ class CloudSession:
             raise ValueError('unresolved inflight request or exhausted budget')
         budget['halted']=False
         budget.setdefault('manual_reviews',[]).append(now.astimezone(timezone.utc).isoformat())
+        self._commit(data);return True
+
+    def retry_rejected_day(self,day,now):
+        """One human-dispatched retry of a day whose every request was rejected unbilled (HTTP 4xx).
+
+        The day keeps its slot and its original outcome under `retry_of`; ledger rows stay."""
+        self._reload();data=deepcopy(self.control);row=data['days'].get(day)
+        if not row or row['status'] not in ('completed','failed') or 'retry_of' in row:
+            raise ValueError('day is not eligible for a rejected-request retry')
+        same=[r for r in data['budget']['requests']
+              if datetime.fromisoformat(r['started_at']).astimezone(SEOUL).date().isoformat()==day]
+        if not same or any(r['status']!='failed' or r['charged_microdollars']!=0
+                           or not re.fullmatch('http_4[0-9]{2}',r.get('error_code','')) for r in same):
+            raise ValueError('only days whose requests were all rejected unbilled can be retried')
+        data['days'][day]={'status':'attempted','retry_of':{'status':row['status'],'request_ids':[r['id'] for r in same],
+                                                            'retried_at':now.isoformat()}}
         self._commit(data);return True
 
     def checkpoint_budget(self,budget):
