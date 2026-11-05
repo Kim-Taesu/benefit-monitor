@@ -1,7 +1,7 @@
 """Encrypted GitHub control with file leases; never initializes missing state."""
 import base64
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime,timezone
 import hashlib
 import json
 import os
@@ -13,7 +13,7 @@ from urllib.request import Request,build_opener
 from .age_state import AgeState,pack_runtime,restore_runtime
 from .research_probe import NoRedirect
 from .store import save,load
-from .trial_budget import TrialBudget,secure_open,MAX_REQUESTS,MAX_RUN_DAYS
+from .trial_budget import TrialBudget,secure_open,CAP,MAX_REQUESTS,MAX_RUN_DAYS
 from scripts.install_age import safe_path
 
 REPOSITORY='Kim-Taesu/benefit-monitor'
@@ -178,6 +178,16 @@ class CloudSession:
         data=deepcopy(self.control)
         data['expires_at']=policy['expires_at'];data['budget']['max_requests']=MAX_REQUESTS
         data['limit_revision']=LIMIT_REVISION
+        self._commit(data);return True
+
+    def resume_after_review(self,now):
+        """Human-dispatched halt release; every failed row and reserved dollar stays in the ledger."""
+        data=deepcopy(self.control);budget=data['budget']
+        if not budget['halted']:return False
+        if any(row['status']=='reserved' for row in budget['requests']) or TrialBudget._exposure(budget)>=CAP:
+            raise ValueError('unresolved inflight request or exhausted budget')
+        budget['halted']=False
+        budget.setdefault('manual_reviews',[]).append(now.astimezone(timezone.utc).isoformat())
         self._commit(data);return True
 
     def checkpoint_budget(self,budget):

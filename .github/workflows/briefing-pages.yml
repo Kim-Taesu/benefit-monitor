@@ -1,9 +1,10 @@
 name: Daily benefit briefing
 on:
   schedule:
-    # 01:00 Asia/Seoul (UTC+9). Observed GitHub delays reached ~6h, so start
-    # early to aim for completion before 07:00 KST. Not guaranteed.
-    - cron: '0 16 * * *'
+    # 00:37 Asia/Seoul (UTC+9), off the top of the hour where GitHub load peaks.
+    # The 01:00 slot was delayed 5.8-10.7h and dropped on 2026-11-04. Not guaranteed;
+    # AI daily dispatches a missing collection after 10:00 KST.
+    - cron: '37 15 * * *'
   workflow_dispatch:
     inputs:
       deploy_approved_snapshot:

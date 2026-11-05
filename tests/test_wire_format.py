@@ -23,9 +23,19 @@ def host(body=BODY):
                 budget={}, candidates=[dict(candidate_id='c1', source_id='seoul', document_ids=['doc-a'])], documents=[doc])
 
 
+BLANK = {'eligibility': {'scope': 'disputed', 'required': [], 'not_confirmed': []},
+         'event_period': {'start': '', 'end': ''}, 'application_period': {'start': '', 'end': ''},
+         'fee_status': 'conditional', 'capacity': 0, 'districts': []}
+
+
+def fact(status='unknown', value=None, evidence=(), reason=''):
+    return {'status': status, 'value': value, 'evidence': list(evidence), 'unknown_reason': reason}
+
+
 def wire(**facts):
-    base = {field: {'status': 'unknown', 'unknown_reason': '원문에 없음'} for field in w.FIELDS}
-    base.update(facts)
+    base = {field: fact(value=BLANK.get(field, ''), reason='원문에 없음') for field in w.FIELDS}
+    for field, given in facts.items():
+        base[field] = dict(fact(value=BLANK.get(field, '')), **given)
     return dict(wire_version=w.RESEARCH_WIRE, status='completed', errors=[],
                 records=[dict(candidate_id='c1', research_status='completed', stop_reason='sufficient_evidence', facts=base)])
 
@@ -59,25 +69,49 @@ class ResearchWireTests(unittest.TestCase):
     def test_shared_shapes_use_resolvable_defs_and_samples_conform(self):
         schema = w.research_wire_schema()
         text = json.dumps(schema)
-        self.assertEqual(set(schema['$defs']), {'evidence', 'unknown'})
-        self.assertEqual(text.count('"unknown_reason": {'), 1)
+        self.assertEqual(set(schema['$defs']), {'evidence'})
+        self.assertNotIn('anyOf', text)
+        self.assertNotIn('pattern', text)
         sample = wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': [{'segment_id': 'd1s4'}]},
                       event_period={'status': 'supported', 'value': {'start': '2026-11-07', 'end': ''},
                                     'evidence': [{'segment_id': 'd1s1'}]})
         self.assertTrue(conforms(sample, schema, schema))
-        bad = [wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': []}),
-               wire(availability={'status': 'supported', 'value': 'x', 'evidence': [{'segment_id': 'd1s1'}]}),
-               wire(event_period={'status': 'supported', 'value': {'start': '11월 7일', 'end': ''},
-                                  'evidence': [{'segment_id': 'd1s1'}]}),
-               wire(selection={'status': 'unknown'})]
-        for value in bad:
+        schema_bad = [wire(availability={'status': 'supported', 'value': 'x', 'evidence': [{'segment_id': 'd1s1'}]}),
+                      wire(fee_status={'status': 'supported', 'value': 'maybe', 'evidence': [{'segment_id': 'd1s4'}]})]
+        broken = wire()
+        del broken['records'][0]['facts']['selection']['unknown_reason']
+        for value in schema_bad + [broken]:
             self.assertFalse(conforms(value, schema, schema))
+
+    def test_constraints_moved_out_of_the_grammar_are_host_rejections(self):
+        cases = {'evidence': wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': []}),
+                 'period format': wire(event_period={'status': 'supported', 'value': {'start': '11월 7일', 'end': ''},
+                                                     'evidence': [{'segment_id': 'd1s1'}]}),
+                 'districts': wire(districts={'status': 'supported', 'value': [], 'evidence': [{'segment_id': 'd1s1'}]}),
+                 'reason': wire(selection={'status': 'unknown', 'unknown_reason': ' '})}
+        schema = w.research_wire_schema()
+        for message, value in cases.items():
+            self.assertTrue(conforms(value, schema, schema), message)
+            with self.assertRaisesRegex(ValueError, message):
+                w.research_from_wire(value, host())
+        timed = wire(application_period={'status': 'supported', 'value': {'start': '2026-11-07', 'end': ''},
+                                         'evidence': [{'segment_id': 'd1s1'}]})
+        with self.assertRaisesRegex(ValueError, 'period format'):
+            w.research_from_wire(timed, host())
+
+    def test_unknown_fact_value_and_evidence_are_discarded(self):
+        draft = w.research_from_wire(wire(capacity={'status': 'unknown', 'value': 99, 'evidence': [{'segment_id': 'd1s1'}],
+                                                    'unknown_reason': '정원 미기재'}), host())
+        facts = {f['field']: f for f in draft['records'][0]['facts']}
+        self.assertEqual((facts['capacity']['value'], facts['capacity']['evidence']), (None, []))
+        self.assertEqual(facts['capacity']['unknown_reason'], '정원 미기재')
+        self.assertNotIn('summary', facts)
 
     def test_schema_is_static_and_inside_provider_limits(self):
         schema = w.research_wire_schema()
         self.assertEqual(schema, w.research_wire_schema())
         found = w.limits(schema)
-        self.assertLessEqual(found['unions'], w.UNION_LIMIT)
+        self.assertEqual((found['unions'], found['patterns']), (0, 0))
         self.assertEqual(found['optional'], 0)
         self.assertEqual(found['unsupported'], [])
         self.assertNotIn('minLength', json.dumps(schema))
@@ -90,6 +124,10 @@ class ResearchWireTests(unittest.TestCase):
             w.check_limits(many)
         with self.assertRaises(ValueError):
             w.check_limits({'type': 'string', 'minLength': 1})
+        with self.assertRaisesRegex(ValueError, 'patterns'):
+            w.check_limits({'type': 'string', 'pattern': '^a$'})
+        with self.assertRaisesRegex(ValueError, 'unions'):
+            w.check_limits({'anyOf': [{'type': 'string'}, {'type': 'integer'}]})
 
     def test_segments_are_exact_slices_and_keep_decimals(self):
         rows = w.segments(BODY, 'd1')
@@ -131,9 +169,8 @@ class ResearchWireTests(unittest.TestCase):
             w.research_from_wire(wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': [{'segment_id': 'd1s99'}]}), host())
         with self.assertRaisesRegex(ValueError, 'version'):
             w.research_from_wire(dict(wire(), wire_version='research-extraction-v3'), host())
-        draft = w.research_from_wire(wire(cost_details={'status': 'unknown', 'unknown_reason': '  '}), host())
         with self.assertRaisesRegex(ValueError, 'reason'):
-            evaluate_draft(draft, host(), 'research')
+            w.research_from_wire(wire(cost_details={'status': 'unknown', 'unknown_reason': '  '}), host())
 
     def test_invalid_date_is_still_rejected_by_existing_gate(self):
         draft = w.research_from_wire(wire(event_period={'status': 'supported', 'value': {'start': '2026-13-40', 'end': ''},
@@ -158,16 +195,20 @@ class TopicWireTests(unittest.TestCase):
         choices = w.eligible_items(topic_host())
         self.assertEqual(choices, {'culture': ['a', 'b'], 'family': ['b']})
         schema = w.topic_wire_schema(topic_host())
-        self.assertEqual(w.limits(schema)['unions'], 1)
-        branches = schema['properties']['topics']['items']['anyOf']
-        self.assertEqual([b['properties']['topic_id']['enum'] for b in branches], [['culture'], ['family']])
-        self.assertEqual(json.dumps(schema).count('"reason": {"type": "string"}, "match_type"'), 2)
+        self.assertEqual(w.limits(schema)['unions'], 0)
+        card = schema['properties']['topics']['items']
+        self.assertEqual(card['properties']['topic_id']['enum'], ['culture', 'family'])
+        self.assertEqual(card['properties']['item_links']['items']['properties']['item_id']['enum'], ['a', 'b'])
         sample = dict(wire_version=w.TOPIC_WIRE, status='completed', errors=[], excluded_items=[],
                       topics=[dict(topic_id='family', item_links=[dict(item_id='b', reason='r', match_type='explicit')],
                                    excluded_items=[dict(item_id='a', reason='가족 근거 없음')])])
         self.assertTrue(conforms(sample, schema, schema))
-        sample['topics'][0]['item_links'][0]['item_id'] = 'a'
+        sample['topics'][0]['item_links'][0]['item_id'] = 'c'
         self.assertFalse(conforms(sample, schema, schema))
+        sample['topics'][0]['item_links'][0]['item_id'] = 'a'
+        self.assertTrue(conforms(sample, schema, schema))
+        with self.assertRaisesRegex(ValueError, 'not eligible'):
+            w.topic_from_wire(sample, topic_host())
 
     def test_no_eligible_topic_stops_before_any_request(self):
         empty = topic_host()

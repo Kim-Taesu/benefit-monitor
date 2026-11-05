@@ -7,6 +7,12 @@ and topic contracts so every existing local gate still runs on the result.
 Anthropic structured outputs allow at most 16 union-typed parameters and 24 optional
 parameters per request and do not support minLength/maxLength/minimum/maximum.
 Schemas built here are checked against those limits before any paid request.
+
+Beyond those limits the provider caps the compiled grammar size. On 2026-11-06 the
+research schema with 14 unions and 5 regex patterns was rejected with HTTP 400
+"The compiled grammar is too large" although count_tokens accepted it. Unions are
+documented as exponentially expensive, so both schemas now use zero unions and zero
+patterns; the host enforces the removed constraints before rebuilding v3 drafts.
 """
 from copy import deepcopy
 import json
@@ -22,12 +28,15 @@ RESEARCH_WIRE = 'research-wire-v1'
 TOPIC_WIRE = 'topic-wire-v1'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
+GRAMMAR_UNION_LIMIT = 0
+GRAMMAR_PATTERN_LIMIT = 0
 UNSUPPORTED = {'minLength', 'maxLength', 'minimum', 'maximum', 'multipleOf', 'maxItems', 'uniqueItems',
                'exclusiveMinimum', 'exclusiveMaximum', 'not', 'oneOf', 'if', 'then', 'else'}
 OPTIONAL_FIELDS = tuple(f for f in FIELDS if f not in REQUIRED_FIELDS)
-SEGMENT_ID = '^d[0-9]+s[0-9]+$'
+# Host-side format checks; never sent as schema patterns.
 DATE_OR_EMPTY = '^([0-9]{4}-[0-9]{2}-[0-9]{2})?$'
 TIMESTAMP_OR_EMPTY = '^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?(Z|[+-][0-9]{2}:[0-9]{2}))?$'
+FACT_STATUSES = ['supported', 'disputed', 'unknown']
 ERROR_CODES = ['missing_input', 'policy_blocked', 'environment_unavailable', 'tool_failure', 'budget_exhausted']
 STATUSES = ['completed', 'partial', 'blocked', 'failed']
 SENTENCE = re.compile(r'.+?(?:[.!?。](?=\s|$)|$)')
@@ -49,7 +58,7 @@ def _errors():
 
 def limits(schema):
     """Count union-typed parameters, optional parameters and unsupported keywords."""
-    counts = {'unions': 0, 'optional': 0, 'unsupported': set()}
+    counts = {'unions': 0, 'optional': 0, 'patterns': 0, 'unsupported': set()}
     def walk(node):
         if isinstance(node, list):
             for child in node:
@@ -60,6 +69,8 @@ def limits(schema):
         counts['unsupported'] |= UNSUPPORTED & set(node)
         if 'anyOf' in node or isinstance(node.get('type'), list):
             counts['unions'] += 1
+        if 'pattern' in node:
+            counts['patterns'] += 1
         if node.get('type') == 'object':
             if node.get('additionalProperties') is not False:
                 counts['unsupported'].add('additionalProperties')
@@ -78,7 +89,8 @@ def limits(schema):
 
 def check_limits(schema):
     found = limits(schema)
-    if found['unions'] > UNION_LIMIT or found['optional'] > OPTIONAL_LIMIT or found['unsupported']:
+    if (found['unions'] > min(UNION_LIMIT, GRAMMAR_UNION_LIMIT) or found['patterns'] > GRAMMAR_PATTERN_LIMIT
+            or found['optional'] > OPTIONAL_LIMIT or found['unsupported']):
         raise ValueError('structured output schema exceeds provider limits: ' + json.dumps(found))
     return found
 
@@ -121,38 +133,38 @@ def _districts():
 
 def _research_values():
     text = _string()
-    period = lambda pattern: _object({'start': {'type': 'string', 'pattern': pattern},
-                                      'end': {'type': 'string', 'pattern': pattern}})
+    period = _object({'start': text, 'end': text})
     values = {field: text for field in ('cost_details', 'payment_conditions', 'selection', 'application_method',
                                         'cancellation', 'restrictions', 'summary', 'conditions')}
     values.update(
         eligibility=_object({'scope': {'enum': ['restricted', 'unrestricted', 'disputed']},
                              'required': {'type': 'array', 'items': text},
                              'not_confirmed': {'type': 'array', 'items': text}}),
-        event_period=period(DATE_OR_EMPTY),
-        application_period=period(TIMESTAMP_OR_EMPTY),
+        event_period=period,
+        application_period=period,
         fee_status={'enum': ['free', 'paid', 'conditional']},
         capacity={'type': 'integer'},
-        districts={'type': 'array', 'minItems': 1, 'items': {'enum': _districts()}})
+        districts={'type': 'array', 'items': {'enum': _districts()}})
     return values
 
 
 def research_wire_schema():
-    """Static schema: one union per field except availability, which may only be unknown.
+    """Static, union-free schema: every fact has the same four slots.
 
-    Shared shapes live in $defs: the provider renders every inline copy, and measured
-    count_tokens overhead fell from 8,218 to 5,369 tokens with the same accepted outputs.
+    status=unknown facts must give unknown_reason; the host discards their value and
+    evidence. Known facts must cite at least one segment. Both rules, date formats and
+    segment membership are host checks in research_from_wire, so a violation is a
+    rejection, never a silent repair.
     """
-    defs = {'evidence': {'type': 'array', 'minItems': 1,
-                         'items': _object({'segment_id': {'type': 'string', 'pattern': SEGMENT_ID}})},
-            'unknown': _object({'status': {'enum': ['unknown']}, 'unknown_reason': _string()})}
-    evidence, unknown = {'$ref': '#/$defs/evidence'}, {'$ref': '#/$defs/unknown'}
+    defs = {'evidence': {'type': 'array', 'items': _object({'segment_id': _string()})}}
+    evidence = {'$ref': '#/$defs/evidence'}
+    values = _research_values()
     facts = {}
-    for field, value in _research_values().items():
-        known = _object({'status': {'enum': ['supported', 'disputed']}, 'value': value, 'evidence': evidence})
-        facts[field] = {'anyOf': [known, unknown]}
-    facts['availability'] = unknown
-    facts = {field: facts[field] for field in FIELDS}
+    for field in FIELDS:
+        status = FACT_STATUSES if field in values else ['unknown']
+        value = values.get(field, _string())
+        facts[field] = _object({'status': {'enum': status}, 'value': value, 'evidence': evidence,
+                                'unknown_reason': _string()})
     record = _object({'candidate_id': _string(), 'research_status': {'enum': STATUSES},
                       'stop_reason': {'enum': ['sufficient_evidence', 'budget_exhausted', 'access_blocked',
                                                'unsupported_document', 'unresolved_conflict', 'tool_failure']},
@@ -175,14 +187,25 @@ def research_from_wire(wire, host):
         for field in FIELDS:
             fact = record['facts'][field]
             if fact['status'] == 'unknown':
+                if not fact['unknown_reason'].strip():
+                    raise ValueError('unknown fact without reason')
                 if field in OPTIONAL_FIELDS:
                     continue
                 facts.append({'field': field, 'value': None, 'status': 'unknown', 'evidence': [],
                               'unknown_reason': fact['unknown_reason'].strip()})
                 continue
+            if field == 'availability':
+                raise ValueError('availability may only be unknown')
+            if not fact['evidence']:
+                raise ValueError('known fact without evidence')
             value = deepcopy(fact['value'])
             if field in ('event_period', 'application_period'):
+                pattern = DATE_OR_EMPTY if field == 'event_period' else TIMESTAMP_OR_EMPTY
+                if any(not re.fullmatch(pattern, value[key]) for key in ('start', 'end')):
+                    raise ValueError('invalid period format')
                 value = {key: value[key] or None for key in ('start', 'end')}
+            if field == 'districts' and not value:
+                raise ValueError('known districts must not be empty')
             evidence, seen = [], set()
             for ref in fact['evidence']:
                 sid = ref['segment_id']
@@ -222,21 +245,21 @@ def eligible_items(host):
 
 
 def topic_wire_schema(host):
-    """Per-topic branches: only items whose basis supports that topic can be linked."""
+    """Union-free: topic and item enums are flat; topic_from_wire rejects ineligible pairs."""
     choices = eligible_items(host)
     if not choices:
         raise ValueError('no topic has eligible items; no request needed')
     all_ids = [item['item_id'] for item in host['approved_items']]
+    linkable = [i for i in all_ids if any(i in ids for ids in choices.values())]
     defs = {'excluded': {'type': 'array', 'items': _object({'item_id': {'enum': all_ids}, 'reason': _string()})}}
     excluded = {'$ref': '#/$defs/excluded'}
-    branches = [_object({'topic_id': {'enum': [topic]},
-                         'item_links': {'type': 'array', 'minItems': 1,
-                                        'items': _object({'item_id': {'enum': ids}, 'reason': _string(),
-                                                          'match_type': {'enum': ['explicit', 'contextual']}})},
-                         'excluded_items': excluded})
-                for topic, ids in choices.items()]
+    card = _object({'topic_id': {'enum': list(choices)},
+                    'item_links': {'type': 'array', 'minItems': 1,
+                                   'items': _object({'item_id': {'enum': linkable}, 'reason': _string(),
+                                                     'match_type': {'enum': ['explicit', 'contextual']}})},
+                    'excluded_items': excluded})
     schema = _object({'wire_version': {'enum': [TOPIC_WIRE]}, 'status': {'enum': STATUSES}, 'errors': _errors(),
-                      'topics': {'type': 'array', 'items': {'anyOf': branches}}, 'excluded_items': excluded})
+                      'topics': {'type': 'array', 'items': card}, 'excluded_items': excluded})
     schema['$defs'] = defs
     check_limits(schema)
     return schema
@@ -247,11 +270,16 @@ def topic_from_wire(wire, host):
     if wire.get('wire_version') != TOPIC_WIRE:
         raise ValueError('topic wire version mismatch')
     items = {item['item_id']: item for item in host['approved_items']}
+    choices = eligible_items(host)
     titles = host.get('allowed_topic_titles') or TITLES
     topics = []
     for card in wire['topics']:
         links = []
+        if card['topic_id'] not in choices:
+            raise ValueError('topic not eligible')
         for link in card['item_links']:
+            if link['item_id'] not in choices[card['topic_id']]:
+                raise ValueError('item not eligible for topic')
             basis = items[link['item_id']]['topic_basis']
             links.append({'item_id': link['item_id'], 'evidence_claim_ids': list(basis['evidence_claim_ids']),
                           'reason': link['reason'], 'match_type': link['match_type']})
