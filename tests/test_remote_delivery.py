@@ -108,4 +108,14 @@ class RemoteDeliveryTests(unittest.TestCase):
         with patch('benefit_monitor.remote_delivery.subprocess.run',side_effect=process),patch('benefit_monitor.remote_delivery.mirror',return_value='2'*40),patch.dict('os.environ',{'PATH':'/usr/bin:/bin'},clear=True):
             self.assertEqual(deliver(self.root,self.policy,now=self.now)['status'],'dispatched_not_yet_verified')
 
+    def test_preceding_refresh_requires_today_kst_main_schedule_to_be_terminal(self):
+        from benefit_monitor.remote_delivery import preceding_refresh
+        cases=[([],False),([{'id':1,'created_at':'2026-11-03T21:47:16Z','status':'completed'}],False),
+               ([{'id':2,'created_at':'2026-11-04T21:47:16Z','status':'in_progress'}],False),
+               ([{'id':2,'created_at':'2026-11-04T21:47:16Z','status':'completed'}],True)]
+        for runs,ready in cases:
+            with patch('benefit_monitor.remote_delivery.github_environment',return_value={}),patch('benefit_monitor.remote_delivery._run',return_value=json.dumps({'workflow_runs':runs})):
+                result=preceding_refresh(self.root,self.now.replace(month=11,day=5,hour=7))
+            self.assertEqual(result['status']=='ready',ready)
+
 if __name__=='__main__':unittest.main()

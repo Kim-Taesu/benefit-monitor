@@ -1,6 +1,6 @@
 # Claude $5 일회 실험 사용법
 
-현재 상태: 추출v2 실제 재실험까지 실행했으나 **자격 조건 누락으로 추가 유료 실행 및 자동 운영 보류**. [최신 결과](evaluations/claude-v2-trial-2026-11-05/README.md)를 먼저 읽는다.
+현재 상태: v2·v3 실제 실험을 수행했고, 사용자 승인4일 운영 연결을 검증 중이다. 자동 사실 승인 품질은 입증하지 못해 AI 초안은 비공개 사람 검토 대기에만 저장한다. [전체 연결 결과](evaluations/goal-integration-2026-11-05/README.md)와 [운영 상태](automation.md)를 먼저 읽는다.
 
 ## 키와 예산
 
@@ -24,7 +24,7 @@ python3 -m benefit_monitor.claude_trial run --kind topic --input .tools/claude-t
 
 위는 후속 검토용 명령 형식이며 추가 실행 권고가 아니다. auth도 실제 요청이면 총 호출 수를 차감한다. 같은 키·요청의 성공 캐시는 재사용한다. 입력·프롬프트·생성 설정이 달라지면 새 유료 요청이다. 모델은 `claude-haiku-5-5`, API는 `api.anthropic.com`만 사용한다. 입력 요청 최대 64,000 UTF-8 bytes, 출력 최대 8192토큰이며 thinking은 비활성이다. 유료 검색·서버 도구·캐싱 요금 모드·고속 처리·다른 모델 자동 전환은 사용하지 않는다.
 
-호스트 입력은 `mode=api_agent`, `synthetic=false`인 프로젝트 내부 JSON이어야 한다. 조사 입력은 기존 allowlist의 공식 본문·ID·해시·시각을 포함한다. 주제 입력은 이번 사람 검토 ID에 묶인 평가용 스냅샷으로 한정한다. 개인 프로필·클릭 기록·키는 보내지 않는다. 이 CLI는 제공된 본문을 판단하며 검색 도구 루프나 스케줄러는 구현하지 않았다. 새 공식 원문 수집은 기존 무료 수집 정책을 따른다.
+호스트 입력은 `mode=api_agent`, `synthetic=false`인 프로젝트 내부 JSON이어야 한다. 조사 입력은 기존 allowlist의 공식 본문·ID·해시·시각을 포함한다. 주제 입력은 사람 검토 ID에 묶인 평가용 스냅샷 또는 기존 공개 승인·현재 유효 사실과 검토된 편집 근거를 대조한 운영 스냅샷으로 한정한다. 개인 프로필·클릭 기록·키는 보내지 않는다. 이 CLI는 제공된 본문을 판단하며 검색 도구 루프나 스케줄러는 구현하지 않았다. 새 공식 원문 수집은 기존 무료 수집 정책을 따른다.
 
 결과는 비공개 `live/runs/<request_id>/`에 입력·프롬프트·메타데이터·검증과 함께 저장된다. `validated_draft`도 `publication_approved=false`, `semantic_review=required`다. 주제 스냅샷은 KST 만료·마감을 걸러내며 실패 시 이전 카드의 유효 연결만 남기는 로컬 fallback이 있다. 실제 공개·일별 예약 실행에는 연결하지 않았다.
 

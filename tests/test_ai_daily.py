@@ -88,5 +88,12 @@ class AIDailyTests(unittest.TestCase):
         with patch('benefit_monitor.ai_daily.collect',side_effect=AssertionError('four attempts already used')):
             self.assertEqual(self.run_daily(online=True)['status'],'trial_run_limit')
 
+    def test_scheduled_public_delivery_waits_before_spending_for_existing_main_refresh(self):
+        self.policy.update(recurring_spend_approved=True,public_application_approved=True,remote_delivery_approved=True);self.save()
+        with patch('benefit_monitor.ai_daily.preceding_refresh',return_value={'status':'waiting_for_existing_refresh'}),patch('benefit_monitor.ai_daily.collect',side_effect=AssertionError('must wait before spending')):
+            self.assertEqual(self.run_daily(scheduled=True)['status'],'waiting_for_existing_refresh')
+        state=self.root/'cache/ai_daily/days.json'
+        self.assertFalse(state.exists())
+
 
 if __name__=='__main__':unittest.main()

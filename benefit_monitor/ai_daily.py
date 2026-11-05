@@ -9,7 +9,7 @@ from .official_reader import project_path
 from .publish import run as publish_briefing, prepare_import
 from .store import load,save,lock
 from .topic_refresh import refresh
-from .remote_delivery import deliver
+from .remote_delivery import deliver,preceding_refresh
 
 
 def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=False):
@@ -49,6 +49,9 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
             return {'status':'already_completed_today' if previous['status']=='completed' else 'previous_attempt_requires_review','day':day}
         if len(state['days'])>=4:
             return {'status':'trial_run_limit'}
+        if scheduled and publish and policy.get('remote_delivery_approved') is True:
+            previous_refresh=preceding_refresh(root,now)
+            if previous_refresh['status']!='ready':return previous_refresh
         state['days'][day]={'status':'attempted','started_at':now.isoformat()}
         save(project_path(root,'cache/ai_daily/days.json'),state)
         try:

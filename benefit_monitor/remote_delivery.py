@@ -29,6 +29,32 @@ def personal_token(root,env):
     return _run(['gh','auth','token','--hostname','github.com','--user','Kim-Taesu'],env=env)
 
 
+def github_environment(root):
+    allowed=('PATH','HOME','LANG','LC_ALL','LC_CTYPE','TMPDIR')
+    env={k:os.environ[k] for k in allowed if k in os.environ}
+    profile=project_path(root,'.tools/personal-gh-auth/hosts.yml')
+    if profile.exists():env['GH_CONFIG_DIR']=str(profile.parent)
+    token=personal_token(root,env)
+    if not token or '\n' in token:raise ValueError('personal GitHub credential unavailable')
+    env.update(GH_TOKEN=token,GH_HOST='github.com',GH_NO_UPDATE_NOTIFIER='1',GH_NO_EXTENSION_UPDATE_NOTIFIER='1')
+    login=_run(['gh','api','--hostname','github.com','user','--jq','.login'],env=env)
+    if login.casefold()!='kim-taesu':raise ValueError('personal GitHub identity mismatch')
+    return env
+
+
+def preceding_refresh(root,now):
+    """Wait before spending so the existing main schedule cannot publish last."""
+    if now.tzinfo is None:raise ValueError('timezone required')
+    env=github_environment(root)
+    endpoint='repos/'+REPOSITORY+'/actions/workflows/briefing-pages.yml/runs?event=schedule&branch=main&per_page=10'
+    data=json.loads(_run(['gh','api','--hostname','github.com',endpoint],env=env))
+    today=now.astimezone(SEOUL).date()
+    runs=[row for row in data['workflow_runs']
+          if datetime.fromisoformat(row['created_at']).astimezone(SEOUL).date()==today]
+    return {'status':'ready' if runs and all(row['status']=='completed' for row in runs) else 'waiting_for_existing_refresh',
+            'preceding_run_ids':[row['id'] for row in runs]}
+
+
 def deliver(root,policy,now=None):
     if policy.get('public_application_approved') is not True or policy.get('remote_delivery_approved') is not True:
         raise ValueError('explicit remote public application approval required')
@@ -46,15 +72,7 @@ def deliver(root,policy,now=None):
     raw=json.loads(project_path(root,'delivery/public/briefing.json').read_text())
     clean=validate(root,raw,now or datetime.now(SEOUL))
     # Strip inherited credentials before selecting the named personal account.
-    allowed=('PATH','HOME','LANG','LC_ALL','LC_CTYPE','TMPDIR')
-    env={k:os.environ[k] for k in allowed if k in os.environ}
-    profile=project_path(root,'.tools/personal-gh-auth/hosts.yml')
-    if profile.exists():env['GH_CONFIG_DIR']=str(profile.parent)
-    token=personal_token(root,env)
-    if not token or '\n' in token:raise ValueError('personal GitHub credential unavailable')
-    env.update(GH_TOKEN=token,GH_HOST='github.com',GH_NO_UPDATE_NOTIFIER='1',GH_NO_EXTENSION_UPDATE_NOTIFIER='1')
-    login=_run(['gh','api','--hostname','github.com','user','--jq','.login'],env=env)
-    if login.casefold()!='kim-taesu':raise ValueError('personal GitHub identity mismatch')
+    env=github_environment(root)
     metadata=json.loads(_run(['gh','api','--hostname','github.com','repos/'+REPOSITORY],env=env))
     if metadata.get('private') is not False:raise ValueError('public repository required for the existing free workflow')
     content=(json.dumps(clean,ensure_ascii=False,indent=2)+'\n').encode()
