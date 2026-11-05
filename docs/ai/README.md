@@ -6,6 +6,8 @@
 
 [수집·주제·일일 연결 진행](automation.md) · [단계별 로드맵과 재개 지점](roadmap.md) · [Phase 0/1 실행 상태](phase01/status.md)
 
+2026-11-05 이후 장기 운영: [운영 Phase 계획](long-term-plan.md) · [품질 기준선](evaluations/baseline-2026-11-05/README.md) · [구조화 출력 전송 계약](structured-output.md) · [사람 검토 도구](review-desk.md)
+
 후속 소액 실험의 사용자 지정 범위는 **매일 공식 자료 검색 → 조건·품질 보강 → 오늘의 주제 카드 유지·추가·교체·제거·순서 판단**까지다. [일별 카드 갱신 동작](topics.md#매일-자료를-판단해-카드-갱신--사용자-요구-반영)을 따른다. 기존 공식 수집기·Claude CLI·비공개 검토 대기·주제 검증·공개 전달·정기 등록을 연결했다. [완료 감사](evaluations/goal-integration-2026-11-05/completion-audit.md)를 따른다. 아래 사실 승인 경계와 별도 승인된4일 지출·공개 범위만 적용한다. 임의 웹 탐색 루프나 무기한 반복 지출을 허용하지 않는다.
 
 
