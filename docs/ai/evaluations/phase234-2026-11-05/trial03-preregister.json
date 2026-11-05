@@ -1,0 +1,189 @@
+{
+  "trial_id": "conditions-prospective-03",
+  "registered_at": "2026-11-04T17:02:17.910560+00:00",
+  "selection": "고정30개 입력 중 아직 상세 조건을 해석하지 않은 문화2개·광역청년센터4개를 미리 지정. 추가 결과를 본 뒤 대체하지 않음. 비용 필터 없음.",
+  "threshold": {
+    "questions": 20,
+    "required_resolved": 10,
+    "new_important_errors": 0
+  },
+  "criteria": "이전과 같은 질문 범위. 부분·반복·충돌은 해결0. 게시된 무료 문구만으로 재료비까지 해결 처리하지 않음.",
+  "shared_questions": "마지막2개는 계속 미해결인 BC/신규가입 조건. 표본 간 통계적 독립성이나 일반 모델 성능을 주장하지 않음.",
+  "source_timing": "네트워크로 원문을 먼저 잠갔으나 이6개의 본문은 아직 모델에 제시하지 않았음. 질문 등록 후 기존 로컬 원문을 읽으며 새 HTTP 성공으로 세지 않음.",
+  "cases": [
+    {
+      "candidate_id": "culture-control-1",
+      "title": "[개인예약]2026년 서울생활사박물관 어린이체험실 '옴팡' 관람 개인 예약",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "sha256": "1ab6c1a6a3c3618c467aad519849ded1c17057c8ec3a5250f21b5273d4445a8d",
+      "source_case_id": "culture_sports-07",
+      "classification": "이미 잠근 실시간 입력 표본의 미해석 추가 상세; 신규성 판정과 별도"
+    },
+    {
+      "candidate_id": "culture-control-2",
+      "title": "아리수나라 어린이 체험 예약",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "sha256": "c2e8ae5b3eae499c6dc6da6e6a01ec429b5cdc6fcbed90f453d09c9d3c583a8d",
+      "source_case_id": "culture_sports-08",
+      "classification": "이미 잠근 실시간 입력 표본의 미해석 추가 상세; 신규성 판정과 별도"
+    },
+    {
+      "candidate_id": "youth-control-1",
+      "title": "모집중 서울광역청년센터 <청년이 바라는 서울청년정책 의견조사> 안내",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75540",
+      "sha256": "d1f1569eadb84f9b8762bc801d9627bfd6f23aaf59e88f2aff59ac3021c86408",
+      "source_case_id": "youth_household-07",
+      "classification": "이미 잠근 실시간 입력 표본의 미해석 추가 상세; 신규성 판정과 별도"
+    },
+    {
+      "candidate_id": "youth-control-2",
+      "title": "모집중 서울광역청년센터 <2026년 정보퐁퐁 만족도 조사>",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75488",
+      "sha256": "3e38cf3c81e63ea757b3715bb9c40922ad2b2e2ad1dfe0c415adf57f4bc42e9b",
+      "source_case_id": "youth_household-08",
+      "classification": "이미 잠근 실시간 입력 표본의 미해석 추가 상세; 신규성 판정과 별도"
+    },
+    {
+      "candidate_id": "youth-control-3",
+      "title": "모집중 서울광역청년센터 <한국마즈와 함께하는 직무토크콘서트 - 달콤한 커리어 토크>",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75481",
+      "sha256": "91ecef1e955dec4c4881987fc659eb80dfc0ad200b5d1d19996cd39d07d3b6d9",
+      "source_case_id": "youth_household-09",
+      "classification": "이미 잠근 실시간 입력 표본의 미해석 추가 상세; 신규성 판정과 별도"
+    },
+    {
+      "candidate_id": "youth-control-4",
+      "title": "모집중 서울광역청년센터 <2026 청년정책연계망 포럼>",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75479",
+      "sha256": "11e20fa39c27593c8506f4c23c6ef56a840c7d41d312bfd624fe59efc4ffc14d",
+      "source_case_id": "youth_household-10",
+      "classification": "이미 잠근 실시간 입력 표본의 미해석 추가 상세; 신규성 판정과 별도"
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "culture-control-1-eligibility",
+      "candidate_id": "culture-control-1",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-1-fee",
+      "candidate_id": "culture-control-1",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-1-deadline",
+      "candidate_id": "culture-control-1",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-2-eligibility",
+      "candidate_id": "culture-control-2",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-2-fee",
+      "candidate_id": "culture-control-2",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-2-deadline",
+      "candidate_id": "culture-control-2",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-1-eligibility",
+      "candidate_id": "youth-control-1",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-1-fee",
+      "candidate_id": "youth-control-1",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-1-deadline",
+      "candidate_id": "youth-control-1",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-2-eligibility",
+      "candidate_id": "youth-control-2",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-2-fee",
+      "candidate_id": "youth-control-2",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-2-deadline",
+      "candidate_id": "youth-control-2",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-3-eligibility",
+      "candidate_id": "youth-control-3",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-3-fee",
+      "candidate_id": "youth-control-3",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-3-deadline",
+      "candidate_id": "youth-control-3",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-4-eligibility",
+      "candidate_id": "youth-control-4",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-4-fee",
+      "candidate_id": "youth-control-4",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "youth-control-4-deadline",
+      "candidate_id": "youth-control-4",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "retail-bc-conditions",
+      "candidate_id": "retail-bc",
+      "program": "11월 이마트24 BC카드 할인",
+      "question": "대상 카드·상품, 최소구매액·한도와 제외 조건은 무엇인가?",
+      "seed_known_part": "공식 목록·상세 HTML의 기간11월1~30일만 확인; 안내 이미지 미열람",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "retail-new-member-conditions",
+      "candidate_id": "retail-new-member",
+      "program": "11월 이마트24 신규가입",
+      "question": "신규 자격, 실제 구매비용·최소결제액, 쿠폰 한도·유효기간은 무엇인가?",
+      "seed_known_part": "공식 목록·상세 HTML의 기간11월1~30일만 확인;2 MiB 초과 이미지 판독 불가",
+      "status": "unresolved"
+    }
+  ]
+}

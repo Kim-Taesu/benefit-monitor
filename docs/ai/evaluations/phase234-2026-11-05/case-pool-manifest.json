@@ -1,0 +1,868 @@
+{
+  "locked_at": "2026-11-04T16:09:24.702800+00:00",
+  "source_commit": "f65f30c",
+  "source_config_sha256": "6c5c668fec0781b2f2a00e9881ff1db1dad636a5eed671c8262c6c20c152668d",
+  "sample_count": 30,
+  "development_count": 12,
+  "holdout_count": 18,
+  "shopping_brand_counts": {
+    "이마트24": 3,
+    "세븐일레븐": 3,
+    "CU": 3,
+    "이마트": 1
+  },
+  "mode": "실제 입력 원문 URL·해시 고정; 최종 답·성능 점수 아님",
+  "limitations": [
+    "같은 문서의 서로 다른 명시적 프로그램은 프로그램 ID로 구분. 같은 행사의 기사와 신청 페이지를 별도 표본으로 세지 않음",
+    "상세가 미열람인 표본은 관측된 목록 원문을 잠갔으며 상세 원문 확보 상태와 구분",
+    "차단·중복·종료·혜택이 아닌 사례도 평가 분모에 남김. 유효 후보만 선별한 성공률 아님",
+    "Codex 개발 조사에 노출된 자료를 향후 API 모델의 독립성 증거로 재사용하지 않음. API 시험 시 새 보류 표본 필요",
+    "온라인 A/B 비교는 아직 실행하지 않음. 동일 시작점·도메인·10/10요청의 회차별 비교는 benchmark-plan.md를 따름"
+  ],
+  "cases": [
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-01",
+      "title": "동작구 주말 유아가족 우리의 자연나라 11월",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "snapshot_hash": "8d0fdd0ca3f959f82c405ab3945007227ac7539f81d977a6a4ce0cfe05370e69",
+      "snapshot_checked_at": "2026-11-04T15:16:04.819172+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-01",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+          "sha256": "8d0fdd0ca3f959f82c405ab3945007227ac7539f81d977a6a4ce0cfe05370e69",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-02",
+      "title": "중랑동행 묵동천 친구들 토요일 가족 프로그램",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "snapshot_hash": "3e7c6b1f9c0faa9f60288e81c9eda06a026adbf86e0ca4598a4746bb11c006f3",
+      "snapshot_checked_at": "2026-11-04T15:16:04.987778+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-02",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+          "sha256": "3e7c6b1f9c0faa9f60288e81c9eda06a026adbf86e0ca4598a4746bb11c006f3",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-03",
+      "title": "월드컵공원 서울형 정원처방 성인 치유의 시간",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "snapshot_hash": "628a7bf6946c7d8f3367004d7c85557062f5c326b516ef23033d2abe5c186645",
+      "snapshot_checked_at": "2026-11-04T15:16:05.187680+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-03",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+          "sha256": "628a7bf6946c7d8f3367004d7c85557062f5c326b516ef23033d2abe5c186645",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-04",
+      "title": "월드컵공원 오색오감 어린이 정원탐험",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T200",
+      "snapshot_hash": "6f8cc77ad89abc431932b20893cd2f77a196b137d57dba3309998e84920caeb2",
+      "snapshot_checked_at": "2026-11-04T15:14:33.632699+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-04",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T200",
+          "sha256": "6f8cc77ad89abc431932b20893cd2f77a196b137d57dba3309998e84920caeb2",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+          "sha256": "9ac0484ca619436eb37609df8ee6962776e04c33d65faef7c8dd069778bb464a",
+          "role": "candidate_document",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-05",
+      "title": "유아와 양육자 겨울을 기다려요",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103101155924156",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T200",
+      "snapshot_hash": "6f8cc77ad89abc431932b20893cd2f77a196b137d57dba3309998e84920caeb2",
+      "snapshot_checked_at": "2026-11-04T15:14:33.632699+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-05",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T200",
+          "sha256": "6f8cc77ad89abc431932b20893cd2f77a196b137d57dba3309998e84920caeb2",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103101155924156",
+          "sha256": "b145b9797b0f665f44c41c9c0ceb657d62692026d3bbf50ebdf80c872a2c3d32",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:44.720931+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-06",
+      "title": "서울기록원 가족 크리스마스 풍경 등 만들기",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103105322721507",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T200",
+      "snapshot_hash": "6f8cc77ad89abc431932b20893cd2f77a196b137d57dba3309998e84920caeb2",
+      "snapshot_checked_at": "2026-11-04T15:14:33.632699+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-06",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T200",
+          "sha256": "6f8cc77ad89abc431932b20893cd2f77a196b137d57dba3309998e84920caeb2",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103105322721507",
+          "sha256": "8c9b58846716bc632d9abbd34ccdbda60ef36ec4e8b367ff2462a0c1277df6f6",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:44.936588+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-control-1",
+      "title": "[개인예약]2026년 서울생활사박물관 어린이체험실 '옴팡' 관람 개인 예약",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/main.do",
+      "snapshot_hash": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+      "snapshot_checked_at": "2026-11-04T15:12:20.773024+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-07",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/main.do",
+          "sha256": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+          "sha256": "1ab6c1a6a3c3618c467aad519849ded1c17057c8ec3a5250f21b5273d4445a8d",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:45.148650+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-control-2",
+      "title": "아리수나라 어린이 체험 예약",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/main.do",
+      "snapshot_hash": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+      "snapshot_checked_at": "2026-11-04T15:12:20.773024+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-08",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/main.do",
+          "sha256": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+          "sha256": "c2e8ae5b3eae499c6dc6da6e6a01ec429b5cdc6fcbed90f453d09c9d3c583a8d",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:45.411809+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-control-3",
+      "title": "서울숲 테니스장 평일",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251203104822013240",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/main.do",
+      "snapshot_hash": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+      "snapshot_checked_at": "2026-11-04T15:12:20.773024+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-09",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/main.do",
+          "sha256": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251203104822013240",
+          "sha256": "676e29241e845a0aa6282bdcfd7080c807f99cc79e5af5ba9af6dca4fb539329",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:45.611693+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "culture_sports",
+      "candidate_id": "culture-control-4",
+      "title": "2026년 서울역사박물관 어린이박물관 관람 안내 (개인)",
+      "brand": "공공서비스예약",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260320170624732091",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/main.do",
+      "snapshot_hash": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+      "snapshot_checked_at": "2026-11-04T15:12:20.773024+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "culture_sports-10",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/main.do",
+          "sha256": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260320170624732091",
+          "sha256": "a4faf7d0f5fad43cd7442a7fbe05fce36efe8e8324850542bb9fb17f5ea6fbe5",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:45.826509+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "shopping-01",
+      "title": "이마트24 린트 엑스트라 크리미 밀크35g 1+1",
+      "brand": "이마트24",
+      "candidate_url": "https://emart24.co.kr/goods/event",
+      "input_document_url": "https://emart24.co.kr/goods/event",
+      "snapshot_hash": "4f3aff19b10bcc0dc0bb2511598cee0fd2fb927a9bf3e8d467be5d234d3218d0",
+      "snapshot_checked_at": "2026-11-04T15:14:34.612506+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-01",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://emart24.co.kr/goods/event",
+          "sha256": "4f3aff19b10bcc0dc0bb2511598cee0fd2fb927a9bf3e8d467be5d234d3218d0",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "shopping-02",
+      "title": "세븐일레븐 액티비아업 플레인210ml 1+1",
+      "brand": "세븐일레븐",
+      "candidate_url": "https://www.7-eleven.co.kr/product/presentList.asp",
+      "input_document_url": "https://www.7-eleven.co.kr/product/presentList.asp",
+      "snapshot_hash": "e4e87e93a5a95d3f0f86e7357e926c8421340bb93d0bff1a2e9aab56a75b7b53",
+      "snapshot_checked_at": "2026-11-04T15:14:35.979634+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-02",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://www.7-eleven.co.kr/product/presentList.asp",
+          "sha256": "e4e87e93a5a95d3f0f86e7357e926c8421340bb93d0bff1a2e9aab56a75b7b53",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "shopping-03",
+      "title": "CU 리콜라 허브레몬 1+1",
+      "brand": "CU",
+      "candidate_url": "https://cu.bgfretail.com/event/plusAjax.do",
+      "input_document_url": "https://cu.bgfretail.com/event/plusAjax.do",
+      "snapshot_hash": "ba1f39a523e21175351556c8f0ee1955056ea2fdd89bcc43ef81c27763f22095",
+      "snapshot_checked_at": "2026-11-04T15:17:43.932639+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-03",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://cu.bgfretail.com/event/plusAjax.do",
+          "sha256": "ba1f39a523e21175351556c8f0ee1955056ea2fdd89bcc43ef81c27763f22095",
+          "role": "locked_input",
+          "request_method": "POST",
+          "request_data": {
+            "pageIndex": "1",
+            "listType": "0",
+            "searchCondition": "23"
+          }
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "retail-ssg-control",
+      "title": "‘대한민국 시그니처 세일’이 돌아왔다! 이마트, 2026 쓱데이 개막… 10일간 초특가 할인 이마트가 10월 30일(금)부터 11월 8일(일)까지 10일간 ‘대한민국 시그니처 세일’ 쓱데이를 통해 올해 최대 규모의 ",
+      "brand": "이마트",
+      "candidate_url": "https://www.shinsegaegroupnewsroom.com/emart-opens-2026-ssg-day/",
+      "input_document_url": "https://www.shinsegaegroupnewsroom.com/family/emart/",
+      "snapshot_hash": "236a58b40f616de54eb16aa6ce44d5269603da279d6c4f030301a152a80bde28",
+      "snapshot_checked_at": "2026-11-04T15:12:36.119942+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-04",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://www.shinsegaegroupnewsroom.com/family/emart/",
+          "sha256": "236a58b40f616de54eb16aa6ce44d5269603da279d6c4f030301a152a80bde28",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://www.shinsegaegroupnewsroom.com/emart-opens-2026-ssg-day/",
+          "sha256": "9c3ea5283b5fc9492adb1b16abc75833cc006538067a21d9fd070788e4060287",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:46.064368+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "emart24-npay",
+      "title": "네이버페이 멤버십 제휴",
+      "brand": "이마트24",
+      "candidate_url": "https://emart24.co.kr/event/8301",
+      "input_document_url": "https://emart24.co.kr/event/ing",
+      "snapshot_hash": "1ffefcbc7c78d8edbf72ce994bdd6a472b9c8d456181a3b947008f7d28779a4a",
+      "snapshot_checked_at": "2026-11-04T15:21:03.408352+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-05",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://emart24.co.kr/event/ing",
+          "sha256": "1ffefcbc7c78d8edbf72ce994bdd6a472b9c8d456181a3b947008f7d28779a4a",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://emart24.co.kr/event/8301",
+          "sha256": "0eee263ecc06458cc72a5e198acc1429a0f47592770791220bf5d99be535dc58",
+          "role": "candidate_document",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "emart24-toss",
+      "title": "ALLDAY1010 토스페이",
+      "brand": "이마트24",
+      "candidate_url": "https://emart24.co.kr/event/5851",
+      "input_document_url": "https://emart24.co.kr/event/ing",
+      "snapshot_hash": "1ffefcbc7c78d8edbf72ce994bdd6a472b9c8d456181a3b947008f7d28779a4a",
+      "snapshot_checked_at": "2026-11-04T15:21:03.408352+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-06",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://emart24.co.kr/event/ing",
+          "sha256": "1ffefcbc7c78d8edbf72ce994bdd6a472b9c8d456181a3b947008f7d28779a4a",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://emart24.co.kr/event/5851",
+          "sha256": "8f707f8b9f01ead70f2ebd61f12942274e646f54c96b6f9a57a13a1a974dec0f",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:46.129135+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "cu-t",
+      "title": "CU T멤버십",
+      "brand": "CU",
+      "candidate_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "input_document_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "snapshot_hash": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+      "snapshot_checked_at": "2026-11-04T15:12:36.990404+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-07",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+          "sha256": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "cu-kt",
+      "title": "CU KT 아침 간편식",
+      "brand": "CU",
+      "candidate_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "input_document_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "snapshot_hash": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+      "snapshot_checked_at": "2026-11-04T15:12:36.990404+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-08",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+          "sha256": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "seven-t",
+      "title": "세븐일레븐 T멤버십",
+      "brand": "세븐일레븐",
+      "candidate_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "input_document_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "snapshot_hash": "bc971d305eea596b5cbdc43a3b2d5fe5d45f4218a689dd1595472c9c9e50cf59",
+      "snapshot_checked_at": "2026-11-04T15:12:37.619495+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-09",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+          "sha256": "bc971d305eea596b5cbdc43a3b2d5fe5d45f4218a689dd1595472c9c9e50cf59",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "shopping_membership",
+      "candidate_id": "seven-ocb",
+      "title": "세븐일레븐 OK캐쉬백 적립",
+      "brand": "세븐일레븐",
+      "candidate_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "input_document_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "snapshot_hash": "bc971d305eea596b5cbdc43a3b2d5fe5d45f4218a689dd1595472c9c9e50cf59",
+      "snapshot_checked_at": "2026-11-04T15:12:37.619495+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "shopping_membership-10",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+          "sha256": "bc971d305eea596b5cbdc43a3b2d5fe5d45f4218a689dd1595472c9c9e50cf59",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-01",
+      "title": "영등포 청년 온기 식탁",
+      "brand": "서울청년센터",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "snapshot_hash": "e7c820e248d71535851d2853272329ccfa637f4d8723e302511c0137d3c10819",
+      "snapshot_checked_at": "2026-11-04T15:16:05.377764+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-01",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+          "sha256": "e7c820e248d71535851d2853272329ccfa637f4d8723e302511c0137d3c10819",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-02",
+      "title": "강북 차크라티 명상",
+      "brand": "서울청년센터",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "snapshot_hash": "20df9410e84ac7a4cf8a0b1de51b98b9f168e19fd31982adb00f25bf91122272",
+      "snapshot_checked_at": "2026-11-04T15:16:05.545148+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-02",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+          "sha256": "20df9410e84ac7a4cf8a0b1de51b98b9f168e19fd31982adb00f25bf91122272",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-03",
+      "title": "노원 우리 지금 만나 일단 만나 북바인딩",
+      "brand": "서울청년센터",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "snapshot_hash": "f8316e73198bf6367ec49cbf80e3f1882372e298a73fe3f29812b012715b2215",
+      "snapshot_checked_at": "2026-11-04T15:16:05.781560+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-03",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+          "sha256": "f8316e73198bf6367ec49cbf80e3f1882372e298a73fe3f29812b012715b2215",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-04",
+      "title": "은평 반찬 한 상 청년정책 한 장",
+      "brand": "서울청년센터",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T000&dCode=T028",
+      "snapshot_hash": "95c97127d89bab4efdd9ebb25e229956dfb22e632e9cac5679f839e3f31c754e",
+      "snapshot_checked_at": "2026-11-04T15:14:34.072781+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-04",
+      "cohort": "development",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T000&dCode=T028",
+          "sha256": "95c97127d89bab4efdd9ebb25e229956dfb22e632e9cac5679f839e3f31c754e",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+          "sha256": "6d2b429b4f6fdf1a0ba73d50db8c343250281fd488269f3c977becbc0e1c9444",
+          "role": "candidate_document",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-05",
+      "title": "관악 나를 지키는 호신술",
+      "brand": "서울청년센터",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102145223953896",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T000&dCode=T028",
+      "snapshot_hash": "95c97127d89bab4efdd9ebb25e229956dfb22e632e9cac5679f839e3f31c754e",
+      "snapshot_checked_at": "2026-11-04T15:14:34.072781+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-05",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T000&dCode=T028",
+          "sha256": "95c97127d89bab4efdd9ebb25e229956dfb22e632e9cac5679f839e3f31c754e",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102145223953896",
+          "sha256": "c2aceb900ef403f40fbbc46076991f1b9b0d9da68936137763a4641523ec8d14",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:46.272685+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-06",
+      "title": "강북 김장 한 판 수육 한 점",
+      "brand": "서울청년센터",
+      "candidate_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135518608401",
+      "input_document_url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T000&dCode=T028",
+      "snapshot_hash": "95c97127d89bab4efdd9ebb25e229956dfb22e632e9cac5679f839e3f31c754e",
+      "snapshot_checked_at": "2026-11-04T15:14:34.072781+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-06",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T000&dCode=T028",
+          "sha256": "95c97127d89bab4efdd9ebb25e229956dfb22e632e9cac5679f839e3f31c754e",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135518608401",
+          "sha256": "a06b8e4b37a10c3ce29a218819e30fabafc421662394eccbe02630759797dcf9",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:46.509535+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-control-1",
+      "title": "모집중 서울광역청년센터 <청년이 바라는 서울청년정책 의견조사> 안내",
+      "brand": "서울광역청년센터",
+      "candidate_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75540",
+      "input_document_url": "https://youth.seoul.go.kr/mainA.do",
+      "snapshot_hash": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+      "snapshot_checked_at": "2026-11-04T15:42:11.941786+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-07",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://youth.seoul.go.kr/mainA.do",
+          "sha256": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75540",
+          "sha256": "d1f1569eadb84f9b8762bc801d9627bfd6f23aaf59e88f2aff59ac3021c86408",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:46.711184+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-control-2",
+      "title": "모집중 서울광역청년센터 <2026년 정보퐁퐁 만족도 조사>",
+      "brand": "서울광역청년센터",
+      "candidate_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75488",
+      "input_document_url": "https://youth.seoul.go.kr/mainA.do",
+      "snapshot_hash": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+      "snapshot_checked_at": "2026-11-04T15:42:11.941786+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-08",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://youth.seoul.go.kr/mainA.do",
+          "sha256": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75488",
+          "sha256": "3e38cf3c81e63ea757b3715bb9c40922ad2b2e2ad1dfe0c415adf57f4bc42e9b",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:46.923644+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-control-3",
+      "title": "모집중 서울광역청년센터 <한국마즈와 함께하는 직무토크콘서트 - 달콤한 커리어 토크>",
+      "brand": "서울광역청년센터",
+      "candidate_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75481",
+      "input_document_url": "https://youth.seoul.go.kr/mainA.do",
+      "snapshot_hash": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+      "snapshot_checked_at": "2026-11-04T15:42:11.941786+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-09",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://youth.seoul.go.kr/mainA.do",
+          "sha256": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75481",
+          "sha256": "91ecef1e955dec4c4881987fc659eb80dfc0ad200b5d1d19996cd39d07d3b6d9",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:47.123720+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    },
+    {
+      "category": "youth_household",
+      "candidate_id": "youth-control-4",
+      "title": "모집중 서울광역청년센터 <2026 청년정책연계망 포럼>",
+      "brand": "서울광역청년센터",
+      "candidate_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75479",
+      "input_document_url": "https://youth.seoul.go.kr/mainA.do",
+      "snapshot_hash": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+      "snapshot_checked_at": "2026-11-04T15:42:11.941786+00:00",
+      "status": "locked_input_not_verdict",
+      "case_id": "youth_household-10",
+      "cohort": "holdout",
+      "documents": [
+        {
+          "url": "https://youth.seoul.go.kr/mainA.do",
+          "sha256": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+          "role": "locked_input",
+          "request_method": "GET",
+          "request_data": null
+        },
+        {
+          "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75479",
+          "sha256": "11e20fa39c27593c8506f4c23c6ef56a840c7d41d312bfd624fe59efc4ffc14d",
+          "role": "additional_primary_document",
+          "checked_at": "2026-11-04T16:38:47.331147+00:00",
+          "run_id": "phase234-document-2026-11-05-r03",
+          "request_method": "GET",
+          "request_data": null
+        }
+      ],
+      "primary_document_status": "captured"
+    }
+  ],
+  "primary_documents_captured": 30,
+  "primary_documents_pending": 14,
+  "primary_document_limitations": "HTML30개 확보이며 이미지·신청 약관·조건 전체 판독 완료 판정은 아님"
+}

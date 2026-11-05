@@ -29,6 +29,28 @@ class PublishTests(unittest.TestCase):
     def run_export(self, now=NOW):
         return publish.run(self.root, now=now)
 
+    def test_operational_body_hold_withholds_old_approved_report_rows(self):
+        from test_pipeline import benefit
+        save(self.root/'cache/operational_state.json',{'schema_version':1,'items':{
+            benefit().id:{'source':'test','hold_at':NOW.isoformat(),'hold_reason':'body_changed'}},'sources':{}})
+        self.assertEqual(publish.payload(self.root,now=NOW)['items'],[])
+
+    def test_validated_payload_can_be_rendered_without_recollecting(self):
+        data=publish.payload(self.root,now=NOW)
+        publish.write_export(self.root,data)
+        saved=json.loads((self.root/'delivery/public/briefing.json').read_text())
+        self.assertEqual(saved,data)
+        self.assertTrue((self.root/'delivery/public/briefing.md').is_file())
+
+    def test_read_only_payload_uses_same_release_gate_without_exporting(self):
+        data=publish.payload(self.root,now=NOW)
+        self.assertEqual(data['items'][0]['url'],self.item['url'])
+        self.assertFalse((self.root/'delivery/public').exists())
+        self.item['summary']='승인 후 변경된 요약'
+        self.report['new']=[self.item]
+        save(self.root/'report.json',self.report)
+        self.assertEqual(publish.payload(self.root,now=NOW)['items'],[])
+
     def test_labels_render_as_facts_filters_summary_and_markdown(self):
         item = dict(self.item, labels=dict(category="교육·강좌", audience="19~39세 청년", region="서울 관악구", action="신청·예약 필요"))
         self.report["new"] = [item]

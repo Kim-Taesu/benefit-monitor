@@ -1,0 +1,90 @@
+{
+  "scope": "사용자가 제시한 Phase0~4 개발시험 초기 달성조건",
+  "status": "passed_after_human_review",
+  "review_id": "phase234-review-r03-2026-11-05",
+  "review_result_file": "human-final-review-result.json",
+  "review_result_sha256": "68ab282df9205a4e5b11972a9b667062cb08ede3c359e876355f619121b19bc5",
+  "phase0": {
+    "passed": true,
+    "evidence": "../../phase01/network-probe-r03.json",
+    "requests": 3,
+    "documents_read": 2
+  },
+  "phase1": {
+    "passed": true,
+    "meaning": "출처 지도·접근상태/방식/갱신/우선순위·분야별질문·동일시작점/예산비교설계·고정표본 준비",
+    "districts": 25,
+    "existing_sources": 15,
+    "locked_cases": 30,
+    "primary_html_captured": 30,
+    "institution_link_slots": 30,
+    "additional_program_slots": 13,
+    "additional_directory_slots": 7,
+    "unlocated_expansion_slots": 50,
+    "all_institution_access_verified": false
+  },
+  "phase2": {
+    "passed": true,
+    "accepted_candidate_ids": [
+      "culture-01",
+      "culture-02",
+      "culture-03",
+      "shopping-04",
+      "shopping-05",
+      "shopping-06",
+      "youth-01",
+      "youth-02",
+      "youth-03"
+    ],
+    "valid_counts": {
+      "culture_sports": 3,
+      "shopping_membership": 3,
+      "youth_household": 3
+    },
+    "total_valid": 9
+  },
+  "phase3": {
+    "passed": true,
+    "trial_id": "conditions-prospective-04",
+    "question_version": "v2",
+    "questions": 20,
+    "resolved": 11,
+    "unresolved": 9,
+    "new_important_errors": 0,
+    "previous_trial_results_preserved": [
+      7,
+      6,
+      7
+    ],
+    "scores_pooled": false
+  },
+  "phase4": {
+    "passed": true,
+    "profiles": 10,
+    "relevant": 10,
+    "relevance_rate": 1.0,
+    "grading_basis": "사용자의 전체 검토표 이슈 없음 응답을10개O로정규화",
+    "known_required_condition_violations": 0,
+    "unknown_eligibility_asserted_as_met": false
+  },
+  "invariants": {
+    "work_branch": "docs/ai-research-playbook",
+    "round03_requests": 54,
+    "round03_limit": 60,
+    "cumulative_requests": 174,
+    "external_llm_api_calls": 0,
+    "additional_service_spending": 0,
+    "main_merged": false,
+    "publication_changed": false,
+    "legacy_round02_operational_verdict": "failed_crawl_delay",
+    "current_round03_network_policy_issues": 0
+  },
+  "not_claimed": [
+    "전체 과거 조사 회차의 운영 무위반",
+    "전체기관100칸의접근성공·자동수집기구현",
+    "온라인동일예산A/B우위·필수조건전체정답의누락률비교·검토소요시간실측",
+    "유료API모델성능·실제월비용검증",
+    "실시간예약·개인자격·잔여석·개별결제할인성공",
+    "Phase5/API과금·Phase6공개베타·main병합승인"
+  ]
+}

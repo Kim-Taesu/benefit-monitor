@@ -14,7 +14,10 @@ from . import cost_policy
 from . import operations
 from .briefing import build as build_briefing, write as write_briefing
 
-def run(root, imports=None, online=False, now=None):
+def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2):
+    if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=10):raise ValueError("AI candidate limit 1..10")
+    if ai_execute and not ai_review:raise ValueError("AI spend requires explicit review stage")
+    if ai_review and not online:raise ValueError("AI body review requires explicit online collection")
     root = Path(root)
     now = now or datetime.now(ZoneInfo("Asia/Seoul"))
     if now.tzinfo is None:
@@ -34,36 +37,50 @@ def run(root, imports=None, online=False, now=None):
         handoffs, failures = [], []
         district_coverage = []
         successful_sources = []
-        if config.get("seoul_district_coverage"):
-            if online:
-                district_items, district_coverage = collect_districts(root, sources["seoul"], now)
-                incoming.extend(district_items)
-            else:
-                cached = load(root/"cache/district_candidates.json", {})
-                district_coverage = [{k:v for k,v in c.items() if k != "items"} | {"mode":"cached"} for c in cached.values()]
-            for d in district_coverage:
-                if d["status"] != "checked":
-                    failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), category=d.get("category", "other")))
+        full_http_limit=cost_policy.budget.limit
+        if ai_review:
+            cost_policy.budget.limit=max(1,full_http_limit-2*ai_max_candidates)
+        try:
+            if config.get("seoul_district_coverage"):
+                if online:
+                    district_items, district_coverage = collect_districts(root, sources["seoul"], now)
+                    incoming.extend(district_items)
+                else:
+                    cached = load(root/"cache/district_candidates.json", {})
+                    district_coverage = [{k:v for k,v in c.items() if k != "items"} | {"mode":"cached"} for c in cached.values()]
+                for d in district_coverage:
+                    if d["status"] != "checked":
+                        failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), category=d.get("category", "other")))
 
-        for s in sources.values():
-            if online and s.get("district_feed"):
-                record = next((d for d in district_coverage if d["district"] == s["district_feed"]), {})
-                if record.get("status") == "checked":
-                    successful_sources.append(s["id"])
-                    continue
-                failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
-            if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
-                try:
-                    incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))
-                    successful_sources.append(s["id"])
-                    continue
-                except Exception as e:
-                    failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
-            handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
+            for s in sources.values():
+                if online and s.get("district_feed"):
+                    record = next((d for d in district_coverage if d["district"] == s["district_feed"]), {})
+                    if record.get("status") == "checked":
+                        successful_sources.append(s["id"])
+                        continue
+                    failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
+                if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
+                    try:
+                        incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))
+                        successful_sources.append(s["id"])
+                        continue
+                    except Exception as e:
+                        failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
+                handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
+        finally:
+            cost_policy.budget.limit=full_http_limit
         # Explicit validated inputs take precedence over discovered candidates.
         explicit_items = [validate(d, sources, now) for d in explicit]
         operational_state = operations.sanitize(load(root/"cache/operational_state.json", {}), set(sources), now)
         explicit_items = operations.observe(operational_state, incoming, explicit_items, now)
+        ai_result = None
+        if ai_review:
+            from .ai_review import review_candidates
+            ai_result = review_candidates(root, incoming + [i.data() for i in explicit_items], now,
+                                          max_candidates=ai_max_candidates, execute=ai_execute)
+            for cid in ai_result['changed_ids']:
+                operational_state.setdefault('items',{}).setdefault(cid,{}).update(
+                    hold_at=now.isoformat(),hold_reason='body_changed')
         body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0)) if online else []
         explicit_items = operations.observe(operational_state, [], explicit_items, now)
         if len({i.id for i in explicit_items}) != len(explicit_items):
@@ -95,6 +112,7 @@ def run(root, imports=None, online=False, now=None):
         report = classify(old, current, now, config.get("expiring_days", 7), config.get("max_age_days", 7))
         operations.health(operational_state, successful_sources, failures, now)
         operations.classify_history(report, operational_state)
+        if ai_result is not None:report["ai_review"] = ai_result
         report["body_check_failures"] = body_failures
         report["review_queue"] = operations.queue(report, operational_state, now, config.get("max_age_days", 7))
         save(root/"cache/operational_state.json", operational_state)
@@ -123,8 +141,11 @@ def main():
     p.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     p.add_argument("--import-items", type=Path)
     p.add_argument("--online", action="store_true")
+    p.add_argument("--ai-review", action="store_true", help="Stage official bodies for private AI review")
+    p.add_argument("--ai-allow-spend", action="store_true", help="Explicit one-run Claude trial authorization")
+    p.add_argument("--ai-max-candidates", type=int, default=2)
     a = p.parse_args()
-    r = run(a.root, a.import_items, a.online)
+    r = run(a.root, a.import_items, a.online, ai_review=a.ai_review, ai_execute=a.ai_allow_spend, ai_max_candidates=a.ai_max_candidates)
     print(f"Report: {a.root / 'report.json'}; complete={r['complete']}")
 
 if __name__ == "__main__":

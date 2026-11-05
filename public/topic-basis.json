@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "items": [],
+  "category_policy": {
+    "approved": true,
+    "mapping": {
+      "문화·체험": [
+        "culture"
+      ],
+      "교육·강좌": [
+        "learning"
+      ],
+      "할인·적립": [
+        "shopping"
+      ]
+    }
+  }
+}

@@ -4,6 +4,45 @@ from urllib.parse import urlsplit, quote
 
 UNRESERVED = frozenset("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~")
 
+
+def crawl_delay(text, agent="BenefitMonitor/0.1"):
+    """Use the most specific agent groups; do not ignore malformed delays."""
+    if "<html" in text.lower() or "<!doctype" in text.lower():
+        raise ValueError("HTML returned instead of robots policy")
+    groups, agents, delays, directives = [], [], [], False
+    for raw in text.splitlines():
+        line = raw.split("#", 1)[0].strip()
+        if ":" not in line:
+            continue
+        key, value = (part.strip() for part in line.split(":", 1))
+        key = key.lower()
+        if key == "user-agent":
+            if directives:
+                groups.append((agents, delays))
+                agents, delays, directives = [], [], False
+            agents.append(value.lower())
+        elif agents and key in ("allow", "disallow", "crawl-delay"):
+            directives = True
+            if key == "crawl-delay":
+                delays.append(value)
+    if agents:
+        groups.append((agents, delays))
+    agent = agent.lower().split("/", 1)[0]
+    selected, specificity = [], -1
+    for names, values in groups:
+        matches = [0 if name == "*" else len(name)
+                   for name in names if name == "*" or (name and name in agent)]
+        if not matches:
+            continue
+        score = max(matches)
+        if score > specificity:
+            specificity, selected = score, list(values)
+        elif score == specificity:
+            selected.extend(values)
+    if any(not re.fullmatch(r"\d+(?:\.\d+)?", value) for value in selected):
+        raise ValueError("Invalid robots crawl-delay; policy review required")
+    return max((float(value) for value in selected), default=0)
+
 def normalize(value):
     value = quote(value, safe="/?:@!$&'()+,;=-._~%*")
     def replace(match):

@@ -1,0 +1,169 @@
+{
+  "request_id": "6c565a36701ff00a00ea43a629eb41f136261117430c34681aab81e2481c9f55",
+  "recorded_contract": "research-extraction-v2",
+  "original_contract": {
+    "valid": true,
+    "errors": [],
+    "assessments": [
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "execution_status": "completed",
+        "evidence_readiness": "needs_review",
+        "synthetic": false
+      }
+    ]
+  },
+  "current_coverage": {
+    "valid": false,
+    "findings": [
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "결제재원·쿠폰·중복할인"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "대상"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "모집정원"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "선정방법"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "선정방법 이의 처리"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "신청제한"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "예약방법"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "이용기간"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "이용요금"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "장소"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "접수기간"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "최초 이용자 조건"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "noncanonical_field",
+        "field": "취소기간"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "eligibility"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "event_period"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "application_period"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "fee_status"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "cost_details"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "payment_conditions"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "selection"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "capacity"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "application_method"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "cancellation"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "restrictions"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "code": "missing_required_field",
+        "field": "availability"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "source_ref": "doc-8d0fdd0ca3f959f8",
+        "cue": "유아동반 가족",
+        "start": 942,
+        "end": 949,
+        "code": "restriction_not_quoted"
+      },
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "source_ref": "doc-8d0fdd0ca3f959f8",
+        "cue": "유아동반 가족",
+        "start": 942,
+        "end": 949,
+        "code": "restriction_not_preserved"
+      }
+    ],
+    "policy": "restriction-cue-coverage-v1",
+    "publication_approved": false,
+    "human_semantic_review": "required"
+  },
+  "new_api_calls": 0,
+  "new_http_requests": 0,
+  "publication_approved": false,
+  "v3_model_quality": "not_measured"
+}

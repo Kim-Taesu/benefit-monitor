@@ -1,0 +1,108 @@
+{
+  "scope": "조사 전용; 운영 sources.yaml 변경 없음",
+  "reviewer": "Codex",
+  "sources": [
+    {
+      "id": "youth_portal",
+      "operator": "서울특별시 청년몽땅정보통",
+      "domains": [
+        "youth.seoul.go.kr"
+      ],
+      "observed_entrypoint": "https://youth.seoul.go.kr/",
+      "authority_url": "https://www.seoul.go.kr/main/index.jsp",
+      "authority_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+      "review": "서울시 공식 주요서비스 링크 및 구조화 데이터에 같은 이름·HTTPS URL 명시. 개인정보·인증 없이 공개 목록만 조사. TLS·robots 선확인. 리다이렉트 별도 검토.",
+      "production_enabled": false,
+      "collection_method": "공개 HTML·공식 첨부 수동 조사; 정적 JS는 실행 없이 경로만 판독",
+      "refresh_plan": "공개목록24시간·마감7일이내우선·실패15분·robots간격준수",
+      "priority": 2,
+      "access_audit": "document-access-r03.json; 청년포털 초기접근은district-access-r02.json",
+      "source_scope": "조사 전용 공개 자료; 운영파서·허용목록 확장 아님"
+    },
+    {
+      "id": "archives",
+      "operator": "서울특별시 서울기록원",
+      "domains": [
+        "archives.seoul.go.kr"
+      ],
+      "observed_entrypoint": "https://archives.seoul.go.kr/",
+      "authority_url": "https://www.seoul.go.kr/main/index.jsp",
+      "authority_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+      "review": "서울시 공식 직속기관 링크에서 기관명과 HTTPS URL 확인. 공개 교육·이용안내만 조사. TLS·robots·Crawl-delay 선확인; 자동 리다이렉트 금지.",
+      "production_enabled": false,
+      "collection_method": "공개 HTML·공식 첨부 수동 조사; 정적 JS는 실행 없이 경로만 판독",
+      "refresh_plan": "공개목록24시간·마감7일이내우선·실패15분·robots간격준수",
+      "priority": 2,
+      "access_audit": "document-access-r03.json; 청년포털 초기접근은district-access-r02.json",
+      "source_scope": "조사 전용 공개 자료; 운영파서·허용목록 확장 아님"
+    },
+    {
+      "id": "gs_assets",
+      "operator": "GS리테일 공식 웹 정적 자료",
+      "domains": [
+        "hpsimg.gsretail.com"
+      ],
+      "observed_entrypoint": "https://hpsimg.gsretail.com/public/js/index.f1c45227.js",
+      "authority_url": "https://www.gsretail.com/",
+      "authority_sha256": "243dc9110e5d1f60818b50b49160523f88d98f0d96532607457b3025780432aa",
+      "review": "기존 허용 GS리테일 공식 페이지의 script src에서 직접 확인한 정적 자료. 실행하지 않고 공개 경로를 확인하는 용도. TLS·robots·간격·2 MiB 동일 적용.",
+      "production_enabled": false,
+      "collection_method": "공개 HTML·공식 첨부 수동 조사; 정적 JS는 실행 없이 경로만 판독",
+      "refresh_plan": "공개목록24시간·마감7일이내우선·실패15분·robots간격준수",
+      "priority": 2,
+      "access_audit": "document-access-r03.json; 청년포털 초기접근은district-access-r02.json",
+      "source_scope": "조사 전용 공개 자료; 운영파서·허용목록 확장 아님"
+    },
+    {
+      "id": "seoul_library",
+      "operator": "서울특별시 서울도서관",
+      "domains": [
+        "lib.seoul.go.kr"
+      ],
+      "observed_entrypoint": "https://lib.seoul.go.kr/",
+      "authority_url": "https://www.seoul.go.kr/main/index.jsp",
+      "authority_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+      "review": "서울시 공식 메인 직속기관 이름·HTTPS 링크에서 확인. 공개 안내·운영 정책만 조사하고 로그인·예약·결제를 실행하지 않음. robots·TLS·Crawl-delay·실패15분·2MiB·자동 이동 금지 적용.",
+      "production_enabled": false,
+      "collection_method": "공개 HTML·공식 첨부 수동 조사",
+      "refresh_plan": "목록24시간·마감7일이내우선·실패15분·robots간격준수",
+      "priority": 2,
+      "access_audit": "document-access-r03.json",
+      "source_scope": "조사 전용; 운영 허용목록 변경 아님"
+    },
+    {
+      "id": "seoul_parks",
+      "operator": "서울특별시 공원 운영기관",
+      "domains": [
+        "parks.seoul.go.kr"
+      ],
+      "observed_entrypoint": "https://parks.seoul.go.kr/information/list.do",
+      "authority_url": "https://www.seoul.go.kr/main/index.jsp",
+      "authority_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+      "review": "서울시 공식 메인 직속기관 이름·HTTPS 링크에서 확인. 공개 안내·운영 정책만 조사하고 로그인·예약·결제를 실행하지 않음. robots·TLS·Crawl-delay·실패15분·2MiB·자동 이동 금지 적용.",
+      "production_enabled": false,
+      "collection_method": "공개 HTML·공식 첨부 수동 조사",
+      "refresh_plan": "목록24시간·마감7일이내우선·실패15분·robots간격준수",
+      "priority": 2,
+      "access_audit": "document-access-r03.json",
+      "source_scope": "조사 전용; 운영 허용목록 변경 아님"
+    },
+    {
+      "id": "seoul_museum",
+      "operator": "서울특별시 서울역사박물관",
+      "domains": [
+        "museum.seoul.go.kr"
+      ],
+      "observed_entrypoint": "https://museum.seoul.go.kr/",
+      "authority_url": "https://www.seoul.go.kr/main/index.jsp",
+      "authority_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+      "review": "서울시 공식 메인 직속기관 이름·HTTPS 링크에서 확인. 공개 안내·운영 정책만 조사하고 로그인·예약·결제를 실행하지 않음. robots·TLS·Crawl-delay·실패15분·2MiB·자동 이동 금지 적용.",
+      "production_enabled": false,
+      "collection_method": "공개 HTML·공식 첨부 수동 조사",
+      "refresh_plan": "목록24시간·마감7일이내우선·실패15분·robots간격준수",
+      "priority": 2,
+      "access_audit": "document-access-r03.json",
+      "source_scope": "조사 전용; 운영 허용목록 변경 아님"
+    }
+  ]
+}

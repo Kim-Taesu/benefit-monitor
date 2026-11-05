@@ -1,0 +1,86 @@
+{
+  "case_id": "culture-01",
+  "scope": "stored_official_document_development_replay",
+  "request_id": "6c565a36701ff00a00ea43a629eb41f136261117430c34681aab81e2481c9f55",
+  "model": "claude-haiku-5-5",
+  "cached": false,
+  "input_sha256": "ffbed7db830e87b97f17f5fff85cb76aff303253ea9c6d591910c6472b6e8e37",
+  "prompt_sha256": "d07780cf88f51ff3d4b76474367e240a1af840a67c8d622361030773a75fc401",
+  "source_body_sha256": "1fbd988cdfb2d69f6aaeac3e3e0ecd1054b6ff949a54cf6bef3453141860559e",
+  "source_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+  "source_retrieved_at": "2026-11-04T15:16:04.819172+00:00",
+  "model_output_sha256": "cccd96863880bf3207566ec58efa3dfeebf962862c97d1f9e1dfae0485ff384c",
+  "model_output_contract": "research-extraction-v2",
+  "structural_validation": {
+    "valid": true,
+    "errors": [],
+    "assessments": [
+      {
+        "candidate_id": "c3aa6c2c79b55d5f0f4d1d9e",
+        "execution_status": "completed",
+        "evidence_readiness": "needs_review",
+        "synthetic": false
+      }
+    ]
+  },
+  "quality_review": {
+    "reviewer": "Codex provisional manual source comparison",
+    "human_final_review": "pending",
+    "verdict": "failed",
+    "critical_error_count": 1,
+    "findings": [
+      {
+        "code": "eligibility_scope_overbroad",
+        "actual": {
+          "field": "대상",
+          "value": "제한없음",
+          "quote": "대상 제한없음"
+        },
+        "missing_qualifier_quote": "유아동반 가족은 많이 찾아와주세요^^",
+        "expected": "요약란의 제한없음을 전체 자격으로 확정하지 않고 상세의 유아 동반 가족 조건을 보존. 정확한 연령·거주조건은 미확인으로 구분.",
+        "importance": "critical"
+      },
+      {
+        "code": "noncanonical_fields",
+        "actual_fields": [
+          "대상",
+          "이용기간",
+          "접수기간",
+          "선정방법",
+          "모집정원",
+          "신청제한",
+          "취소기간",
+          "이용요금",
+          "예약방법",
+          "장소",
+          "결제재원·쿠폰·중복할인",
+          "최초 이용자 조건",
+          "선정방법 이의 처리"
+        ],
+        "impact": "계약상 자유 field명을 허용해 날짜·자격 등 자동 후속 처리의 근거가 부족함. structural 통과는 운영 연결 근거가 아님."
+      }
+    ]
+  },
+  "usage": {
+    "input_tokens": 9787,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 0
+    },
+    "output_tokens": 1480,
+    "output_tokens_details": {
+      "thinking_tokens": 0
+    },
+    "service_tier": "standard",
+    "inference_geo": "global",
+    "speed": "standard"
+  },
+  "usage_calculated_microdollars": 1719,
+  "new_api_calls": 1,
+  "new_benefit_http_requests": 0,
+  "remaining_planned_calls": "stage1 나머지2건·stage2 3건·주제1회는 중요오류 중단 기준에 따라 미실행",
+  "publication_approved": false,
+  "decision": "stop_at_quality_gate_no_automatic_operation"
+}

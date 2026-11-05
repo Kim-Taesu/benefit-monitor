@@ -1,0 +1,55 @@
+{
+  "scope": "현재 열람한 공식 자료를 사용하는 개인화 보조 사례; 신규 발견 점수 아님",
+  "claims": [
+    {
+      "candidate_id": "existing-cu-kt",
+      "title": "CU KT멤버십 아침 간편식 할인",
+      "issuer_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "document_sha256": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+      "confirmed": [
+        "KT멤버십, 매일05~09시 대상 간편식",
+        "1000원당200원 할인, 하루1회·할인한도1000원",
+        "타 할인·적립 중복 불가"
+      ],
+      "costs": "상품 구매비용 발생. 기존 멤버십을 보유한 가상 상황이며 신규 요금제·구독 가입 권유 없음.",
+      "unresolved": [
+        "개인 멤버십 사용 가능 상태",
+        "실제 대상상품·가격·잔여 한도·적용 성공"
+      ],
+      "novelty": "기존 공개 데이터에 이미 있어 신규 건수0"
+    },
+    {
+      "candidate_id": "existing-cu-t",
+      "title": "CU T멤버십 할인 또는 적립",
+      "issuer_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "document_sha256": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+      "confirmed": [
+        "VIP·골드1000원당100원, 실버1000원당50원 할인 또는 적립",
+        "1+1·2+1·담배·주류·유가증권·의약품·서비스·일부 면세상품 등 제외",
+        "타 할인·적립 서비스 중복 불가"
+      ],
+      "costs": "상품 구매비용 발생. 기존 멤버십 가정.",
+      "unresolved": [
+        "실제 품목·가격·포인트·적용 성공"
+      ],
+      "novelty": "기존 공개 데이터에 이미 있어 신규 건수0"
+    },
+    {
+      "candidate_id": "support-emart24-uplus",
+      "title": "이마트24 유플러스 멤버십 차감 할인",
+      "issuer_url": "https://emart24.co.kr/service/alliance",
+      "document_sha256": "0efde7f1bfc7155af551ed67ab10755cfddbb3925f01b8236175a89ffe23a9c0",
+      "confirmed": [
+        "VVIP·VIP1000원당100원, 우수회원1000원당50원 포인트 차감 할인",
+        "하루1회, 일 최대2만원·월 최대10만원 한도 안내",
+        "담배·주류·서비스·+1 및 할인 행사상품 등 일부 품목 제외"
+      ],
+      "costs": "구매비용과 멤버십 포인트 차감. 기존 LGU+멤버십 보유라는 가상 가정. 신규 가입·결제 실행 없음.",
+      "unresolved": [
+        "등급·가용 포인트·실제 구매품목·가격·잔여 한도",
+        "실제 할인 적용 성공"
+      ],
+      "novelty": "개인화 보조 사례이며 신규 목표에 산입하지 않음"
+    }
+  ]
+}

@@ -1,0 +1,471 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "research trial result v1",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "trial-result-v1"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "offline_fixture",
+        "read_only_research",
+        "api_agent"
+      ]
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "partial",
+        "blocked",
+        "failed"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "enum": [
+              "missing_input",
+              "policy_blocked",
+              "environment_unavailable",
+              "tool_failure",
+              "budget_exhausted"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "candidate_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "candidate_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "schema_version": {
+            "enum": [
+              "research-draft-v1"
+            ]
+          },
+          "candidate_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_status": {
+            "enum": [
+              "completed",
+              "partial",
+              "blocked",
+              "failed"
+            ]
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "requested_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "final_url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "source_id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "document_role": {
+                  "enum": [
+                    "notice",
+                    "terms",
+                    "attachment",
+                    "correction",
+                    "faq"
+                  ]
+                },
+                "publisher_type": {
+                  "enum": [
+                    "fixture",
+                    "issuer",
+                    "official_editorial",
+                    "citizen_report",
+                    "ai_summary",
+                    "unknown"
+                  ]
+                },
+                "retrieved_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "published_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "body_hash": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "hash_algorithm": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "extraction_scope": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "fetch_status": {
+                  "enum": [
+                    "ok",
+                    "blocked",
+                    "failed",
+                    "unsupported"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "requested_url",
+                "final_url",
+                "source_id",
+                "document_role",
+                "publisher_type",
+                "retrieved_at",
+                "published_at",
+                "body_hash",
+                "extraction_scope",
+                "fetch_status"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "field": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "value": {},
+                "status": {
+                  "enum": [
+                    "supported",
+                    "unknown",
+                    "disputed"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_ref": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "quote": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "locator": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "source_ref",
+                      "quote",
+                      "locator"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "field",
+                "value",
+                "status",
+                "evidence"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "missing_questions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "question": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "importance": {
+                  "enum": [
+                    "critical",
+                    "optional"
+                  ]
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "field",
+                "question",
+                "importance",
+                "reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "conflicts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "claim_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "resolution": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "field",
+                "claim_ids",
+                "description",
+                "resolution"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "proposed_fields": {
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "conditions": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "valid_from": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "valid_until": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "deadline_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "published_at": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "districts": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fee_status": {
+                "enum": [
+                  "free",
+                  "paid",
+                  "conditional",
+                  "unknown"
+                ]
+              },
+              "labels": {
+                "type": "null"
+              },
+              "payment_terms": {
+                "type": "null"
+              },
+              "benefit_value": {
+                "type": "null"
+              }
+            },
+            "required": [
+              "summary",
+              "conditions",
+              "valid_from",
+              "valid_until",
+              "deadline_at",
+              "published_at",
+              "districts",
+              "fee_status",
+              "labels",
+              "payment_terms",
+              "benefit_value"
+            ],
+            "additionalProperties": false
+          },
+          "supplemental": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "information": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "claim_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              },
+              "required": [
+                "information",
+                "claim_ids"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "review_reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "stop_reason": {
+            "enum": [
+              "sufficient_evidence",
+              "budget_exhausted",
+              "access_blocked",
+              "unsupported_document",
+              "unresolved_conflict",
+              "tool_failure"
+            ]
+          },
+          "audit": {
+            "type": "null"
+          }
+        },
+        "required": [
+          "schema_version",
+          "candidate_id",
+          "source_id",
+          "research_status",
+          "sources",
+          "claims",
+          "missing_questions",
+          "conflicts",
+          "proposed_fields",
+          "supplemental",
+          "review_reasons",
+          "stop_reason",
+          "audit"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "mode",
+    "status",
+    "errors",
+    "records"
+  ],
+  "additionalProperties": false
+}

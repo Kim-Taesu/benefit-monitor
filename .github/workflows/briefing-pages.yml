@@ -5,6 +5,19 @@ on:
     # early to aim for completion before 07:00 KST. Not guaranteed.
     - cron: '0 16 * * *'
   workflow_dispatch:
+    inputs:
+      deploy_approved_snapshot:
+        description: '승인된 공개 snapshot을 재검증해 배포'
+        type: boolean
+        default: false
+      snapshot_commit:
+        description: 'briefing-data의 고정 commit SHA'
+        type: string
+        default: ''
+      expected_code_sha:
+        description: '배포할 작업 브랜치의 고정 commit SHA'
+        type: string
+        default: ''
   push:
     branches: [main]
 
@@ -25,11 +38,23 @@ jobs:
     permissions:
       contents: write
     outputs:
-      collection_outcome: ${{ steps.briefing.outcome }}
+      collection_outcome: ${{ steps.snapshot.outcome != 'skipped' && steps.snapshot.outcome || steps.briefing.outcome }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
+      - name: Verify the requested code revision before running project code
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_approved_snapshot == true
+        env:
+          EXPECTED_CODE_SHA: ${{ inputs.expected_code_sha }}
+        run: |
+          python3 - <<'PYCODE'
+          import os, re, subprocess
+          expected = os.environ['EXPECTED_CODE_SHA']
+          actual = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+          if not re.fullmatch('[0-9a-f]{40}', expected) or actual != expected:
+              raise SystemExit('Requested code revision does not match the checkout')
+          PYCODE
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
@@ -47,7 +72,7 @@ jobs:
         working-directory: frontend
         run: npm test && npm run build
       - name: Collect and export public briefing
-        if: github.event_name != 'push'
+        if: github.event_name != 'push' && inputs.deploy_approved_snapshot != true
         id: briefing
         continue-on-error: true
         shell: bash
@@ -61,8 +86,22 @@ jobs:
           python -m benefit_monitor.publish --prepare-import
           python -m benefit_monitor.cli --online --import-items inputs/public.json
           python -m benefit_monitor.publish
+      - name: Validate and export the approved immutable snapshot
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_approved_snapshot == true
+        id: snapshot
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRIEFING_REPOSITORY: ${{ github.repository }}
+          SNAPSHOT_COMMIT: ${{ inputs.snapshot_commit }}
+          EXPECTED_CODE_SHA: ${{ inputs.expected_code_sha }}
+        run: >-
+          python -m benefit_monitor.public_snapshot
+          --repository "$BRIEFING_REPOSITORY"
+          --commit "$SNAPSHOT_COMMIT"
+          --expected-code-sha "$EXPECTED_CODE_SHA"
       - name: Publish failure status instead of old recommendations
-        if: github.event_name != 'push' && steps.briefing.outcome == 'failure'
+        if: github.event_name != 'push' && (steps.briefing.outcome == 'failure' || steps.snapshot.outcome == 'failure')
         run: python -m benefit_monitor.publish --failure
       - name: Summarize collection status
         if: github.event_name != 'push'
@@ -82,7 +121,7 @@ jobs:
                   stream.write(f"Collection issue: {failure['source']} / {failure.get('district', '-')} / {failure.get('category', failure['reason'])}\n")
           PY
       - name: Mirror public JSON for the existing ChatGPT reader
-        if: github.event_name != 'push'
+        if: github.event_name != 'push' && inputs.deploy_approved_snapshot != true
         env:
           GH_TOKEN: ${{ github.token }}
           BRIEFING_REPOSITORY: ${{ github.repository }}

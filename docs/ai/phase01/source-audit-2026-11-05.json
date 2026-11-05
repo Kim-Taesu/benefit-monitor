@@ -1,0 +1,739 @@
+{
+  "checked_at": "2026-11-04T15:12:16.651194+00:00",
+  "request_limit": 60,
+  "prior_request_attempts": 7,
+  "request_attempts": 60,
+  "events": [
+    {
+      "url": "https://mediahub.seoul.go.kr/robots.txt",
+      "source": "seoul",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:16.659238+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 278,
+      "sha256": "08ea763d6d1fa2534a090b671faa3d8932314c78785c4ddf2323b3bfa5e3e6d2",
+      "content_type": "text/plain;charset=utf-8"
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/news/newsMain.do",
+      "source": "seoul",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:16.699949+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 124199,
+      "sha256": "925b4e919a857605b80129147020388f63406e64aa237dbfd2908f120d85bd7e",
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://www.gangseo.seoul.kr/robots.txt",
+      "source": "gangseo",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:19.349912+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 725,
+      "sha256": "cee96ee7846f8e0ba3b23ab7ab457beb9d2b67de575b37f09dda1074c672fd28",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "url": "https://www.gangseo.seoul.kr/",
+      "source": "gangseo",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:19.431005+00:00",
+      "status": "failed",
+      "stage": "transport_or_policy",
+      "error": "redirect_not_followed: destination needs separate policy review",
+      "http_status": 302,
+      "redirect_target": "https://www.gangseo.seoul.kr/index"
+    },
+    {
+      "url": "https://www.ep.go.kr/robots.txt",
+      "source": "eunpyeong",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:19.489381+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 253,
+      "sha256": "42f822b1a7ad388b873efac0f547b0fc050a6bf283f3e253da00fc5bc6dda21c",
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://snvision.seongnam.go.kr/robots.txt",
+      "source": "seongnam",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:19.582205+00:00",
+      "status": "failed",
+      "stage": "tls",
+      "error": "<urlopen error [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] ssl/tls alert handshake failure (_ssl.c:1082)>"
+    },
+    {
+      "url": "https://www.korea.kr/robots.txt",
+      "source": "government",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:19.673368+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 262,
+      "sha256": "98d411637ae27a333b95d03c7b691eae06992f5d0d061ff6e3a77ffaace7ebf8",
+      "content_type": "text/plain; charset=UTF-8"
+    },
+    {
+      "url": "https://www.korea.kr/news/policyNewsList.do",
+      "source": "government",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:19.778514+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 205512,
+      "sha256": "a4a2b049cb6d18f3f042e4b7e5c5b271cf9ca3149e1b718470453a238f7e0ecf",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/robots.txt",
+      "source": "culture",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:20.677457+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 248,
+      "sha256": "ab72ab80f4b6416723bb7a1cc508bfacaadca7d3848ba3b21163129041ad6d51",
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/main.do",
+      "source": "culture",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:20.773024+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 346478,
+      "sha256": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+      "content_type": ""
+    },
+    {
+      "url": "https://membership.kt.com/robots.txt",
+      "source": "kt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:20.963968+00:00",
+      "status": "failed",
+      "stage": "timeout",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/robots.txt",
+      "source": "retail",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:36.071720+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 133,
+      "sha256": "587cd11a524c373b3709ed74ae38e2a7fa488a020beffd391b4bb8be5cf28f20",
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/family/emart/",
+      "source": "retail",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:36.119942+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 64230,
+      "sha256": "236a58b40f616de54eb16aa6ce44d5269603da279d6c4f030301a152a80bde28",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "url": "https://cu.bgfretail.com/robots.txt",
+      "source": "convenience",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:36.840852+00:00",
+      "status": "missing_robots_404",
+      "http_status": 404
+    },
+    {
+      "url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "source": "convenience",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:36.990404+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 43857,
+      "sha256": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://sll.seoul.go.kr/robots.txt",
+      "source": "seoul_lifelong",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:37.149544+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 99,
+      "sha256": "23f42f5ac105c383ff4e3fbd9bc1a1d2d25ebc897025726fbaefe122feb69fc7",
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://sll.seoul.go.kr/",
+      "source": "seoul_lifelong",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:37.212684+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 439743,
+      "sha256": "e854675d9c618cbfff4b205a4e533449e4039655c879bf0e4a9f64339e35a43d",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "url": "https://www.7-eleven.co.kr/robots.txt",
+      "source": "seven",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:37.568195+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 358,
+      "sha256": "53fdd94c0f88ec9280a24c2cbe645670cd04c20c27d3501a4723b3ac78965e5b",
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "source": "seven",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:37.619495+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 30697,
+      "sha256": "bc971d305eea596b5cbdc43a3b2d5fe5d45f4218a689dd1595472c9c9e50cf59",
+      "content_type": "text/html; Charset=utf-8"
+    },
+    {
+      "url": "https://emart24.co.kr/robots.txt",
+      "source": "emart24",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:37.694857+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 71,
+      "sha256": "c5df55e70298700ed941e2c054dc2f55cbf70eae83defe67fff1589560bfad54",
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://emart24.co.kr/service/alliance",
+      "source": "emart24",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:37.763784+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 72304,
+      "sha256": "0efde7f1bfc7155af551ed67ab10755cfddbb3925f01b8236175a89ffe23a9c0",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "url": "https://www.i-sh.co.kr/robots.txt",
+      "source": "sh",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:37.908011+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 1361,
+      "sha256": "e34bc2b5151844e9b8e7c5cdfcaba7d1f5edde09ba8558b8af986ad173c05e18",
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.i-sh.co.kr/app/lay2/program/S1T294C297/www/brd/m_247/list.do?multi_itm_seq=2",
+      "source": "sh",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:37.973227+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 151420,
+      "sha256": "ab9d0862c64c9b02bd32799df7bd4da93ffabde06a78dce6882575f1247eec88",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "url": "https://www.eshare.go.kr/robots.txt",
+      "source": "eshare",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:39.329477+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 1153,
+      "sha256": "8a1ffac5a8582646b1083d507587093813ee741ea49f6e2f06bc27ba996b4bfd",
+      "content_type": "text/plain; charset=UTF-8"
+    },
+    {
+      "url": "https://www.eshare.go.kr/UserPortal/adv/unifdSearch/UnifiedSearchMainView.do",
+      "source": "eshare",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:39.430611+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 97593,
+      "sha256": "853c78121c99d991f5d93dadaec8ab64b91a07b5db557ed3cff2a3405e8208e8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "url": "https://www.khs.go.kr/robots.txt",
+      "source": "heritage",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:12:39.621222+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 115,
+      "sha256": "f651cb81ba61c4de704fc403679b18670c478c5f82a5bdaa37faeda930fce5e4",
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.khs.go.kr/cha/openapi/selectEventListOpenapi.do",
+      "source": "heritage",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:12:39.715262+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "bytes": 972671,
+      "sha256": "903f4e1f276ceaf00fc1c2109ab2414853b58dd6d05c306c9f0fd8a0d954906c",
+      "content_type": "application/xml; charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T200",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:14:33.632699+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "6f8cc77ad89abc431932b20893cd2f77a196b137d57dba3309998e84920caeb2",
+      "bytes": 91981,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/search/selectPageListDetailSearchImg.do?code=T000&dCode=T028",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:14:34.072781+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "95c97127d89bab4efdd9ebb25e229956dfb22e632e9cac5679f839e3f31c754e",
+      "bytes": 95312,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "convenience",
+      "url": "https://cu.bgfretail.com/event/plus.do?category=event&depth2=3&sf=N",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:14:34.479151+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "46f70c0e4cc19796a3f17decc07c20ca4b990ec5ced9bfc442f9fd62248bbcf7",
+      "bytes": 32697,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/goods/event",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:14:34.612506+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "4f3aff19b10bcc0dc0bb2511598cee0fd2fb927a9bf3e8d467be5d234d3218d0",
+      "bytes": 77756,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "seven",
+      "url": "https://www.7-eleven.co.kr/product/presentList.asp",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:14:35.979634+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "e4e87e93a5a95d3f0f86e7357e926c8421340bb93d0bff1a2e9aab56a75b7b53",
+      "bytes": 57545,
+      "charset": "utf-8",
+      "content_type": "text/html; Charset=utf-8"
+    },
+    {
+      "source": "seoul",
+      "url": "https://www.seoul.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:14:38.379026+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "bb9fd745598d92b5c816b4ec38170f5db3b5436c1ce7ebae1c2d1154721b80f9",
+      "bytes": 615,
+      "charset": "utf-8",
+      "content_type": "text/plain"
+    },
+    {
+      "source": "seoul",
+      "url": "https://www.seoul.go.kr/",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:14:38.438766+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "e11abe210659a8a8447ec88fcab9f7c723cd0bb994c03c5c187f635d79e62e3a",
+      "bytes": 4160,
+      "charset": "utf-8",
+      "content_type": "text/html"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:16:04.819172+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "8d0fdd0ca3f959f82c405ab3945007227ac7539f81d977a6a4ce0cfe05370e69",
+      "bytes": 115499,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:16:04.987778+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "3e7c6b1f9c0faa9f60288e81c9eda06a026adbf86e0ca4598a4746bb11c006f3",
+      "bytes": 134370,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:16:05.187680+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "628a7bf6946c7d8f3367004d7c85557062f5c326b516ef23033d2abe5c186645",
+      "bytes": 123068,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:16:05.377764+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "e7c820e248d71535851d2853272329ccfa637f4d8723e302511c0137d3c10819",
+      "bytes": 112038,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:16:05.545148+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "20df9410e84ac7a4cf8a0b1de51b98b9f168e19fd31982adb00f25bf91122272",
+      "bytes": 119477,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:16:05.781560+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "f8316e73198bf6367ec49cbf80e3f1882372e298a73fe3f29812b012715b2215",
+      "bytes": 119775,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "seoul",
+      "url": "https://www.seoul.go.kr/main/index.jsp",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:16:05.978159+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+      "bytes": 217878,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "convenience",
+      "url": "https://cu.bgfretail.com/event/plusAjax.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:17:43.932639+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "ba1f39a523e21175351556c8f0ee1955056ea2fdd89bcc43ef81c27763f22095",
+      "bytes": 38807,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=utf-8",
+      "request_method": "POST",
+      "request_data": {
+        "pageIndex": "1",
+        "listType": "0",
+        "searchCondition": "23"
+      }
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/cmsdata/web_upload/temp/20261103/17936908358638Y0YO8GJSCJ3TAOFM1T42R1YK.png",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:20:42.578040+00:00",
+      "status": "failed",
+      "error": "2 MiB 초과",
+      "stage": "transport_or_policy"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/event/ing",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:21:03.408352+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "1ffefcbc7c78d8edbf72ce994bdd6a472b9c8d456181a3b947008f7d28779a4a",
+      "bytes": 53739,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "seven",
+      "url": "https://www.7-eleven.co.kr/event/eventList.asp",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:21:03.767614+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "8e4d4384462765e26825e8d8ac6d5f0d8d23690ab78b75970e1e8612e3b985fb",
+      "bytes": 40910,
+      "charset": "utf-8",
+      "content_type": "text/html; Charset=utf-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/event/8541",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:21:18.272585+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "176f7655dacb738ff209a3a418a0ac7c752d2a9462a54d3dcdcdbd08c6eaf753",
+      "bytes": 34187,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/event/8505",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:21:18.349064+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "26e5b63ea5569a9effee7ed5389ad1f76a52085f35d1a93f0fa251c825bab9bb",
+      "bytes": 34593,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/event/8439",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:21:18.427576+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "5cbd924d699f0ca7008d38babfd58544bab9d7adf2682ba7d8cecfe76be01638",
+      "bytes": 34596,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/image/MjgwMzQz",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:21:26.766652+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "ea58aa3f4d901e239087f6fd25bdd09cad4462f2585da4f5a3a33556312a4758",
+      "bytes": 446742,
+      "charset": "utf-8",
+      "content_type": "image/png;charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/image/MjgwMjY3",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:21:26.903588+00:00",
+      "status": "failed",
+      "error": "2 MiB 초과",
+      "stage": "transport_or_policy"
+    },
+    {
+      "source": "seven",
+      "url": "https://www.7-eleven.co.kr/product/presentView.asp",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:26:45.142352+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "9fb301e91f4c88c74a44e1e80cbc20f23c0d1d603ebfe5b3af55d61a3916dfda",
+      "bytes": 41402,
+      "charset": "utf-8",
+      "content_type": "text/html; Charset=utf-8",
+      "request_method": "POST",
+      "request_data": {
+        "pCd": "061343",
+        "pTab": "1"
+      }
+    },
+    {
+      "source": "gangseo",
+      "url": "https://www.gangseo.seoul.kr/index",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:30:06.152717+00:00",
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+      "bytes": 246943,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "gangseo",
+      "url": "https://www.gangseo.seoul.kr/munhwa",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:30:54.487759+00:00",
+      "status": "failed",
+      "error": "redirect_not_followed: destination needs separate policy review",
+      "stage": "transport_or_policy",
+      "http_status": 302,
+      "redirect_target": "https://www.gangseo.seoul.kr/munhwa/index"
+    }
+  ],
+  "external_llm_calls": 0,
+  "publication_status": "review_only",
+  "run_id": "phase01-live-2026-11-05-r01",
+  "run_status": "closed_at_request_limit",
+  "close_reason": "같은 실행의 기본 요청 한도 도달; 추가 HTTP 요청 중단",
+  "network_requests_after_close": 0,
+  "policy_decisions": [
+    {
+      "url": "https://www.gangseo.seoul.kr/gs040101",
+      "result": "robots_disallowed_no_request",
+      "request_attempts": 0
+    },
+    {
+      "host": "www.gangseo.seoul.kr",
+      "crawl_delay_seconds": 10,
+      "observation": "루트·index·munhwa 본문 요청 간격10초 이상. robots 취득은 문서 조회와 구분."
+    }
+  ],
+  "sources": [
+    {
+      "source": "seoul",
+      "seed_url": "https://mediahub.seoul.go.kr/news/newsMain.do",
+      "status": "read",
+      "title": "서울시 - 내 손안에 서울",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "gangseo",
+      "seed_url": "https://www.gangseo.seoul.kr/index",
+      "status": "read",
+      "reason": null,
+      "initial_result": "루트302 차단",
+      "initial_seed_url": "https://www.gangseo.seoul.kr/",
+      "title": "강서구청",
+      "remaining": "공지 경로 robots 차단; 문화관광 진입점302 미추적"
+    },
+    {
+      "source": "eunpyeong",
+      "seed_url": "https://www.ep.go.kr/",
+      "status": "blocked",
+      "reason": "robots 차단"
+    },
+    {
+      "source": "seongnam",
+      "seed_url": "https://snvision.seongnam.go.kr/rss/rss_news.php",
+      "status": "blocked",
+      "reason": "<urlopen error [SSL: SSLV3_ALERT_HANDSHAKE_FAILURE] ssl/tls alert handshake failure (_ssl.c:1082)>"
+    },
+    {
+      "source": "government",
+      "seed_url": "https://www.korea.kr/news/policyNewsList.do",
+      "status": "read",
+      "title": "정책뉴스 | 뉴스 | 대한민국 정책브리핑",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "culture",
+      "seed_url": "https://yeyak.seoul.go.kr/web/main.do",
+      "status": "read",
+      "title": "서울특별시 공공서비스예약",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "kt",
+      "seed_url": "https://membership.kt.com/",
+      "status": "blocked",
+      "reason": "The read operation timed out"
+    },
+    {
+      "source": "retail",
+      "seed_url": "https://www.shinsegaegroupnewsroom.com/family/emart/",
+      "status": "read",
+      "title": "이마트 – 신세계그룹 뉴스룸",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "convenience",
+      "seed_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+      "status": "read",
+      "title": "NICE TO CU",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "seoul_lifelong",
+      "seed_url": "https://sll.seoul.go.kr/",
+      "status": "read",
+      "title": "서울시 평생학습포털",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "seven",
+      "seed_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "status": "read",
+      "title": "할인 카드 | 할인·멤버십 카드 | PRODUCT | 7-ELEVEN | 세븐일레븐",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "emart24",
+      "seed_url": "https://emart24.co.kr/service/alliance",
+      "status": "read",
+      "title": "제휴 서비스 - 이마트24",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "sh",
+      "seed_url": "https://www.i-sh.co.kr/app/lay2/program/S1T294C297/www/brd/m_247/list.do?multi_itm_seq=2",
+      "status": "read",
+      "title": "SH인터넷청약시스템 >SH소식>공고 및 공지>주택임대",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "eshare",
+      "seed_url": "https://www.eshare.go.kr/UserPortal/adv/unifdSearch/UnifiedSearchMainView.do",
+      "status": "read",
+      "title": "공유누리",
+      "benefit_verification": "미검증"
+    },
+    {
+      "source": "heritage",
+      "seed_url": "https://www.khs.go.kr/cha/openapi/selectEventListOpenapi.do",
+      "status": "read",
+      "title": "",
+      "benefit_verification": "미검증"
+    }
+  ]
+}

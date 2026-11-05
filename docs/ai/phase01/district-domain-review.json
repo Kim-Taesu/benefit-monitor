@@ -1,0 +1,258 @@
+{
+  "scope": "차기 별도 실사 회차의 구청 robots 검토용; 운영 수집 허용목록 변경 아님",
+  "authority_url": "https://www.seoul.go.kr/main/index.jsp",
+  "authority_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+  "reviewer": "Codex 예비 검토",
+  "domains": [
+    {
+      "district": "종로구",
+      "hostname": "www.jongno.go.kr",
+      "observed_entrypoint": "https://www.jongno.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "중구",
+      "hostname": "www.junggu.seoul.kr",
+      "observed_entrypoint": "https://www.junggu.seoul.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "용산구",
+      "hostname": "www.yongsan.go.kr",
+      "observed_entrypoint": "https://www.yongsan.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "성동구",
+      "hostname": "www.sd.go.kr",
+      "observed_entrypoint": "https://www.sd.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "광진구",
+      "hostname": "www.gwangjin.go.kr",
+      "observed_entrypoint": "https://www.gwangjin.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "동대문구",
+      "hostname": "www.ddm.go.kr",
+      "observed_entrypoint": "https://www.ddm.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "중랑구",
+      "hostname": "www.jungnang.go.kr",
+      "observed_entrypoint": "https://www.jungnang.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "성북구",
+      "hostname": "www.sb.go.kr",
+      "observed_entrypoint": "https://www.sb.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "강북구",
+      "hostname": "www.gangbuk.go.kr",
+      "observed_entrypoint": "https://www.gangbuk.go.kr/",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "도봉구",
+      "hostname": "www.dobong.go.kr",
+      "observed_entrypoint": "https://www.dobong.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "노원구",
+      "hostname": "www.nowon.kr",
+      "observed_entrypoint": "https://www.nowon.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "은평구",
+      "hostname": "www.ep.go.kr",
+      "observed_entrypoint": "https://www.ep.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "서대문구",
+      "hostname": "www.sdm.go.kr",
+      "observed_entrypoint": "https://www.sdm.go.kr/",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "마포구",
+      "hostname": "www.mapo.go.kr",
+      "observed_entrypoint": "https://www.mapo.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "양천구",
+      "hostname": "www.yangcheon.go.kr",
+      "observed_entrypoint": "https://www.yangcheon.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "강서구",
+      "hostname": "www.gangseo.seoul.kr",
+      "observed_entrypoint": "https://www.gangseo.seoul.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "구로구",
+      "hostname": "www.guro.go.kr",
+      "observed_entrypoint": "https://www.guro.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "금천구",
+      "hostname": "www.geumcheon.go.kr",
+      "observed_entrypoint": "https://www.geumcheon.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "영등포구",
+      "hostname": "www.ydp.go.kr",
+      "observed_entrypoint": "https://www.ydp.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "동작구",
+      "hostname": "www.dongjak.go.kr",
+      "observed_entrypoint": "https://www.dongjak.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "관악구",
+      "hostname": "www.gwanak.go.kr",
+      "observed_entrypoint": "https://www.gwanak.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "서초구",
+      "hostname": "www.seocho.go.kr",
+      "observed_entrypoint": "https://www.seocho.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "강남구",
+      "hostname": "www.gangnam.go.kr",
+      "observed_entrypoint": "https://www.gangnam.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "송파구",
+      "hostname": "www.songpa.go.kr",
+      "observed_entrypoint": "https://www.songpa.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    },
+    {
+      "district": "강동구",
+      "hostname": "www.gangdong.go.kr",
+      "observed_entrypoint": "https://www.gangdong.go.kr",
+      "operator_basis": "서울시 공식 자치구25 연결에서 해당 구 이름과 대응",
+      "next_allowed_step": "TLS 기본 검증·anonymous robots 선확인; 허용 경로만 별도 요청",
+      "redirect_policy": "자동 추적 금지; 목적지 별도 검토",
+      "content_access": "기존 robots 결과 또는 다음 회차 robots 판단에 따름",
+      "production_enabled": false
+    }
+  ]
+}

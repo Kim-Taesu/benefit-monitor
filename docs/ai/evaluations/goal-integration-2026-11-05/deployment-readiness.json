@@ -1,0 +1,39 @@
+{
+  "authentication": "anonymous",
+  "repository": "Kim-Taesu/benefit-monitor",
+  "requests": [
+    {
+      "kind": "pages_environment",
+      "status": "ok",
+      "data": {
+        "name": "github-pages",
+        "deployment_branch_policy": {
+          "protected_branches": false,
+          "custom_branch_policies": true
+        }
+      }
+    },
+    {
+      "kind": "pages_branch_policies",
+      "status": "ok",
+      "data": {
+        "total_count": 1,
+        "branch_policies": [
+          {
+            "name": "main",
+            "type": "branch"
+          }
+        ]
+      }
+    },
+    {
+      "kind": "work_branch",
+      "status": "ok",
+      "data": {
+        "name": "docs/ai-research-playbook",
+        "sha": "6d329c6a6f92183d7cb681814ef175ebee1ae3ac",
+        "protected": false
+      }
+    }
+  ]
+}

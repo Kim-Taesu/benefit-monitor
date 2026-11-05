@@ -1,0 +1,38 @@
+{
+  "schema_version": "research-probe-v1",
+  "checked_at": "2026-11-04T17:08:26.685139+00:00",
+  "status": "passed",
+  "request_limit": 6,
+  "request_attempts": 3,
+  "responses": 3,
+  "documents_read": 2,
+  "events": [
+    {
+      "url": "https://mediahub.seoul.go.kr/robots.txt",
+      "role": "robots",
+      "status": "ok",
+      "bytes": 278,
+      "sha256": "08ea763d6d1fa2534a090b671faa3d8932314c78785c4ddf2323b3bfa5e3e6d2"
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/news/newsMain.do",
+      "role": "seed",
+      "status": "ok",
+      "bytes": 124143,
+      "sha256": "1b6a835458f83ea6efed7682d772d9766e0df7c778c85c8c5e03dcfab4e34f23"
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/archives/2019931",
+      "role": "linked_article",
+      "status": "ok",
+      "bytes": 139395,
+      "sha256": "bc8bf20afa4e2814cb9efb40d301b43b8c03a382f9453ba7d3095b624391ef3b"
+    }
+  ],
+  "external_llm_calls": 0,
+  "redirects_followed": 0,
+  "retry_count": 0,
+  "mode": "read_only_research",
+  "reason": "seed and linked article read under robots policy",
+  "execution_note": "운영 설정 복사본의 seoul.html_url을 이미 검토한 /news/newsMain.do로 지정한 run(config) 실제 실행. 운영 sources.yaml 변경 없음."
+}

@@ -1,0 +1,33 @@
+{
+  "collection": {
+    "online": true,
+    "successful_sources": [
+      "seoul"
+    ],
+    "successful_districts": 0
+  },
+  "cost_policy": {
+    "mode": "free_public_only",
+    "paid_services_used": false,
+    "public_http_requests": 4,
+    "request_limit": 60,
+    "platform_billing": "outside_project_control"
+  },
+  "ai_review": {
+    "queued": 1,
+    "rejected": 1,
+    "awaiting_api": 0,
+    "skipped_unchanged": 0,
+    "changed_ids": [],
+    "failures": [],
+    "rows": [
+      {
+        "candidate_id": "dcba573fdf30df4046fe3307",
+        "status": "rejected_draft",
+        "review_file": "cache/ai_review/queue/4a471dfe4188e6b36b56183441e61e628be7adaa2f1a9fe0fe8dc2d74fa568bf.json"
+      }
+    ]
+  },
+  "pending_count": 8,
+  "public_release_changed": false
+}

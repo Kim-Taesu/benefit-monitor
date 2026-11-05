@@ -1,0 +1,189 @@
+[
+  {
+    "day": "2026-11-05T12:00:00+09:00",
+    "request_id": "261da3ca2b8c045561364c1d5c764fc168ff324d94c9a1638d78c4ea18a51026",
+    "original_validation": {
+      "valid": true,
+      "errors": [],
+      "assessments": [],
+      "structural_valid": true,
+      "semantic_review": {
+        "valid": true,
+        "findings": [],
+        "publication_approved": false,
+        "human_semantic_review": "required",
+        "policy": "host-topic-basis-v1"
+      }
+    },
+    "current_validation": {
+      "valid": false,
+      "errors": [
+        "topic semantics requires review"
+      ],
+      "assessments": [],
+      "structural_valid": true,
+      "semantic_review": {
+        "valid": false,
+        "findings": [
+          {
+            "code": "profile_conditions_require_review",
+            "topic_id": "age"
+          }
+        ],
+        "publication_approved": false,
+        "human_semantic_review": "required",
+        "policy": "host-topic-basis-v2"
+      }
+    },
+    "usage": {
+      "input_tokens": 22261,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 1578,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "cards": [
+      {
+        "topic_id": "culture",
+        "title": "문화·체험",
+        "item_ids": [
+          "culture-01",
+          "culture-02",
+          "culture-03"
+        ],
+        "profile_conditions": []
+      },
+      {
+        "topic_id": "family",
+        "title": "가족과 함께",
+        "item_ids": [
+          "culture-01",
+          "culture-02"
+        ],
+        "profile_conditions": []
+      },
+      {
+        "topic_id": "shopping",
+        "title": "장보기·멤버십",
+        "item_ids": [
+          "shopping-04",
+          "shopping-05",
+          "shopping-06"
+        ],
+        "profile_conditions": []
+      },
+      {
+        "topic_id": "age",
+        "title": "연령별 혜택",
+        "item_ids": [
+          "youth-01",
+          "youth-02",
+          "youth-03"
+        ],
+        "profile_conditions": [
+          {
+            "field": "age",
+            "operator": "between",
+            "min": 19,
+            "max": 39,
+            "basis": "youth-01 및 youth-03 본문의 만19~39세 청년 조건",
+            "reference_date": null
+          }
+        ]
+      }
+    ],
+    "publication_approved": false
+  },
+  {
+    "day": "2026-11-19T12:00:00+09:00",
+    "request_id": "2c6f14e18097fe9f27129f4d0ecc285ad6c883b9a5aff59e8224451b79a77536",
+    "original_validation": {
+      "valid": true,
+      "errors": [],
+      "assessments": [],
+      "structural_valid": true,
+      "semantic_review": {
+        "valid": true,
+        "findings": [],
+        "publication_approved": false,
+        "human_semantic_review": "required",
+        "policy": "host-topic-basis-v1"
+      }
+    },
+    "current_validation": {
+      "valid": true,
+      "errors": [],
+      "assessments": [],
+      "structural_valid": true,
+      "semantic_review": {
+        "valid": true,
+        "findings": [],
+        "publication_approved": false,
+        "human_semantic_review": "required",
+        "policy": "host-topic-basis-v2"
+      }
+    },
+    "usage": {
+      "input_tokens": 19235,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 1196,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "cards": [
+      {
+        "topic_id": "culture",
+        "title": "문화·체험",
+        "item_ids": [
+          "culture-02",
+          "culture-03"
+        ],
+        "profile_conditions": []
+      },
+      {
+        "topic_id": "family",
+        "title": "가족과 함께",
+        "item_ids": [
+          "culture-02"
+        ],
+        "profile_conditions": []
+      },
+      {
+        "topic_id": "shopping",
+        "title": "장보기·멤버십",
+        "item_ids": [
+          "shopping-04",
+          "shopping-06"
+        ],
+        "profile_conditions": []
+      },
+      {
+        "topic_id": "age",
+        "title": "연령별 혜택",
+        "item_ids": [
+          "youth-02"
+        ],
+        "profile_conditions": []
+      }
+    ],
+    "publication_approved": false
+  }
+]

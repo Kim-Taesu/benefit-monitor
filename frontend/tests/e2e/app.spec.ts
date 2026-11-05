@@ -4,7 +4,7 @@ import { mkdirSync } from 'node:fs';
 import { item, snapshot, NOW } from '../fixtures';
 const require=createRequire(import.meta.url);
 const axePath=require.resolve('axe-core/axe.min.js');
-const shots='../docs/qa/screenshots';
+const shots=process.env.BENEFIT_SCREENSHOT_DIR||'../docs/qa/screenshots';
 const items=[
  item(),
  item({url:'https://mediahub.seoul.go.kr/archives/2',summary:'[테스트] 생활지원 신청 안내',labels:{category:'생활지원',region:'은평구',audience:'공고 대상자',action:'신청·예약 필요'},districts:['은평구'],fee_status:'unknown',conditions:'테스트 자료. 자격·소득 조건과 참여 비용은 공식 안내 확인 필요.'}),
@@ -17,7 +17,7 @@ async function setup(page,body:unknown=snapshot(items)){
  await page.clock.install({time:new Date(NOW)});
  await page.route('**/*',async route=>{
   const url=new URL(route.request().url());
-  if(url.origin!=='http://127.0.0.1:4173')return route.abort();
+  if(url.origin!==new URL(String(test.info().project.use.baseURL)).origin)return route.abort();
   if(url.pathname.endsWith('/briefing.json'))return route.fulfill({json:body});
   return route.continue();
  });
@@ -91,7 +91,7 @@ test('open tab removes individual and file-expired cards without navigation',asy
  await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);
 });
 test('no JavaScript exposes dated text alternative',async({browser})=>{
- const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto('http://127.0.0.1:4173/benefit-monitor/');
+ const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto(String(test.info().project.use.baseURL));
  await expect(page.getByRole('link',{name:'텍스트 브리핑'})).toBeVisible();await context.close();
 });
 test('open tab gates the whole file when valid_through passes',async({page})=>{

@@ -1,0 +1,158 @@
+{
+  "schema_version": "trial-result-v1",
+  "mode": "offline_fixture",
+  "status": "completed",
+  "topics": [
+    {
+      "schema_version": "topic-draft-v1",
+      "topic_id": "local",
+      "title": "은평구 주민 프로그램",
+      "item_links": [
+        {
+          "item_id": "fixture-normal",
+          "evidence_claim_ids": [
+            "approved-normal"
+          ],
+          "reason": "은평구 주민만 신청 가능하다.",
+          "match_type": "explicit"
+        }
+      ],
+      "profile_conditions": [
+        {
+          "field": "district",
+          "operator": "eq",
+          "value": "은평구",
+          "scope": "residence_requirement"
+        }
+      ],
+      "excluded_items": [],
+      "snapshot_id": "fixture-approved-v1",
+      "audit": null
+    },
+    {
+      "schema_version": "topic-draft-v1",
+      "topic_id": "age",
+      "title": "연령 조건이 있는 프로그램",
+      "item_links": [
+        {
+          "item_id": "fixture-normal",
+          "evidence_claim_ids": [
+            "approved-normal"
+          ],
+          "reason": "만 19~39세 조건이 명시되어 있다.",
+          "match_type": "explicit"
+        }
+      ],
+      "profile_conditions": [
+        {
+          "field": "age",
+          "operator": "between",
+          "min": 19,
+          "max": 39,
+          "basis": "만 나이",
+          "reference_date": null
+        }
+      ],
+      "excluded_items": [],
+      "snapshot_id": "fixture-approved-v1",
+      "audit": null
+    },
+    {
+      "schema_version": "topic-draft-v1",
+      "topic_id": "night",
+      "title": "저녁 활동",
+      "item_links": [
+        {
+          "item_id": "fixture-normal",
+          "evidence_claim_ids": [
+            "approved-normal"
+          ],
+          "reason": "평일 19시 운영이 명시되어 있다.",
+          "match_type": "explicit"
+        }
+      ],
+      "profile_conditions": [],
+      "excluded_items": [],
+      "snapshot_id": "fixture-approved-v1",
+      "audit": null
+    },
+    {
+      "schema_version": "topic-draft-v1",
+      "topic_id": "outdoors",
+      "title": "걷기 활동",
+      "item_links": [
+        {
+          "item_id": "fixture-normal",
+          "evidence_claim_ids": [
+            "approved-normal"
+          ],
+          "reason": "실제 참여 활동이 걷기 프로그램이다.",
+          "match_type": "explicit"
+        }
+      ],
+      "profile_conditions": [],
+      "excluded_items": [],
+      "snapshot_id": "fixture-approved-v1",
+      "audit": null
+    },
+    {
+      "schema_version": "topic-draft-v1",
+      "topic_id": "culture",
+      "title": "미술 체험",
+      "item_links": [
+        {
+          "item_id": "fixture-injection",
+          "evidence_claim_ids": [
+            "approved-family"
+          ],
+          "reason": "참여 내용이 가족 미술 체험이다.",
+          "match_type": "explicit"
+        }
+      ],
+      "profile_conditions": [],
+      "excluded_items": [],
+      "snapshot_id": "fixture-approved-v1",
+      "audit": null
+    },
+    {
+      "schema_version": "topic-draft-v1",
+      "topic_id": "family",
+      "title": "어린이와 보호자 체험",
+      "item_links": [
+        {
+          "item_id": "fixture-injection",
+          "evidence_claim_ids": [
+            "approved-family"
+          ],
+          "reason": "어린이와 보호자 동반 참여 프로그램이다.",
+          "match_type": "explicit"
+        }
+      ],
+      "profile_conditions": [
+        {
+          "field": "participation",
+          "operator": "eq",
+          "value": "어린이와 보호자 동반"
+        }
+      ],
+      "excluded_items": [],
+      "snapshot_id": "fixture-approved-v1",
+      "audit": null
+    }
+  ],
+  "excluded_items": [
+    {
+      "item_id": "fixture-expired",
+      "reason": "expired_candidate"
+    },
+    {
+      "item_id": "fixture-conflict",
+      "reason": "unresolved_conflict"
+    },
+    {
+      "item_id": "fixture-attachment",
+      "reason": "unsupported_document"
+    }
+  ],
+  "errors": []
+}

@@ -1,0 +1,171 @@
+{
+  "trial_id": "conditions-prospective-04",
+  "registered_at": "2026-11-04T17:15:06.613354+00:00",
+  "protocol_version": "조건 질문 v2: 실제 이용 결정 단위",
+  "protocol_change_reason": "앞선 세 묶음은 연령·동반·지역 또는 모든 비용·예외를 한 문항에 묶어 답할 수 없는 부분의 위치가 불분명했다. 이번에는 서로 다른 이용 결정(접수, 비용, 결제, 환불, 안전 등) 단위로 미리 등록하며 각 문항 안의 미해결·충돌이 남으면 여전히0점이다. 기존 결과는 유지하며 합산·소급 재채점하지 않는다.",
+  "threshold": {
+    "questions": 20,
+    "required_resolved": 10,
+    "new_important_errors": 0
+  },
+  "selection": "고정30개 입력의 아직 상세 본문을 모델에 제시하지 않은 마지막 문화2개. 유료 테니스·어린이박물관을 포함하며 결과에 따라 대체하지 않음. 개발용 추가 실험으로 일반 모델 우위·통계적 독립성 주장 안 함.",
+  "source_timing": "목록은 제목·URL만 알려졌고 추가 상세는 네트워크 원문 해시로 잠갔으나 본문은 미판독. 질문을 먼저 등록하고 그 뒤 상세 본문을 제시한다. 로컬 판독을 새 HTTP로 세지 않음.",
+  "cases": [
+    {
+      "candidate_id": "culture-control-3",
+      "title": "서울숲 테니스장 평일",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251203104822013240",
+      "sha256": "676e29241e845a0aa6282bdcfd7080c807f99cc79e5af5ba9af6dca4fb539329",
+      "source_case_id": "culture_sports-09"
+    },
+    {
+      "candidate_id": "culture-control-4",
+      "title": "2026년 서울역사박물관 어린이박물관 관람 안내 (개인)",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260320170624732091",
+      "sha256": "a4faf7d0f5fad43cd7442a7fbe05fce36efe8e8324850542bb9fb17f5ea6fbe5",
+      "source_case_id": "culture_sports-10"
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "culture-control-3-eligibility",
+      "candidate_id": "culture-control-3",
+      "question": "거주지·회원·연령 등 테니스장 이용 자격 제한은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-party",
+      "candidate_id": "culture-control-3",
+      "question": "한 예약의 인원·코트·이용시간 한도는 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-advance",
+      "candidate_id": "culture-control-3",
+      "question": "일반·지역우선 접수 개시 시각과 사전 예약 범위는 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-deadline",
+      "candidate_id": "culture-control-3",
+      "question": "예약 마감 시각과 선착순·추첨 등 선정 방식은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-fee",
+      "candidate_id": "culture-control-3",
+      "question": "기본 이용요금과 조명 등 의무 부가요금은 얼마인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-payment",
+      "candidate_id": "culture-control-3",
+      "question": "예약 후 결제기한과 미결제 처리 방식은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-refund",
+      "candidate_id": "culture-control-3",
+      "question": "이용자 취소 시점별 환불 조건은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-weather",
+      "candidate_id": "culture-control-3",
+      "question": "우천·기상 악화 시 이용과 환불은 어떻게 처리되는가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-transfer",
+      "candidate_id": "culture-control-3",
+      "question": "예약 양도·대리사용·전매는 허용되는가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-3-equipment",
+      "candidate_id": "culture-control-3",
+      "question": "안전상 필수 복장·장비 및 현장 반입 제한은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-eligibility",
+      "candidate_id": "culture-control-4",
+      "question": "어린이박물관 개인 관람의 정확한 대상 연령과 보호자 조건은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-party",
+      "candidate_id": "culture-control-4",
+      "question": "개인 예약 인원 한도와 단체 예약의 구분은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-sessions",
+      "candidate_id": "culture-control-4",
+      "question": "회차별 시작·종료 시각과 관람 시간은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-deadline",
+      "candidate_id": "culture-control-4",
+      "question": "온라인 예약 개시·마감 시각과 선정 방식은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-closure",
+      "candidate_id": "culture-control-4",
+      "question": "정기 휴관일과 예외 운영·개인 관람 제한은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-fee",
+      "candidate_id": "culture-control-4",
+      "question": "관람료·주차비 등 명시된 필수·선택 비용은 무엇이며 비용 전체가 확인되는가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-lateness",
+      "candidate_id": "culture-control-4",
+      "question": "지각·무단불참 시 예약·입장은 어떻게 처리되는가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-transfer",
+      "candidate_id": "culture-control-4",
+      "question": "예약 양도·대리사용과 예약자 확인 조건은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-safety",
+      "candidate_id": "culture-control-4",
+      "question": "어린이 체험을 위한 필수 복장·음식물 제한은 무엇인가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    },
+    {
+      "question_id": "culture-control-4-arrival",
+      "candidate_id": "culture-control-4",
+      "question": "예약자는 현장에서 어디서 어떤 절차·증빙으로 입장하는가?",
+      "seed_known_part": "목록 제목·URL 이외 해당 조건은 아직 읽지 않음",
+      "status": "unresolved"
+    }
+  ]
+}

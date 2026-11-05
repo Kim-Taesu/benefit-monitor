@@ -1,0 +1,13 @@
+{
+  "mode": "cached_real_offline",
+  "source_file": "cache/review_texts.json",
+  "source_sha256": "061d742367ce59688e34239fa7f8280f0b33c1ad720e9d61f158478cd30e88ff",
+  "candidate_count": 30,
+  "selection": "first 30 in stored order; no outcome-based sampling",
+  "baseline": "preserved original Python candidate objects, not fresh pipeline rerun",
+  "current_code_commit": "d0812f5d324cf9111884d3b6032958a3880c6012",
+  "retrieved_at": "unknown; cache filesystem date is not retrieval proof",
+  "network_http": 0,
+  "external_api_calls": 0,
+  "scope": "Seoul mediahub articles only; issuer/citizen mix; not primary issuer validation"
+}

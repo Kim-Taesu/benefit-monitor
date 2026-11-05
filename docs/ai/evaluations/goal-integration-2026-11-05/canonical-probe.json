@@ -1,0 +1,37 @@
+{
+  "schema_version": "research-probe-v1",
+  "checked_at": "2026-11-05T02:05:14.212479+00:00",
+  "status": "passed",
+  "request_limit": 6,
+  "request_attempts": 3,
+  "responses": 3,
+  "documents_read": 2,
+  "events": [
+    {
+      "url": "https://mediahub.seoul.go.kr/robots.txt",
+      "role": "robots",
+      "status": "ok",
+      "bytes": 278,
+      "sha256": "08ea763d6d1fa2534a090b671faa3d8932314c78785c4ddf2323b3bfa5e3e6d2"
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/news/newsMain.do",
+      "role": "seed",
+      "status": "ok",
+      "bytes": 124130,
+      "sha256": "ee61005f59092d0cea9a88f0226da4f7c0eca3e0ef257e06508d6bfd6c68cb6a"
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/archives/2019931",
+      "role": "linked_article",
+      "status": "ok",
+      "bytes": 139414,
+      "sha256": "e89de214d6708c716768639795f6cbcb771ec38aff23bfb85f6e819a46a81ed8"
+    }
+  ],
+  "external_llm_calls": 0,
+  "redirects_followed": 0,
+  "retry_count": 0,
+  "mode": "read_only_research",
+  "reason": "seed and linked article read under robots policy"
+}

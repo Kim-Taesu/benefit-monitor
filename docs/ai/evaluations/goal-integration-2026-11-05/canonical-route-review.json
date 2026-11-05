@@ -1,0 +1,6 @@
+{
+  "url": "https://mediahub.seoul.go.kr/news/newsMain.do",
+  "basis": "직전302 Location의 동일 공식호스트·HTTPS·기존allowlist를 수동 확인. 자동redirect추적없음.",
+  "cooldown_elapsed": true,
+  "global_source_config_changed": false
+}

@@ -1,0 +1,209 @@
+{
+  "trial_id": "conditions-prospective-02",
+  "registration_sha256": "a85e24a7888e5a2bda62f9166bc82a32b93153d1fa255c314c01acbbeb1c673e",
+  "questions": 20,
+  "resolved_count": 2,
+  "required_resolved": 10,
+  "passed": false,
+  "inspected_details": 2,
+  "pending_details": 4,
+  "reviewer_type": "Codex 예비 검토; 사람 최종 검증 전",
+  "answers": [
+    {
+      "question_id": "culture-04-eligibility",
+      "candidate_id": "culture-04",
+      "program": "월드컵공원 오색오감 어린이 정원탐험",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "seed_known_part": "목록의 유아단체·유아/양육자·가족 또는 청년이라는 대분류만 관측",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+      "document_sha256": "9ac0484ca619436eb37609df8ee6962776e04c33d65faef7c8dd069778bb464a",
+      "remaining": "유아 단체라는 범위·15명 이내는 확인했으나 수치 연령은 미명시. 무료·주차비는 확인했으나 재료비 별도 조건 미확인. 본문2025년9월 일정과2026년11월19일 일정이 함께 남아 있음."
+    },
+    {
+      "question_id": "culture-04-fee",
+      "candidate_id": "culture-04",
+      "program": "월드컵공원 오색오감 어린이 정원탐험",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "seed_known_part": "목록 무료 표기. 무료 반복 확인은 해결0; 재료·부대비의 미확인 조건이 남으면 부분 해결",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+      "document_sha256": "9ac0484ca619436eb37609df8ee6962776e04c33d65faef7c8dd069778bb464a",
+      "remaining": "유아 단체라는 범위·15명 이내는 확인했으나 수치 연령은 미명시. 무료·주차비는 확인했으나 재료비 별도 조건 미확인. 본문2025년9월 일정과2026년11월19일 일정이 함께 남아 있음."
+    },
+    {
+      "question_id": "culture-04-deadline",
+      "candidate_id": "culture-04",
+      "program": "월드컵공원 오색오감 어린이 정원탐험",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "seed_known_part": "목록의 날짜 범위·선정방식만 관측; 시각·회차별 마감·최종 확정 조건 미확인",
+      "status": "resolved",
+      "answer": "요약 접수 종료2026-11-18 17:00 KST, 각 이용일 전일17시; 선착순. 이용일 본문의 과거2025년 일정 잔존은 별도 충돌로 보존.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+      "document_sha256": "9ac0484ca619436eb37609df8ee6962776e04c33d65faef7c8dd069778bb464a"
+    },
+    {
+      "question_id": "culture-05-eligibility",
+      "candidate_id": "culture-05",
+      "program": "유아와 양육자 겨울을 기다려요",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "seed_known_part": "목록의 유아단체·유아/양육자·가족 또는 청년이라는 대분류만 관측",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "culture-05-fee",
+      "candidate_id": "culture-05",
+      "program": "유아와 양육자 겨울을 기다려요",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "seed_known_part": "목록 무료 표기. 무료 반복 확인은 해결0; 재료·부대비의 미확인 조건이 남으면 부분 해결",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "culture-05-deadline",
+      "candidate_id": "culture-05",
+      "program": "유아와 양육자 겨울을 기다려요",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "seed_known_part": "목록의 날짜 범위·선정방식만 관측; 시각·회차별 마감·최종 확정 조건 미확인",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "culture-06-eligibility",
+      "candidate_id": "culture-06",
+      "program": "서울기록원 가족 크리스마스 풍경 등 만들기",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "seed_known_part": "목록의 유아단체·유아/양육자·가족 또는 청년이라는 대분류만 관측",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "culture-06-fee",
+      "candidate_id": "culture-06",
+      "program": "서울기록원 가족 크리스마스 풍경 등 만들기",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "seed_known_part": "목록 무료 표기. 무료 반복 확인은 해결0; 재료·부대비의 미확인 조건이 남으면 부분 해결",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "culture-06-deadline",
+      "candidate_id": "culture-06",
+      "program": "서울기록원 가족 크리스마스 풍경 등 만들기",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "seed_known_part": "목록의 날짜 범위·선정방식만 관측; 시각·회차별 마감·최종 확정 조건 미확인",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "youth-04-eligibility",
+      "candidate_id": "youth-04",
+      "program": "은평 반찬 한 상 청년정책 한 장",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "seed_known_part": "목록의 유아단체·유아/양육자·가족 또는 청년이라는 대분류만 관측",
+      "status": "resolved",
+      "answer": "서울 거점 만19~39세 청년. 은평구 거주·활동 우대. 의무복무 제대군인은 복무기간 고려 최대3년 연령상한 연장. 본인 계정·신청자/이용자 일치 필요.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+      "document_sha256": "6d2b429b4f6fdf1a0ba73d50db8c343250281fd488269f3c977becbc0e1c9444"
+    },
+    {
+      "question_id": "youth-04-fee",
+      "candidate_id": "youth-04",
+      "program": "은평 반찬 한 상 청년정책 한 장",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "seed_known_part": "목록 무료 표기. 무료 반복 확인은 해결0; 재료·부대비의 미확인 조건이 남으면 부분 해결",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+      "document_sha256": "6d2b429b4f6fdf1a0ba73d50db8c343250281fd488269f3c977becbc0e1c9444",
+      "remaining": "요약 접수 마감11월12일15시와 본문11월11일13시 충돌. 사전 설문 완료·선정 문자로 최종 확정. 무료 표기 외 재료비·부대비 전체 조건은 미확인."
+    },
+    {
+      "question_id": "youth-04-deadline",
+      "candidate_id": "youth-04",
+      "program": "은평 반찬 한 상 청년정책 한 장",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "seed_known_part": "목록의 날짜 범위·선정방식만 관측; 시각·회차별 마감·최종 확정 조건 미확인",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+      "document_sha256": "6d2b429b4f6fdf1a0ba73d50db8c343250281fd488269f3c977becbc0e1c9444",
+      "remaining": "요약 접수 마감11월12일15시와 본문11월11일13시 충돌. 사전 설문 완료·선정 문자로 최종 확정. 무료 표기 외 재료비·부대비 전체 조건은 미확인."
+    },
+    {
+      "question_id": "youth-05-eligibility",
+      "candidate_id": "youth-05",
+      "program": "관악 나를 지키는 호신술",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "seed_known_part": "목록의 유아단체·유아/양육자·가족 또는 청년이라는 대분류만 관측",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "youth-05-fee",
+      "candidate_id": "youth-05",
+      "program": "관악 나를 지키는 호신술",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "seed_known_part": "목록 무료 표기. 무료 반복 확인은 해결0; 재료·부대비의 미확인 조건이 남으면 부분 해결",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "youth-05-deadline",
+      "candidate_id": "youth-05",
+      "program": "관악 나를 지키는 호신술",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "seed_known_part": "목록의 날짜 범위·선정방식만 관측; 시각·회차별 마감·최종 확정 조건 미확인",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "youth-06-eligibility",
+      "candidate_id": "youth-06",
+      "program": "강북 김장 한 판 수육 한 점",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "seed_known_part": "목록의 유아단체·유아/양육자·가족 또는 청년이라는 대분류만 관측",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "youth-06-fee",
+      "candidate_id": "youth-06",
+      "program": "강북 김장 한 판 수육 한 점",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "seed_known_part": "목록 무료 표기. 무료 반복 확인은 해결0; 재료·부대비의 미확인 조건이 남으면 부분 해결",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "youth-06-deadline",
+      "candidate_id": "youth-06",
+      "program": "강북 김장 한 판 수육 한 점",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "seed_known_part": "목록의 날짜 범위·선정방식만 관측; 시각·회차별 마감·최종 확정 조건 미확인",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "retail-bc-conditions",
+      "candidate_id": "retail-bc",
+      "program": "11월 이마트24 BC카드 할인",
+      "question": "대상 카드·상품, 최소구매액·한도와 제외 조건은 무엇인가?",
+      "seed_known_part": "공식 목록·상세 HTML의 기간11월1~30일만 확인; 안내 이미지 미열람",
+      "status": "awaiting_additional_document",
+      "answer": null
+    },
+    {
+      "question_id": "retail-new-member-conditions",
+      "candidate_id": "retail-new-member",
+      "program": "11월 이마트24 신규가입",
+      "question": "신규 자격, 실제 구매비용·최소결제액, 쿠폰 한도·유효기간은 무엇인가?",
+      "seed_known_part": "공식 목록·상세 HTML의 기간11월1~30일만 확인;2 MiB 초과 이미지 판독 불가",
+      "status": "awaiting_additional_document",
+      "answer": null
+    }
+  ]
+}

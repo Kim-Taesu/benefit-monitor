@@ -1,0 +1,25 @@
+{
+  "scope": "사용자 Phase0~4 초기 달성조건의 현재 증거 및 명시적 최종 검토 대조",
+  "passed": true,
+  "review_result_sha256": "68ab282df9205a4e5b11972a9b667062cb08ede3c359e876355f619121b19bc5",
+  "frozen_packet_unchanged": true,
+  "baseline_and_sources_unchanged": true,
+  "new_http_requests": 0,
+  "new_candidates_by_category": [
+    3,
+    3,
+    3
+  ],
+  "resolved_questions": 11,
+  "question_denominator": 20,
+  "human_reported_important_errors": 0,
+  "human_related_profiles": 10,
+  "profile_denominator": 10,
+  "known_constraint_violations": 0,
+  "prior_failures_preserved": true,
+  "all_historical_runs_policy_clean": false,
+  "out_of_scope": [
+    "온라인A/B·누락률·검토시간",
+    "API과금·공개베타·main병합"
+  ]
+}

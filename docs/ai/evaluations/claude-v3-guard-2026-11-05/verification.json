@@ -1,0 +1,24 @@
+{
+  "tests": {
+    "count": 302,
+    "result": "passed",
+    "command": "python3 -m unittest discover -s tests -v"
+  },
+  "compileall": "passed",
+  "diff_check": "passed",
+  "new_api_calls": 0,
+  "new_http_requests": 0,
+  "live_artifacts_unchanged": 109,
+  "frozen_hashes_verified": 14,
+  "free_policy_unchanged": true,
+  "credential_pattern_leaks": [],
+  "independent_review": false,
+  "v3_model_quality": "not_measured",
+  "source_sha256": {
+    "benefit_monitor/research_guard.py": "e29bd10798fc8ab80bf9896091260f6a0c160837198cf1539e2e2273e18d0ad4",
+    "benefit_monitor/research_extraction.py": "72d34216d648b3ef4dbc84ac2a378c8862e5e41e8a23dd8a8d4061bb445204f6",
+    "benefit_monitor/claude_trial.py": "215fc0c6ca73f080f4926b8288676381e26c5037a53bd832841de5d76a648289",
+    "benefit_monitor/replay_research_guard.py": "aced24d32c85b52af0366b07d8ba3d0a43b4f3af10be0d426113e98cbe9e33f7",
+    "docs/ai/schemas/research-extraction-v3.schema.json": "f91482bda9fe8194f4c1dba5d77aeb5f43e8905c165b782febd411e5c26ca59d"
+  }
+}
