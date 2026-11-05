@@ -19,7 +19,10 @@ from .validation import official
 from . import wire_format
 
 API = 'https://api.anthropic.com'
+API_VERSION = '2023-06-01'
 MAX_BYTES = 64_000
+# Host files keep local-gate metadata that is stripped before sending; the request body keeps MAX_BYTES.
+MAX_INPUT_FILE = 256_000
 MAX_RESPONSE = 2 * 1024 * 1024
 # Structured-output schemas compile on first use; the provider allows up to 180 seconds.
 TIMEOUT_SECONDS = 300
@@ -66,6 +69,20 @@ def configured_key(root):
 
 def network_open(request):
     return build_opener(NoRedirect()).open(request, timeout=TIMEOUT_SECONDS)
+
+
+def redacted_detail(error, key):
+    try:
+        data = json.loads(error.read(8192))
+        message = data.get('error', {}).get('message', '')
+        if isinstance(message, str):
+            detail = message.replace(key, '[redacted]')
+            return re.sub(r'sk-ant-[A-Za-z0-9_\-]+', '[redacted]', detail)[:400]
+    except (ValueError, TypeError, AttributeError):
+        pass
+    finally:
+        error.close()
+    return None
 
 
 class ClaudeClient:
@@ -119,9 +136,7 @@ class ClaudeClient:
             os.close(fd)
         except FileExistsError:
             raise TrialError('previous request unresolved; no automatic retry') from None
-        request = Request(API + path, data=body, headers={
-            'x-api-key':self.key, 'anthropic-version':'2023-06-01',
-            'Content-Type':'application/json', 'User-Agent':'BenefitMonitor-ClaudeTrial/1.0'})
+        request = Request(API + path, data=body, headers=self._headers())
         try:
             with network_open(request) as response:
                 raw = response.read(MAX_RESPONSE + 1)
@@ -163,18 +178,7 @@ class ClaudeClient:
             return result
         except HTTPError as error:
             code = 'http_' + str(error.code)
-            detail = None
-            try:
-                data = json.loads(error.read(8192))
-                message = data.get('error', {}).get('message', '')
-                if isinstance(message, str):
-                    detail = message.replace(self.key, '[redacted]')
-                    detail = re.sub(r'sk-ant-[A-Za-z0-9_\-]+', '[redacted]', detail)[:400]
-            except (ValueError, TypeError, AttributeError):
-                pass
-            finally:
-                error.close()
-            self.budget.fail(digest, code, detail)
+            self.budget.fail(digest, code, redacted_detail(error, self.key))
             raise TrialError('Claude request failed: ' + code) from None
         except Exception:
             # Provider errors and arbitrary exception reprs may contain credentials.
@@ -182,10 +186,14 @@ class ClaudeClient:
                 self.budget.fail(digest, 'transport_or_usage_failure')
             raise TrialError('Claude response unavailable or usage unverified; reservation retained') from None
 
+    def _headers(self):
+        return {'x-api-key':self.key, 'anthropic-version':API_VERSION,
+                'Content-Type':'application/json', 'User-Agent':'BenefitMonitor-ClaudeTrial/1.0'}
+
     def models(self):
         return self._request('/v1/models?limit=100')
 
-    def message(self, system, user, max_tokens=4096, retry_failed_once=False, output_schema=None):
+    def payload(self, system, user, max_tokens=4096, output_schema=None):
         if type(max_tokens) is not int or not 1 <= max_tokens <= 8192:
             raise ValueError('invalid output token limit')
         payload = dict(model=self.budget.summary()['model'], max_tokens=max_tokens, system=system,
@@ -194,6 +202,47 @@ class ClaudeClient:
             # Checked before the reservation so an over-limit schema never costs a request.
             wire_format.check_limits(output_schema)
             payload['output_config'] = {'format':{'type':'json_schema','schema':output_schema}}
+        return payload
+
+    def count_tokens(self, payload):
+        """Free provider check of the exact request shape. Never reserves, settles or retries."""
+        body = json.dumps({k:v for k, v in payload.items() if k != 'max_tokens'},
+                          ensure_ascii=False, separators=(',', ':')).encode()
+        if len(body) > MAX_BYTES or self.key.encode() in body:
+            raise ValueError('trial input exceeds limit or contains credentials')
+        request = Request(API + '/v1/messages/count_tokens', data=body, headers=self._headers())
+        try:
+            with network_open(request) as response:
+                raw = response.read(65_536)
+            if self.key.encode() in raw:
+                raise ValueError('secret echo')
+            tokens = json.loads(raw)['input_tokens']
+            if type(tokens) is not int or not 0 < tokens <= 100_000:
+                raise ValueError('unexpected token count')
+        except HTTPError as error:
+            code = 'http_' + str(error.code)
+            self._preflight_failure(code, redacted_detail(error, self.key))
+            raise TrialError('preflight rejected before reservation: ' + code) from None
+        except Exception:
+            self._preflight_failure('transport_or_shape_failure', None)
+            raise TrialError('preflight unavailable; no request reserved') from None
+        self.last_preflight = {'endpoint':'/v1/messages/count_tokens', 'anthropic_version':API_VERSION,
+                               'input_tokens':tokens, 'billed':False}
+        return tokens
+
+    def _preflight_failure(self, code, detail):
+        # Kept beside the ledger so the cloud runtime archive preserves the reason.
+        path = self.root / 'preflight-failures.json'
+        rows = json.loads(path.read_text()) if path.is_file() else []
+        rows.append({'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(), 'code':code, 'detail':detail})
+        path.write_text(json.dumps(rows[-50:], ensure_ascii=False, indent=2) + '\n')
+
+    def message(self, system, user, max_tokens=4096, retry_failed_once=False, output_schema=None, preflight=False):
+        payload = self.payload(system, user, max_tokens, output_schema)
+        self.last_preflight = None
+        if preflight:
+            # A provider rejection here stops the run before any reservation or request count.
+            self.count_tokens(payload)
         return self._request('/v1/messages', payload, retry_failed_once=retry_failed_once)
 
 
@@ -342,7 +391,7 @@ def topic_model_input(host):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('init','status','auth','run','resume'))
+    parser.add_argument('command', choices=('init','status','auth','run','resume','preflight'))
     parser.add_argument('--root', type=Path, default=Path.cwd())
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
@@ -379,9 +428,9 @@ def main():
                           'cached':client.last_cached,'haiku_model_ids':[x for x in ids if x.startswith('claude-haiku')]}, ensure_ascii=False))
         return 0 if budget.summary()['model'] in ids else 1
     if not args.kind or not args.input:
-        parser.error('run requires --kind and --input')
+        parser.error('run and preflight require --kind and --input')
     input_path = args.input.resolve()
-    if not input_path.is_relative_to(root) or input_path.stat().st_size > MAX_BYTES:
+    if not input_path.is_relative_to(root) or input_path.stat().st_size > MAX_INPUT_FILE:
         parser.error('input must be a bounded project-local file')
     host = json.loads(input_path.read_text())
     if host.get('mode') != 'api_agent':
@@ -403,8 +452,16 @@ def main():
             parser.error('repair path escapes trial root')
         user_input = repair_context(host,args.kind,previous,model_input)
     client = ClaudeClient(folder, budget, configured_key(root))
-    result = client.message(system, json.dumps(user_input, ensure_ascii=False,separators=(',',':')),
-                            max_tokens=8192, retry_failed_once=args.retry_failed_once, output_schema=schema)
+    user_text = json.dumps(user_input, ensure_ascii=False,separators=(',',':'))
+    if args.command == 'preflight':
+        # Free token count only: no reservation, no request count, no model output.
+        tokens = client.count_tokens(client.payload(system, user_text, 8192, schema))
+        print(json.dumps({'status':'preflight_passed','kind':args.kind,'input_tokens':tokens,'billed':False,
+                          'anthropic_version':API_VERSION,'schema_limits':{k:sorted(v) if isinstance(v,set) else v for k,v in wire_format.limits(schema).items()},
+                          'request_count':budget.summary()['request_count']},ensure_ascii=False))
+        return 0
+    result = client.message(system, user_text, max_tokens=8192, retry_failed_once=args.retry_failed_once,
+                            output_schema=schema, preflight=True)
     run_id = client.last_request_id
     destination = folder/'runs'/run_id
     if not destination.resolve().is_relative_to(folder.resolve()):
@@ -418,6 +475,7 @@ def main():
                 'input_sha256':hashlib.sha256(json.dumps(host,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
                 'prompt_sha256':hashlib.sha256(system.encode()).hexdigest(),'repair_of':args.repair_from,
                 'cached':client.last_cached,'wire_decoder':'structured-output-v1','usage':result['usage'],
+                'preflight':client.last_preflight,
                 'schema_sha256':hashlib.sha256(json.dumps(schema,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
                 'model_output_contract':wire_format.RESEARCH_WIRE if args.kind == 'research' else wire_format.TOPIC_WIRE}
     (destination/'metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n')

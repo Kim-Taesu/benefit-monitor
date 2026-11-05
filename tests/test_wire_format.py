@@ -30,7 +30,49 @@ def wire(**facts):
                 records=[dict(candidate_id='c1', research_status='completed', stop_reason='sufficient_evidence', facts=base)])
 
 
+def conforms(value, node, root):
+    """Small validator for the keywords the wire schemas use; refs must resolve inside $defs."""
+    if '$ref' in node:
+        prefix = '#/$defs/'
+        assert node['$ref'].startswith(prefix), node['$ref']
+        return conforms(value, root['$defs'][node['$ref'][len(prefix):]], root)
+    if 'anyOf' in node:
+        return any(conforms(value, branch, root) for branch in node['anyOf'])
+    if 'enum' in node:
+        return value in node['enum']
+    kind = node.get('type')
+    if kind == 'object':
+        return (isinstance(value, dict) and set(value) == set(node['properties']) == set(node['required'])
+                and all(conforms(value[k], v, root) for k, v in node['properties'].items()))
+    if kind == 'array':
+        return (isinstance(value, list) and len(value) >= node.get('minItems', 0)
+                and all(conforms(item, node['items'], root) for item in value))
+    if kind == 'string':
+        import re
+        return isinstance(value, str) and ('pattern' not in node or re.search(node['pattern'], value) is not None)
+    if kind == 'integer':
+        return type(value) is int
+    raise AssertionError('unexpected schema node: ' + json.dumps(node))
+
+
 class ResearchWireTests(unittest.TestCase):
+    def test_shared_shapes_use_resolvable_defs_and_samples_conform(self):
+        schema = w.research_wire_schema()
+        text = json.dumps(schema)
+        self.assertEqual(set(schema['$defs']), {'evidence', 'unknown'})
+        self.assertEqual(text.count('"unknown_reason": {'), 1)
+        sample = wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': [{'segment_id': 'd1s4'}]},
+                      event_period={'status': 'supported', 'value': {'start': '2026-11-07', 'end': ''},
+                                    'evidence': [{'segment_id': 'd1s1'}]})
+        self.assertTrue(conforms(sample, schema, schema))
+        bad = [wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': []}),
+               wire(availability={'status': 'supported', 'value': 'x', 'evidence': [{'segment_id': 'd1s1'}]}),
+               wire(event_period={'status': 'supported', 'value': {'start': '11월 7일', 'end': ''},
+                                  'evidence': [{'segment_id': 'd1s1'}]}),
+               wire(selection={'status': 'unknown'})]
+        for value in bad:
+            self.assertFalse(conforms(value, schema, schema))
+
     def test_schema_is_static_and_inside_provider_limits(self):
         schema = w.research_wire_schema()
         self.assertEqual(schema, w.research_wire_schema())
@@ -119,6 +161,13 @@ class TopicWireTests(unittest.TestCase):
         self.assertEqual(w.limits(schema)['unions'], 1)
         branches = schema['properties']['topics']['items']['anyOf']
         self.assertEqual([b['properties']['topic_id']['enum'] for b in branches], [['culture'], ['family']])
+        self.assertEqual(json.dumps(schema).count('"reason": {"type": "string"}, "match_type"'), 2)
+        sample = dict(wire_version=w.TOPIC_WIRE, status='completed', errors=[], excluded_items=[],
+                      topics=[dict(topic_id='family', item_links=[dict(item_id='b', reason='r', match_type='explicit')],
+                                   excluded_items=[dict(item_id='a', reason='가족 근거 없음')])])
+        self.assertTrue(conforms(sample, schema, schema))
+        sample['topics'][0]['item_links'][0]['item_id'] = 'a'
+        self.assertFalse(conforms(sample, schema, schema))
 
     def test_no_eligible_topic_stops_before_any_request(self):
         empty = topic_host()
