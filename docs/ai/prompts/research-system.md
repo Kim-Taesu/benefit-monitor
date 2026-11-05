@@ -40,13 +40,31 @@
 | conditions | 이용자가 알아야 할 핵심 조건 묶음 |
 | districts | 혜택이 적용되는 서울 자치구. 주최 기관 주소만으로 정하지 않는다 |
 
+## 출력 칸
+
+`facts`는 위 표의 필드를 한 번씩, 모두 담은 배열이다. 각 항목은 같은 칸을 가진다.
+
+| 칸 | 쓰는 필드 |
+|---|---|
+| `text` | 글로 된 필드 전부, fee_status 값, eligibility의 scope |
+| `items` | eligibility의 required, districts 이름 목록 |
+| `not_confirmed` | eligibility의 not_confirmed |
+| `start`, `end` | event_period, application_period |
+| `number` | capacity |
+| `segment_ids` | 근거 조각 ID |
+| `unknown_reason` | unknown일 때 이유 |
+
+- 그 필드에 쓰지 않는 칸은 빈 문자열, 빈 배열, 0으로 둔다.
+- `unknown`이면 값 칸과 segment_ids를 비우고 unknown_reason만 쓴다. 호스트는 unknown의 값과 근거를 버린다.
+- `supported`나 `disputed`면 segment_ids에 조각을 하나 이상 고르고 unknown_reason은 빈 문자열로 둔다.
+- districts는 "강남구"처럼 서울 자치구 정식 이름으로 쓴다.
+
 ## 판단 규칙
 
 - 원문에 적힌 것만 쓴다. 요일, 출생연도, 절약액, 마감일을 계산하거나 추정하지 않는다.
 - 다른 연도, 차수, 지점, 프로그램의 조건을 합치지 않는다.
 - `unknown`에는 무엇이 원문에 없었는지 구체적인 `unknown_reason`을 쓴다.
-- 모든 필드는 `status`, `value`, `evidence`, `unknown_reason` 네 칸을 항상 가진다. `unknown`이면 value는 형식에 맞는 빈 값(빈 문자열, 빈 배열, 0)으로 두고 evidence는 비운다. 호스트는 unknown의 value와 evidence를 버린다.
-- `supported`나 `disputed`면 evidence에 조각을 하나 이상 고르고 unknown_reason은 빈 문자열로 둔다.
+
 - 접수 기간에 날짜만 있고 시각이 없으면 application_period를 unknown으로 두고, unknown_reason에 원문의 날짜와 "시각 미기재"를 적는다. 시각을 지어내지 않는다.
 - 요약의 대상란이 "제한없음"이어도 본문에 유아 동반, 가족 대상, 성인 전용, 회원 한정, 나이 범위 같은 문구가 있으면 그 제한을 eligibility.required나 restrictions에 그대로 남기고 그 문장을 근거로 고른다. 관계가 불분명하면 disputed나 not_confirmed로 남긴다.
 - scope가 restricted면 required에 구체적인 조건을 적는다. unrestricted면 required를 비운다.

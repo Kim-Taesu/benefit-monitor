@@ -12,10 +12,11 @@ from urllib.error import HTTPError,URLError
 from .age_state import AgeState
 from .ai_daily import daily
 from .briefing import SEOUL
-from .claude_trial import configured_key
+from .claude_trial import ClaudeClient,configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
 from .mirror import run as mirror,restore as restore_mirror
 from .public_snapshot import validate
+from .wire_format import research_wire_schema
 from .store import load,save
 from .trial_budget import TrialBudget,CAP,MAX_REQUESTS,MAX_RUN_DAYS
 from scripts.install_age import safe_path
@@ -51,7 +52,7 @@ def disable_workflow(store):
 
 # GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
 FALLBACK_REFRESH_HOUR=10
-ATTENTION={'completed_with_provider_failure'}
+ATTENTION={'completed_with_provider_failure','probe_rejected'}
 
 
 def todays_refresh(store,now):
@@ -100,7 +101,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     return {'status':'dispatched_not_yet_verified','snapshot_commit':commit,'code_sha':code,'ref':'main'}
 
 
-def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False):
+def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False):
     trusted_environment()
     root=Path(root).resolve();now=now or datetime.now(SEOUL)
     if now.tzinfo is None:raise ValueError('timezone required')
@@ -111,11 +112,11 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False)
     # Trusted runner applies the approved limit revision once with its short-lived token.
     revised=preflight.apply_limit_revision()
     resumed=False
-    if (resume or retry) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
-        raise ValueError('halt review and day retry require a manual dispatch')
+    if (resume or retry or probe_only) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
+        raise ValueError('halt review, day retry and grammar probe require a manual dispatch')
     if resume:
         resumed=preflight.resume_after_review(now)
-    if not check_only:
+    if not check_only or probe_only:
         if not preflight.control['active']:return {'status':'handoff_required'}
         control=preflight.control;budget=control['budget']
         stop=('trial_expired' if now>=datetime.fromisoformat(control['expires_at']) else
@@ -132,6 +133,13 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False)
     summary={'requests':len(budget['requests']),'exposure_microdollars':budget['exposure_microdollars'],
              'day_status':session.control['days'].get(day,{}).get('status'),'active':session.control['active'],
              'halt_resumed':resumed}
+    if probe_only:
+        # Paid but tiny; never marks a day. Persists the probe cache and the ledger row.
+        client=ClaudeClient(safe_path(root,'.tools/claude-trial/live'),
+                            TrialBudget(safe_path(root,BUDGET),checkpoint=session.checkpoint_budget),key)
+        probe=client.grammar_probe(research_wire_schema())
+        session.save_runtime()
+        return dict(summary,status='probe_'+probe['status'],probe=probe)
     if check_only:
         data=dict(session.control)
         data['check']={'snapshot_sha256':snapshot_digest(data),'ref':os.environ.get('GITHUB_REF',''),
@@ -189,7 +197,8 @@ def main():
 def exit_code(result):
     """A finished day with provider rejections must not look green in Actions."""
     if result.get('status') in ATTENTION:
-        print('::error::AI provider rejected '+str(len(result.get('provider_failures',[])))+' request(s); trial halted='+str(result.get('halted')))
+        if result['status']=='probe_rejected':print('::error::grammar probe rejected the research schema; trial not halted')
+        else:print('::error::AI provider rejected '+str(len(result.get('provider_failures',[])))+' request(s); trial halted='+str(result.get('halted')))
         return 1
     return 0
 

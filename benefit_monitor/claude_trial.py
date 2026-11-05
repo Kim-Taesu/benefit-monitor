@@ -85,6 +85,10 @@ def redacted_detail(error, key):
     return None
 
 
+PROBE_SYSTEM = 'Grammar compile check. Reply with the smallest JSON value that matches the schema.'
+PROBE_MAX_TOKENS = 16
+
+
 class ClaudeClient:
     def __init__(self, root, budget, key):
         self.root, self.budget, self.key = Path(root), budget, key
@@ -93,7 +97,7 @@ class ClaudeClient:
             raise ValueError('response directory escapes trial root')
         self.cache.mkdir(mode=0o700, parents=True, exist_ok=True)
 
-    def _request(self, path, payload=None, retry_failed_once=False):
+    def _request(self, path, payload=None, retry_failed_once=False, probe=False):
         state = self.budget.summary()
         body = json.dumps(payload, ensure_ascii=False, separators=(',', ':')).encode() if payload is not None else None
         if body is not None and (len(body) > MAX_BYTES or self.key.encode() in body):
@@ -178,7 +182,8 @@ class ClaudeClient:
             return result
         except HTTPError as error:
             code = 'http_' + str(error.code)
-            self.budget.fail(digest, code, redacted_detail(error, self.key))
+            # A rejected grammar probe is unbilled and stops only the stage, not the trial.
+            self.budget.fail(digest, code, redacted_detail(error, self.key), halt=not (probe and error.code == 400))
             raise TrialError('Claude request failed: ' + code) from None
         except Exception:
             # Provider errors and arbitrary exception reprs may contain credentials.
@@ -236,6 +241,32 @@ class ClaudeClient:
         rows = json.loads(path.read_text()) if path.is_file() else []
         rows.append({'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(), 'code':code, 'detail':detail})
         path.write_text(json.dumps(rows[-50:], ensure_ascii=False, indent=2) + '\n')
+
+    def grammar_probe(self, schema):
+        """Paid, tiny request that only proves the provider compiles this schema's grammar.
+
+        count_tokens accepted schemas the provider later refused to compile, so each new
+        schema is probed once (16 output tokens). Results are cached by schema hash."""
+        key = hashlib.sha256(json.dumps(schema, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+        path = self.root / 'grammar-probes.json'
+        rows = json.loads(path.read_text()) if path.is_file() else {}
+        if key in rows:
+            return dict(rows[key], schema_sha256=key, cached=True)
+        payload = self.payload(PROBE_SYSTEM, 'probe', PROBE_MAX_TOKENS, schema)
+        try:
+            result = self._request('/v1/messages', payload, probe=True)
+            row = {'status':'passed', 'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
+                   'request_id':self.last_request_id, 'usage':result['usage']}
+        except TrialError:
+            state = self.budget.summary()
+            ledger = next((r for r in state['requests'] if r['id'] == self.last_request_id), None)
+            if state['halted'] or not ledger or ledger['status'] != 'failed' or ledger.get('error_code') != 'http_400':
+                raise
+            row = {'status':'rejected', 'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
+                   'request_id':self.last_request_id, 'detail':ledger.get('error_detail')}
+        rows[key] = row
+        path.write_text(json.dumps(rows, ensure_ascii=False, indent=2) + '\n')
+        return dict(row, schema_sha256=key, cached=False)
 
     def message(self, system, user, max_tokens=4096, retry_failed_once=False, output_schema=None, preflight=False):
         payload = self.payload(system, user, max_tokens, output_schema)
@@ -391,7 +422,7 @@ def topic_model_input(host):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('init','status','auth','run','resume','preflight'))
+    parser.add_argument('command', choices=('init','status','auth','run','resume','preflight','probe'))
     parser.add_argument('--root', type=Path, default=Path.cwd())
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
@@ -427,8 +458,12 @@ def main():
         print(json.dumps({'authentication':'passed','configured_model_available':budget.summary()['model'] in ids,
                           'cached':client.last_cached,'haiku_model_ids':[x for x in ids if x.startswith('claude-haiku')]}, ensure_ascii=False))
         return 0 if budget.summary()['model'] in ids else 1
+    if args.command == 'probe' and args.kind == 'research' and not args.input:
+        result = ClaudeClient(folder, budget, configured_key(root)).grammar_probe(wire_format.research_wire_schema())
+        print(json.dumps(dict(result, kind='research'), ensure_ascii=False))
+        return 0 if result['status'] == 'passed' else 1
     if not args.kind or not args.input:
-        parser.error('run and preflight require --kind and --input')
+        parser.error('run, preflight and topic probe require --kind and --input')
     input_path = args.input.resolve()
     if not input_path.is_relative_to(root) or input_path.stat().st_size > MAX_INPUT_FILE:
         parser.error('input must be a bounded project-local file')
@@ -460,6 +495,10 @@ def main():
                           'anthropic_version':API_VERSION,'schema_limits':{k:sorted(v) if isinstance(v,set) else v for k,v in wire_format.limits(schema).items()},
                           'request_count':budget.summary()['request_count']},ensure_ascii=False))
         return 0
+    probe = client.grammar_probe(schema)
+    if args.command == 'probe' or probe['status'] != 'passed':
+        print(json.dumps(dict(probe, kind=args.kind, status='grammar_'+probe['status']), ensure_ascii=False))
+        return 0 if probe['status'] == 'passed' else 1
     result = client.message(system, user_text, max_tokens=8192, retry_failed_once=args.retry_failed_once,
                             output_schema=schema, preflight=True)
     run_id = client.last_request_id
