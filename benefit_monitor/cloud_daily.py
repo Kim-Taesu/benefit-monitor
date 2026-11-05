@@ -13,7 +13,7 @@ from .age_state import AgeState
 from .ai_daily import daily
 from .briefing import SEOUL
 from .claude_trial import configured_key
-from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET
+from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
 from .mirror import run as mirror
 from .public_snapshot import validate
 from .store import load,save
@@ -89,7 +89,12 @@ def cloud_run(root,now=None,check_only=True,store=None):
     day=now.date().isoformat()
     summary={'requests':len(budget['requests']),'exposure_microdollars':budget['exposure_microdollars'],
              'day_status':session.control['days'].get(day,{}).get('status'),'active':session.control['active']}
-    if check_only:return dict(summary,status='check_passed')
+    if check_only:
+        data=dict(session.control)
+        data['check']={'snapshot_sha256':snapshot_digest(data),'ref':os.environ.get('GITHUB_REF',''),
+                       'code_sha':os.environ.get('GITHUB_SHA',''),'run_id':os.environ.get('GITHUB_RUN_ID','')}
+        session._commit(data)  # Confirms contents:write without day or provider admission.
+        return dict(summary,status='check_passed')
     if not session.control['active']:return {'status':'handoff_required'}
     stop=('trial_expired' if now>=datetime.fromisoformat(session.control['expires_at']) else
           'trial_run_limit' if len(session.control['days'])>=4 else

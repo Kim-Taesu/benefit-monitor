@@ -1,0 +1,46 @@
+name: AI daily trial
+on:
+  schedule:
+    # KST 06:00..23:45; delayed runs still use program admission gates.
+    - cron: '*/15 0-14,21-23 * * *'
+  workflow_dispatch:
+    inputs:
+      check_only:
+        description: '복원·Secret·원격 저장만 검증, Claude 호출 없음'
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency:
+  group: benefit-ai-daily
+  cancel-in-progress: false
+jobs:
+  ai:
+    if: >-
+      github.repository == 'Kim-Taesu/benefit-monitor' &&
+      github.ref == 'refs/heads/main' &&
+      github.event.repository.private == false &&
+      vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Install verified project-local age
+        run: python scripts/install_age.py
+      - name: Run bounded AI trial or check only
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          BENEFIT_AI_STATE_IDENTITY: ${{ secrets.BENEFIT_AI_STATE_IDENTITY }}
+          GH_TOKEN: ${{ github.token }}
+          BENEFIT_AI_CLOUD: '1'
+          CHECK_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.check_only && 'true' || 'false' }}
+        run: |
+          python scripts/run_ai_cloud.py

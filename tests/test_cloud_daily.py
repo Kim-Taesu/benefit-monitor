@@ -42,6 +42,9 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(m,'daily',side_effect=AssertionError('must not collect')):
             result=m.cloud_run(self.root,now=NOW,store=self.fixture.store())
             self.assertEqual(result['status'],'check_passed');self.assertEqual(result['requests'],30)
+            control=json.loads(self.fixture.store().read('control')[0])
+            self.assertEqual(control['check']['code_sha'],'a'*40)
+            self.assertEqual(control['check']['snapshot_sha256'],m.snapshot_digest(control))
             result=m.cloud_run(self.root,now=datetime.fromisoformat('2026-11-05T22:00:00+09:00'),check_only=False,store=self.fixture.store())
             self.assertEqual(result['status'],'already_completed_today')
         self.assertEqual(len(json.loads(self.fixture.store().read('control')[0])['days']),1)

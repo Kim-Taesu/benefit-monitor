@@ -30,6 +30,10 @@ def requests_digest(rows):
     return hashlib.sha256(json.dumps(rows,ensure_ascii=False,sort_keys=True,separators=(',',':')).encode()).hexdigest()
 
 
+def snapshot_digest(data):
+    return requests_digest({k:data[k] for k in ('trial_id','expires_at','recipient','api_key_sha256','budget','days','runtime_sha')})
+
+
 def _blob_sha(raw):return hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
 
 
@@ -70,7 +74,7 @@ class GitHubStateStore:
 
     def _api(self,path,body=None):
         payload=json.dumps(body,separators=(',',':')).encode() if body is not None else None
-        request=Request('https://api.github.com/repos/'+REPOSITORY+'/'+path,data=payload,
+        request=Request('https://api.github.com/repos/'+REPOSITORY+('/'+path if path else ''),data=payload,
                         headers={'Authorization':'Bearer '+self.token,'Accept':'application/vnd.github+json',
                                  'Content-Type':'application/json','User-Agent':'BenefitMonitor-AI-State/1.0'},
                         method='PUT' if body is not None else 'GET')

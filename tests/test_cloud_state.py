@@ -83,6 +83,15 @@ class CloudStateTests(unittest.TestCase):
         raw=json.dumps(self.control).encode();store.write('control',raw,None)
         return module.CloudSession.restore(self.root,store)
 
+    def test_repository_metadata_url_has_no_trailing_slash(self):
+        import io
+        store=self.store()
+        def opener(request):
+            self.assertEqual(request.full_url,'https://api.github.com/repos/Kim-Taesu/benefit-monitor')
+            return io.BytesIO(b'{"private": false}')
+        store.opener=opener
+        self.assertFalse(store._api('')['private'])
+
     def test_storage_requires_file_sha_and_does_not_expose_plain_state(self):
         store=self.store();sha=store.write('control',b'private ledger',None)
         self.assertNotEqual(self.remote.files['ai-control.age'],b'private ledger')
