@@ -8,6 +8,7 @@ import hashlib
 import json
 import socket
 import ssl
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -17,13 +18,19 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 from .collectors.html import ArticleLinks
 from .collectors.rss import AGENT, LIMIT
 from .cost_policy import RequestBudget, require_free
-from .robots import allowed
+from .robots import allowed, crawl_delay
 from .validation import official
+
+
+class RedirectBlocked(ValueError):
+    def __init__(self, code, target):
+        super().__init__('redirect_not_followed: destination needs separate policy review')
+        self.code, self.target = code, target
 
 
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise ValueError('redirect_not_followed: destination needs separate policy review')
+        raise RedirectBlocked(code, newurl)
 
 
 def error_stage(error):
@@ -61,13 +68,23 @@ def run(config, previous=None, now=None, opener=None):
     robot_url = 'https://' + urlsplit(route).netloc + '/robots.txt'
     opener = opener or build_opener(NoRedirect())  # default TLS verification and inherited proxy
     robots = {}
+    last_request = {}
 
     def fetch(url, role):
         if not official(url, source['domains']):
             raise ValueError('URL outside official HTTPS allowlist')
         if role != 'robots' and not allowed(robots[urlsplit(url).netloc], url, AGENT):
             raise ValueError('robots disallows URL')
+        host = urlsplit(url).netloc
+        if role != 'robots':
+            delay = crawl_delay(robots[host], AGENT)
+            remaining = delay - (time.monotonic() - last_request[host])
+            if remaining > 15:
+                raise ValueError('robots crawl-delay exceeds inline wait; defer this host')
+            if remaining > 0:
+                time.sleep(remaining)
         budget.consume()
+        last_request[host] = time.monotonic()
         event = {'url':url, 'role':role, 'status':'attempted'}
         report['events'].append(event)
         try:
@@ -86,8 +103,14 @@ def run(config, previous=None, now=None, opener=None):
                     report['documents_read'] += 1
                 event.update(status='ok', bytes=len(body), sha256=hashlib.sha256(body).hexdigest())
                 return text
+        except RedirectBlocked as error:
+            report['responses'] += 1
+            event.update(status='failed', stage=error_stage(error), error=str(error),
+                         http_status=error.code, redirect_target=error.target)
+            raise
         except HTTPError as error:
             report['responses'] += 1
+            error.close()
             if role == 'robots' and error.code == 404:
                 event.update(status='missing_robots_404')
                 return ''

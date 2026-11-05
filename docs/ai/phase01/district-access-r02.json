@@ -1,0 +1,1492 @@
+{
+  "run_id": "phase01-district-2026-11-05-r02",
+  "started_at": "2026-11-04T15:35:20.444781+00:00",
+  "status": "closed_at_request_limit",
+  "request_limit": 60,
+  "request_attempts": 60,
+  "prior_cumulative_requests": 60,
+  "cumulative_requests": 120,
+  "events": [
+    {
+      "url": "https://www.jongno.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.445380+00:00",
+      "status": "ok",
+      "sha256": "6e88a2987f671355902c6d2b72c0bbd11b38e05e7f8714b749684f79b80270fc",
+      "bytes": 1374,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.junggu.seoul.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.512708+00:00",
+      "status": "failed",
+      "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+      "stage": "tls"
+    },
+    {
+      "url": "https://www.yongsan.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.574387+00:00",
+      "status": "ok",
+      "sha256": "0ac2c31c420b9ab36e6cb0bcfcbaa6d317be9de1c3250f43819ac81f3b909807",
+      "bytes": 250,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.sd.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.659539+00:00",
+      "status": "failed",
+      "error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+      "stage": "tls"
+    },
+    {
+      "url": "https://www.gwangjin.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.706305+00:00",
+      "status": "ok",
+      "sha256": "209c10f5cae337d7dedadc077273619f7d0193dcadb13783cfc9c40579f71b1a",
+      "bytes": 706,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.ddm.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.780247+00:00",
+      "status": "ok",
+      "sha256": "38422830a570c1adda0fcb8de1f64fc41bdd4c4c9d0ad7f050c77bd9519ba576",
+      "bytes": 1092,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.jungnang.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.853843+00:00",
+      "status": "ok",
+      "sha256": "c3be19cdb2050a67d7c523be1f2026856ebff8e1dc40d715952ce8740981fcc9",
+      "bytes": 715,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.sb.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:20.968752+00:00",
+      "status": "ok",
+      "sha256": "e04e2631dc70a585c6b61e8216b7320cbeb5c80edbf0972f8fd56b0eca9afc3e",
+      "bytes": 97,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.sb.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:21.042355+00:00",
+      "status": "ok",
+      "sha256": "47f01171488443ac236f7ef7eca90b6e3bec39513bfe30bc5cca85b484d9824d",
+      "bytes": 784,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "url": "https://www.gangbuk.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.093526+00:00",
+      "status": "ok",
+      "sha256": "98cf6de21d12ce55db34e420f9eed9aace2ab56ed914b5938a6d61fdaa157e32",
+      "bytes": 441,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://www.dobong.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.180286+00:00",
+      "status": "ok",
+      "sha256": "182762cbaacde5e9a433cc4cf0fd4c67675b9c1003eac8d2f9fe6d7bb739cf94",
+      "bytes": 1504,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.nowon.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.256285+00:00",
+      "status": "ok",
+      "sha256": "a2921198eb08c3a22ef79929547ad9f3482967e1b42d7d43e779fbf9f04da563",
+      "bytes": 131,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.nowon.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:21.336752+00:00",
+      "status": "failed",
+      "error": "redirect_not_followed: destination needs separate policy review",
+      "stage": "transport_or_policy",
+      "http_status": 301,
+      "redirect_target": "https://www.nowon.kr/www/index.do"
+    },
+    {
+      "url": "https://www.sdm.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.413895+00:00",
+      "status": "ok",
+      "sha256": "d5fe01249d3ee909af13f3e02a4726e3c1f9fc44c36dca0b32262353511672da",
+      "bytes": 309,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.sdm.go.kr/",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:21.472863+00:00",
+      "status": "failed",
+      "error": "redirect_not_followed: destination needs separate policy review",
+      "stage": "transport_or_policy",
+      "http_status": 301,
+      "redirect_target": "https://www.sdm.go.kr/index.do"
+    },
+    {
+      "url": "https://www.mapo.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.511039+00:00",
+      "status": "ok",
+      "sha256": "2c0570ade507f8e147fb5219bfe0ff3cfebeec475151a3aadea30d5f9ff9614d",
+      "bytes": 4375,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.yangcheon.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.595511+00:00",
+      "status": "ok",
+      "sha256": "6ac5b921aed196c40d48b55d3e011040300c45e586ef9c4bdb21e5b4dfc81ebd",
+      "bytes": 1537,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.guro.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.706296+00:00",
+      "status": "ok",
+      "sha256": "62e900014360a73287b28cbaf48f9dd92e4192844bed70bc85f55c0652f14d43",
+      "bytes": 194,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.guro.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:21.811633+00:00",
+      "status": "ok",
+      "sha256": "5427e7a5d6beaff02f636fbf0dc6917df5131e57adbad6768acbfbc34a4da7dd",
+      "bytes": 1672,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "url": "https://www.geumcheon.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:21.894959+00:00",
+      "status": "ok",
+      "sha256": "052a6fb08a909f292ab016c55e0e34a6a56ea3d8701648ebf44247acad32274b",
+      "bytes": 35,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.geumcheon.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:21.959699+00:00",
+      "status": "ok",
+      "sha256": "9936cc1b2f1d7f8a4dba181a94330b63c7c8f5316eadc0ecc68fb2aa34087c56",
+      "bytes": 11447,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "url": "https://www.ydp.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:22.017897+00:00",
+      "status": "ok",
+      "sha256": "36d597839f4dbbb08cfc19848bf9f95596a50b1de1a704660f4ac017ecd9b735",
+      "bytes": 11,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.ydp.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:22.091609+00:00",
+      "status": "failed",
+      "error": "redirect_not_followed: destination needs separate policy review",
+      "stage": "transport_or_policy",
+      "http_status": 302,
+      "redirect_target": "https://www.ydp.go.kr/www/index.do"
+    },
+    {
+      "url": "https://www.dongjak.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:22.161788+00:00",
+      "status": "ok",
+      "sha256": "ea2ec7fe07a305b0c53ab55cafd68455a31a6272d0326c9c28dbe47a13ef124b",
+      "bytes": 3203,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.gwanak.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:22.263563+00:00",
+      "status": "ok",
+      "sha256": "f5a850f8a44dbf37fedc7f50b7399ad811562d94cdc5baf4e039f198181c3d39",
+      "bytes": 719,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.gwanak.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:22.336367+00:00",
+      "status": "failed",
+      "error": "redirect_not_followed: destination needs separate policy review",
+      "stage": "transport_or_policy",
+      "http_status": 301,
+      "redirect_target": "https://www.gwanak.go.kr/site/gwanak/main.do"
+    },
+    {
+      "url": "https://www.seocho.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:22.400861+00:00",
+      "status": "ok",
+      "sha256": "80decddfd783285181e110802fa8217bed20f6c5a882ada872dc02febd6a200a",
+      "bytes": 2298,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain"
+    },
+    {
+      "url": "https://www.seocho.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:22.496655+00:00",
+      "status": "ok",
+      "sha256": "87c6efcb7226e97aeb4f7c881dcec10e93b2c4207ad71446ac82b44a26ab308a",
+      "bytes": 1481,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html"
+    },
+    {
+      "url": "https://www.gangnam.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:22.546662+00:00",
+      "status": "ok",
+      "sha256": "486e156b41d129fb9aab97dbfe5187b7876f8206e0ab9fe6fdd1b0a27e52611d",
+      "bytes": 387,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain; charset=utf-8"
+    },
+    {
+      "url": "https://www.gangnam.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:22.633862+00:00",
+      "status": "ok",
+      "sha256": "8ee66098b43cb6d6dcb95ccdc5f2daab4a68d02483b45e29ef69ed63a7392455",
+      "bytes": 790,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://www.songpa.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:22.694882+00:00",
+      "status": "ok",
+      "sha256": "eda2ab2095a0692d56c76355ee1dc0066dd36fe76483b7bbfbd77aea27a4d2ad",
+      "bytes": 1007,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=utf-8"
+    },
+    {
+      "url": "https://www.songpa.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:22.774514+00:00",
+      "status": "ok",
+      "sha256": "8358667b83f82296eee147550336d793eb88250b11f84015494d2b896e5315b7",
+      "bytes": 453,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "https://www.gangdong.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:35:22.845467+00:00",
+      "status": "ok",
+      "sha256": "5244ce8f89def8c62c303fa95a557e50ee7091687368188961815eec6f5abd7f",
+      "bytes": 1408,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/plain;charset=UTF-8"
+    },
+    {
+      "url": "https://www.gangdong.go.kr",
+      "role": "seed",
+      "checked_at": "2026-11-04T15:35:22.981841+00:00",
+      "status": "ok",
+      "sha256": "b4def5577544fffba7aae02431fcde6251625090dbe67f86005197550d89c497",
+      "bytes": 97,
+      "charset": "utf-8",
+      "http_status": 200,
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "성북구",
+      "url": "https://www.sb.go.kr/www/index.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:29.166078+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+      "bytes": 382923,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "구로구",
+      "url": "https://www.guro.go.kr/www/mini.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:29.749113+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "9cc2cf060c7ebbb7dd9044bddf3f405c0a69d64be28630cae6bebf555638a05d",
+      "bytes": 68183,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "서초구",
+      "url": "https://www.seocho.go.kr/site/seocho/main.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:30.724779+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+      "bytes": 247395,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "강남구",
+      "url": "https://www.gangnam.go.kr/main.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:31.053171+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+      "bytes": 476078,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "source": "송파구",
+      "url": "https://www.songpa.go.kr/www/index.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:31.295360+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+      "bytes": 632609,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=utf-8",
+      "quarantine_reason": "crawl_delay_violation",
+      "evidence_use": "통과 근거 제외; 적법한 간격을 지킨 새 관측 전 재사용 금지"
+    },
+    {
+      "source": "강동구",
+      "url": "https://www.gangdong.go.kr/newportal/",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:31.704302+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+      "bytes": 158917,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "광진구",
+      "url": "https://www.gwangjin.go.kr/portal/main",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:32.389917+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "8cac61fa478fc9787edcefd4179620595a19a4e60be3bb9fa8be96bd8962e24f",
+      "bytes": 1248,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "source": "도봉구",
+      "url": "https://www.dobong.go.kr/default.asp",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:37:32.443885+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+      "bytes": 245117,
+      "charset": "utf-8",
+      "content_type": "text/html; Charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/management/ckImgSubmit.do?uid=dc583309-08eb-4690-a10c-bcb2e22b846c&fileName=1.JPG",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:38:51.024073+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "failed",
+      "error": "'utf-8' codec can't decode byte 0xff in position 0: invalid start byte",
+      "stage": "transport_or_policy"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/goods/event?search=%ED%95%98%EA%B2%90%EB%8B%A4%EC%A6%88",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:38:51.312374+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "dce40a2dcfa73539218fb8c5a4cca2debce5a95ba2ea13dd53d778e3b5e47b5c",
+      "bytes": 38732,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/robots.txt",
+      "role": "robots",
+      "checked_at": "2026-11-04T15:40:45.221081+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "missing_robots_404",
+      "http_status": 404,
+      "error": "HTTP Error 404: Not Found",
+      "stage": "http"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:40:45.282628+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "4a6ddb2869f8f8f4dbbbd64390e296fd1ec6ff859e87a383147a83fc9459fe5a",
+      "bytes": 118,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/index.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:41:05.228159+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "a2f62318111c778b7eb52b7a74b152518080650ff61f6e6bfd45e759a8b13a70",
+      "bytes": 3751,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/event/8401",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:41:05.283591+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "5341ea5b165e7e751b08523ad3c8ecd5035afed8c47517a8dba8d837c355050a",
+      "bytes": 34564,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/event/8503",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:41:05.350794+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "990765f2144f43e6a32ff33dfda8331455398ea0125862176a46d48bb949eed2",
+      "bytes": 34588,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/event/8301",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:41:05.450079+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "0eee263ecc06458cc72a5e198acc1429a0f47592770791220bf5d99be535dc58",
+      "bytes": 34618,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=UTF-8"
+    },
+    {
+      "source": "emart24",
+      "url": "https://emart24.co.kr/image/Mjc5OTg4",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:41:15.144138+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "failed",
+      "error": "2 MiB 초과",
+      "stage": "transport_or_policy"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/mainA.do",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:42:11.941786+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "c04ffc741cff11e561f41d6dbf21210c6f6e8a1d9767a293b95831d5d4f4c91d",
+      "bytes": 181197,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/list.do?key=2309130006",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:43:44.974814+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "4f7edb25da216734fae4f2a263f409c291e68aa5a878ad09dae59b995a859155",
+      "bytes": 240157,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/content.do?key=2310200003",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:43:46.456520+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "8fb718d0650985e5ef9ad10f8abf07de9b23dbd15f158426e064848f9c0239a4",
+      "bytes": 151764,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/list.do?key=2309130006&sw=%EC%B0%A8%ED%81%AC%EB%9D%BC%ED%8B%B0",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:45:49.488999+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "8dfc6297e35aa5a1cccd61b9954893c023c4a403ff251a1a06bd88fb70fa4854",
+      "bytes": 231529,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/list.do?key=2309130006&sw=%EB%B6%81%EB%B0%94%EC%9D%B8%EB%94%A9",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:45:50.509488+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "0cd9f585b967a3efe4fff9161b4d5e3f6d8027ca1f33c14cf3d1dfeda45d77f5",
+      "bytes": 234249,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75522",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:48:29.644233+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "0b173164c797d15184a032b5dcb4ce26302fac8f992a5ff3f30b53225fa3851e",
+      "bytes": 161390,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "youth_portal",
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75473",
+      "role": "research_document",
+      "checked_at": "2026-11-04T15:48:29.817395+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "274c8e398cafa3a717dfd34ef343c50b1a37ce7b025e636b418e400f8faf37d6",
+      "bytes": 163001,
+      "charset": "utf-8",
+      "content_type": "text/html; charset=UTF-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+      "role": "research_document",
+      "checked_at": "2026-11-04T16:00:53.139411+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "9ac0484ca619436eb37609df8ee6962776e04c33d65faef7c8dd069778bb464a",
+      "bytes": 124021,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    },
+    {
+      "source": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+      "role": "research_document",
+      "checked_at": "2026-11-04T16:00:53.323903+00:00",
+      "request_method": "GET",
+      "request_data": null,
+      "status": "ok",
+      "http_status": 200,
+      "sha256": "6d2b429b4f6fdf1a0ba73d50db8c343250281fd488269f3c977becbc0e1c9444",
+      "bytes": 128145,
+      "charset": "utf-8",
+      "content_type": "text/html;charset=utf-8"
+    }
+  ],
+  "cached_reads": 1,
+  "external_llm_calls": 0,
+  "redirects_followed": 0,
+  "ended_at": "2026-11-04T16:15:00.074277+00:00",
+  "close_reason": "현재 별도 회차60/60, 전체누적120. 같은 회차 예산 초기화·추가 HTTP 요청 없음",
+  "operational_verdict": "failed_crawl_delay",
+  "policy_incidents": [
+    {
+      "host": "www.songpa.go.kr",
+      "policy_url": "https://www.songpa.go.kr/robots.txt",
+      "declared_crawl_delay_seconds": 3600,
+      "previous_document_at": "2026-11-04T15:35:22.774514+00:00",
+      "noncompliant_document_at": "2026-11-04T15:37:31.295360+00:00",
+      "observed_document_interval_seconds": 128.520846,
+      "next_document_not_before": "2026-11-04T16:37:31.295360+00:00",
+      "affected_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+      "classification": "요청 제어 실수; 회차 운영 검증 실패",
+      "remediation": "해당 본문·파생 기관 연결 격리. 새 관측 전 통과 근거 사용 금지. 회차 간 마지막 요청 시각 기반 강제 지연."
+    }
+  ],
+  "districts": [
+    {
+      "district": "종로구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.jongno.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.445380+00:00",
+          "status": "ok",
+          "sha256": "6e88a2987f671355902c6d2b72c0bbd11b38e05e7f8714b749684f79b80270fc",
+          "bytes": 1374,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "중구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": null
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "용산구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.yongsan.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.574387+00:00",
+          "status": "ok",
+          "sha256": "0ac2c31c420b9ab36e6cb0bcfcbaa6d317be9de1c3250f43819ac81f3b909807",
+          "bytes": 250,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "성동구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": null
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "광진구",
+      "access": {
+        "status": "blocked_error_or_challenge",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gwangjin.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.706305+00:00",
+          "status": "ok",
+          "sha256": "209c10f5cae337d7dedadc077273619f7d0193dcadb13783cfc9c40579f71b1a",
+          "bytes": 706,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "광진구",
+          "url": "https://www.gwangjin.go.kr/portal/main",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:32.389917+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "8cac61fa478fc9787edcefd4179620595a19a4e60be3bb9fa8be96bd8962e24f",
+          "bytes": 1248,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=utf-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "동대문구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.ddm.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.780247+00:00",
+          "status": "ok",
+          "sha256": "38422830a570c1adda0fcb8de1f64fc41bdd4c4c9d0ad7f050c77bd9519ba576",
+          "bytes": 1092,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "중랑구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.jungnang.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.853843+00:00",
+          "status": "ok",
+          "sha256": "c3be19cdb2050a67d7c523be1f2026856ebff8e1dc40d715952ce8740981fcc9",
+          "bytes": 715,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "성북구",
+      "access": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.sb.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.968752+00:00",
+          "status": "ok",
+          "sha256": "e04e2631dc70a585c6b61e8216b7320cbeb5c80edbf0972f8fd56b0eca9afc3e",
+          "bytes": 97,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "성북구",
+          "url": "https://www.sb.go.kr/www/index.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:29.166078+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+          "bytes": 382923,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 4
+    },
+    {
+      "district": "강북구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "HTML returned instead of robots policy",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gangbuk.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.093526+00:00",
+          "status": "ok",
+          "sha256": "98cf6de21d12ce55db34e420f9eed9aace2ab56ed914b5938a6d61fdaa157e32",
+          "bytes": 441,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "도봉구",
+      "access": {
+        "status": "read",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.dobong.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.180286+00:00",
+          "status": "ok",
+          "sha256": "182762cbaacde5e9a433cc4cf0fd4c67675b9c1003eac8d2f9fe6d7bb739cf94",
+          "bytes": 1504,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "source": "도봉구",
+          "url": "https://www.dobong.go.kr/default.asp",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:32.443885+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+          "bytes": 245117,
+          "charset": "utf-8",
+          "content_type": "text/html; Charset=utf-8"
+        }
+      },
+      "discovered_slot_count": 4
+    },
+    {
+      "district": "노원구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.nowon.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.256285+00:00",
+          "status": "ok",
+          "sha256": "a2921198eb08c3a22ef79929547ad9f3482967e1b42d7d43e779fbf9f04da563",
+          "bytes": 131,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "은평구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 1,
+        "robots_evidence": {
+          "url": "https://www.ep.go.kr/robots.txt",
+          "source": "eunpyeong",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:12:19.489381+00:00",
+          "status": "ok",
+          "http_status": 200,
+          "bytes": 253,
+          "sha256": "42f822b1a7ad388b873efac0f547b0fc050a6bf283f3e253da00fc5bc6dda21c",
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "서대문구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.sdm.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.413895+00:00",
+          "status": "ok",
+          "sha256": "d5fe01249d3ee909af13f3e02a4726e3c1f9fc44c36dca0b32262353511672da",
+          "bytes": 309,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "마포구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.mapo.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.511039+00:00",
+          "status": "ok",
+          "sha256": "2c0570ade507f8e147fb5219bfe0ff3cfebeec475151a3aadea30d5f9ff9614d",
+          "bytes": 4375,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "양천구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.yangcheon.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.595511+00:00",
+          "status": "ok",
+          "sha256": "6ac5b921aed196c40d48b55d3e011040300c45e586ef9c4bdb21e5b4dfc81ebd",
+          "bytes": 1537,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "강서구",
+      "access": {
+        "status": "cached_evidence_read",
+        "original_probe_result": "blocked",
+        "reason": "호스트 실패15분 대기",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 1,
+        "robots_evidence": {
+          "url": "https://www.gangseo.seoul.kr/robots.txt",
+          "source": "gangseo",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:12:19.349912+00:00",
+          "status": "ok",
+          "http_status": 200,
+          "bytes": 725,
+          "sha256": "cee96ee7846f8e0ba3b23ab7ab457beb9d2b67de575b37f09dda1074c672fd28",
+          "content_type": "text/html; charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "gangseo",
+          "url": "https://www.gangseo.seoul.kr/index",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:30:06.152717+00:00",
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+          "bytes": 246943,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 4
+    },
+    {
+      "district": "구로구",
+      "access": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.guro.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.706296+00:00",
+          "status": "ok",
+          "sha256": "62e900014360a73287b28cbaf48f9dd92e4192844bed70bc85f55c0652f14d43",
+          "bytes": 194,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "source": "구로구",
+          "url": "https://www.guro.go.kr/www/mini.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:29.749113+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "9cc2cf060c7ebbb7dd9044bddf3f405c0a69d64be28630cae6bebf555638a05d",
+          "bytes": 68183,
+          "charset": "utf-8",
+          "content_type": "text/html;charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 2
+    },
+    {
+      "district": "금천구",
+      "access": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.geumcheon.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.894959+00:00",
+          "status": "ok",
+          "sha256": "052a6fb08a909f292ab016c55e0e34a6a56ea3d8701648ebf44247acad32274b",
+          "bytes": 35,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "url": "https://www.geumcheon.go.kr",
+          "role": "seed",
+          "checked_at": "2026-11-04T15:35:21.959699+00:00",
+          "status": "ok",
+          "sha256": "9936cc1b2f1d7f8a4dba181a94330b63c7c8f5316eadc0ecc68fb2aa34087c56",
+          "bytes": 11447,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/html"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "영등포구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.ydp.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.017897+00:00",
+          "status": "ok",
+          "sha256": "36d597839f4dbbb08cfc19848bf9f95596a50b1de1a704660f4ac017ecd9b735",
+          "bytes": 11,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "동작구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.dongjak.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.161788+00:00",
+          "status": "ok",
+          "sha256": "ea2ec7fe07a305b0c53ab55cafd68455a31a6272d0326c9c28dbe47a13ef124b",
+          "bytes": 3203,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "관악구",
+      "access": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gwanak.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.263563+00:00",
+          "status": "ok",
+          "sha256": "f5a850f8a44dbf37fedc7f50b7399ad811562d94cdc5baf4e039f198181c3d39",
+          "bytes": 719,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "서초구",
+      "access": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.seocho.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.400861+00:00",
+          "status": "ok",
+          "sha256": "80decddfd783285181e110802fa8217bed20f6c5a882ada872dc02febd6a200a",
+          "bytes": 2298,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "source": "서초구",
+          "url": "https://www.seocho.go.kr/site/seocho/main.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:30.724779+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+          "bytes": 247395,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 4
+    },
+    {
+      "district": "강남구",
+      "access": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gangnam.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.546662+00:00",
+          "status": "ok",
+          "sha256": "486e156b41d129fb9aab97dbfe5187b7876f8206e0ab9fe6fdd1b0a27e52611d",
+          "bytes": 387,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain; charset=utf-8"
+        },
+        "document_evidence": {
+          "source": "강남구",
+          "url": "https://www.gangnam.go.kr/main.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:31.053171+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+          "bytes": 476078,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=utf-8"
+        }
+      },
+      "discovered_slot_count": 4
+    },
+    {
+      "district": "송파구",
+      "access": {
+        "status": "navigation_only",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.songpa.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.694882+00:00",
+          "status": "ok",
+          "sha256": "eda2ab2095a0692d56c76355ee1dc0066dd36fe76483b7bbfbd77aea27a4d2ad",
+          "bytes": 1007,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=utf-8"
+        },
+        "document_evidence": {
+          "url": "https://www.songpa.go.kr",
+          "role": "seed",
+          "checked_at": "2026-11-04T15:35:22.774514+00:00",
+          "status": "ok",
+          "sha256": "8358667b83f82296eee147550336d793eb88250b11f84015494d2b896e5315b7",
+          "bytes": 453,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8"
+        }
+      },
+      "discovered_slot_count": 0
+    },
+    {
+      "district": "강동구",
+      "access": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gangdong.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.845467+00:00",
+          "status": "ok",
+          "sha256": "5244ce8f89def8c62c303fa95a557e50ee7091687368188961815eec6f5abd7f",
+          "bytes": 1408,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "강동구",
+          "url": "https://www.gangdong.go.kr/newportal/",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:31.704302+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+          "bytes": 158917,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        }
+      },
+      "discovered_slot_count": 4
+    }
+  ]
+}

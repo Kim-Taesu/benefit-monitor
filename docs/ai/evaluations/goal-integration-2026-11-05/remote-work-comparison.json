@@ -1,0 +1,11 @@
+{
+  "local_head": "f65f30c7fdc3cef7b7233590fbc3aa3c59feab4a",
+  "remote_head": "6d329c6a6f92183d7cb681814ef175ebee1ae3ac",
+  "local_tree": "aa55d659dfd70086062df1a0ec2931b701ae3e8b",
+  "remote_tree": "aa55d659dfd70086062df1a0ec2931b701ae3e8b",
+  "baseline_trees_identical": true,
+  "shallow": false,
+  "common_ancestor_found": false,
+  "fetch": "anonymous HTTPS; personal repository only; no credential helper",
+  "resolution": "기준 트리는 동일하다. 승인 후 양쪽 이력을 보존하는 작업 브랜치 결합과 일반 push가 필요하다. force push·main 병합은 하지 않는다."
+}

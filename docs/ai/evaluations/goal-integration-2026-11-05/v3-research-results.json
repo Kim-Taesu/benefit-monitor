@@ -1,0 +1,238 @@
+[
+  {
+    "case_id": "culture-01",
+    "request_id": "91343ea3f088a7f31351b1c7572540de3baa487e6ade0ca2bd4a394b78db5a52",
+    "original_validation": {
+      "valid": false,
+      "error": "invalid_or_truncated_model_output",
+      "stop_reason": "end_turn",
+      "content_types": [
+        "text"
+      ]
+    },
+    "current_validation": {
+      "valid": false,
+      "errors": [
+        "reason is only for unknown facts"
+      ]
+    },
+    "usage": {
+      "input_tokens": 12321,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 1790,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "publication_approved": false
+  },
+  {
+    "case_id": "youth-03",
+    "request_id": "c72d52c5d294cbf91d93b021a4c7b1f252bb9a4d1b146dc8789fb698762469f7",
+    "original_validation": {
+      "valid": true,
+      "errors": [],
+      "assessments": [
+        {
+          "candidate_id": "024f8cffc9621245601406e0",
+          "execution_status": "completed",
+          "evidence_readiness": "needs_review",
+          "synthetic": false
+        }
+      ],
+      "structural_valid": true,
+      "publication_approved": false,
+      "coverage": {
+        "valid": true,
+        "findings": [],
+        "policy": "restriction-cue-coverage-v1",
+        "publication_approved": false,
+        "human_semantic_review": "required"
+      }
+    },
+    "current_validation": {
+      "valid": false,
+      "errors": [
+        "required fields or restriction coverage requires review"
+      ],
+      "assessments": [
+        {
+          "candidate_id": "024f8cffc9621245601406e0",
+          "execution_status": "completed",
+          "evidence_readiness": "needs_review",
+          "synthetic": false
+        }
+      ],
+      "structural_valid": true,
+      "publication_approved": false,
+      "coverage": {
+        "valid": false,
+        "findings": [
+          {
+            "candidate_id": "024f8cffc9621245601406e0",
+            "code": "qualifier_not_preserved",
+            "field": "cancellation",
+            "source_ref": "doc-f8316e73198bf636",
+            "cue": "주말·공휴일 제외",
+            "start": 1491,
+            "end": 1500
+          },
+          {
+            "candidate_id": "024f8cffc9621245601406e0",
+            "code": "qualifier_not_preserved",
+            "field": "cancellation",
+            "source_ref": "doc-f8316e73198bf636",
+            "cue": "센터 운영일(평일) 기준",
+            "start": 1502,
+            "end": 1515
+          }
+        ],
+        "policy": "restriction-cue-coverage-v2",
+        "publication_approved": false,
+        "human_semantic_review": "required"
+      }
+    },
+    "usage": {
+      "input_tokens": 12673,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 2255,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "publication_approved": false
+  },
+  {
+    "case_id": "shopping-06",
+    "request_id": "87f0dea9f9903a6243a9465281e06e9738df1e9f53d1771f14f0b632672e4710",
+    "original_validation": {
+      "valid": false,
+      "errors": [
+        "unknown requires null value and no evidence"
+      ],
+      "assessments": [],
+      "structural_valid": false,
+      "publication_approved": false
+    },
+    "current_validation": {
+      "valid": false,
+      "errors": [
+        "unknown requires null value and no evidence"
+      ],
+      "assessments": [],
+      "structural_valid": false,
+      "publication_approved": false
+    },
+    "usage": {
+      "input_tokens": 12852,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 2207,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "publication_approved": false
+  },
+  {
+    "case_id": "culture-04",
+    "request_id": "18e85ba1802f8bc987fa82f6869f75ef4c5b87d700ca1501e0ce52d2585aa8b0",
+    "original_validation": {
+      "valid": false,
+      "errors": [
+        "quote not in successful source"
+      ],
+      "assessments": [],
+      "structural_valid": false,
+      "publication_approved": false
+    },
+    "current_validation": {
+      "valid": false,
+      "errors": [
+        "quote not in successful source"
+      ],
+      "assessments": [],
+      "structural_valid": false,
+      "publication_approved": false
+    },
+    "usage": {
+      "input_tokens": 13474,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 2550,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "publication_approved": false
+  },
+  {
+    "case_id": "youth-04",
+    "request_id": "7c18e51f0646c6b6f6933917cac0f3f2f21849362780abc627451dccabeaadb5",
+    "original_validation": {
+      "valid": false,
+      "errors": [
+        "quote not in successful source"
+      ],
+      "assessments": [],
+      "structural_valid": false,
+      "publication_approved": false
+    },
+    "current_validation": {
+      "valid": false,
+      "errors": [
+        "quote not in successful source"
+      ],
+      "assessments": [],
+      "structural_valid": false,
+      "publication_approved": false
+    },
+    "usage": {
+      "input_tokens": 13732,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 3052,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "publication_approved": false
+  }
+]

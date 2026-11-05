@@ -1,0 +1,11 @@
+{
+  "registered_at": "2026-11-05T02:08:03.652705+00:00",
+  "stage": "실제 수집→AI→비공개 검토 대기 통합 점검",
+  "max_new_api_calls": 1,
+  "reason": "앞선7회는 저장 원문/날짜 재생이었다. 이번1회는 새로 수집한 본문을 실제 경로로 전달하는 별도 통합 점검이며 실패 응답 반복 호출이 아님.",
+  "runtime": ".tools/goal-live-runtime",
+  "single_api_ledger": ".tools/claude-trial/live/budget.json",
+  "public_application": false,
+  "schedule_activation": false,
+  "scope": "동일기존공식host의 수동검토canonical주소·기존seoul collector 하나; 전체서울수집으로 주장하지 않음"
+}

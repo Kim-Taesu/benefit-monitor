@@ -1,0 +1,176 @@
+{
+  "schema_version": "topic-basis-review-v1",
+  "source_review_id": "phase234-review-r03-2026-11-05",
+  "provenance": "Codex 편집 규칙: 기존 사용자 승인 사실에서 보수적으로 작성. 새 사실 승인·모델 재출력 아님.",
+  "human_review": "pending",
+  "scope": "development_replay_only",
+  "items": {
+    "culture-01": {
+      "topic_ids": [
+        "culture",
+        "family"
+      ],
+      "title_facets": [
+        "family",
+        "weekend"
+      ],
+      "evidence_claim_ids": [
+        "approved-culture-01"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-culture-01",
+          "quote": "유아 동반 가족"
+        },
+        {
+          "claim_id": "approved-culture-01",
+          "quote": "상세에 토·일 동일 프로그램, 표시 이용기간 2026-10-28~11-22; 회차별 일정·잔여석은 재확인"
+        }
+      ]
+    },
+    "culture-02": {
+      "topic_ids": [
+        "culture",
+        "family"
+      ],
+      "title_facets": [
+        "family",
+        "weekend"
+      ],
+      "evidence_claim_ids": [
+        "approved-culture-02"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-culture-02",
+          "quote": "만4세 이상 자녀와 보호자 동반"
+        },
+        {
+          "claim_id": "approved-culture-02",
+          "quote": "2026-11-14·21·28 토요일10:00~12:00; 화랑대역4번출구 집결"
+        }
+      ]
+    },
+    "culture-03": {
+      "topic_ids": [
+        "culture"
+      ],
+      "title_facets": [],
+      "evidence_claim_ids": [
+        "approved-culture-03"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-culture-03",
+          "quote": "성인"
+        },
+        {
+          "claim_id": "approved-culture-03",
+          "quote": "2026-11-10·17·24,10:00~11:30; 마포구 노을에코교실"
+        }
+      ]
+    },
+    "shopping-04": {
+      "topic_ids": [
+        "shopping"
+      ],
+      "title_facets": [],
+      "evidence_claim_ids": [
+        "approved-shopping-04"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-shopping-04",
+          "quote": "핫아메리카노 또는 레쓰비 마일드캔200ml 증정"
+        }
+      ]
+    },
+    "shopping-05": {
+      "topic_ids": [
+        "shopping"
+      ],
+      "title_facets": [],
+      "evidence_claim_ids": [
+        "approved-shopping-05"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-shopping-05",
+          "quote": "대상세트30% 할인"
+        }
+      ]
+    },
+    "shopping-06": {
+      "topic_ids": [
+        "shopping"
+      ],
+      "title_facets": [],
+      "evidence_claim_ids": [
+        "approved-shopping-06"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-shopping-06",
+          "quote": "대상 뷰티·패션상품30% 할인"
+        }
+      ]
+    },
+    "youth-01": {
+      "topic_ids": [
+        "age"
+      ],
+      "title_facets": [],
+      "evidence_claim_ids": [
+        "approved-youth-01"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-youth-01",
+          "quote": "만19~39세 청년"
+        },
+        {
+          "claim_id": "approved-youth-01",
+          "quote": "2026-11-13,17:00~19:30; 서울청년센터 영등포 모임포랑"
+        }
+      ]
+    },
+    "youth-02": {
+      "topic_ids": [
+        "age"
+      ],
+      "title_facets": [],
+      "evidence_claim_ids": [
+        "approved-youth-02"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-youth-02",
+          "quote": "청년"
+        },
+        {
+          "claim_id": "approved-youth-02",
+          "quote": "2026-11-25,19:00~20:30; 서울청년센터 강북; 텀블러 준비"
+        }
+      ]
+    },
+    "youth-03": {
+      "topic_ids": [
+        "age"
+      ],
+      "title_facets": [],
+      "evidence_claim_ids": [
+        "approved-youth-03"
+      ],
+      "evidence_quotes": [
+        {
+          "claim_id": "approved-youth-03",
+          "quote": "서울시 청년 만19~39세"
+        },
+        {
+          "claim_id": "approved-youth-03",
+          "quote": "2026-11-12·17·20,19:00~21:00; 서울청년센터 노원"
+        }
+      ]
+    }
+  }
+}

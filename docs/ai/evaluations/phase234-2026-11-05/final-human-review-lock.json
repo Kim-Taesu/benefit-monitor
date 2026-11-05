@@ -1,0 +1,34 @@
+{
+  "review_id": "phase234-review-r03-2026-11-05",
+  "human_results": null,
+  "documents": [
+    {
+      "path": "final-human-review.md",
+      "sha256": "a390b847fd55f03cee644220f016cb7ec7c47a854f6af259eb2436bbd277bbf3"
+    },
+    {
+      "path": "candidates.json",
+      "sha256": "3128306972e42765d5aedac102fdc0082de0c4430c4b11b92fbf3f244ddee93a"
+    },
+    {
+      "path": "novelty-review-r03.json",
+      "sha256": "b49f561ad45411a10ed14a26775862a7f866b1ced0b24df8e3faf1d03e64e35d"
+    },
+    {
+      "path": "trial04-preregister.json",
+      "sha256": "e402f9e6ca16aab02ba5a92fb5ecb928ad355a33e1c77dc6f57cd0fc44e70851"
+    },
+    {
+      "path": "trial04-results.json",
+      "sha256": "7758992f80e751e1cb863458ffbdf12151a19bba5a347900aaefb8e97f1c17f4"
+    },
+    {
+      "path": "profiles.json",
+      "sha256": "3286b2a600949f356c3d91ef8da7c16ef800bd09b87f7845ef17877c56ddfbfb"
+    },
+    {
+      "path": "personalization-review.md",
+      "sha256": "d04ced0e0961e7d715d07ea8cd2b138ae21ea4c259edcd88363f6cc9bd70fd82"
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "trial_id": "conditions-prospective-03",
+  "registration_sha256": "00a62243b8079701f5b4c219e214ee6286ca69eeaf9c99c7ef3808ec8a8789d9",
+  "questions": 20,
+  "resolved_count": 7,
+  "required_resolved": 10,
+  "passed": false,
+  "inspected_details": 6,
+  "pending_details": 0,
+  "reviewer_type": "Codex 예비 검토; 사람 최종 정답·중요오류 검증 전",
+  "important_errors_independent_review": null,
+  "answers": [
+    {
+      "question_id": "culture-control-1-eligibility",
+      "candidate_id": "culture-control-1",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "보호자 동반 유아·어린이, 권장36개월 이상~초등학생. 권장 연령을 필수 연령으로 바꾸지 않음. 보호자 포함2~5명 예약, 10명 이상 단체는 별도 예약. 미끄럼틀은 키100cm 이상; 수치상 강제 연령 하한은 미명시.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "document_sha256": "1ab6c1a6a3c3618c467aad519849ded1c17057c8ec3a5250f21b5273d4445a8d"
+    },
+    {
+      "question_id": "culture-control-1-fee",
+      "candidate_id": "culture-control-1",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "관람 무료. 주차 최초30분1200원·초과5분300원·일19200원. 재료비 등 모든 부대비용 면제까지 명시하지 않음.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "document_sha256": "1ab6c1a6a3c3618c467aad519849ded1c17057c8ec3a5250f21b5273d4445a8d"
+    },
+    {
+      "question_id": "culture-control-1-deadline",
+      "candidate_id": "culture-control-1",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "resolved",
+      "answer": "관람14일 전09시~전날23시 온라인 선착순. 당일 온라인 불가, 현장 회차30명 선착순. 화~목1회차는 단체전용이며11/6·11/20 1회차도 개인불가. 실제 잔여석 미확인.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "document_sha256": "1ab6c1a6a3c3618c467aad519849ded1c17057c8ec3a5250f21b5273d4445a8d"
+    },
+    {
+      "question_id": "culture-control-2-eligibility",
+      "candidate_id": "culture-control-2",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "초등3학년 이하 어린이와 보호자 동반. 어린이 없는 성인 입장 불가. 성인까지 예약 인원 포함, 1회2~60명. 지역 제한은 본문에 명시하지 않았으며 서울 거주 필수로 추정하지 않음.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "document_sha256": "c2e8ae5b3eae499c6dc6da6e6a01ec429b5cdc6fcbed90f453d09c9d3c583a8d"
+    },
+    {
+      "question_id": "culture-control-2-fee",
+      "candidate_id": "culture-control-2",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "이용요금 무료. 개인 실내화 권장·공용 실내화 제공. 추가 비용의 전체 조건은 미명시.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "document_sha256": "c2e8ae5b3eae499c6dc6da6e6a01ec429b5cdc6fcbed90f453d09c9d3c583a8d"
+    },
+    {
+      "question_id": "culture-control-2-deadline",
+      "candidate_id": "culture-control-2",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "resolved",
+      "answer": "이용 전날17시까지 사전예약 선착순. 다음달 예약은 전달 첫 주 평일09시 개시 안내. 취소 잔여석은 현장대기순, 연락 없이10분 이상 늦으면 현장 입장 전환 가능.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "document_sha256": "c2e8ae5b3eae499c6dc6da6e6a01ec429b5cdc6fcbed90f453d09c9d3c583a8d"
+    },
+    {
+      "question_id": "youth-control-1-eligibility",
+      "candidate_id": "youth-control-1",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "응답 대상은 서울시내 대학·대학원생. 서울 거주 청년 전체로 확대하지 않음. 수치 연령 제한은 게시하지 않음. 설문 말미 별도 경품 응모 가능.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75540",
+      "document_sha256": "d1f1569eadb84f9b8762bc801d9627bfd6f23aaf59e88f2aff59ac3021c86408"
+    },
+    {
+      "question_id": "youth-control-1-fee",
+      "candidate_id": "youth-control-1",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "약10분 설문·응답자 중 추첨 기프티콘. 참가비·응모 추가비용 전체 조건은 명시하지 않음.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75540",
+      "document_sha256": "d1f1569eadb84f9b8762bc801d9627bfd6f23aaf59e88f2aff59ac3021c86408"
+    },
+    {
+      "question_id": "youth-control-1-deadline",
+      "candidate_id": "youth-control-1",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "resolved",
+      "answer": "2026-11-06 18:00까지 응답. 응답자 중 추첨하며 마지막 페이지에서 경품 응모. 경품 인원·선정일·발송일은 별도 미확인이고 이 문항의 마감·추첨방식과 구분.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75540",
+      "document_sha256": "d1f1569eadb84f9b8762bc801d9627bfd6f23aaf59e88f2aff59ac3021c86408"
+    },
+    {
+      "question_id": "youth-control-2-eligibility",
+      "candidate_id": "youth-control-2",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "정보퐁퐁 채널 구독자 및 청년 정책에 관심 있는 누구나. 구독만을 필수로 제한하거나19~39세로 임의 제한하지 않음.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75488",
+      "document_sha256": "3e38cf3c81e63ea757b3715bb9c40922ad2b2e2ad1dfe0c415adf57f4bc42e9b"
+    },
+    {
+      "question_id": "youth-control-2-fee",
+      "candidate_id": "youth-control-2",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "설문 참여자700명 추첨 커피쿠폰·12월7일 개별 발송. 참가비·추가 비용을 명시하지 않음.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75488",
+      "document_sha256": "3e38cf3c81e63ea757b3715bb9c40922ad2b2e2ad1dfe0c415adf57f4bc42e9b"
+    },
+    {
+      "question_id": "youth-control-2-deadline",
+      "candidate_id": "youth-control-2",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "요약은11월30일00시, 본문은11월30일까지로 시각 불명. 700명 추첨·12월7일발송은 확인했으나 정확한 마감 충돌 미해결.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75488",
+      "document_sha256": "3e38cf3c81e63ea757b3715bb9c40922ad2b2e2ad1dfe0c415adf57f4bc42e9b"
+    },
+    {
+      "question_id": "youth-control-3-eligibility",
+      "candidate_id": "youth-control-3",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "2026청년수당 참여자 및 만19~39세 서울 거주·활동 청년이라는 문구. 두 집단의 합집합/교집합을 추가 신청 안내 없이 임의 확정하지 않음.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75481",
+      "document_sha256": "91ecef1e955dec4c4881987fc659eb80dfc0ad200b5d1d19996cd39d07d3b6d9"
+    },
+    {
+      "question_id": "youth-control-3-fee",
+      "candidate_id": "youth-control-3",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "무료·재료비·부대비용 명시 없음. 취업 행사이므로 무료라고 가정하지 않음.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75481",
+      "document_sha256": "91ecef1e955dec4c4881987fc659eb80dfc0ad200b5d1d19996cd39d07d3b6d9"
+    },
+    {
+      "question_id": "youth-control-3-deadline",
+      "candidate_id": "youth-control-3",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "요약11월5일00시·본문11월5일까지로 시각 차이. 구글폼 제출만 안내하며 선발 방식 미명시.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75481",
+      "document_sha256": "91ecef1e955dec4c4881987fc659eb80dfc0ad200b5d1d19996cd39d07d3b6d9"
+    },
+    {
+      "question_id": "youth-control-4-eligibility",
+      "candidate_id": "youth-control-4",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "청년정책·청년지원 관계자100명 내외: 중앙부처/지자체 담당자, 청년지원기관, 기업/공공기관/재단의 청년지원·사회공헌 관계자, 연구자/전문가 등. 일반청년 전체나19~39세 조건으로 바꾸지 않음.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75479",
+      "document_sha256": "11e20fa39c27593c8506f4c23c6ef56a840c7d41d312bfd624fe59efc4ffc14d"
+    },
+    {
+      "question_id": "youth-control-4-fee",
+      "candidate_id": "youth-control-4",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "참가비·추가 비용 명시 없음. 행사장만으로 무료를 추정하지 않음.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75479",
+      "document_sha256": "11e20fa39c27593c8506f4c23c6ef56a840c7d41d312bfd624fe59efc4ffc14d"
+    },
+    {
+      "question_id": "youth-control-4-deadline",
+      "candidate_id": "youth-control-4",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": "본문11월5일18시까지·11월6일 선정자 개별 안내. 요약11월5일00시와 충돌, 선발 기준도 미명시.",
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75479",
+      "document_sha256": "11e20fa39c27593c8506f4c23c6ef56a840c7d41d312bfd624fe59efc4ffc14d"
+    },
+    {
+      "question_id": "retail-bc-conditions",
+      "candidate_id": "retail-bc",
+      "program": "11월 이마트24 BC카드 할인",
+      "question": "대상 카드·상품, 최소구매액·한도와 제외 조건은 무엇인가?",
+      "seed_known_part": "공식 목록·상세 HTML의 기간11월1~30일만 확인; 안내 이미지 미열람",
+      "status": "partial_or_unresolved",
+      "answer": "공식 이미지에서11월1~30일·BC30%·두 위스키 할인액 확인. 카드 세부 종류·제외/최소구매/한도는 앱 상세로 안내되며 현재 미확정."
+    },
+    {
+      "question_id": "retail-new-member-conditions",
+      "candidate_id": "retail-new-member",
+      "program": "11월 이마트24 신규가입",
+      "question": "신규 자격, 실제 구매비용·최소결제액, 쿠폰 한도·유효기간은 무엇인가?",
+      "seed_known_part": "공식 목록·상세 HTML의 기간11월1~30일만 확인;2 MiB 초과 이미지 판독 불가",
+      "status": "partial_or_unresolved",
+      "answer": "안내 이미지2MiB 상한 초과로 미판독. 신규 자격·최소 결제·쿠폰 유효기간 미확정."
+    }
+  ]
+}

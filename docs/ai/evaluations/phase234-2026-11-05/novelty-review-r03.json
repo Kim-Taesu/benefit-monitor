@@ -1,0 +1,66 @@
+{
+  "scope": "기존 공개·후보·검토556객체 전체의 동결JSON과 수정하지 않은 파서 출력 대조. URL만 아닌 프로그램·기간·상품·결제 구조로 검토.",
+  "baseline_files": [
+    {
+      "path": "/Users/user/personal/benefit-monitor/.maintenance/p0-source/public/verified.json",
+      "sha256": "ff3fd625b9a9d4df1396696e9eaf4ea2e85c0b490401cdef07ee516bc6a4e132",
+      "bytes": 126500
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/.maintenance/p0-source/inputs/public.json",
+      "sha256": "a3fb3837ae9b010cc91921ed5a8d94fce8aee3b858aa772b2abc027ea102ed7b",
+      "bytes": 128635
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/report.json",
+      "sha256": "42535f2e3fdc037b8a9a8da1b1320c39b8d4920387ff120fd4118b8ecdc43b35",
+      "bytes": 206951
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/verified_items.json",
+      "sha256": "c64a2858feec764eaf2ebc0ed797363eb8516bd3445c45c2e61a6c5ed33c4bbc",
+      "bytes": 83568
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/operational_state.json",
+      "sha256": "50cc1f508f932700f341867d55b196b0c204ce7e859530c322f7fdb73069fbbb",
+      "bytes": 26567
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/district_candidates.json",
+      "sha256": "8b8f9c29c463f24ef182414093e085feda23c1caf84cb0c7f4f13713f898488a",
+      "bytes": 29119
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/review_texts.json",
+      "sha256": "061d742367ce59688e34239fa7f8280f0b33c1ad720e9d61f158478cd30e88ff",
+      "bytes": 260482
+    }
+  ],
+  "existing_emart24_record_count": 3,
+  "existing_program": "이마트24 KT멤버십 및 현대카드M포인트 상시 제휴 안내",
+  "new_program_ids": [
+    "shopping-04",
+    "shopping-05",
+    "shopping-06"
+  ],
+  "known_duplicate_controls": [
+    "기존 CU KT 아침할인은 신규 제외",
+    "세븐일레븐 상시포인트 안내는 신규 제외",
+    "옐로우10월행사는 종료 제외",
+    "개점기사만으로 혜택 추가하지 않음"
+  ],
+  "provisional_valid_counts": {
+    "culture_sports": 3,
+    "shopping_membership": 3,
+    "youth_household": 3
+  },
+  "total_provisional_valid": 9,
+  "human_final_review": null,
+  "phase2_passed": false,
+  "limitations": [
+    "고정30개 표본의 실패를 추가탐색으로 교체하지 않음",
+    "온라인 A/B·같은예산 모델우위 판정 아님",
+    "수치목표 예비충족이며 사람최종평가 대기"
+  ]
+}

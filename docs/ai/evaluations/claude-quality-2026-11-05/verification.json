@@ -1,0 +1,26 @@
+{
+  "tests": {
+    "command": "python3 -m unittest discover -s tests -v",
+    "count": 285,
+    "result": "passed"
+  },
+  "compileall": "passed",
+  "diff_check": "passed",
+  "new_network_requests": 0,
+  "new_api_calls": 0,
+  "recorded_live_artifacts_unchanged": 101,
+  "phase234_frozen_hashes_verified": 14,
+  "free_collector_policy_unchanged": true,
+  "key_file_read_by_this_work": false,
+  "token_pattern_scan_leaks": [],
+  "independent_review": false,
+  "remote_ci": "unavailable_no_remote",
+  "source_sha256": {
+    "benefit_monitor/research_extraction.py": "a70b63e73202560225d0ae470e3e3f04942a2ac5325496edbb179884dcd6fc15",
+    "benefit_monitor/topic_semantics.py": "4874cdec1ecffad21ba530aa9976ca99da074794d02db00fefde9adde6c9ee7d",
+    "benefit_monitor/replay_quality.py": "196d123d487641ee80dc46d4a9ba3edd3c8d2284e74767ccbc8d2248a3b4f5d0",
+    "benefit_monitor/claude_trial.py": "6b615e3240d4a28d83b1161e262b81d7fdd8ef7416ecf813f3e98d7c3a981aba",
+    "benefit_monitor/daily_topics.py": "df982aca603827e5af868ee95da20e1945c0da7ecb4e8e2b230afed18cd03bf2",
+    "docs/ai/schemas/research-extraction.schema.json": "0efc8019615128ff9f2aa700f2887f0b243464c1d725f569cf6e36b3be99baf2"
+  }
+}

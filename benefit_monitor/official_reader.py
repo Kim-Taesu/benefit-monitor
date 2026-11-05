@@ -1,0 +1,104 @@
+"""Official bodies for AI review, sharing the existing public HTTP budget."""
+from datetime import timedelta
+import hashlib
+import json
+from pathlib import Path
+import time
+from urllib.error import HTTPError
+from urllib.parse import urlsplit
+from urllib.request import Request, build_opener
+
+from . import cost_policy
+from .collectors.body import extract_body
+from .collectors.rss import AGENT, LIMIT
+from .research_probe import NoRedirect
+from .robots import allowed, crawl_delay
+from .store import load, save
+from .validation import official
+
+
+def project_path(root, relative):
+    root=Path(root).resolve()
+    path=(root/relative).resolve()
+    if not root.is_relative_to(Path(__file__).resolve().parents[1]) or not path.is_relative_to(root):
+        raise ValueError('path outside permitted project')
+    return path
+
+
+def network_open(request):
+    return build_opener(NoRedirect()).open(request,timeout=15)
+
+
+class OfficialReader:
+    def __init__(self,root,now):
+        if now.tzinfo is None:raise ValueError('timezone required')
+        self.root,self.now=Path(root).resolve(),now
+        config=load(project_path(root,'sources.yaml'),None)
+        cost_policy.require_free(config)
+        self.sources={s['id']:s for s in config['sources']}
+        self.path=project_path(root,'cache/ai_review/http.json')
+        self.state=load(self.path,{'hosts':{},'pages':{}})
+
+    def _fetch(self,url,domains,host_state):
+        if not official(url,domains):raise ValueError('unapproved official URL')
+        delay=crawl_delay(host_state.get('robots',''),AGENT)
+        remaining=delay-(time.time()-host_state.get('last_request_epoch',0))
+        if remaining>15:raise ValueError('crawl-delay requires deferred fetch')
+        if remaining>0:time.sleep(remaining)
+        cost_policy.budget.consume()
+        host_state['last_request_epoch']=time.time()
+        try:
+            with network_open(Request(url,headers={'User-Agent':AGENT})) as response:
+                body=response.read(LIMIT+1)
+                content_type=response.headers.get('Content-Type','').lower()
+            if len(body)>LIMIT:raise ValueError('response exceeds 2 MiB')
+            return body,content_type
+        except HTTPError as error:
+            error.close()
+            raise
+        finally:
+            save(self.path,self.state)
+
+    def read(self,candidate):
+        source=self.sources[candidate['source']]
+        url=candidate['url']
+        if not official(url,source['domains']):raise ValueError('unapproved official URL')
+        host=urlsplit(url).netloc
+        hs=self.state['hosts'].setdefault(host,{})
+        stamp=self.now.timestamp()
+        if stamp<hs.get('failure_until',0):raise ValueError('source failure cooldown')
+        key=hashlib.sha256(url.encode()).hexdigest()
+        cached=self.state['pages'].get(key)
+        if cached and 0<=stamp-cached['at']<21600:
+            return load(project_path(self.root,cached['file']),None)
+        try:
+            if stamp>=hs.get('robots_until',0):
+                try:
+                    robot,_=self._fetch('https://'+host+'/robots.txt',source['domains'],hs)
+                    robot=robot.decode('utf-8','strict')
+                except HTTPError as error:
+                    error.close()
+                    if error.code!=404:raise
+                    robot=''
+                hs.update(robots=robot,robots_until=stamp+21600)
+                save(self.path,self.state)
+            if not allowed(hs['robots'],url,AGENT):raise ValueError('robots denies URL')
+            raw,content_type=self._fetch(url,source['domains'],hs)
+            if 'text/html' not in content_type:raise ValueError('unsupported body content type')
+            text,mode=extract_body(raw.decode('utf-8','strict'),url)
+            if len(text)<80:raise ValueError('insufficient official body')
+            digest=hashlib.sha256(text.encode()).hexdigest()
+            doc=dict(id='doc-'+digest[:24],requested_url=url,final_url=url,source_id=source['id'],
+                     document_role='notice',publisher_type='unknown',retrieved_at=self.now.isoformat(),published_at=None,
+                     body_hash=digest,hash_algorithm='sha256-utf8-exact',extraction_scope='collectors.body:'+mode,
+                     fetch_status='ok',body=text,links=[])
+            relative='cache/ai_review/documents/'+key+'-'+digest+'.json'
+            save(project_path(self.root,relative),doc)
+            self.state['pages'][key]={'at':stamp,'file':relative}
+            hs.pop('failure_until',None)
+            save(self.path,self.state)
+            return doc
+        except Exception:
+            hs['failure_until']=stamp+900
+            save(self.path,self.state)
+            raise

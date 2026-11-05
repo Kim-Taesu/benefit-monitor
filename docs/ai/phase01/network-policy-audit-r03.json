@@ -1,0 +1,493 @@
+{
+  "run_id": "phase234-document-2026-11-05-r03",
+  "request_attempts": 54,
+  "cumulative_requests": 174,
+  "network_policy_issues": [],
+  "checked_requests": [
+    {
+      "url": "https://www.songpa.go.kr/www/index.do",
+      "checked_at": "2026-11-04T16:38:44.284286+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 3600.0,
+      "since_last_host_request_seconds": 3672.988926
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103101155924156",
+      "checked_at": "2026-11-04T16:38:44.720931+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3593.696858,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 2271.397028
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103105322721507",
+      "checked_at": "2026-11-04T16:38:44.936588+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3593.912515,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.215657
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "checked_at": "2026-11-04T16:38:45.148650+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3594.124577,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.212062
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "checked_at": "2026-11-04T16:38:45.411809+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3594.387736,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.263159
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251203104822013240",
+      "checked_at": "2026-11-04T16:38:45.611693+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3594.58762,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.199884
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260320170624732091",
+      "checked_at": "2026-11-04T16:38:45.826509+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3594.802436,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.214816
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/emart-opens-2026-ssg-day/",
+      "checked_at": "2026-11-04T16:38:46.064368+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 5169.944426
+    },
+    {
+      "url": "https://emart24.co.kr/event/5851",
+      "checked_at": "2026-11-04T16:38:46.129135+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3450.984997,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 3450.984997
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102145223953896",
+      "checked_at": "2026-11-04T16:38:46.272685+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3595.248612,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.446176
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135518608401",
+      "checked_at": "2026-11-04T16:38:46.509535+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3595.485462,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.23685
+    },
+    {
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75540",
+      "checked_at": "2026-11-04T16:38:46.711184+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 3016.893789
+    },
+    {
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75488",
+      "checked_at": "2026-11-04T16:38:46.923644+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.21246
+    },
+    {
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75481",
+      "checked_at": "2026-11-04T16:38:47.123720+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.200076
+    },
+    {
+      "url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75479",
+      "checked_at": "2026-11-04T16:38:47.331147+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.207427
+    },
+    {
+      "url": "https://archives.seoul.go.kr/robots.txt",
+      "checked_at": "2026-11-04T16:41:17.273498+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true
+    },
+    {
+      "url": "https://archives.seoul.go.kr/",
+      "checked_at": "2026-11-04T16:41:17.353682+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.080184
+    },
+    {
+      "url": "https://www.gsretail.com/robots.txt",
+      "checked_at": "2026-11-04T16:41:17.403233+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true
+    },
+    {
+      "url": "https://www.gsretail.com/",
+      "checked_at": "2026-11-04T16:41:27.403625+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 10.0,
+      "since_last_host_request_seconds": 10.000392
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/?s=%EC%9D%B4%EB%A7%88%ED%8A%B824",
+      "checked_at": "2026-11-04T16:42:44.374633+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 238.310265
+    },
+    {
+      "url": "https://archives.seoul.go.kr/main",
+      "checked_at": "2026-11-04T16:43:20.144317+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 122.790635
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/management/ckImgSubmit.do?uid=dc583309-08eb-4690-a10c-bcb2e22b846c&fileName=1.JPG",
+      "checked_at": "2026-11-04T16:43:20.870254+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3869.846181,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 274.360719
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/management/ckImgSubmit.do?uid=bceb8ca6-535d-49ae-9847-60f937bf6318&fileName=2.JPG",
+      "checked_at": "2026-11-04T16:43:21.136623+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 3870.11255,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.266369
+    },
+    {
+      "url": "https://archives.seoul.go.kr/exhibitions-programs/programs/6000",
+      "checked_at": "2026-11-04T16:44:29.596523+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 69.452206
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/emart24-launches-a-sandwich-in-collaboration-with-qwer/",
+      "checked_at": "2026-11-04T16:44:30.259227+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 105.884594
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/emart24-offers-a-wealth-of-benefits-for-pepero-day/",
+      "checked_at": "2026-11-04T16:44:30.333111+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.073884
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/emart24s-yellow-establishes-itself-as-a-daily-necessity-product/",
+      "checked_at": "2026-11-04T16:44:30.395419+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.062308
+    },
+    {
+      "url": "https://hpsimg.gsretail.com/robots.txt",
+      "checked_at": "2026-11-04T16:46:45.199015+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true
+    },
+    {
+      "url": "https://hpsimg.gsretail.com/public/js/index.f1c45227.js",
+      "checked_at": "2026-11-04T16:46:55.203975+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 10.0,
+      "since_last_host_request_seconds": 10.00496
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/e-mart24-all-day-care-lab-store-opens/",
+      "checked_at": "2026-11-04T16:46:55.331946+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 144.936527
+    },
+    {
+      "url": "https://www.shinsegaegroupnewsroom.com/beauty-fashion-emart24-launch-store/",
+      "checked_at": "2026-11-04T16:46:55.996151+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.664205
+    },
+    {
+      "url": "https://archives.seoul.go.kr/user-guide/faq",
+      "checked_at": "2026-11-04T16:48:28.271185+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 238.674662
+    },
+    {
+      "url": "https://emart24.co.kr/goods/ff",
+      "checked_at": "2026-11-04T16:48:28.356145+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 4033.212007,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 582.22701
+    },
+    {
+      "url": "https://archives.seoul.go.kr/upload/loadTempImage?fileName=2e5dc961-f1a4-4dbd-8759-51bc47a6715b.png",
+      "checked_at": "2026-11-04T16:53:40.202112+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 311.930927
+    },
+    {
+      "url": "https://archives.seoul.go.kr/upload/loadTempImage?fileName=ea836ebf-3e16-4feb-ae5c-1c753abe5429.png",
+      "checked_at": "2026-11-04T16:53:40.302495+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.100383
+    },
+    {
+      "url": "https://emart24.co.kr/image/MjgwMjU1",
+      "checked_at": "2026-11-04T16:57:31.798890+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 4576.654752,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 543.442745
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/robots.txt",
+      "checked_at": "2026-11-04T17:08:26.685378+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/news/newsMain.do",
+      "checked_at": "2026-11-04T17:08:26.757359+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.071981
+    },
+    {
+      "url": "https://mediahub.seoul.go.kr/archives/2019931",
+      "checked_at": "2026-11-04T17:08:29.478753+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 2.721394
+    },
+    {
+      "url": "https://archives.seoul.go.kr/user-guide/faq?categorySeq=4",
+      "checked_at": "2026-11-04T17:12:54.023811+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 1153.721316
+    },
+    {
+      "url": "https://yeyak.seoul.go.kr/common/file/FileDown.do?file_id=1793583386705XHOO1IMZYZM76NDVDNP74P26W",
+      "checked_at": "2026-11-04T17:15:45.578182+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "since_last_failure_seconds": 5814.554109,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 1944.441559
+    },
+    {
+      "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=467&key=6901",
+      "checked_at": "2026-11-04T17:23:38.832691+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 6369.666613
+    },
+    {
+      "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=448&key=8086",
+      "checked_at": "2026-11-04T17:23:39.267739+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.435048
+    },
+    {
+      "url": "https://www.dobong.go.kr/Contents.asp?code=10010277",
+      "checked_at": "2026-11-04T17:23:39.644444+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 6367.200559
+    },
+    {
+      "url": "https://lib.seoul.go.kr/robots.txt",
+      "checked_at": "2026-11-04T17:27:47.133826+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true
+    },
+    {
+      "url": "https://lib.seoul.go.kr/",
+      "checked_at": "2026-11-04T17:27:47.231681+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.097855
+    },
+    {
+      "url": "https://parks.seoul.go.kr/robots.txt",
+      "checked_at": "2026-11-04T17:27:48.122338+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true
+    },
+    {
+      "url": "https://parks.seoul.go.kr/information/list.do",
+      "checked_at": "2026-11-04T17:27:48.191725+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.069387
+    },
+    {
+      "url": "https://museum.seoul.go.kr/robots.txt",
+      "checked_at": "2026-11-04T17:27:48.246353+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true
+    },
+    {
+      "url": "https://lib.seoul.go.kr/slibsrch/main",
+      "checked_at": "2026-11-04T17:28:05.940277+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 18.708596
+    },
+    {
+      "url": "https://youth.seoul.go.kr/orang/index.do",
+      "checked_at": "2026-11-04T17:28:07.501372+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 2960.170225
+    },
+    {
+      "url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001",
+      "checked_at": "2026-11-04T17:28:36.750638+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 29.249266
+    },
+    {
+      "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00014",
+      "checked_at": "2026-11-04T17:28:36.867467+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 0.116829
+    },
+    {
+      "url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+      "checked_at": "2026-11-04T17:29:09.010379+00:00",
+      "allowlisted": true,
+      "failure_cooldown": true,
+      "robots_allowed": true,
+      "selected_crawl_delay": 0,
+      "since_last_host_request_seconds": 32.142912
+    }
+  ],
+  "scope": "회차3 저장사건의허용목록·robots·요청간격·실패대기·성공본문크기와원장한도대조.자동이동미실행은NoRedirect실행경로·진단테스트근거.네트워크차단실패를성공으로세지않음.",
+  "limits": [
+    "회차2 위반 판정에 영향 없음",
+    "동일예산 온라인 A/B 또는 대상별 시간5분 측정을 대신하지 않음",
+    "정책 검토는 과거에 관측한 robots 원문 기준이며 원격 정책 불변 보장 아님"
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "registered_at": "2026-11-04T15:16:04.749960+00:00",
+  "status": "추가 상세 문서 열람 전 고정",
+  "questions": [
+    {
+      "question_id": "culture-01-eligibility",
+      "candidate_id": "culture-01",
+      "program": "동작 자연나라",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-01-fee",
+      "candidate_id": "culture-01",
+      "program": "동작 자연나라",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-01-deadline",
+      "candidate_id": "culture-01",
+      "program": "동작 자연나라",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-02-eligibility",
+      "candidate_id": "culture-02",
+      "program": "중랑 묵동천 가족",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-02-fee",
+      "candidate_id": "culture-02",
+      "program": "중랑 묵동천 가족",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-02-deadline",
+      "candidate_id": "culture-02",
+      "program": "중랑 묵동천 가족",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-03-eligibility",
+      "candidate_id": "culture-03",
+      "program": "월드컵공원 성인 정원처방",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-03-fee",
+      "candidate_id": "culture-03",
+      "program": "월드컵공원 성인 정원처방",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "culture-03-deadline",
+      "candidate_id": "culture-03",
+      "program": "월드컵공원 성인 정원처방",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-01-eligibility",
+      "candidate_id": "youth-01",
+      "program": "청년 온기 식탁",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-01-fee",
+      "candidate_id": "youth-01",
+      "program": "청년 온기 식탁",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-01-deadline",
+      "candidate_id": "youth-01",
+      "program": "청년 온기 식탁",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-02-eligibility",
+      "candidate_id": "youth-02",
+      "program": "강북 차크라티 명상",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-02-fee",
+      "candidate_id": "youth-02",
+      "program": "강북 차크라티 명상",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-02-deadline",
+      "candidate_id": "youth-02",
+      "program": "강북 차크라티 명상",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-03-eligibility",
+      "candidate_id": "youth-03",
+      "program": "노원 북바인딩",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-03-fee",
+      "candidate_id": "youth-03",
+      "program": "노원 북바인딩",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "youth-03-deadline",
+      "candidate_id": "youth-03",
+      "program": "노원 북바인딩",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "shopping-01-period",
+      "candidate_id": "shopping-01",
+      "program": "이마트24 린트 초콜릿",
+      "question": "공식 자료에 명시된 행사 적용 기간은 무엇인가?",
+      "status": "미확인"
+    },
+    {
+      "question_id": "shopping-02-stores",
+      "candidate_id": "shopping-02",
+      "program": "세븐일레븐 액티비아",
+      "question": "적용 매장과 제외 매장 조건은 무엇인가?",
+      "status": "미확인"
+    }
+  ]
+}

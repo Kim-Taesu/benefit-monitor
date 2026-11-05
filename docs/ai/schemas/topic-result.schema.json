@@ -11,7 +11,8 @@
     "mode": {
       "enum": [
         "offline_fixture",
-        "read_only_research"
+        "read_only_research",
+        "api_agent"
       ]
     },
     "status": {

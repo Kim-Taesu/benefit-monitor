@@ -1,0 +1,60 @@
+[
+  {
+    "source": "culture",
+    "seed_url": "https://yeyak.seoul.go.kr/web/main.do",
+    "body_sha256": "7a8a8da646321a0c6ea14adf0317789ffcf8e6953020fbb12e2dd940807a668e",
+    "candidate_urls": [
+      "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251203104822013240",
+      "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260320170624732091",
+      "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027092614230058",
+      "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104161843848560",
+      "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104155734097976"
+    ],
+    "mode": "실제 저장 본문에 수정하지 않은 Python 파서 적용; 온라인 A/B 비교 아님"
+  },
+  {
+    "source": "convenience",
+    "seed_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+    "body_sha256": "cefcc4ea8ab0c9009acca2f884e16a237818496d61cffb8831cab1062c4f9ab6",
+    "candidate_urls": [
+      "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1"
+    ],
+    "mode": "실제 저장 본문에 수정하지 않은 Python 파서 적용; 온라인 A/B 비교 아님"
+  },
+  {
+    "source": "seven",
+    "seed_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+    "body_sha256": "bc971d305eea596b5cbdc43a3b2d5fe5d45f4218a689dd1595472c9c9e50cf59",
+    "candidate_urls": [
+      "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+      "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=3"
+    ],
+    "mode": "실제 저장 본문에 수정하지 않은 Python 파서 적용; 온라인 A/B 비교 아님"
+  },
+  {
+    "source": "emart24",
+    "seed_url": "https://emart24.co.kr/service/alliance",
+    "body_sha256": "0efde7f1bfc7155af551ed67ab10755cfddbb3925f01b8236175a89ffe23a9c0",
+    "candidate_urls": [
+      "https://emart24.co.kr/service/alliance"
+    ],
+    "mode": "실제 저장 본문에 수정하지 않은 Python 파서 적용; 온라인 A/B 비교 아님"
+  },
+  {
+    "source": "retail",
+    "seed_url": "https://www.shinsegaegroupnewsroom.com/family/emart/",
+    "body_sha256": "236a58b40f616de54eb16aa6ce44d5269603da279d6c4f030301a152a80bde28",
+    "candidate_urls": [
+      "https://www.shinsegaegroupnewsroom.com/customers-line-up-at-e-mart-as-ssg-day-kicks-off/",
+      "https://www.shinsegaegroupnewsroom.com/emart-opens-2026-ssg-day/",
+      "https://www.shinsegaegroupnewsroom.com/emart-is-offering-its-largest-ever-shopping-benefits-over-a-10-day-period/",
+      "https://www.shinsegaegroupnewsroom.com/e-mart-holds-discount-event-for-camping-gear-and-home-appliances/",
+      "https://www.shinsegaegroupnewsroom.com/emart-october-grand-festival/",
+      "https://www.shinsegaegroupnewsroom.com/emart-and-emart-everyday-launch-special-promotion-on-food-items-for-the-autumn-table/",
+      "https://www.shinsegaegroupnewsroom.com/emart-cabbage-pre-order/"
+    ],
+    "mode": "같은 실제 저장 본문에 수정하지 않은 Python 파서 적용. 온라인 동일 예산 비교 아님."
+  }
+]

@@ -12,6 +12,7 @@ from .briefing import SEOUL, FEES, aware_time, build, identity
 from .store import load, save, save_text
 from .validation import validate, LABEL_CATEGORIES, benefit_value_label
 from . import operations
+from .models import Benefit
 
 PUBLIC_FIELDS = ("source", "url", "title", "summary", "conditions", "districts",
                  "verified_at", "valid_from", "valid_until", "deadline_at",
@@ -264,7 +265,7 @@ refresh();setInterval(refresh, 60000);
 </script></body></html>'''
 
 
-def run(root, now=None, failure=False):
+def payload(root, now=None, failure=False, report=None, state=None):
     root = Path(root)
     now = now or datetime.now(SEOUL)
     if now.tzinfo is None:
@@ -273,8 +274,11 @@ def run(root, now=None, failure=False):
     data = dict(schema_version=1, generated_at=now.isoformat(), source_report_at=None,
                 valid_through=None, status="collection_failed", items=[], coverage_incomplete=True,
                 message="수집 실패 또는 연결 미완료입니다. 이전 결과를 오늘의 브리핑으로 사용하지 않습니다.")
+    config = load(root / "sources.yaml", None)
+    state = operations.sanitize(state if state is not None else load(root / "cache/operational_state.json", {}),
+                               {s["id"] for s in config["sources"]}, now)
     if not failure:
-        report = load(root / "report.json", None)
+        report = report if report is not None else load(root / "report.json", None)
         if report is None:
             raise ValueError("Missing current report")
         report_time = aware_time(report["verified_at"])
@@ -289,6 +293,10 @@ def run(root, now=None, failure=False):
             for group in ("top3", "other_verified", "upcoming"):
                 for item in briefing[group]:
                     release = approved.get(identity(item))
+                    cid = Benefit(source=item['source'],url=item['url'],title=item['title'],summary=item['summary']).id
+                    hold = state['items'].get(cid,{}).get('hold_at')
+                    if hold and aware_time(item['verified_at']) <= aware_time(hold):
+                        continue
                     if release and all(item[k] == v for k, v in release.items()):
                         items[identity(item)] = {k: item[k] for k in PUBLIC_FIELDS if k != "benefit_value" or item[k]}
             data.update(source_report_at=report_time.isoformat(), items=list(items.values()),
@@ -306,9 +314,6 @@ def run(root, now=None, failure=False):
                 if item["valid_until"]:
                     expires.append(datetime.combine(date.fromisoformat(item["valid_until"])+timedelta(days=1),time.min,SEOUL))
                 item["display_until"]=min(expires).isoformat()
-    config = load(root / "sources.yaml", None)
-    state = operations.sanitize(load(root / "cache/operational_state.json", {}),
-                               {s["id"] for s in config["sources"]}, now)
     data["operational_state"] = state
     data["source_health"] = state["sources"]
     data["run_context"] = run_context(now, aware_time(data["source_report_at"]) if data["source_report_at"] else None, os.environ.get("GITHUB_EVENT_NAME", ""))
@@ -316,6 +321,24 @@ def run(root, now=None, failure=False):
     data["review_queue"] = operations.queue(report, state, now, config.get("max_age_days", 7)) if not failure and data["source_report_at"] else []
     if "withheld" in data:
         data["withheld"]["pending"] = max(data["withheld"]["pending"],len(data["review_queue"]))
+    return data
+
+
+def run(root, now=None, failure=False):
+    root = Path(root)
+    data = payload(root, now=now, failure=failure)
+    now = aware_time(data['generated_at'])
+    if (root/'public/topic-publication.json').exists():
+        from .topic_publication import cards
+        approved_cards = cards(root,now)
+        if approved_cards is not None:data['topic_cards'] = approved_cards
+    return write_export(root,data)
+
+
+def write_export(root,data):
+    """Render a payload already checked by the local or snapshot publication gate."""
+    root=Path(root)
+    now=aware_time(data['generated_at'])
     output = root / "delivery/public"
     output.mkdir(parents=True, exist_ok=True)
     if any(p.name not in {"briefing.json", "briefing.md", "index.html"} for p in output.iterdir()):

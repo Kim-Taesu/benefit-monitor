@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import {computed,nextTick,onMounted,onUnmounted,ref,watch} from 'vue';
 import type {Benefit} from './benefits';
+import {publishedTopics} from './published-topics';
 import {DISTRICTS,TOPICS,INTEREST_IDS,CARRIERS,BETA_KEY,emptyBeta,loadBeta,saveBeta,clearBeta,recordEvent,recentEvents,topicsFor,summarizeEvents,searchTopics} from './beta';
 import type {Action,BetaState,TopicId,Profile,Topic} from './beta';
-const props=defineProps<{items:Benefit[];now:number;query:string}>();
+const props=defineProps<{items:Benefit[];now:number;query:string;publishedData?:unknown}>();
 const emit=defineEmits<{selectTopic:[topic:Topic|null]}>();
 const icons:Record<TopicId,string>={local:'🏡',night:'🌙',culture:'🎨',learning:'📚',shopping:'🛍️',carrier:'📱',age:'🎯',vouchers:'🎟️',convenience:'🏪',outdoors:'👟',family:'🧸',housing:'🔑',career:'💼'};
 let storage:Storage|null=null;try{storage=window.localStorage;}catch{}
@@ -12,7 +13,7 @@ let consentStopped=false;
 function stored(){const value=loadBeta(storage,props.now);return consentStopped?{...value,consent:false,events:[]}:value;}
 const form=ref<Profile>(JSON.parse(JSON.stringify(state.value.profile))),ageInput=ref(state.value.profile.age===null?'':String(state.value.profile.age));
 const selected=ref<TopicId|null>(null),notice=ref(''),root=ref<HTMLElement|null>(null);
-const topics=computed(()=>topicsFor(props.items,state.value.profile,state.value.consent?state.value.events:[],props.now));
+const topics=computed(()=>publishedTopics(props.publishedData,props.items,state.value.profile,props.now)??topicsFor(props.items,state.value.profile,state.value.consent?state.value.events:[],props.now));
 // Explicit interests stay visible; discovery slots rank by local aggregate evidence.
 const showAll=ref(false);
 const displayed=computed(()=>{const pinned=topics.value.filter(t=>t.pinned);return [...pinned,...topics.value.filter(t=>!t.pinned).slice(0,showAll.value?undefined:Math.max(0,8-pinned.length))];});

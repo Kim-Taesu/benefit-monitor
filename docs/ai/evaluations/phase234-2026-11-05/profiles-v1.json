@@ -1,0 +1,229 @@
+{
+  "status": "개발용 추천 초안; 독립 사람 채점 전",
+  "profiles": [
+    {
+      "profile_id": "P01",
+      "fictional": true,
+      "age": 40,
+      "district": "동작구",
+      "carrier": "KT",
+      "interests": [
+        "주말 유아가족 숲체험"
+      ],
+      "child_age": 5,
+      "recommended_candidate_id": "culture-01",
+      "recommendation_reason": "유아동반 가족·동작구·주말 관심 일치",
+      "additional_checks": [
+        "유아의 정확한 나이 범위",
+        "회차·잔여석"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P02",
+      "fictional": true,
+      "age": 33,
+      "district": "중랑구",
+      "carrier": "SKT",
+      "interests": [
+        "가족 생태체험"
+      ],
+      "child_age": 6,
+      "recommended_candidate_id": "culture-02",
+      "recommendation_reason": "만4세 이상 자녀 동반·보호자 참석·중랑구 활동 일치",
+      "additional_checks": [
+        "가족당 전체인원2~3명",
+        "접수 마감 충돌",
+        "기상·최소가족수 취소"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P03",
+      "fictional": true,
+      "age": 52,
+      "district": "마포구",
+      "carrier": "LGU+",
+      "interests": [
+        "평일 오전 정원 산책"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": "culture-03",
+      "recommendation_reason": "성인·마포구·화요일 오전 야외활동 관심 일치",
+      "additional_checks": [
+        "정원10/12명 충돌",
+        "전일17시 접수",
+        "차량 이용 시 주차비"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P04",
+      "fictional": true,
+      "age": 27,
+      "district": "영등포구",
+      "carrier": "KT",
+      "interests": [
+        "요리",
+        "또래 교류"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": "youth-01",
+      "recommendation_reason": "만19~39세·영등포 요리 모임 관심 일치",
+      "additional_checks": [
+        "마감13시/14시 충돌",
+        "정원10/100명 충돌",
+        "심사·최종 선정 문자"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P05",
+      "fictional": true,
+      "age": 29,
+      "district": "노원구",
+      "carrier": "SKT",
+      "interests": [
+        "북바인딩",
+        "평일 저녁 공예"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": "youth-03",
+      "recommendation_reason": "서울시 만19~39세·노원·책 만들기 관심 일치",
+      "additional_checks": [
+        "동일3회 중 하루만",
+        "추첨·11월10일 안내",
+        "센터 평일3일 전 전화 취소"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P06",
+      "fictional": true,
+      "age": 30,
+      "district": "강북구",
+      "carrier": "LGU+",
+      "interests": [
+        "명상",
+        "차"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": "youth-02",
+      "recommendation_reason": "강북구민 우선과 차·명상 관심에 부합하는 조건부 후보",
+      "additional_checks": [
+        "정확한 청년 연령 미확인",
+        "심사·문자 회신 필수",
+        "텀블러 준비"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P07",
+      "fictional": true,
+      "age": 45,
+      "district": "서대문구",
+      "carrier": "알뜰폰",
+      "interests": [
+        "자연 산책",
+        "평일 오전"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": "culture-03",
+      "recommendation_reason": "성인·인접 마포 활동·평일 오전 산책 관심 일치",
+      "additional_checks": [
+        "거주지 조건 명시 없음; 추가 자격 확인",
+        "정원 충돌",
+        "전일 마감"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P08",
+      "fictional": true,
+      "age": 17,
+      "district": "노원구",
+      "carrier": "KT",
+      "interests": [
+        "청년 교류",
+        "혼자 참여"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": null,
+      "recommendation_reason": "확인된 청년 모임19~39세와 불일치; 가족 프로그램은 동반 조건 불충족",
+      "additional_checks": [
+        "강북 청년 연령 미확인이라 적격이라고 추천하지 않음"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P09",
+      "fictional": true,
+      "age": null,
+      "district": "노원구",
+      "carrier": "미확인",
+      "interests": [
+        "북바인딩"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": "youth-03",
+      "recommendation_reason": "지역·관심 일치하나 나이가 없어 조건부 후보로만 제시",
+      "additional_checks": [
+        "만19~39세 확인 전 적격 확정 금지",
+        "서울시 청년 증빙 기준",
+        "추첨·하루만 선택"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    },
+    {
+      "profile_id": "P10",
+      "fictional": true,
+      "age": 28,
+      "district": "경기도 거주·마포 생활권",
+      "carrier": "KT",
+      "interests": [
+        "성인 정원 프로그램",
+        "평일 오전"
+      ],
+      "child_age": null,
+      "recommended_candidate_id": "culture-03",
+      "recommendation_reason": "성인·마포 생활권·정원 프로그램 관심 일치",
+      "additional_checks": [
+        "거주지 제한 미명시; 신청 자격은 별도 확인",
+        "정원 충돌",
+        "선착순·잔여석"
+      ],
+      "eligibility_assertion": "미확인 자격을 충족했다고 확정하지 않음",
+      "carrier_match": "이번 검증 후보에서 통신사 조건 없음; 통신사별 추천 성능은 미검증",
+      "human_relevance_score": null
+    }
+  ],
+  "profile_count": 10,
+  "recommendation_count": 9,
+  "known_constraint_violations_in_local_check": 0,
+  "human_relevance_rate": null,
+  "phase4_passed": false,
+  "limits": [
+    "프로필을 결과 열람 후 작성하여 독립 보류평가가 아님",
+    "실제 사용자 정보 아님",
+    "관련성90% 달성은 아직 입증하지 않음",
+    "통신사별 혜택 연결은 미검증"
+  ]
+}

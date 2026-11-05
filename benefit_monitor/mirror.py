@@ -6,12 +6,12 @@ import subprocess
 from pathlib import Path
 
 
-def run(root, repository):
-    content = (Path(root) / "delivery/public/briefing.json").read_bytes()
+def run(root, repository, env=None, content=None):
+    content = content if content is not None else (Path(root) / "delivery/public/briefing.json").read_bytes()
     data=json.loads(content)
     if data.get("status")=="collection_failed":
         from .store import load, save
-        restore(root,repository)
+        restore(root,repository,env=env)
         data["operational_state"]=load(Path(root)/"cache/operational_state.json",{})
         data["source_health"]=data["operational_state"].get("sources",{})
         save(Path(root)/"delivery/public/briefing.json",data)
@@ -19,14 +19,15 @@ def run(root, repository):
     endpoint = f"repos/{repository}/contents/briefing.json"
     current = subprocess.run(
         ["gh", "api", "--method", "GET", endpoint + "?ref=briefing-data", "--jq", ".sha"],
-        check=True, capture_output=True, text=True).stdout.strip()
+        check=True, capture_output=True, text=True, env=env).stdout.strip()
     payload = dict(message="Update public briefing JSON", branch="briefing-data", sha=current,
                    content=base64.b64encode(content).decode("ascii"))
-    subprocess.run(["gh", "api", "--method", "PUT", endpoint, "--input", "-"],
-                   input=json.dumps(payload), check=True, capture_output=True, text=True)
+    result=subprocess.run(["gh", "api", "--method", "PUT", endpoint, "--input", "-"],
+                   input=json.dumps(payload), check=True, capture_output=True, text=True, env=env)
+    return json.loads(result.stdout).get("commit",{}).get("sha")
 
 
-def restore(root, repository, now=None):
+def restore(root, repository, now=None, env=None):
     from datetime import datetime
     from .briefing import SEOUL
     from .store import load, save
@@ -34,12 +35,20 @@ def restore(root, repository, now=None):
     root=Path(root)
     result=subprocess.run(["gh", "api", "--method", "GET",
         f"repos/{repository}/contents/briefing.json?ref=briefing-data"],
-        check=True,capture_output=True,text=True)
+        check=True,capture_output=True,text=True,env=env)
     envelope=json.loads(result.stdout)
     if envelope.get("encoding")!="base64":raise ValueError("Unexpected mirror encoding")
     remote=json.loads(base64.b64decode(envelope["content"]))
     config=load(root/"sources.yaml",None)
-    state=sanitize(remote.get("operational_state",{}),{x["id"] for x in config["sources"]},now or datetime.now(SEOUL))
+    now=now or datetime.now(SEOUL)
+    ids={x['id'] for x in config['sources']}
+    state=sanitize(remote.get("operational_state",{}),ids,now)
+    local=sanitize(load(root/'cache/operational_state.json',{}),ids,now)
+    # A mirror restore must not undo a body/title change observed locally.
+    for key,row in local['items'].items():
+        old=state['items'].get(key,{})
+        if row.get('hold_at') and (not old.get('hold_at') or datetime.fromisoformat(row['hold_at'])>datetime.fromisoformat(old['hold_at'])):
+            state['items'][key]=row
     save(root/"cache/operational_state.json",state)
 
 

@@ -1,0 +1,15 @@
+{
+  "new_requests": 1,
+  "prior_artifact_hashes_preserved": 100,
+  "ledger_change": "one appended request; previous content hash verified",
+  "frozen_hashes_verified": 14,
+  "free_collector_policy_unchanged": true,
+  "credential_pattern_leak_paths": [],
+  "preflight_tests": {
+    "count": 285,
+    "result": "passed"
+  },
+  "quality_gate": "failed",
+  "automatic_operation": "not_connected",
+  "publication_approved": false
+}

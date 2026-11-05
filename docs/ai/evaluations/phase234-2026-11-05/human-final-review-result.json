@@ -1,0 +1,82 @@
+{
+  "review_id": "phase234-review-r03-2026-11-05",
+  "recorded_at": "2026-11-04T23:24:47.107847+00:00",
+  "reviewer": "사용자",
+  "source": "현재 대화의 명시적 최종 검토 응답",
+  "verbatim_response": "최종 검토표 확인. 이슈 없음.",
+  "scope": "동결된 최종 검토표의 신규 후보9개·해결 조건11개·연결된 프로필P01~P10 전체",
+  "normalization": "사용자가 최종 검토표를 확인하고 이슈 없다고 일괄 판정한 응답을 각 검토 항목 O로 기록. 개별 점수 나열이나 검토 소요시간을 받은 것으로 기록하지 않음.",
+  "candidate_results": {
+    "culture-01": "O",
+    "culture-02": "O",
+    "culture-03": "O",
+    "shopping-04": "O",
+    "shopping-05": "O",
+    "shopping-06": "O",
+    "youth-01": "O",
+    "youth-02": "O",
+    "youth-03": "O"
+  },
+  "condition_results": {
+    "culture-control-3-eligibility": "O",
+    "culture-control-3-deadline": "O",
+    "culture-control-3-fee": "O",
+    "culture-control-3-refund": "O",
+    "culture-control-3-weather": "O",
+    "culture-control-3-transfer": "O",
+    "culture-control-4-party": "O",
+    "culture-control-4-sessions": "O",
+    "culture-control-4-closure": "O",
+    "culture-control-4-lateness": "O",
+    "culture-control-4-transfer": "O"
+  },
+  "new_important_errors_reported": 0,
+  "profile_results": {
+    "P01": "O",
+    "P02": "O",
+    "P03": "O",
+    "P04": "O",
+    "P05": "O",
+    "P06": "O",
+    "P07": "O",
+    "P08": "O",
+    "P09": "O",
+    "P10": "O"
+  },
+  "reviewer_minutes": null,
+  "frozen_documents": [
+    {
+      "path": "final-human-review.md",
+      "sha256": "a390b847fd55f03cee644220f016cb7ec7c47a854f6af259eb2436bbd277bbf3"
+    },
+    {
+      "path": "candidates.json",
+      "sha256": "3128306972e42765d5aedac102fdc0082de0c4430c4b11b92fbf3f244ddee93a"
+    },
+    {
+      "path": "novelty-review-r03.json",
+      "sha256": "b49f561ad45411a10ed14a26775862a7f866b1ced0b24df8e3faf1d03e64e35d"
+    },
+    {
+      "path": "trial04-preregister.json",
+      "sha256": "e402f9e6ca16aab02ba5a92fb5ecb928ad355a33e1c77dc6f57cd0fc44e70851"
+    },
+    {
+      "path": "trial04-results.json",
+      "sha256": "7758992f80e751e1cb863458ffbdf12151a19bba5a347900aaefb8e97f1c17f4"
+    },
+    {
+      "path": "profiles.json",
+      "sha256": "3286b2a600949f356c3d91ef8da7c16ef800bd09b87f7845ef17877c56ddfbfb"
+    },
+    {
+      "path": "personalization-review.md",
+      "sha256": "d04ced0e0961e7d715d07ea8cd2b138ae21ea4c259edcd88363f6cc9bd70fd82"
+    }
+  ],
+  "limitations": [
+    "개발용 가상프로필·수집시점 원문의 평가이며 일반 사용자 전체 관련성이나 현재 자격·재고·할인성공 보장 아님",
+    "기존 실패 묶음·질문버전 차이·회차2 운영위반을 소급 취소하지 않음",
+    "공개·배포·신청·결제·API과금·main병합 승인이 아님"
+  ]
+}

@@ -73,3 +73,19 @@ class MirrorTests(unittest.TestCase):
                 return subprocess.CompletedProcess(args,0,'{}','')
             with patch('benefit_monitor.mirror.subprocess.run',side_effect=api):mirror.run(root,'Kim-Taesu/benefit-monitor')
             self.assertEqual(json.loads((root/'delivery/public/briefing.json').read_text())['operational_state'],prior)
+
+    def test_restore_cannot_erase_a_newer_local_review_hold(self):
+        from datetime import datetime
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            save(root/'sources.yaml',{'sources':[{'id':'test'}]})
+            key='a'*24
+            local={'source':'test','hold_at':'2026-10-28T07:00:00+09:00','hold_reason':'body_changed'}
+            save(root/'cache/operational_state.json',{'schema_version':1,'items':{key:local},'sources':{}})
+            remote={'operational_state':{'schema_version':1,'items':{},'sources':{'test':{'consecutive_failures':3}}}}
+            envelope={'encoding':'base64','content':base64.b64encode(json.dumps(remote).encode()).decode()}
+            with patch('benefit_monitor.mirror.subprocess.run',return_value=subprocess.CompletedProcess([],0,json.dumps(envelope),'')):
+                mirror.restore(root,'Kim-Taesu/benefit-monitor',datetime.fromisoformat('2026-10-28T08:00:00+09:00'))
+            state=json.loads((root/'cache/operational_state.json').read_text())
+            self.assertEqual(state['items'][key],local)
+            self.assertEqual(state['sources']['test']['consecutive_failures'],3)

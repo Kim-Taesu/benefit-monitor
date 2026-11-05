@@ -1,0 +1,42 @@
+{
+  "source_commit": "f65f30c",
+  "snapshot_scope": "기존 공개·후보·검토 자료",
+  "files": [
+    {
+      "path": "/Users/user/personal/benefit-monitor/.maintenance/p0-source/public/verified.json",
+      "sha256": "ff3fd625b9a9d4df1396696e9eaf4ea2e85c0b490401cdef07ee516bc6a4e132",
+      "bytes": 126500
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/.maintenance/p0-source/inputs/public.json",
+      "sha256": "a3fb3837ae9b010cc91921ed5a8d94fce8aee3b858aa772b2abc027ea102ed7b",
+      "bytes": 128635
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/report.json",
+      "sha256": "42535f2e3fdc037b8a9a8da1b1320c39b8d4920387ff120fd4118b8ecdc43b35",
+      "bytes": 206951
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/verified_items.json",
+      "sha256": "c64a2858feec764eaf2ebc0ed797363eb8516bd3445c45c2e61a6c5ed33c4bbc",
+      "bytes": 83568
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/operational_state.json",
+      "sha256": "50cc1f508f932700f341867d55b196b0c204ce7e859530c322f7fdb73069fbbb",
+      "bytes": 26567
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/district_candidates.json",
+      "sha256": "8b8f9c29c463f24ef182414093e085feda23c1caf84cb0c7f4f13713f898488a",
+      "bytes": 29119
+    },
+    {
+      "path": "/Users/user/personal/benefit-monitor/cache/review_texts.json",
+      "sha256": "061d742367ce59688e34239fa7f8280f0b33c1ad720e9d61f158478cd30e88ff",
+      "bytes": 260482
+    }
+  ],
+  "observed_records": 556
+}

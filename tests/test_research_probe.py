@@ -2,6 +2,7 @@ import copy
 import json
 import socket
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -70,13 +71,61 @@ class ResearchProbeTests(unittest.TestCase):
         self.assertEqual(report['request_attempts'],1)
 
     def test_404_robots_can_continue(self):
-        opener=Opener([HTTPError('https://mediahub.seoul.go.kr/robots.txt',404,'missing',{},None),self.seed,'<html>공고</html>'])
+        from io import BytesIO
+        stream = BytesIO(b'missing')
+        opener=Opener([HTTPError('https://mediahub.seoul.go.kr/robots.txt',404,'missing',{},stream),self.seed,'<html>공고</html>'])
         self.assertEqual(run(self.config,now=self.now,opener=opener)['status'],'passed')
+        self.assertTrue(stream.closed)
 
     def test_redirect_rejected(self):
         with self.assertRaises(ValueError):
             NoRedirect().redirect_request(None,None,302,'',{},'https://other.example/')
 
+    def test_redirect_destination_recorded_without_following(self):
+        for destination in ('https://mediahub.seoul.go.kr/main.do',
+                            'https://outside.example/'):
+            with self.subTest(destination=destination):
+                try:
+                    NoRedirect().redirect_request(None,None,302,'',{},destination)
+                except ValueError as error:
+                    blocked = error
+                opener = Opener(['User-agent: *\nAllow: /', blocked])
+                report = run(self.config, now=self.now, opener=opener)
+                self.assertEqual(report['status'], 'blocked')
+                self.assertEqual(report['events'][-1].get('redirect_target'), destination)
+                self.assertEqual(report['events'][-1].get('http_status'), 302)
+                self.assertEqual(report['responses'], 2)
+                self.assertEqual(report['request_attempts'], 2)
+                self.assertEqual(report['redirects_followed'], 0)
+                self.assertEqual(report['documents_read'], 0)
+                self.assertEqual(len(opener.urls), 2)
+
     def test_no_link_is_not_pass(self):
         report=run(self.config,now=self.now,opener=Opener(['','<html>empty</html>']))
         self.assertEqual(report['status'],'blocked')
+
+    def test_crawl_delay_between_real_request_boundaries(self):
+        policies = [
+            ('User-agent: *\nCrawl-delay: 10\nAllow: /', [0, 10, 20], 'passed'),
+            ('User-agent: *\nCrawl-delay: 3600\nAllow: /', [0], 'blocked'),
+            ('User-agent: *\nCrawl-delay: 10\nAllow: /\n'
+             'User-agent: BenefitMonitor\nAllow: /', [0, 0, 0], 'passed'),
+            ('User-agent: BenefitMonitor\nCrawl-delay: 2\nAllow: /\n'
+             'User-agent: BenefitMonitor\nCrawl-delay: 5\nAllow: /', [0, 5, 10], 'passed'),
+            ('User-agent: *\nCrawl-delay: invalid\nAllow: /', [0], 'blocked'),
+        ]
+        for policy, expected_times, expected_status in policies:
+            with self.subTest(policy=policy):
+                elapsed, request_times = [0], []
+                class TimedOpener(Opener):
+                    def open(self, request, timeout):
+                        request_times.append(elapsed[0])
+                        return super().open(request, timeout)
+                def advance(seconds):
+                    elapsed[0] += seconds
+                opener = TimedOpener([policy, self.seed, '<html>공고</html>'])
+                with patch('time.monotonic', side_effect=lambda: elapsed[0]), \
+                     patch('time.sleep', side_effect=advance):
+                    report = run(self.config, now=self.now, opener=opener)
+                self.assertEqual(report['status'], expected_status)
+                self.assertEqual(request_times, expected_times)

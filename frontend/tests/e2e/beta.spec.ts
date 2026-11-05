@@ -6,7 +6,7 @@ const require=createRequire(import.meta.url);
 async function setup(page){
  await page.clock.install({time:new Date(NOW)});
  await page.route('**/*',route=>{
-  const u=new URL(route.request().url());if(u.origin!=='http://127.0.0.1:4173')return route.abort();
+  const u=new URL(route.request().url());if(u.origin!==new URL(String(test.info().project.use.baseURL)).origin)return route.abort();
   if(u.pathname.endsWith('/briefing.json'))return route.fulfill({json:snapshot([
    item({summary:'[테스트] 은평 야간 전시',districts:['은평구']}),
    item({url:'https://mediahub.seoul.go.kr/archives/2',summary:'[테스트] KT 할인',districts:[],labels:{category:'할인·적립',region:'전국'}}),
@@ -43,7 +43,7 @@ for(const width of [390,1440])test(`beta accessibility and screenshot ${width}`,
  await page.addScriptTag({path:require.resolve('axe-core/axe.min.js')});
  expect(await page.evaluate(async()=>(await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}})).violations)).toEqual([]);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
- mkdirSync('../docs/qa/screenshots',{recursive:true});await page.screenshot({path:`../docs/qa/screenshots/beta-${width}.png`,fullPage:true});
+ const shots=process.env.BENEFIT_SCREENSHOT_DIR||'../docs/qa/screenshots';mkdirSync(shots,{recursive:true});await page.screenshot({path:`${shots}/beta-${width}.png`,fullPage:true});
 });
 test('storage denial and expiry never remove basic discovery or fabricate recommendations',async({page})=>{
  await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new Error('blocked');}}));

@@ -1,0 +1,603 @@
+{
+  "scope": "recorded_v1_development_replay",
+  "new_api_calls": 0,
+  "publication_approved": false,
+  "research": [
+    {
+      "candidate": "culture-01",
+      "request_id": "1595fa291c00480843016d6c6150c6d53300d5e92414636b6d5bcda92d633aab",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "culture-02",
+      "request_id": "21d357a2b59915707e61cc042fad602ed6dc1477d23ceeec9e0e41fe0ac8d08f",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown/empty claim references"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "culture-03",
+      "request_id": "6bff6aae6a8d07a48f6b7a45b91a53acd6f12b443acaea00b8a0f80e11d8bad8",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "youth-01",
+      "request_id": "f05c804289ac43e0f04a85d3610c24085b38d87d856d5d2aa4aaca5fe1618309",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown/empty claim references"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "youth-02",
+      "request_id": "bece60d4272f6ef1a9dc7b7e9048c0913e56e2b82e9ddf57cdd9aa10ea5fa186",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "youth-03",
+      "request_id": "63c71bb7bf5b7189114cb7ac422e593f5a20b84b9610ba0d0ac7464f610df65c",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "Invalid isoformat string: '2026-11-02T00:00:00+09:00'"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "shopping-04",
+      "request_id": "51edbc2a1980ccd01e4db427f771b0be1519357a57785030a139f54bf3c21b4e",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "shopping-05",
+      "request_id": "9f0c064ecad0d83d584fb529969aba282cb5c8838cf582647af0e274c9a725f6",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "shopping-06",
+      "request_id": "55ec5ce2a808d60a31ed831a335d71867be692e35c3deed7af5f8b58a2ee320b",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "proposed field contradicts supported claim"
+        ],
+        "assessments": []
+      }
+    }
+  ],
+  "topics": [
+    {
+      "reference_time": "2026-11-05T12:00:00+09:00",
+      "request_id": "7daa312026dd56663cfd1e0a55c049b46430e57d440e7e1ff253f776d2fbbe8b",
+      "input_count": 9,
+      "structural": {
+        "valid": true,
+        "errors": [],
+        "assessments": []
+      },
+      "semantic": {
+        "valid": false,
+        "findings": [
+          {
+            "code": "unreviewed_title",
+            "topic_id": "culture"
+          },
+          {
+            "code": "relative_title_requires_review",
+            "topic_id": "culture"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-03",
+            "code": "unsupported_title_facet",
+            "facet": "family"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-03",
+            "code": "unsupported_title_facet",
+            "facet": "weekend"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "family"
+          },
+          {
+            "topic_id": "family",
+            "item_id": "culture-01",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "topic_id": "family",
+            "item_id": "culture-02",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "shopping"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "career"
+          },
+          {
+            "topic_id": "career",
+            "item_id": "youth-01",
+            "code": "unsupported_topic"
+          },
+          {
+            "topic_id": "career",
+            "item_id": "youth-02",
+            "code": "unsupported_topic"
+          },
+          {
+            "topic_id": "career",
+            "item_id": "youth-03",
+            "code": "unsupported_topic"
+          }
+        ],
+        "publication_approved": false,
+        "human_semantic_review": "required",
+        "policy": "host-topic-basis-v1"
+      },
+      "fallback_cards": [
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "culture",
+          "title": "문화·체험",
+          "item_links": [
+            {
+              "item_id": "culture-01",
+              "evidence_claim_ids": [
+                "approved-culture-01"
+              ],
+              "reason": "토·일 운영 유아 동반 가족 대상 무료 자연 체험 프로그램으로 주말 가족 문화 체험에 해당함. 대상 연령·회차 잔여석은 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "culture-02",
+              "evidence_claim_ids": [
+                "approved-culture-02"
+              ],
+              "reason": "토요일 운영 만4세 이상 자녀 동반 가족 무료 프로그램. 접수 마감 적용 방식과 날씨 진행 여부는 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "culture-03",
+              "evidence_claim_ids": [
+                "approved-culture-03"
+              ],
+              "reason": "성인 대상 무료 체험 프로그램이나 가족 주제가 아니므로 문화 체험 주제에는 적합하나 가족 연결은 하지 않음.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "dfce0aea51f19bf3a2538213093781568c64428be81677e6439b5705db0b75a2",
+          "audit": null
+        },
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "family",
+          "title": "가족과 함께",
+          "item_links": [
+            {
+              "item_id": "culture-01",
+              "evidence_claim_ids": [
+                "approved-culture-01"
+              ],
+              "reason": "유아 동반 가족 대상 무료 프로그램. 유아 연령 범위·거주지 제한은 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "culture-02",
+              "evidence_claim_ids": [
+                "approved-culture-02"
+              ],
+              "reason": "만4세 이상 자녀와 보호자 동반 무료 프로그램. 가족당 인원 2~3명 조건 확인 필요.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "dfce0aea51f19bf3a2538213093781568c64428be81677e6439b5705db0b75a2",
+          "audit": null
+        },
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "shopping",
+          "title": "장보기·멤버십",
+          "item_links": [
+            {
+              "item_id": "shopping-04",
+              "evidence_claim_ids": [
+                "approved-shopping-04"
+              ],
+              "reason": "샌드위치 구매 시 음료 증정으로 구매 전제 혜택. 증정 음료 한도·카드 제외 조건은 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "shopping-05",
+              "evidence_claim_ids": [
+                "approved-shopping-05"
+              ],
+              "reason": "기획세트 대상 30% 할인으로 구매 전제 할인 혜택. 점포 취급·재고 확인 필요.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "shopping-06",
+              "evidence_claim_ids": [
+                "approved-shopping-06"
+              ],
+              "reason": "대상 뷰티·패션 상품 30% 할인. 서울 취급점과 SKU 범위는 미확인.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "dfce0aea51f19bf3a2538213093781568c64428be81677e6439b5705db0b75a2",
+          "audit": null
+        }
+      ]
+    },
+    {
+      "reference_time": "2026-11-11T18:00:00+09:00",
+      "request_id": "232a5f7bc5b43e00a0fcb5b175376aa9c9a7cd6e1febad91b2639cf7c86003ce",
+      "input_count": 6,
+      "structural": {
+        "valid": true,
+        "errors": [],
+        "assessments": []
+      },
+      "semantic": {
+        "valid": false,
+        "findings": [
+          {
+            "code": "unreviewed_title",
+            "topic_id": "culture"
+          },
+          {
+            "code": "relative_title_requires_review",
+            "topic_id": "culture"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-01",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-02",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-03",
+            "code": "unsupported_title_facet",
+            "facet": "family"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-03",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-03",
+            "code": "unsupported_title_facet",
+            "facet": "weekend"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "family"
+          },
+          {
+            "topic_id": "family",
+            "item_id": "culture-01",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "topic_id": "family",
+            "item_id": "culture-02",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "shopping"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "career"
+          },
+          {
+            "topic_id": "career",
+            "item_id": "youth-02",
+            "code": "unsupported_topic"
+          }
+        ],
+        "publication_approved": false,
+        "human_semantic_review": "required",
+        "policy": "host-topic-basis-v1"
+      },
+      "fallback_cards": [
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "culture",
+          "title": "문화·체험",
+          "item_links": [
+            {
+              "item_id": "culture-01",
+              "evidence_claim_ids": [
+                "approved-culture-01"
+              ],
+              "reason": "토·일 운영 유아 동반 가족 대상 무료 자연 체험 프로그램. 유아 연령 범위·거주지 제한·회차별 잔여석은 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "culture-02",
+              "evidence_claim_ids": [
+                "approved-culture-02"
+              ],
+              "reason": "토요일 운영 만4세 이상 자녀 동반 가족 무료 프로그램. 접수 마감 적용 방식과 날씨에 따른 진행 여부는 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "culture-03",
+              "evidence_claim_ids": [
+                "approved-culture-03"
+              ],
+              "reason": "성인 대상 무료 체험 프로그램으로 문화 체험 주제에 해당하나 가족 조건은 없음. 주차비 별도 발생.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "9bc10c30ba99b21b5042290ab0ff8ea58f1a3c6b2a01acef42b8ea0801895831",
+          "audit": null
+        },
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "family",
+          "title": "가족과 함께",
+          "item_links": [
+            {
+              "item_id": "culture-01",
+              "evidence_claim_ids": [
+                "approved-culture-01"
+              ],
+              "reason": "유아 동반 가족 대상 무료 프로그램. 유아 연령 범위·거주지 제한은 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "culture-02",
+              "evidence_claim_ids": [
+                "approved-culture-02"
+              ],
+              "reason": "만4세 이상 자녀와 보호자 동반 무료 프로그램. 가족당 인원 2~3명 조건 확인 필요.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "9bc10c30ba99b21b5042290ab0ff8ea58f1a3c6b2a01acef42b8ea0801895831",
+          "audit": null
+        },
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "shopping",
+          "title": "장보기·멤버십",
+          "item_links": [
+            {
+              "item_id": "shopping-04",
+              "evidence_claim_ids": [
+                "approved-shopping-04"
+              ],
+              "reason": "샌드위치 전상품 구매 시 음료 증정. 구매 전제 혜택이며 증정 음료 선택권·한도·카드 제외 조건은 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "shopping-06",
+              "evidence_claim_ids": [
+                "approved-shopping-06"
+              ],
+              "reason": "대상 뷰티·패션 상품 30% 할인. 구매 전제 혜택이며 서울 취급점과 SKU 범위는 미확인.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "9bc10c30ba99b21b5042290ab0ff8ea58f1a3c6b2a01acef42b8ea0801895831",
+          "audit": null
+        }
+      ]
+    },
+    {
+      "reference_time": "2026-11-19T12:00:00+09:00",
+      "request_id": "9e92b510b4587be1c34ef4ae30142a654caf550589cc365077d3f4292fa9901a",
+      "input_count": 5,
+      "structural": {
+        "valid": true,
+        "errors": [],
+        "assessments": []
+      },
+      "semantic": {
+        "valid": false,
+        "findings": [
+          {
+            "code": "unreviewed_title",
+            "topic_id": "shopping"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "culture"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-02",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-03",
+            "code": "unsupported_title_facet",
+            "facet": "family"
+          },
+          {
+            "topic_id": "culture",
+            "item_id": "culture-03",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "family"
+          },
+          {
+            "topic_id": "family",
+            "item_id": "culture-02",
+            "code": "unsupported_title_facet",
+            "facet": "free"
+          },
+          {
+            "code": "unreviewed_title",
+            "topic_id": "career"
+          },
+          {
+            "topic_id": "career",
+            "item_id": "youth-02",
+            "code": "unsupported_topic"
+          }
+        ],
+        "publication_approved": false,
+        "human_semantic_review": "required",
+        "policy": "host-topic-basis-v1"
+      },
+      "fallback_cards": [
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "shopping",
+          "title": "장보기·멤버십",
+          "item_links": [
+            {
+              "item_id": "shopping-04",
+              "evidence_claim_ids": [
+                "approved-shopping-04"
+              ],
+              "reason": "샌드위치 전상품 구매 시 음료 증정. 구매 전제 혜택이며 증정 음료 선택권·한도·카드 제외 조건은 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "shopping-06",
+              "evidence_claim_ids": [
+                "approved-shopping-06"
+              ],
+              "reason": "대상 뷰티·패션 상품 30% 할인. 구매 전제 혜택이며 서울 취급점과 SKU 범위는 미확인.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "e98c666cb56be6b6241bb2c6fac1ced5b6100da44595355bf9c41b9a778a71b5",
+          "audit": null
+        },
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "culture",
+          "title": "문화·체험",
+          "item_links": [
+            {
+              "item_id": "culture-02",
+              "evidence_claim_ids": [
+                "approved-culture-02"
+              ],
+              "reason": "토요일 운영 만4세 이상 자녀 동반 가족 무료 프로그램. 접수 마감 적용 방식과 날씨에 따른 진행 여부는 미확인.",
+              "match_type": "explicit"
+            },
+            {
+              "item_id": "culture-03",
+              "evidence_claim_ids": [
+                "approved-culture-03"
+              ],
+              "reason": "성인 대상 무료 체험 프로그램. 표시 정원과 본문 인원 차이, 주차비 별도 발생.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "e98c666cb56be6b6241bb2c6fac1ced5b6100da44595355bf9c41b9a778a71b5",
+          "audit": null
+        },
+        {
+          "schema_version": "topic-draft-v1",
+          "topic_id": "family",
+          "title": "가족과 함께",
+          "item_links": [
+            {
+              "item_id": "culture-02",
+              "evidence_claim_ids": [
+                "approved-culture-02"
+              ],
+              "reason": "만4세 이상 자녀와 보호자 동반 무료 프로그램. 가족당 인원 2~3명 조건 확인 필요.",
+              "match_type": "explicit"
+            }
+          ],
+          "profile_conditions": [],
+          "excluded_items": [],
+          "snapshot_id": "e98c666cb56be6b6241bb2c6fac1ced5b6100da44595355bf9c41b9a778a71b5",
+          "audit": null
+        }
+      ]
+    }
+  ],
+  "research_valid": 0,
+  "topic_structural_valid": 3,
+  "topic_semantic_valid": 0,
+  "extraction_v2_model_quality": "not_measured",
+  "basis_sha256": "400669276698692497133423eb1c6fa946cd285124f3dd7f5a3daf1a5477b327"
+}

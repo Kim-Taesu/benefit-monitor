@@ -73,6 +73,8 @@ def validate(result, host, kind):
         now = _timestamp(host['now'])
         if result['mode'] != host['mode']:
             raise ValueError('mode mismatch')
+        if result['mode'] == 'api_agent' and host.get('synthetic') is not False:
+            raise ValueError('API mode requires non-fixture host')
         if result['status'] in ('blocked', 'failed') and not result['errors']:
             raise ValueError('blocked/failed requires errors')
         if result['status'] == 'completed' and result['errors']:

@@ -119,3 +119,13 @@ class AIContractTests(unittest.TestCase):
     def test_invalid_age_reference_date(self):
         self.topics['topics'][1]['profile_conditions'][0]['reference_date'] = 'not-a-date'
         self.assertFalse(validate(self.topics,self.thost,'topic')['valid'])
+
+    def test_api_mode_schema_and_fixture_guard(self):
+        self.host['mode'] = self.result['mode'] = 'api_agent'
+        schema = json.loads((ROOT/'schemas/research-result.schema.json').read_text())
+        self.assertEqual(check_schema(self.result,schema), [])
+        self.assertFalse(self.check()['valid'])
+
+    def test_api_topic_rejects_synthetic_host(self):
+        self.thost['mode'] = self.topics['mode'] = 'api_agent'
+        self.assertFalse(validate(self.topics,self.thost,'topic')['valid'])

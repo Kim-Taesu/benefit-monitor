@@ -11,29 +11,91 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.jongno.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260320170624732091",
+              "label": "2026년 서울역사박물관 어린이박물관 관람 안내 (개인)",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 종로구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "a4faf7d0f5fad43cd7442a7fbe05fce36efe8e8324850542bb9fb17f5ea6fbe5",
+              "checked_at": "2026-11-04T16:38:45.826509+00:00",
+              "source_case_id": "culture_sports-10",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.jongno.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.jongno.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.445380+00:00",
+          "status": "ok",
+          "sha256": "6e88a2987f671355902c6d2b72c0bbd11b38e05e7f8714b749684f79b80270fc",
+          "bytes": 1374,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      }
     },
     {
       "district": "중구",
@@ -44,29 +106,83 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.junggu.seoul.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_directory_record_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단 여부와 별도로 서울시 공식 센터 디렉터리의 실제 항목에서 확인. 개별 프로그램 자격은 별도.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00162",
+              "label": "서울청년센터 중구",
+              "address": "서울 중구 서소문로12길 36 (서소문동) 8층",
+              "hours": "(월~금) 10:00~21:30 (토) 10:00~17:00 (일, 공휴일) 휴관",
+              "district": "중구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00162",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.junggu.seoul.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": null
+      }
     },
     {
       "district": "용산구",
@@ -77,29 +193,75 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.yongsan.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.yongsan.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.yongsan.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.574387+00:00",
+          "status": "ok",
+          "sha256": "0ac2c31c420b9ab36e6cb0bcfcbaa6d317be9de1c3250f43819ac81f3b909807",
+          "bytes": 250,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      }
     },
     {
       "district": "성동구",
@@ -110,29 +272,99 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.sd.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251203104822013240",
+              "label": "서울숲 테니스장 평일",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 성동구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "676e29241e845a0aa6282bdcfd7080c807f99cc79e5af5ba9af6dca4fb539329",
+              "checked_at": "2026-11-04T16:38:45.611693+00:00",
+              "source_case_id": "culture_sports-09",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_directory_record_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단 여부와 별도로 서울시 공식 센터 디렉터리의 실제 항목에서 확인. 개별 프로그램 자격은 별도.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00006",
+              "label": "서울청년센터 성동",
+              "address": "서울 성동구 마조로 66 (마장동, 라봄 성동) 2층, 210호",
+              "hours": "(월-금) 10:00~21:40 (토) 10:00~17:00 (일, 공휴일) 휴관 **매월 마지막 날이 평일인 경우, 해당 일자에는 기관 정비를 실시합니다. 이에 따라 운영시간은 09:00~18:00이며, 전화 응대만 가능하고 공간 이용은 제한됩니다. 이용에 참고 부탁드립니다.",
+              "district": "성동구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00006",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.sd.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1082)>",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": null
+      }
     },
     {
       "district": "광진구",
@@ -143,29 +375,123 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.gwangjin.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+              "label": "아리수나라 어린이 체험 예약",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 광진구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "c2e8ae5b3eae499c6dc6da6e6a01ec429b5cdc6fcbed90f453d09c9d3c583a8d",
+              "checked_at": "2026-11-04T16:38:45.411809+00:00",
+              "source_case_id": "culture_sports-08",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_directory_record_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단 여부와 별도로 서울시 공식 센터 디렉터리의 실제 항목에서 확인. 개별 프로그램 자격은 별도.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00010",
+              "label": "서울청년센터 광진",
+              "address": "서울 광진구 능동로 245 (군자동) DH빌딩 2F, 3F",
+              "hours": "(월-금) 10시-22시 (토) 10시-17시 (일, 공휴일) 휴관",
+              "district": "광진구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00010",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.gwangjin.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked_error_or_challenge",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gwangjin.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.706305+00:00",
+          "status": "ok",
+          "sha256": "209c10f5cae337d7dedadc077273619f7d0193dcadb13783cfc9c40579f71b1a",
+          "bytes": 706,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "광진구",
+          "url": "https://www.gwangjin.go.kr/portal/main",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:32.389917+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "8cac61fa478fc9787edcefd4179620595a19a4e60be3bb9fa8be96bd8962e24f",
+          "bytes": 1248,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=utf-8"
+        }
+      }
     },
     {
       "district": "동대문구",
@@ -176,29 +502,93 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.ddm.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_directory_record_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단 여부와 별도로 서울시 공식 센터 디렉터리의 실제 항목에서 확인. 개별 프로그램 자격은 별도.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00007",
+              "label": "서울청년센터 동대문",
+              "address": "서울 동대문구 회기로 165 (회기동)",
+              "hours": "(월-금) 10시-21시30분 (토) 10시-17시 (일, 공휴일) 휴관",
+              "district": "동대문구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00007",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.ddm.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.ddm.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.780247+00:00",
+          "status": "ok",
+          "sha256": "38422830a570c1adda0fcb8de1f64fc41bdd4c4c9d0ad7f050c77bd9519ba576",
+          "bytes": 1092,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      }
     },
     {
       "district": "중랑구",
@@ -209,29 +599,91 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.jungnang.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+              "label": "중랑동행 묵동천 친구들 토요일 가족 프로그램",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 중랑구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "3e7c6b1f9c0faa9f60288e81c9eda06a026adbf86e0ca4598a4746bb11c006f3",
+              "checked_at": "2026-11-04T15:16:04.987778+00:00",
+              "source_case_id": "culture_sports-02",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.jungnang.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.jungnang.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.853843+00:00",
+          "status": "ok",
+          "sha256": "c3be19cdb2050a67d7c523be1f2026856ebff8e1dc40d715952ce8740981fcc9",
+          "bytes": 715,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      }
     },
     {
       "district": "성북구",
@@ -242,29 +694,222 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=93&key=6663",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.sb.go.kr",
+          "observed_sources": [
+            {
+              "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=93&key=6663",
+              "label": "공지사항",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=92&key=5951",
+              "label": "공지사항",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "new_domain_review_pending",
+          "url": "https://www.sbculture.or.kr/culture/main/main.do",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.sbculture.or.kr/culture/main/main.do",
+              "label": "성북문화재단",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            },
+            {
+              "url": "https://www.gongdan.go.kr/portal/main/main.do",
+              "label": "성북구 도시관리공단",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            },
+            {
+              "url": "https://www.sb.go.kr/www/selectBbsNttView.do?key=6352&bbsNo=43&nttNo=9585321&pageIndex=1",
+              "label": "[성북구도시관리공단] 기간직(휴직대체_회원관리 보조), 기간직(휴직대체_주차관리 및 방호) 채용 최종합격예정자공고 및 채용과정공개 최신글 2026 .11 .04",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "limitations": "시설관리공단 관련 채용공고이며 문화 프로그램·시설 이용 안내 자체가 아님. 프로그램 출처로 세지 않음."
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.sb.go.kr/yeyak/unityResveRentInqList.do?key=6604",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.sb.go.kr/yeyak/unityResveRentInqList.do?key=6604",
+              "label": "1인가구 물품대여",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=467&key=6901",
+              "label": "1인가구 모여라",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "document_read",
+              "latest_access_audit": {
+                "source": "성북구",
+                "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=467&key=6901",
+                "policy_checked_at": "2026-11-04T17:25:22.923810+00:00",
+                "network_requested": true,
+                "status": "document_read",
+                "reason": null,
+                "title": "1인가구 모여라 - 성북구청",
+                "event": {
+                  "source": "성북구",
+                  "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=467&key=6901",
+                  "role": "research_document",
+                  "checked_at": "2026-11-04T17:23:38.832691+00:00",
+                  "request_method": "GET",
+                  "request_data": null,
+                  "status": "ok",
+                  "http_status": 200,
+                  "sha256": "cb8955af0d029611106dad0b48f3aac2caa43b86d343ac2e155a07751d12377f",
+                  "bytes": 216832,
+                  "charset": "utf-8",
+                  "content_type": "text/html; charset=UTF-8"
+                }
+              }
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00142",
+              "label": "서울청년센터 성북",
+              "address": "서울 성북구 종암로5길 7 (종암동, 서울청년센터 성북)",
+              "hours": "(월요일 - 금요일) 10:00 ~ 22:00 (21:30 이용마감) (토요일) 10:00 ~ 17:00 (16:30 이용마감) (일요일, 공휴일) 휴관",
+              "district": "성북구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00142",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=448&key=8086",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=448&key=8086",
+              "label": "대학 도서관‧박물관",
+              "discovered_from": "https://www.sb.go.kr/www/index.do",
+              "document_sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "document_read",
+              "latest_access_audit": {
+                "source": "성북구",
+                "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=448&key=8086",
+                "policy_checked_at": "2026-11-04T17:25:22.924125+00:00",
+                "network_requested": true,
+                "status": "document_read",
+                "reason": null,
+                "title": "대학 도서관‧박물관 - 성북구청",
+                "event": {
+                  "source": "성북구",
+                  "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=448&key=8086",
+                  "role": "research_document",
+                  "checked_at": "2026-11-04T17:23:39.267739+00:00",
+                  "request_method": "GET",
+                  "request_data": null,
+                  "status": "ok",
+                  "http_status": 200,
+                  "sha256": "c2ce9126adf06154b6d842d79b7a3af2ace11b15df4d0d20727cb15b8dc9759c",
+                  "bytes": 220207,
+                  "charset": "utf-8",
+                  "content_type": "text/html; charset=UTF-8"
+                }
+              }
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.sb.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.sb.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:20.968752+00:00",
+          "status": "ok",
+          "sha256": "e04e2631dc70a585c6b61e8216b7320cbeb5c80edbf0972f8fd56b0eca9afc3e",
+          "bytes": 97,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "성북구",
+          "url": "https://www.sb.go.kr/www/index.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:29.166078+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "83d6fdb62c6a7c9243827cd03e65788da958b81c19fccbc05038cdf2bc5d0b29",
+          "bytes": 382923,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        }
+      }
     },
     {
       "district": "강북구",
@@ -275,29 +920,123 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.gangbuk.go.kr/",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+              "label": "강북 차크라티 명상",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 강북구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "20df9410e84ac7a4cf8a0b1de51b98b9f168e19fd31982adb00f25bf91122272",
+              "checked_at": "2026-11-04T15:16:05.545148+00:00",
+              "source_case_id": "youth_household-02",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            },
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135518608401",
+              "label": "강북 김장 한 판 수육 한 점",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 강북구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "a06b8e4b37a10c3ce29a218819e30fabafc421662394eccbe02630759797dcf9",
+              "checked_at": "2026-11-04T16:38:46.509535+00:00",
+              "source_case_id": "youth_household-06",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ],
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00013",
+              "label": "서울청년센터 강북",
+              "address": "서울 강북구 노해로23길 123 (수유동, 강북청년창업마루)",
+              "hours": "(월-금) 9시 30분-21시 30분 / (토) 09시 30분-17시 / (일, 공휴일) 휴관",
+              "district": "강북구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00013",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.gangbuk.go.kr/",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "HTML returned instead of robots policy",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gangbuk.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.093526+00:00",
+          "status": "ok",
+          "sha256": "98cf6de21d12ce55db34e420f9eed9aace2ab56ed914b5938a6d61fdaa157e32",
+          "bytes": 441,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8"
+        }
+      }
     },
     {
       "district": "도봉구",
@@ -308,29 +1047,199 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.dobong.go.kr/Contents.asp?code=10008769",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.dobong.go.kr",
+          "observed_sources": [
+            {
+              "url": "https://www.dobong.go.kr/Contents.asp?code=10008769",
+              "label": "공지사항",
+              "discovered_from": "https://www.dobong.go.kr/default.asp",
+              "document_sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "new_domain_review_pending",
+          "url": "https://www.dobongsiseol.or.kr",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.dobongsiseol.or.kr",
+              "label": "도봉시설관리공단",
+              "discovered_from": "https://www.dobong.go.kr/default.asp",
+              "document_sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.dobong.go.kr/Contents.asp?code=10010277",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.dobong.go.kr/Contents.asp?code=10010277",
+              "label": "1인가구 정책",
+              "discovered_from": "https://www.dobong.go.kr/default.asp",
+              "document_sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "redirect_not_followed",
+              "latest_access_audit": {
+                "source": "도봉구",
+                "url": "https://www.dobong.go.kr/Contents.asp?code=10010277",
+                "policy_checked_at": "2026-11-04T17:25:22.924147+00:00",
+                "network_requested": true,
+                "status": "redirect_not_followed",
+                "reason": "redirect_not_followed: destination needs separate policy review",
+                "title": null,
+                "event": {
+                  "source": "도봉구",
+                  "url": "https://www.dobong.go.kr/Contents.asp?code=10010277",
+                  "role": "research_document",
+                  "checked_at": "2026-11-04T17:23:39.644444+00:00",
+                  "request_method": "GET",
+                  "request_data": null,
+                  "status": "failed",
+                  "error": "redirect_not_followed: destination needs separate policy review",
+                  "stage": "transport_or_policy",
+                  "http_status": 302,
+                  "redirect_target": "https://www.dobong.go.kr/Contents.asp?code=10010278"
+                }
+              }
+            },
+            {
+              "url": "https://www.dobong.go.kr/Contents.asp?code=10010278",
+              "label": "1인가구 정책 비전",
+              "discovered_from": "https://www.dobong.go.kr/default.asp",
+              "document_sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.dobong.go.kr/Contents.asp?code=10010283",
+              "label": "1인가구 지원사업 관련 사이트",
+              "discovered_from": "https://www.dobong.go.kr/default.asp",
+              "document_sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00019",
+              "label": "서울청년센터 도봉",
+              "address": "서울 도봉구 마들로11길 75 (창동, 서울청년센터 도봉)",
+              "hours": "(평일) 9:30~21:30 (토요일) 10:00~17:00 (일요일/공휴일) 휴관",
+              "district": "도봉구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00019",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.dobong.go.kr/Contents.asp?code=10009506",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.dobong.go.kr/Contents.asp?code=10009506",
+              "label": "도서관정보",
+              "discovered_from": "https://www.dobong.go.kr/default.asp",
+              "document_sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "blocked_without_request",
+              "latest_access_audit": {
+                "source": "도봉구",
+                "url": "https://www.dobong.go.kr/Contents.asp?code=10009506",
+                "policy_checked_at": "2026-11-04T17:25:22.924154+00:00",
+                "network_requested": false,
+                "status": "blocked_without_request",
+                "reason": "호스트 실패 cooldown",
+                "title": null,
+                "event": null
+              }
+            },
+            {
+              "url": "https://www.dobong.go.kr/Contents.asp?code=10009507",
+              "label": "도봉구통합도서관",
+              "discovered_from": "https://www.dobong.go.kr/default.asp",
+              "document_sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.dobong.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.dobong.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.180286+00:00",
+          "status": "ok",
+          "sha256": "182762cbaacde5e9a433cc4cf0fd4c67675b9c1003eac8d2f9fe6d7bb739cf94",
+          "bytes": 1504,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "source": "도봉구",
+          "url": "https://www.dobong.go.kr/default.asp",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:32.443885+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "5cd62bede4bf11c406786fd32ddb50817ff8e7e0b0c8616f6737a84462ab33b4",
+          "bytes": 245117,
+          "charset": "utf-8",
+          "content_type": "text/html; Charset=utf-8"
+        }
+      }
     },
     {
       "district": "노원구",
@@ -341,29 +1250,125 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.nowon.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+              "label": "[개인예약]2026년 서울생활사박물관 어린이체험실 '옴팡' 관람 개인 예약",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 노원구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "1ab6c1a6a3c3618c467aad519849ded1c17057c8ec3a5250f21b5273d4445a8d",
+              "checked_at": "2026-11-04T16:38:45.148650+00:00",
+              "source_case_id": "culture_sports-07",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+              "label": "노원 우리 지금 만나 일단 만나 북바인딩",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 노원구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "f8316e73198bf6367ec49cbf80e3f1882372e298a73fe3f29812b012715b2215",
+              "checked_at": "2026-11-04T15:16:05.781560+00:00",
+              "source_case_id": "youth_household-03",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ],
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00005",
+              "label": "서울청년센터 노원",
+              "address": "서울 노원구 동일로 1405 (상계동, KB금융 노원Plaza) 9층",
+              "hours": "• 평일 / 10:00~22:00 • 토요일 / 10:00~17:00 (청소 및 정리를 위해 마감 30분 전 퇴실을 안내드립니다.) (일요일 및 공휴일 휴관)",
+              "district": "노원구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00005",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.nowon.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.nowon.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.256285+00:00",
+          "status": "ok",
+          "sha256": "a2921198eb08c3a22ef79929547ad9f3482967e1b42d7d43e779fbf9f04da563",
+          "bytes": 131,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      }
     },
     {
       "district": "은평구",
@@ -374,29 +1379,140 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "configured_homepage_board_unverified",
+          "status": "blocked_parent_or_not_located",
           "url": "https://www.ep.go.kr/",
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.ep.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103101155924156",
+              "label": "유아와 양육자 겨울을 기다려요",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 은평구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "b145b9797b0f665f44c41c9c0ceb657d62692026d3bbf50ebdf80c872a2c3d32",
+              "checked_at": "2026-11-04T16:38:44.720931+00:00",
+              "source_case_id": "culture_sports-05",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 1,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            },
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103105322721507",
+              "label": "서울기록원 가족 크리스마스 풍경 등 만들기",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 은평구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "8c9b58846716bc632d9abbd34ccdbda60ef36ec4e8b367ff2462a0c1277df6f6",
+              "checked_at": "2026-11-04T16:38:44.936588+00:00",
+              "source_case_id": "culture_sports-06",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 1,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+              "label": "은평 반찬 한 상 청년정책 한 장",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 은평구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "6d2b429b4f6fdf1a0ba73d50db8c343250281fd488269f3c977becbc0e1c9444",
+              "checked_at": "2026-11-04T15:14:34.072781+00:00",
+              "source_case_id": "youth_household-04",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 1,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ],
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00004",
+              "label": "서울청년센터 은평",
+              "address": "서울 은평구 통일로67길 9 (대조동, 주주베에이) A동 2층",
+              "hours": "(월-금) 10시-21시 (토) 10시-17시 (일, 공휴일) 휴관",
+              "district": "은평구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00004",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 1
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.ep.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "blocked",
+        "production_allowlist_changed": false,
+        "access_reason": "robots 차단"
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 1,
+        "robots_evidence": {
+          "url": "https://www.ep.go.kr/robots.txt",
+          "source": "eunpyeong",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:12:19.489381+00:00",
+          "status": "ok",
+          "http_status": 200,
+          "bytes": 253,
+          "sha256": "42f822b1a7ad388b873efac0f547b0fc050a6bf283f3e253da00fc5bc6dda21c",
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      }
     },
     {
       "district": "서대문구",
@@ -407,29 +1523,75 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.sdm.go.kr/",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.sdm.go.kr/",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.sdm.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.413895+00:00",
+          "status": "ok",
+          "sha256": "d5fe01249d3ee909af13f3e02a4726e3c1f9fc44c36dca0b32262353511672da",
+          "bytes": 309,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      }
     },
     {
       "district": "마포구",
@@ -440,29 +1602,123 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.mapo.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+              "label": "월드컵공원 서울형 정원처방 성인 치유의 시간",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 마포구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "628a7bf6946c7d8f3367004d7c85557062f5c326b516ef23033d2abe5c186645",
+              "checked_at": "2026-11-04T15:16:05.187680+00:00",
+              "source_case_id": "culture_sports-03",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            },
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+              "label": "월드컵공원 오색오감 어린이 정원탐험",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 마포구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "9ac0484ca619436eb37609df8ee6962776e04c33d65faef7c8dd069778bb464a",
+              "checked_at": "2026-11-04T15:14:33.632699+00:00",
+              "source_case_id": "culture_sports-04",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_directory_record_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단 여부와 별도로 서울시 공식 센터 디렉터리의 실제 항목에서 확인. 개별 프로그램 자격은 별도.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00009",
+              "label": "서울청년센터 마포",
+              "address": "서울 마포구 월드컵로1길 14 (합정동, 마포 한강 푸르지오) 1층 합정실뿌리복지센터 내",
+              "hours": "(월-금) 10시-22시 (토) 10시-17시 (일, 공휴일) 휴관",
+              "district": "마포구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00009",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.mapo.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.mapo.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.511039+00:00",
+          "status": "ok",
+          "sha256": "2c0570ade507f8e147fb5219bfe0ff3cfebeec475151a3aadea30d5f9ff9614d",
+          "bytes": 4375,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      }
     },
     {
       "district": "양천구",
@@ -473,29 +1729,93 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.yangcheon.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_directory_record_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단 여부와 별도로 서울시 공식 센터 디렉터리의 실제 항목에서 확인. 개별 프로그램 자격은 별도.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00018",
+              "label": "서울청년센터 양천",
+              "address": "서울특별시 양천구 오목로 359 (목동) 서울청년센터 양천",
+              "hours": "(월-금) 10시-22시 (토) 10시-17시 (일, 공휴일) 휴관",
+              "district": "양천구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00018",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.yangcheon.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.yangcheon.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.595511+00:00",
+          "status": "ok",
+          "sha256": "6ac5b921aed196c40d48b55d3e011040300c45e586ef9c4bdb21e5b4dfc81ebd",
+          "bytes": 1537,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        }
+      }
     },
     {
       "district": "강서구",
@@ -506,29 +1826,196 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "configured_homepage_board_unverified",
-          "url": "https://www.gangseo.seoul.kr/",
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_robots_disallowed",
+          "url": "https://www.gangseo.seoul.kr/gs020502",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.gangseo.seoul.kr",
+          "discovered_from": "https://www.gangseo.seoul.kr/index",
+          "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+          "observed_sources": [
+            {
+              "url": "https://www.gangseo.seoul.kr/gs020502",
+              "label": "공지사항",
+              "discovered_from": "https://www.gangseo.seoul.kr/index",
+              "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed"
+            },
+            {
+              "url": "https://www.gangseo.seoul.kr/gs040101",
+              "label": "공지사항 더보기",
+              "discovered_from": "https://www.gangseo.seoul.kr/index",
+              "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed"
+            }
+          ],
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_robots_disallowed",
+          "url": "https://www.gangseo.seoul.kr/gs050208",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "discovered_from": "https://www.gangseo.seoul.kr/index",
+          "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+          "observed_sources": [
+            {
+              "url": "https://www.gangseo.seoul.kr/gs050208",
+              "label": "시설관리공단",
+              "discovered_from": "https://www.gangseo.seoul.kr/index",
+              "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed"
+            },
+            {
+              "url": "https://www.gangseo.seoul.kr/munhwa",
+              "label": "문화관광",
+              "discovered_from": "https://www.gangseo.seoul.kr/index",
+              "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.gangseo.seoul.kr/eco",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "discovered_from": "https://www.gangseo.seoul.kr/index",
+          "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+          "observed_sources": [
+            {
+              "url": "https://www.gangseo.seoul.kr/eco",
+              "label": "경제/일자리/청년",
+              "discovered_from": "https://www.gangseo.seoul.kr/index",
+              "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "blocked_without_request",
+              "latest_access_audit": {
+                "source": "강서구",
+                "url": "https://www.gangseo.seoul.kr/eco",
+                "policy_checked_at": "2026-11-04T17:25:22.923445+00:00",
+                "network_requested": false,
+                "status": "blocked_without_request",
+                "reason": "Invalid robots crawl-delay; policy review required",
+                "title": null,
+                "event": null
+              }
+            }
+          ],
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00014",
+              "label": "서울청년센터 강서",
+              "address": "서울 강서구 강서로 231 (화곡동, 우장산역 해링턴 타워) 상가 101동 2층",
+              "hours": "(월-금) 10시-22시 (토) 10시-17시 (일, 공휴일) 휴관",
+              "district": "강서구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00014",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_and_detail_read",
+              "detail_sha256": "9ef8b9a6a582dcdbef0a41398d5a9d18b1e934634179840f759c61b04cbf6887",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 1
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.gangseo.seoul.kr/edu/edu050111",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "discovered_from": "https://www.gangseo.seoul.kr/index",
+          "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+          "observed_sources": [
+            {
+              "url": "https://www.gangseo.seoul.kr/edu/edu050111",
+              "label": "평생학습관",
+              "discovered_from": "https://www.gangseo.seoul.kr/index",
+              "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.gangseo.seoul.kr/edu/index",
+              "label": "평생학습관",
+              "discovered_from": "https://www.gangseo.seoul.kr/index",
+              "document_sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "blocked_without_request",
+              "latest_access_audit": {
+                "source": "강서구",
+                "url": "https://www.gangseo.seoul.kr/edu/index",
+                "policy_checked_at": "2026-11-04T17:25:22.923589+00:00",
+                "network_requested": false,
+                "status": "blocked_without_request",
+                "reason": "Invalid robots crawl-delay; policy review required",
+                "title": null,
+                "event": null
+              }
+            }
+          ],
+          "priority": 1,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.gangseo.seoul.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "read",
+        "production_allowlist_changed": false,
+        "access_reason": "관측된 같은 호스트/index 열람; 공지 게시판은 robots 차단"
+      },
+      "access_audit": {
+        "status": "cached_evidence_read",
+        "original_probe_result": "blocked",
+        "reason": "호스트 실패15분 대기",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 1,
+        "robots_evidence": {
+          "url": "https://www.gangseo.seoul.kr/robots.txt",
+          "source": "gangseo",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:12:19.349912+00:00",
+          "status": "ok",
+          "http_status": 200,
+          "bytes": 725,
+          "sha256": "cee96ee7846f8e0ba3b23ab7ab457beb9d2b67de575b37f09dda1074c672fd28",
+          "content_type": "text/html; charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "gangseo",
+          "url": "https://www.gangseo.seoul.kr/index",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:30:06.152717+00:00",
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "b2b1f3e4332115ce1849e9e2dc2086477e028af8e9f7a38b21e167d8332bdb5d",
+          "bytes": 246943,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        },
+        "latest_policy_restriction": "robots 응답이 <pre>로 감싸져 있고 Crawl-delay 값10</pre>를 반환. 엄격 판독에서 유효하지 않아 새 본문 요청0회. 기존 성공 본문은 역사적 관측이며 현재 정책 준수 성공으로 소급 평가하지 않음."
+      }
     },
     {
       "district": "구로구",
@@ -539,29 +2026,115 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.guro.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "new_domain_review_pending",
+          "url": "https://www.guroartsvalley.or.kr/",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.guroartsvalley.or.kr/",
+              "label": "구로문화재단",
+              "discovered_from": "https://www.guro.go.kr/www/mini.do",
+              "document_sha256": "9cc2cf060c7ebbb7dd9044bddf3f405c0a69d64be28630cae6bebf555638a05d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            },
+            {
+              "url": "https://www.gurosisul.or.kr/Default.asp",
+              "label": "구로시설관리공단",
+              "discovered_from": "https://www.guro.go.kr/www/mini.do",
+              "document_sha256": "9cc2cf060c7ebbb7dd9044bddf3f405c0a69d64be28630cae6bebf555638a05d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.guro.go.kr/www/selectBbsNttView.do?bbsNo=662&nttNo=241856&&pageUnit=10&key=1790&pageIndex=1",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.guro.go.kr/www/selectBbsNttView.do?bbsNo=662&nttNo=241856&&pageUnit=10&key=1790&pageIndex=1",
+              "label": "구로기적의도서관 2026년 기획특강 < 니체초인 수업> 안내",
+              "discovered_from": "https://www.guro.go.kr/www/mini.do",
+              "document_sha256": "9cc2cf060c7ebbb7dd9044bddf3f405c0a69d64be28630cae6bebf555638a05d",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.guro.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.guro.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.706296+00:00",
+          "status": "ok",
+          "sha256": "62e900014360a73287b28cbaf48f9dd92e4192844bed70bc85f55c0652f14d43",
+          "bytes": 194,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "source": "구로구",
+          "url": "https://www.guro.go.kr/www/mini.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:29.749113+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "9cc2cf060c7ebbb7dd9044bddf3f405c0a69d64be28630cae6bebf555638a05d",
+          "bytes": 68183,
+          "charset": "utf-8",
+          "content_type": "text/html;charset=UTF-8"
+        }
+      }
     },
     {
       "district": "금천구",
@@ -572,29 +2145,104 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.geumcheon.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_directory_record_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단 여부와 별도로 서울시 공식 센터 디렉터리의 실제 항목에서 확인. 개별 프로그램 자격은 별도.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00003",
+              "label": "서울청년센터 금천",
+              "address": "서울 금천구 가산디지털1로 120 (가산동) 1층, 2층",
+              "hours": "(월-금) 10시-22시 (토) 10시-17시 (일, 공휴일) 휴관",
+              "district": "금천구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00003",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.geumcheon.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.geumcheon.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:21.894959+00:00",
+          "status": "ok",
+          "sha256": "052a6fb08a909f292ab016c55e0e34a6a56ea3d8701648ebf44247acad32274b",
+          "bytes": 35,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "url": "https://www.geumcheon.go.kr",
+          "role": "seed",
+          "checked_at": "2026-11-04T15:35:21.959699+00:00",
+          "status": "ok",
+          "sha256": "9936cc1b2f1d7f8a4dba181a94330b63c7c8f5316eadc0ecc68fb2aa34087c56",
+          "bytes": 11447,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/html"
+        }
+      }
     },
     {
       "district": "영등포구",
@@ -605,29 +2253,109 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.ydp.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+              "label": "영등포 청년 온기 식탁",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 영등포구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "e7c820e248d71535851d2853272329ccfa637f4d8723e302511c0137d3c10819",
+              "checked_at": "2026-11-04T15:16:05.377764+00:00",
+              "source_case_id": "youth_household-01",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ],
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00015",
+              "label": "서울청년센터 영등포",
+              "address": "서울 영등포구 당산로 83 (당산동2가, 한화포레나당산) 2층",
+              "hours": "화-금 : 10시-22시 월/토/일 : 10시-17시 매월 첫번째 월요일 / 법정 공휴일 휴관",
+              "district": "영등포구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00015",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.ydp.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.ydp.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.017897+00:00",
+          "status": "ok",
+          "sha256": "36d597839f4dbbb08cfc19848bf9f95596a50b1de1a704660f4ac017ecd9b735",
+          "bytes": 11,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      }
     },
     {
       "district": "동작구",
@@ -638,29 +2366,91 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.dongjak.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+              "label": "동작구 주말 유아가족 우리의 자연나라 11월",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 동작구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "8d0fdd0ca3f959f82c405ab3945007227ac7539f81d977a6a4ce0cfe05370e69",
+              "checked_at": "2026-11-04T15:16:04.819172+00:00",
+              "source_case_id": "culture_sports-01",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.dongjak.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "robots 차단; 요청0",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.dongjak.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.161788+00:00",
+          "status": "ok",
+          "sha256": "ea2ec7fe07a305b0c53ab55cafd68455a31a6272d0326c9c28dbe47a13ef124b",
+          "bytes": 3203,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      }
     },
     {
       "district": "관악구",
@@ -671,29 +2461,109 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.gwanak.go.kr",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
+          "status": "official_program_alternative_read",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "구청 메인 차단을 우회하지 않고 기존 허용 서울시 공식 예약 경로에서 해당 지역 기관 프로그램을 확인. 기관 홈페이지 진입점 미확인은 유지.",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "additional_official_program_sources": [
+            {
+              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102145223953896",
+              "label": "관악 나를 지키는 호신술",
+              "operator_basis": "서울시 공식 공공서비스예약 상세의 운영기관·대상·해당 구 소재 주소/기관명. 구청 소유 기관이라고 확대하지 않음.",
+              "district_attribution": "공식 상세 본문의 관악구 명시",
+              "access_status": "official_program_document_read",
+              "document_sha256": "c2aceb900ef403f40fbbc46076991f1b9b0d9da68936137763a4641523ec8d14",
+              "checked_at": "2026-11-04T16:38:46.272685+00:00",
+              "source_case_id": "youth_household-05",
+              "collection_method": "공식 분야목록에서 연결된 상세HTML을 수동 조사. 기존 자동파서 수집 범위에는 추가하지 않음.",
+              "refresh_plan": "목록24시간·마감7일이내우선; 구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2,
+              "limitations": "프로그램 문서를 읽은 근거이며 기관 홈페이지·모든 공고 접근 검증 아님. 실제 자격·잔여석·신청 성공 별도."
+            }
+          ],
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00002",
+              "label": "서울청년센터 관악",
+              "address": "서울 관악구 신림로 99 (신림동, 센터스퀘어 서울대점) 청년활력공간 1~2층",
+              "hours": "(월) 10시-18시 (화-토) 10시-22시 (일, 공휴일) 휴관",
+              "district": "관악구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00002",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
+          "status": "blocked_parent_or_not_located",
           "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "reason": "현재 공식 진입점에서 해당 기관 연결을 확인하지 못함; 명칭·URL 추정 안 함",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.gwanak.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "blocked",
+        "original_probe_result": "blocked",
+        "reason": "redirect_not_followed: destination needs separate policy review",
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gwanak.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.263563+00:00",
+          "status": "ok",
+          "sha256": "f5a850f8a44dbf37fedc7f50b7399ad811562d94cdc5baf4e039f198181c3d39",
+          "bytes": 719,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        }
+      }
     },
     {
       "district": "서초구",
@@ -704,29 +2574,199 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.seocho.go.kr/site/seocho/ex/bbs/List.do?cbIdx=57",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.seocho.go.kr",
+          "observed_sources": [
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/ex/bbs/List.do?cbIdx=57",
+              "label": "공지사항",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/ex/bbs/List.do?cbIdx=459",
+              "label": "주민 AI·디지털 리터러시 교육 공지사항",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/ex/bbs/View.do?cbIdx=57&bcIdx=399631",
+              "label": "「서리풀 커뮤니티 활성화 사업」 공지사항",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "new_domain_review_pending",
+          "url": "https://www.seochocf.or.kr/",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.seochocf.or.kr/",
+              "label": "서초문화재단",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            },
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/04/10405020100002015070703.jsp",
+              "label": "서초구민체육센터",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/04/10405020300002015070703.jsp",
+              "label": "언남문화체육센터",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.seocho.go.kr/site/seocho/04/10402011400002019061811.jsp",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/04/10402011400002019061811.jsp",
+              "label": "1인가구 지원센터",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/04/10402160000002019061803.jsp",
+              "label": "1인가구",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/ex/bbs/View.do?cbIdx=60&bcIdx=411844",
+              "label": "★ [청년1인가구] 건강한 밥상 5기 신청안내★ 등록일 2026.10.13",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00011",
+              "label": "서울청년센터 서초",
+              "address": "서울 서초구 남부순환로 2567 (서초동) 2층",
+              "hours": "(월~금) 10시~22시 (토) 10시~17시 (일, 공휴일) 휴관",
+              "district": "서초구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00011",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.seocho.go.kr/site/seocho/04/10403040100002015081101.jsp",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/04/10403040100002015081101.jsp",
+              "label": "서초구립도서관",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.seocho.go.kr/site/seocho/04/10403080000002015102905.jsp",
+              "label": "서초구 평생학습관(서초·방배)",
+              "discovered_from": "https://www.seocho.go.kr/site/seocho/main.do",
+              "document_sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.seocho.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.seocho.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.400861+00:00",
+          "status": "ok",
+          "sha256": "80decddfd783285181e110802fa8217bed20f6c5a882ada872dc02febd6a200a",
+          "bytes": 2298,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain"
+        },
+        "document_evidence": {
+          "source": "서초구",
+          "url": "https://www.seocho.go.kr/site/seocho/main.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:30.724779+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "884df022b7531b63915b82b3c075ae0f71f584d2ae407130627157e60448554b",
+          "bytes": 247395,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        }
+      }
     },
     {
       "district": "강남구",
@@ -737,29 +2777,165 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.gangnam.go.kr/main.do#",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.gangnam.go.kr",
+          "observed_sources": [
+            {
+              "url": "https://www.gangnam.go.kr/main.do#",
+              "label": "공지사항",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.gangnam.go.kr/board/B_000001/list.do?mid=ID05_040101",
+              "label": "공지사항",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.gangnam.go.kr/board/B_000001/1076716/view.do",
+              "label": "공지사항 2026년 강남구 내 체육시설업 대표자 및 종사자 아동·장애인 학대 신고의무자 교육 이수 관련 안내 2026-11-04 생활체육과",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.gangnam.go.kr/office/gfac/main.do",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.gangnam.go.kr/office/gfac/main.do",
+              "label": "강남문화재단",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.gangnam.go.kr/notice/view.do?not_ancmt_mgt_no=65827&mid=ID05_040202&gubunfield=05",
+              "label": "채용공고 [강남구 도시관리공단] 2026년 제2회(42기) 직원 공개채용 서류전형 합격자 및 필기시험 일정 공고 2026-11-02 기획예산과",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.gangnam.go.kr/office/youthgn/main.do",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.gangnam.go.kr/office/youthgn/main.do",
+              "label": "강남청년누리",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.gangnam.go.kr/board/B_000001/1076713/view.do",
+              "label": "공지사항 2026년 희망두배 청년통장 · 꿈나래 통장 신규 참가자 선정 결과 관련 안내 2026-11-03 복지정책과",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "new_domain_review_pending",
+          "url": "https://library.gangnam.go.kr",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://library.gangnam.go.kr",
+              "label": "강남구립도서관",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            },
+            {
+              "url": "https://www.gangnam.go.kr/office/longlearn/main.do",
+              "label": "평생학습",
+              "discovered_from": "https://www.gangnam.go.kr/main.do",
+              "document_sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.gangnam.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gangnam.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.546662+00:00",
+          "status": "ok",
+          "sha256": "486e156b41d129fb9aab97dbfe5187b7876f8206e0ab9fe6fdd1b0a27e52611d",
+          "bytes": 387,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain; charset=utf-8"
+        },
+        "document_evidence": {
+          "source": "강남구",
+          "url": "https://www.gangnam.go.kr/main.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:31.053171+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "4fd08482aa3db6dc1c8ce618e3236f30e577744023e3b8a1dc3cdab8f56305d5",
+          "bytes": 476078,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=utf-8"
+        }
+      }
     },
     {
       "district": "송파구",
@@ -770,29 +2946,380 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_sources_observed",
+          "url": "https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=403&key=5980&",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.songpa.go.kr",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "quarantined_sources": [
+            {
+              "url": "https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=403&key=5980&",
+              "label": "공지사항",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=16&key=2200&",
+              "label": "공지사항",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=92&key=2775&",
+              "label": "공지사항",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            }
+          ],
+          "reason": "회차3에서 3600초 경과 후 다시 열람한 공식 메인 연결. 하위 접근 정책은 각 출처에 구분. 회차2 격리 이력은 별도 보존.",
+          "observed_sources": [
+            {
+              "url": "https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=403&key=5980&",
+              "label": "공지사항",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=16&key=2200&",
+              "label": "공지사항",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=92&key=2775&",
+              "label": "공지사항",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            }
+          ]
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_sources_observed",
+          "url": "https://www.songpafac.or.kr/home.do",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "quarantined_sources": [
+            {
+              "url": "https://www.songpafac.or.kr/home.do",
+              "label": "송파문화재단",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            },
+            {
+              "url": "https://www.songpa.go.kr/culture/index.do",
+              "label": "문화관광",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            },
+            {
+              "url": "https://www.songpa.go.kr/culture/sub.do?key=3885",
+              "label": "문화관광해설사",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            }
+          ],
+          "reason": "회차3에서 3600초 경과 후 다시 열람한 공식 메인 연결. 하위 접근 정책은 각 출처에 구분. 회차2 격리 이력은 별도 보존.",
+          "observed_sources": [
+            {
+              "url": "https://www.songpafac.or.kr/home.do",
+              "label": "송파문화재단",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            },
+            {
+              "url": "https://www.songpa.go.kr/culture/index.do",
+              "label": "문화관광",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            },
+            {
+              "url": "https://www.songpa.go.kr/culture/sub.do?key=3885",
+              "label": "문화관광해설사",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            }
+          ]
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_sources_observed",
+          "url": "https://www.songpa.go.kr/www/contents.do?key=5979&",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "quarantined_sources": [
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=5979&",
+              "label": "1인가구 전·월세 상담",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=5653&",
+              "label": "1인 청년가구 중개보수 감면 사업",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/tsfspStep1.do?key=6242&",
+              "label": "청년 어학·자격시험 응시료 지원(신청)",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            }
+          ],
+          "reason": "회차3에서 3600초 경과 후 다시 열람한 공식 메인 연결. 하위 접근 정책은 각 출처에 구분. 회차2 격리 이력은 별도 보존.",
+          "observed_sources": [
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=5979&",
+              "label": "1인가구 전·월세 상담",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=5653&",
+              "label": "1인 청년가구 중개보수 감면 사업",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/tsfspStep1.do?key=6242&",
+              "label": "청년 어학·자격시험 응시료 지원(신청)",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_sources_observed",
+          "url": "https://www.songpa.go.kr/www/contents.do?key=5276&",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "quarantined_sources": [
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=5276&",
+              "label": "공구도서관",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=6176&",
+              "label": "장난감도서관 운영",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
+            }
+          ],
+          "reason": "회차3에서 3600초 경과 후 다시 열람한 공식 메인 연결. 하위 접근 정책은 각 출처에 구분. 회차2 격리 이력은 별도 보존.",
+          "observed_sources": [
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=5276&",
+              "label": "공구도서관",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            },
+            {
+              "url": "https://www.songpa.go.kr/www/contents.do?key=6176&",
+              "label": "장난감도서관 운영",
+              "discovered_from": "https://www.songpa.go.kr/www/index.do",
+              "document_sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read",
+              "priority": 2,
+              "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+              "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+              "checked_at": "2026-11-04T16:38:44.284286+00:00",
+              "run_id": "phase234-document-2026-11-05-r03"
+            }
+          ]
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.songpa.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": "회차2 위반 후 3672.988926초 경과한 새 요청; 과거 위반은 소급 해제하지 않음",
+        "run_id": "phase234-document-2026-11-05-r03",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.songpa.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.694882+00:00",
+          "status": "ok",
+          "sha256": "eda2ab2095a0692d56c76355ee1dc0066dd36fe76483b7bbfbd77aea27a4d2ad",
+          "bytes": 1007,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=utf-8"
+        },
+        "document_evidence": {
+          "source": "송파구",
+          "url": "https://www.songpa.go.kr/www/index.do",
+          "role": "research_document",
+          "checked_at": "2026-11-04T16:38:44.284286+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "d69ff0e4031dc229aca33fa4166f070af7ef5c94365e761c86e5e7bc9ad8c622",
+          "bytes": 632609,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=utf-8"
+        },
+        "previous_observation": {
+          "url": "https://www.songpa.go.kr",
+          "role": "seed",
+          "checked_at": "2026-11-04T15:35:22.774514+00:00",
+          "status": "ok",
+          "sha256": "8358667b83f82296eee147550336d793eb88250b11f84015494d2b896e5315b7",
+          "bytes": 453,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/html; charset=utf-8"
+        }
+      }
     },
     {
       "district": "강동구",
@@ -803,29 +3330,176 @@
       "expansion_slots": [
         {
           "type": "district_notices",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.gangdong.go.kr/web/newportal/bbs/b_114",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "entrypoint_url": "https://www.gangdong.go.kr",
+          "observed_sources": [
+            {
+              "url": "https://www.gangdong.go.kr/web/newportal/bbs/b_114",
+              "label": "공지사항",
+              "discovered_from": "https://www.gangdong.go.kr/newportal/",
+              "document_sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.gangdong.go.kr/web/newportal/notice/01",
+              "label": "고시공고",
+              "discovered_from": "https://www.gangdong.go.kr/newportal/",
+              "document_sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_robots_disallowed"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "culture_sports",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "new_domain_review_pending",
+          "url": "https://www.gdfac.or.kr",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.gdfac.or.kr",
+              "label": "강동문화재단",
+              "discovered_from": "https://www.gangdong.go.kr/newportal/",
+              "document_sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            },
+            {
+              "url": "https://www.gangdong.go.kr/web/newportal/contents/gdp_002_003_003",
+              "label": "마을활력소, 성내문화체육센터",
+              "discovered_from": "https://www.gangdong.go.kr/newportal/",
+              "document_sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         },
         {
           "type": "youth_single_household",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "linked_policy_allowed_not_read",
+          "url": "https://www.gangdong.go.kr/web/newportal/contents/gdp_002_006_004_006",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.gangdong.go.kr/web/newportal/contents/gdp_002_006_004_006",
+              "label": "희망두배청년·꿈나래 통장사업",
+              "discovered_from": "https://www.gangdong.go.kr/newportal/",
+              "document_sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            },
+            {
+              "url": "https://www.gangdong.go.kr/web/newportal/contents/gdp_005_008_014",
+              "label": "미취업 청년 어학 및 자격시험 응시료 지원사업",
+              "discovered_from": "https://www.gangdong.go.kr/newportal/",
+              "document_sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "linked_policy_allowed_not_read"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증",
+          "official_directory_sources": [
+            {
+              "centre_id": "CT00001",
+              "label": "서울청년센터 강동",
+              "address": "서울 강동구 올림픽로 610 (성내동, 천호역 효성해링턴타워) B동 2층 서울청년센터 강동",
+              "hours": "(월요일 - 금요일) 10:00 ~ 22:00 / 평일 공용공간은 오전 9시부터 운영! (토요일) 10:00 ~ 17:00 / 토요일 공용공간은 오전 10시부터 운영! (일요일, 공휴일) 휴관",
+              "district": "강동구",
+              "url": "https://youth.seoul.go.kr/orang/cntr/intro.do?key=2309210001&cntrId=CT00001",
+              "evidence_url": "https://youth.seoul.go.kr/orang/cntr/list.do?key=2309210001&pageIndex=1&recordCountPerPage=18",
+              "document_sha256": "fced9684ca34117934a8b33ccca10304babd0e3f5fbed430b1a177cb230bfcfa",
+              "checked_at": "2026-11-04T17:29:09.010379+00:00",
+              "access_status": "directory_record_read_detail_not_read",
+              "operator_basis": "서울특별시 서울청년센터 공식 디렉터리의 센터명·소재지·운영시간. 구청 산하 기관 소유나 모든 프로그램 자격은 추정하지 않음.",
+              "collection_method": "공식 HTML 디렉터리 항목 수동 판독; 센터별 프로그램·상담·대관 자동 수집은 미구현",
+              "refresh_plan": "목록24시간·프로그램마감7일이내우선;구별운영6시간캐시·실패15분·robots간격준수",
+              "priority": 2
+            }
+          ]
         },
         {
           "type": "library_lifelong_learning",
-          "status": "discovery_pending",
-          "url": null,
-          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록"
+          "status": "new_domain_review_pending",
+          "url": "https://www.gdlibrary.or.kr",
+          "task": "구청 공식 조직/유관기관 링크에서 확인; 기관·운영 주체·공개 HTTPS·robots·도메인 검토 후 등록",
+          "observed_sources": [
+            {
+              "url": "https://www.gdlibrary.or.kr",
+              "label": "구립도서관",
+              "discovered_from": "https://www.gangdong.go.kr/newportal/",
+              "document_sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+              "operator_basis": "구청의 공식 링크 명칭; 연결 기관 자체 운영·정책은 별도 확인",
+              "access_policy": "new_domain_review_pending"
+            }
+          ],
+          "priority": 2,
+          "refresh_plan": "공개 목록24시간; 구별 운영 목록 캐시6시간·실패15분 존중",
+          "collection_method": "공식 연결을 이용한 사람/수동 상세 조사; 전용 자동 파서는 미검증"
         }
-      ]
+      ],
+      "official_entrypoint": {
+        "url": "https://www.gangdong.go.kr",
+        "discovered_from": "https://www.seoul.go.kr/main/index.jsp",
+        "document_sha256": "f89afb8ebcc994ccb73c4d532d3e09256e5b56ea642187d059584a76d2eb6f68",
+        "checked_at": "2026-11-04T15:16:05.978159+00:00",
+        "access_status": "not_requested",
+        "production_allowlist_changed": false
+      },
+      "access_audit": {
+        "status": "read",
+        "original_probe_result": "read",
+        "reason": null,
+        "run_id": "phase01-district-2026-11-05-r02",
+        "request_method": "anonymous HTTPS GET; TLS 검증",
+        "collection_method": "공개 HTML 링크 후보; 게시판 파서·전체 수집은 미구현",
+        "refresh_plan": "목록24시간; 운영 구별 캐시6시간·실패15분. robots 차단은 시간 만료만으로 해제하지 않음",
+        "priority": 2,
+        "robots_evidence": {
+          "url": "https://www.gangdong.go.kr/robots.txt",
+          "role": "robots",
+          "checked_at": "2026-11-04T15:35:22.845467+00:00",
+          "status": "ok",
+          "sha256": "5244ce8f89def8c62c303fa95a557e50ee7091687368188961815eec6f5abd7f",
+          "bytes": 1408,
+          "charset": "utf-8",
+          "http_status": 200,
+          "content_type": "text/plain;charset=UTF-8"
+        },
+        "document_evidence": {
+          "source": "강동구",
+          "url": "https://www.gangdong.go.kr/newportal/",
+          "role": "research_document",
+          "checked_at": "2026-11-04T15:37:31.704302+00:00",
+          "request_method": "GET",
+          "request_data": null,
+          "status": "ok",
+          "http_status": 200,
+          "sha256": "dea1ea875c74763f8e059b074d146751a19e37b6e8f3ca8ed7ffe8c289fe4194",
+          "bytes": 158917,
+          "charset": "utf-8",
+          "content_type": "text/html; charset=UTF-8"
+        }
+      }
     }
-  ]
+  ],
+  "coverage_summary": {
+    "districts": 25,
+    "slots": 100,
+    "institution_homepage_link_slots": 30,
+    "additional_program_only_slots": 13,
+    "unlocated_slots": 50,
+    "interpretation": "기관홈연결30·공식프로그램추가13·공식센터디렉터리추가를구분.센터17개는소재지별실제항목이며25개구모두에센터가있다고추정하지않음.",
+    "official_directory_only_slots": 7
+  }
 }

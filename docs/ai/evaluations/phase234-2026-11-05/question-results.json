@@ -1,0 +1,379 @@
+{
+  "registered_questions_file": "questions.json",
+  "resolved_count": 7,
+  "total": 20,
+  "target": 10,
+  "passed": false,
+  "reviewer_type": "Codex 예비; 사람 최종 검토 전",
+  "answers": [
+    {
+      "question_id": "culture-01-eligibility",
+      "candidate_id": "culture-01",
+      "program": "동작 자연나라",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": {
+        "required": [
+          "유아 동반 가족"
+        ],
+        "not_confirmed": [
+          "유아의 정확한 나이 범위",
+          "거주지 제한"
+        ]
+      },
+      "remaining": [
+        "재료비 등 추가 요금의 별도 명시 없음",
+        "실제 선택 가능한 회차·잔여석",
+        "요약 대상 제한없음과 본문 유아동반 가족을 함께 기록; 제한없음으로 추천하지 않음"
+      ],
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "document_hashes": [
+        "8d0fdd0ca3f959f82c405ab3945007227ac7539f81d977a6a4ce0cfe05370e69"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-01-fee",
+      "candidate_id": "culture-01",
+      "program": "동작 자연나라",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": "공식 이용요금 무료. 재료비 별도 표기 없음. 교통비 등 개인 지출은 별도 미확인.",
+      "remaining": "무료 표기는 확인했으나 별도 재료비·추가 요금의 완전한 조건까지 없다고 단정할 수 없어 전체 해결로 세지 않음",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "document_hashes": [
+        "8d0fdd0ca3f959f82c405ab3945007227ac7539f81d977a6a4ce0cfe05370e69"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-01-deadline",
+      "candidate_id": "culture-01",
+      "program": "동작 자연나라",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "resolved",
+      "answer": "2026-11-18 16:00 KST 마감, 선착순. 실제 회차·잔여석 별도 확인.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "document_hashes": [
+        "8d0fdd0ca3f959f82c405ab3945007227ac7539f81d977a6a4ce0cfe05370e69"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-02-eligibility",
+      "candidate_id": "culture-02",
+      "program": "중랑 묵동천 가족",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "만4세 이상 자녀·보호자 동반 가족, 가족당 전체인원2~3명. 거주지 추가 제한은 명시되지 않아 자격 보장하지 않음.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "document_hashes": [
+        "3e7c6b1f9c0faa9f60288e81c9eda06a026adbf86e0ca4598a4746bb11c006f3"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-02-fee",
+      "candidate_id": "culture-02",
+      "program": "중랑 묵동천 가족",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": "본문 참가비 무료. 재료비 별도 표기 없음. 주차시설 없음.",
+      "remaining": "무료 표기는 확인했으나 별도 재료비·추가 요금의 완전한 조건까지 없다고 단정할 수 없어 전체 해결로 세지 않음",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "document_hashes": [
+        "3e7c6b1f9c0faa9f60288e81c9eda06a026adbf86e0ca4598a4746bb11c006f3"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-02-deadline",
+      "candidate_id": "culture-02",
+      "program": "중랑 묵동천 가족",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": {
+        "start": "2026-11-04T12:00:00+09:00",
+        "end": null,
+        "observed_end": "2026-11-25T15:01:00+09:00",
+        "per_session_cutoff": "이용일3일 전12시 표기; 정확 적용은 기관 확인"
+      },
+      "remaining": [
+        "접수 전체 마감과 회차별 마감 적용 관계",
+        "재료비 별도 조건",
+        "날씨·최소 가족수에 따른 진행 여부",
+        "요약 마감15:01과 회차3일 전12시를 구분",
+        "본문 비가 오면 취소와 주의사항 비·눈에도 원칙 진행이 충돌; 당일 기관 확인"
+      ],
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "document_hashes": [
+        "3e7c6b1f9c0faa9f60288e81c9eda06a026adbf86e0ca4598a4746bb11c006f3"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-03-eligibility",
+      "candidate_id": "culture-03",
+      "program": "월드컵공원 성인 정원처방",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "공식 대상은 성인. 수치 나이를 임의 환산하지 않음; 거주지 제한·개인 자격 보장 안 함.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "document_hashes": [
+        "628a7bf6946c7d8f3367004d7c85557062f5c326b516ef23033d2abe5c186645"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-03-fee",
+      "candidate_id": "culture-03",
+      "program": "월드컵공원 성인 정원처방",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": "체험비 무료. 주차비 별도: 승용차10분300원·대형버스10분900원. 재료비 별도 표기 없음.",
+      "remaining": "무료 표기는 확인했으나 별도 재료비·추가 요금의 완전한 조건까지 없다고 단정할 수 없어 전체 해결로 세지 않음",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "document_hashes": [
+        "628a7bf6946c7d8f3367004d7c85557062f5c326b516ef23033d2abe5c186645"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "culture-03-deadline",
+      "candidate_id": "culture-03",
+      "program": "월드컵공원 성인 정원처방",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "resolved",
+      "answer": "전체2026-11-23 17:00 KST, 각 이용 전일17시까지, 선착순.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "document_hashes": [
+        "628a7bf6946c7d8f3367004d7c85557062f5c326b516ef23033d2abe5c186645"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-01-eligibility",
+      "candidate_id": "youth-01",
+      "program": "청년 온기 식탁",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "만19~39세 청년이며 본인 계정·신청자·이용자 정보 일치 필요. 거주·활동 기준 미명시.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "document_hashes": [
+        "e7c820e248d71535851d2853272329ccfa637f4d8723e302511c0137d3c10819"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-01-fee",
+      "candidate_id": "youth-01",
+      "program": "청년 온기 식탁",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": "공식 이용요금 무료. 재료비 별도 표기 없음.",
+      "remaining": "무료 표기는 확인했으나 별도 재료비·추가 요금의 완전한 조건까지 없다고 단정할 수 없어 전체 해결로 세지 않음",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "document_hashes": [
+        "e7c820e248d71535851d2853272329ccfa637f4d8723e302511c0137d3c10819"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-01-deadline",
+      "candidate_id": "youth-01",
+      "program": "청년 온기 식탁",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": {
+        "start": "2026-11-04T00:00:00+09:00",
+        "end": null,
+        "observed_end": "2026-11-11T14:00:00+09:00",
+        "body_end": "2026-11-11T13:00:00+09:00"
+      },
+      "remaining": [
+        "마감시각13시/14시 및 정원10명/100명 확인",
+        "개별 선정 문자·재료비 등 추가 비용 조건",
+        "요약 마감14시와 본문13시 충돌",
+        "요약 정원100명과 본문 청년10명 충돌"
+      ],
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "document_hashes": [
+        "e7c820e248d71535851d2853272329ccfa637f4d8723e302511c0137d3c10819"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-02-eligibility",
+      "candidate_id": "youth-02",
+      "program": "강북 차크라티 명상",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": {
+        "required": [
+          "청년",
+          "선정 문자 회신 후 최종 확정"
+        ],
+        "priority": [
+          "강북구민 우선"
+        ],
+        "not_confirmed": [
+          "청년의 정확한 나이 범위",
+          "우선 외 지역 선정 가능 조건"
+        ]
+      },
+      "remaining": [
+        "정확한 청년 연령·추가 비용",
+        "안내 이미지2 MiB 상한 초과로 판독 불가",
+        "선정·최종 확정 여부"
+      ],
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "document_hashes": [
+        "20df9410e84ac7a4cf8a0b1de51b98b9f168e19fd31982adb00f25bf91122272"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-02-fee",
+      "candidate_id": "youth-02",
+      "program": "강북 차크라티 명상",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": "공식 이용요금 무료. 재료비 별도 표기 없음.",
+      "remaining": "무료 표기는 확인했으나 별도 재료비·추가 요금의 완전한 조건까지 없다고 단정할 수 없어 전체 해결로 세지 않음",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "document_hashes": [
+        "20df9410e84ac7a4cf8a0b1de51b98b9f168e19fd31982adb00f25bf91122272"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-02-deadline",
+      "candidate_id": "youth-02",
+      "program": "강북 차크라티 명상",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "document_hashes": [
+        "20df9410e84ac7a4cf8a0b1de51b98b9f168e19fd31982adb00f25bf91122272",
+        "0b173164c797d15184a032b5dcb4ce26302fac8f992a5ff3f30b53225fa3851e"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서",
+      "previous_status": "resolved",
+      "previous_answer": "2026-11-24 00:00 KST 마감. 심사·강북구민 우선·문자 회신으로 최종 확정.",
+      "known_part": {
+        "reservation_end": "2026-11-24T00:00:00+09:00",
+        "youth_portal_end": "2026-11-23T00:00:00+09:00"
+      },
+      "remaining": "서로 다른 공식 페이지의 마감이 하루 차이. 어느 시각이 맞는지 확정하지 않음",
+      "additional_evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75522"
+    },
+    {
+      "question_id": "youth-03-eligibility",
+      "candidate_id": "youth-03",
+      "program": "노원 북바인딩",
+      "question": "정확한 연령·동반자·지역 등 필수 대상 조건은 무엇인가?",
+      "status": "resolved",
+      "answer": "서울시 청년 만19~39세, 동일내용3회 중 하루 선택·본인인증. 생활권 증빙 기준 미확인.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "document_hashes": [
+        "f8316e73198bf6367ec49cbf80e3f1882372e298a73fe3f29812b012715b2215"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-03-fee",
+      "candidate_id": "youth-03",
+      "program": "노원 북바인딩",
+      "question": "참가비·재료비와 추가 비용 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": "공식 이용요금 무료. 재료비 별도 표기 없음.",
+      "remaining": "무료 표기는 확인했으나 별도 재료비·추가 요금의 완전한 조건까지 없다고 단정할 수 없어 전체 해결로 세지 않음",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "document_hashes": [
+        "f8316e73198bf6367ec49cbf80e3f1882372e298a73fe3f29812b012715b2215"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "youth-03-deadline",
+      "candidate_id": "youth-03",
+      "program": "노원 북바인딩",
+      "question": "접수 마감 시각과 선정·마감 방식은 무엇인가?",
+      "status": "resolved",
+      "answer": "2026-11-09 23:59 KST 마감. 추첨·회차20명,11월10일 개별 문자 안내 예정.",
+      "evidence_url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "document_hashes": [
+        "f8316e73198bf6367ec49cbf80e3f1882372e298a73fe3f29812b012715b2215"
+      ],
+      "additional_document": "원래 목록에서 연결된 상세 문서"
+    },
+    {
+      "question_id": "shopping-01-period",
+      "candidate_id": "shopping-01",
+      "program": "이마트24 린트 초콜릿",
+      "question": "공식 자료에 명시된 행사 적용 기간은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": {
+        "displayed_item_price_krw": 4000,
+        "offer": "1+1",
+        "conditions": "공식 이달 행사 목록; 정확한 시작·종료일과 제외점 미기재",
+        "minimum_spend": "구매비용 발생; 최종 결제 조건·교차구매·중복할인은 별도 미확인"
+      },
+      "remaining": [
+        "정확한 적용기간",
+        "개별 점포 재고·가격·제외점",
+        "다른 혜택과 중복 및 결제수단 조건"
+      ],
+      "evidence_url": "https://emart24.co.kr/goods/event",
+      "document_hashes": [
+        "4f3aff19b10bcc0dc0bb2511598cee0fd2fb927a9bf3e8d467be5d234d3218d0"
+      ],
+      "additional_document": "추가 자료 미확보"
+    },
+    {
+      "question_id": "shopping-02-stores",
+      "candidate_id": "shopping-02",
+      "program": "세븐일레븐 액티비아",
+      "question": "적용 매장과 제외 매장 조건은 무엇인가?",
+      "status": "partial_or_unresolved",
+      "answer": null,
+      "known_part": {
+        "displayed_item_price_krw": 2400,
+        "offer": "1+1",
+        "conditions": "전국 점포, 일부 점포 제외; 구체 제외점 미확인. 공식 이달 목록",
+        "minimum_spend": "구매비용 발생; 최종 결제 조건·교차구매·중복할인은 별도 미확인"
+      },
+      "remaining": [
+        "정확한 적용기간",
+        "개별 점포 재고·가격·제외점",
+        "다른 혜택과 중복 및 결제수단 조건"
+      ],
+      "evidence_url": "https://www.7-eleven.co.kr/product/presentList.asp",
+      "document_hashes": [
+        "e4e87e93a5a95d3f0f86e7357e926c8421340bb93d0bff1a2e9aab56a75b7b53"
+      ],
+      "additional_document": "추가 자료 미확보"
+    }
+  ],
+  "revisions": [
+    {
+      "reason": "추가 공식 문서에서 마감 하루 차이 확인",
+      "previous_resolved_count": 8,
+      "current_resolved_count": 7,
+      "evidence_url": "https://youth.seoul.go.kr/infoData/sprtInfo/view.do?key=2309130006&sprtInfoId=75522",
+      "checked_at": "2026-11-04T15:48:29.644233+00:00"
+    }
+  ]
+}

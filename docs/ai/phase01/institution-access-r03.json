@@ -1,0 +1,112 @@
+{
+  "run_id": "phase234-document-2026-11-05-r03",
+  "network_requests_for_this_followup": 3,
+  "preflight_checks": 6,
+  "checks": [
+    {
+      "source": "강서구",
+      "url": "https://www.gangseo.seoul.kr/eco",
+      "policy_checked_at": "2026-11-04T17:25:22.923445+00:00",
+      "network_requested": false,
+      "status": "blocked_without_request",
+      "reason": "Invalid robots crawl-delay; policy review required",
+      "title": null,
+      "event": null
+    },
+    {
+      "source": "강서구",
+      "url": "https://www.gangseo.seoul.kr/edu/index",
+      "policy_checked_at": "2026-11-04T17:25:22.923589+00:00",
+      "network_requested": false,
+      "status": "blocked_without_request",
+      "reason": "Invalid robots crawl-delay; policy review required",
+      "title": null,
+      "event": null
+    },
+    {
+      "source": "성북구",
+      "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=467&key=6901",
+      "policy_checked_at": "2026-11-04T17:25:22.923810+00:00",
+      "network_requested": true,
+      "status": "document_read",
+      "reason": null,
+      "title": "1인가구 모여라 - 성북구청",
+      "event": {
+        "source": "성북구",
+        "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=467&key=6901",
+        "role": "research_document",
+        "checked_at": "2026-11-04T17:23:38.832691+00:00",
+        "request_method": "GET",
+        "request_data": null,
+        "status": "ok",
+        "http_status": 200,
+        "sha256": "cb8955af0d029611106dad0b48f3aac2caa43b86d343ac2e155a07751d12377f",
+        "bytes": 216832,
+        "charset": "utf-8",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    },
+    {
+      "source": "성북구",
+      "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=448&key=8086",
+      "policy_checked_at": "2026-11-04T17:25:22.924125+00:00",
+      "network_requested": true,
+      "status": "document_read",
+      "reason": null,
+      "title": "대학 도서관‧박물관 - 성북구청",
+      "event": {
+        "source": "성북구",
+        "url": "https://www.sb.go.kr/www/selectBbsNttList.do?bbsNo=448&key=8086",
+        "role": "research_document",
+        "checked_at": "2026-11-04T17:23:39.267739+00:00",
+        "request_method": "GET",
+        "request_data": null,
+        "status": "ok",
+        "http_status": 200,
+        "sha256": "c2ce9126adf06154b6d842d79b7a3af2ace11b15df4d0d20727cb15b8dc9759c",
+        "bytes": 220207,
+        "charset": "utf-8",
+        "content_type": "text/html; charset=UTF-8"
+      }
+    },
+    {
+      "source": "도봉구",
+      "url": "https://www.dobong.go.kr/Contents.asp?code=10010277",
+      "policy_checked_at": "2026-11-04T17:25:22.924147+00:00",
+      "network_requested": true,
+      "status": "redirect_not_followed",
+      "reason": "redirect_not_followed: destination needs separate policy review",
+      "title": null,
+      "event": {
+        "source": "도봉구",
+        "url": "https://www.dobong.go.kr/Contents.asp?code=10010277",
+        "role": "research_document",
+        "checked_at": "2026-11-04T17:23:39.644444+00:00",
+        "request_method": "GET",
+        "request_data": null,
+        "status": "failed",
+        "error": "redirect_not_followed: destination needs separate policy review",
+        "stage": "transport_or_policy",
+        "http_status": 302,
+        "redirect_target": "https://www.dobong.go.kr/Contents.asp?code=10010278"
+      }
+    },
+    {
+      "source": "도봉구",
+      "url": "https://www.dobong.go.kr/Contents.asp?code=10009506",
+      "policy_checked_at": "2026-11-04T17:25:22.924154+00:00",
+      "network_requested": false,
+      "status": "blocked_without_request",
+      "reason": "호스트 실패 cooldown",
+      "title": null,
+      "event": null
+    }
+  ],
+  "request_attempts_total": 44,
+  "cumulative_requests": 164,
+  "policy_notes": [
+    "강서구 비정상 형식 robots는 임의 태그 제거로 허용하지 않고 보류",
+    "도봉구302 자동추적0회, 같은호스트 후속도서관 요청은900초실패cooldown으로0회",
+    "성북구목록2개실제판독;목록의프로그램조건·도서관이용자격은별도미검증"
+  ]
+}

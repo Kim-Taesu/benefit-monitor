@@ -1,0 +1,155 @@
+{
+  "evaluated_at": "2026-11-05",
+  "scope": "development_replay_not_holdout",
+  "model": "claude-haiku-5-5",
+  "research": [
+    {
+      "candidate": "culture-01",
+      "request_id": "1595fa291c00480843016d6c6150c6d53300d5e92414636b6d5bcda92d633aab",
+      "status": "rejected_draft",
+      "input_sha256": "ffbed7db830e87b97f17f5fff85cb76aff303253ea9c6d591910c6472b6e8e37",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "culture-02",
+      "request_id": "21d357a2b59915707e61cc042fad602ed6dc1477d23ceeec9e0e41fe0ac8d08f",
+      "status": "rejected_draft",
+      "input_sha256": "d0458bbf6ed3e6777782b6155ca2c5635d48c1eebabb28fee8a1d0d97afc7f85",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown/empty claim references"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "culture-03",
+      "request_id": "6bff6aae6a8d07a48f6b7a45b91a53acd6f12b443acaea00b8a0f80e11d8bad8",
+      "status": "rejected_draft",
+      "input_sha256": "933e4fd241ec644b4e3d0bfa67e75e1d92a2e5ed209e55d91e4a138e8e6ebb4b",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "youth-01",
+      "request_id": "f05c804289ac43e0f04a85d3610c24085b38d87d856d5d2aa4aaca5fe1618309",
+      "status": "rejected_draft",
+      "input_sha256": "1a2fa4689bd80df42dc11c8cd4db584969e8e37ca46b0666483ab4a5cf935cc0",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown/empty claim references"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "youth-02",
+      "request_id": "bece60d4272f6ef1a9dc7b7e9048c0913e56e2b82e9ddf57cdd9aa10ea5fa186",
+      "status": "rejected_draft",
+      "input_sha256": "ec4445acd091f70dc63828f98b3a64efe90aeb3a3624ac3cddbe53312b00ff44",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "youth-03",
+      "request_id": "63c71bb7bf5b7189114cb7ac422e593f5a20b84b9610ba0d0ac7464f610df65c",
+      "status": "rejected_draft",
+      "input_sha256": "300ecf9be70c7a642c51416f1e670c939e8f5c174de954cb760a488bf590dcd5",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "Invalid isoformat string: '2026-11-02T00:00:00+09:00'"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "shopping-04",
+      "request_id": "51edbc2a1980ccd01e4db427f771b0be1519357a57785030a139f54bf3c21b4e",
+      "status": "rejected_draft",
+      "input_sha256": "dde80debe3d107d21a87c5154852b53f6cda426749b9a12671f4474fed605ffc",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "shopping-05",
+      "request_id": "9f0c064ecad0d83d584fb529969aba282cb5c8838cf582647af0e274c9a725f6",
+      "status": "rejected_draft",
+      "input_sha256": "adfc3e7002a0aa323aaeeb2691a66e63dc674da94ce75959b11fc6d58d45e50b",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "unknown requires null value and no evidence"
+        ],
+        "assessments": []
+      }
+    },
+    {
+      "candidate": "shopping-06",
+      "request_id": "55ec5ce2a808d60a31ed831a335d71867be692e35c3deed7af5f8b58a2ee320b",
+      "status": "rejected_draft",
+      "input_sha256": "a56b3acd18dd8e6630617c4498ad1836f9b07c9545d367c51efdb1fbbe0dad97",
+      "validation": {
+        "valid": false,
+        "errors": [
+          "proposed field contradicts supported claim"
+        ],
+        "assessments": []
+      }
+    }
+  ],
+  "daily_topics": [
+    {
+      "reference_time": "2026-11-05T12:00:00+09:00",
+      "input_count": 9,
+      "request_id": "7daa312026dd56663cfd1e0a55c049b46430e57d440e7e1ff253f776d2fbbe8b",
+      "structural_status": "validated_draft",
+      "semantic_review": "failed",
+      "publication_approved": false
+    },
+    {
+      "reference_time": "2026-11-11T18:00:00+09:00",
+      "input_count": 6,
+      "request_id": "232a5f7bc5b43e00a0fcb5b175376aa9c9a7cd6e1febad91b2639cf7c86003ce",
+      "structural_status": "validated_draft",
+      "semantic_review": "failed",
+      "publication_approved": false
+    },
+    {
+      "reference_time": "2026-11-19T12:00:00+09:00",
+      "input_count": 5,
+      "request_id": "9e92b510b4587be1c34ef4ae30142a654caf550589cc365077d3f4292fa9901a",
+      "structural_status": "validated_draft",
+      "semantic_review": "failed",
+      "publication_approved": false
+    }
+  ],
+  "request_count": 18,
+  "usage_calculated_microdollars": 45130,
+  "held_failure_microdollars": 30844,
+  "exposure_microdollars": 75974,
+  "decision": "quality_gate_failed_automatic_operation_on_hold"
+}

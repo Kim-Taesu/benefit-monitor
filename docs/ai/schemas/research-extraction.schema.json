@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "research extraction v2",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "enum": [
+        "research-extraction-v2"
+      ]
+    },
+    "status": {
+      "enum": [
+        "completed",
+        "partial",
+        "blocked",
+        "failed"
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "enum": [
+              "missing_input",
+              "policy_blocked",
+              "environment_unavailable",
+              "tool_failure",
+              "budget_exhausted"
+            ]
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          },
+          "candidate_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "message",
+          "candidate_id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "candidate_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "research_status": {
+            "enum": [
+              "completed",
+              "partial",
+              "blocked",
+              "failed"
+            ]
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "value": {},
+                "status": {
+                  "enum": [
+                    "supported",
+                    "unknown",
+                    "disputed"
+                  ]
+                },
+                "evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_ref": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "quote": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "locator": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "source_ref",
+                      "quote",
+                      "locator"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "unknown_reason": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "field",
+                "value",
+                "status",
+                "evidence",
+                "unknown_reason"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "stop_reason": {
+            "enum": [
+              "sufficient_evidence",
+              "budget_exhausted",
+              "access_blocked",
+              "unsupported_document",
+              "unresolved_conflict",
+              "tool_failure"
+            ]
+          }
+        },
+        "required": [
+          "candidate_id",
+          "research_status",
+          "facts",
+          "stop_reason"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "status",
+    "errors",
+    "records"
+  ],
+  "additionalProperties": false
+}

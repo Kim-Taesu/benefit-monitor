@@ -1,0 +1,27 @@
+{
+  "repository": "Kim-Taesu/benefit-monitor",
+  "authentication": "anonymous",
+  "requests": [
+    {
+      "kind": "repository",
+      "status": "ok",
+      "data": {
+        "full_name": "Kim-Taesu/benefit-monitor",
+        "private": false,
+        "default_branch": "main",
+        "id": 1433960546,
+        "html_url": "https://github.com/Kim-Taesu/benefit-monitor"
+      }
+    },
+    {
+      "kind": "workflow",
+      "status": "ok",
+      "data": {
+        "id": 398286930,
+        "path": ".github/workflows/briefing-pages.yml",
+        "state": "active",
+        "html_url": "https://github.com/Kim-Taesu/benefit-monitor/blob/main/.github/workflows/briefing-pages.yml"
+      }
+    }
+  ]
+}
