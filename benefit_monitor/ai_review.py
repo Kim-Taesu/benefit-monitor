@@ -12,9 +12,11 @@ from .store import load,save,lock
 
 
 def fingerprint(_runtime_root):
+    """Changes when the model prompt or the structured-output wire contract changes."""
     root=Path(__file__).resolve().parents[1]
-    names=('README.md','research.md','research-extraction.md','schemas/research-extraction-v3.schema.json')
-    return hashlib.sha256(b'\n'.join((Path(root)/'docs/ai'/p).read_bytes() for p in names)).hexdigest()
+    names=('docs/ai/prompts/research-system.md','benefit_monitor/wire_format.py',
+           'docs/ai/schemas/research-extraction-v3.schema.json')
+    return hashlib.sha256(b'\n'.join((Path(root)/p).read_bytes() for p in names)).hexdigest()
 
 
 def invoke(root,kind,input_path):
