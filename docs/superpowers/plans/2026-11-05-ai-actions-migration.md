@@ -81,9 +81,9 @@
 **파일:** `README.md`, `docs/ai/automation.md`, 새 migration 결과 JSON/감사 문서. 기존 frozen 증거는 수정하지 않는다.
 
 - [x] 전체 unittest·출처 정책·diff·현재 frontend CI를 확인하고 설계 범위 리뷰를 수행한다. 키/identity를 실제 값 메모리 대조로 공개 이력·로그·artifact에서 검사한다.
-- [ ] 기존 branch의 새 PR을 작성해 누적 한도와 crypto 도구, 아직 로컬 활성 상태, 사용자 main 머지 필요를 명시한다. 자동 main 병합은 하지 않는다.
-- [ ] 사용자 머지 후 로컬 실행 중 여부 확인·job 해제·enabled=false·최신 상태 암호화/업로드·cloud active 전환을 순서대로 수행한다. 이때 실패하면 두 환경 동시 재개를 막고 최신 control 확인 후에만 복구한다.
-- [ ] 실제 main cloud 첫 실행의 복원·당일 중복 차단·API30회 유지·등록된 스케줄·Mac 해제를 확인한다. 확인된 배포와 dispatch를 구분해 기록한다. 다음 날 관측은 후속으로 남긴다.
+- [x] 기존 branch의 새 PR을 작성해 누적 한도와 crypto 도구, 아직 로컬 활성 상태, 사용자 main 머지 필요를 명시한다. 자동 main 병합은 하지 않는다.
+- [x] 사용자 머지 후 로컬 실행 중 여부 확인·job 해제·enabled=false·최신 상태 암호화/업로드·cloud active 전환을 순서대로 수행한다. 이때 실패하면 두 환경 동시 재개를 막고 최신 control 확인 후에만 복구한다.
+- [x] 실제 main cloud 첫 실행의 복원·당일 중복 차단·API30회 유지·등록된 스케줄·Mac 해제를 확인한다. 확인된 배포와 dispatch를 구분해 기록한다. 다음 날 관측은 후속으로 남긴다.
 
 ## 자체 검토
 

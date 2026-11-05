@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T16:34:26.637038+09:00",
+  "stage": "post_merge_cloud_active_mac_disabled",
+  "user_merged_pr": 18,
+  "main_commit": "777032ac09684b5a4753f1a0972894c20dc0eec9",
+  "workflows": [
+    {
+      "id": 41987718272,
+      "url": "https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41987718272",
+      "conclusion": "success",
+      "observed_output_status": "check_passed",
+      "security_audit": {
+        "git_blobs": 609,
+        "tracked_files": 261,
+        "job_logs": 1,
+        "artifact_members": 0,
+        "ciphertexts": 2,
+        "matches": 0,
+        "ai_totals": [],
+        "run_id": "41987718272",
+        "scope": "all local Git refs, tracked files, selected completed run logs and artifact members, remote ciphertexts"
+      }
+    },
+    {
+      "id": 41987825991,
+      "url": "https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41987825991",
+      "conclusion": "success",
+      "observed_output_status": "already_completed_today",
+      "security_audit": {
+        "git_blobs": 609,
+        "tracked_files": 261,
+        "job_logs": 1,
+        "artifact_members": 0,
+        "ciphertexts": 2,
+        "matches": 0,
+        "ai_totals": [],
+        "run_id": "41987825991",
+        "scope": "all local Git refs, tracked files, selected completed run logs and artifact members, remote ciphertexts"
+      }
+    }
+  ],
+  "schedule": {
+    "state": "active",
+    "cron_utc": "*/15 0-14,21-23 * * *",
+    "window_kst": "06:00..23:45 every 15 minutes",
+    "next_eligible_day_kst": "2026-11-06",
+    "wait_for_existing_main_refresh": true,
+    "timing_guaranteed": false
+  },
+  "state": {
+    "cloud_active": true,
+    "mac_enabled": false,
+    "mac_job_loaded": false,
+    "latest_runtime_uploaded_after_local_stop": true,
+    "main_validation_before_activation": true,
+    "today_status": "completed",
+    "daily_attempts_used": 1,
+    "daily_attempts_max": 4
+  },
+  "trial": {
+    "requests_before_handoff": 30,
+    "requests_after_handoff": 30,
+    "additional_provider_requests": 0,
+    "confirmed_microdollars": 75924,
+    "exposure_microdollars": 106768,
+    "cap_microdollars": 5000000,
+    "max_requests": 40,
+    "expires_at": "2026-11-09T13:09:12.753468+09:00"
+  },
+  "pages_deployment_in_this_handoff": false,
+  "not_yet_observed": [
+    "next_day_actual_AI_generation",
+    "next_day_public_snapshot_dispatch_and_Pages_deployment"
+  ],
+  "spending_boundary": "program reservation limit only; provider account-wide charges and taxes are not guaranteed"
+}

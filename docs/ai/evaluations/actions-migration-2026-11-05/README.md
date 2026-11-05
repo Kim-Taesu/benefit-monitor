@@ -1,6 +1,6 @@
 # GitHub Actions 전환 검증
 
-상태: 구현·작업 브랜치 무과금 검증 완료, 전체 리뷰의 중요3건 수정·최종 무과금 검증 완료, PR 준비 중. 사용자 main 머지와 최신 상태 handoff는 아직 수행하지 않았다. Mac 스케줄이 현재 실행 주체이며 cloud control은 active=false다.
+상태: 사용자 main 머지와 최신 handoff를 완료했다. Mac job 해제·enabled=false와 cloud active=true를 확인했으며 실제 main 실행이 오늘 중복을 차단했다. 요청30회 유지·추가 Claude 호출0회다. [최종 감사](completion-audit.md), [이관 후 증거](post-merge-verification.json).
 
 ## 승인 범위와 보존한 한도
 
@@ -22,7 +22,7 @@ API Secret은 ANTHROPIC_API_KEY, 상태 복호화 Secret은 BENEFIT_AI_STATE_IDE
 
 로컬 Git 전체 refs의606개 blob·현재 tracked260개 파일·최종 실행2개 job log·artifact18개 파일·원격 암호문2개에서 실제 API 키/private identity 및 base64 표현의 일치가0이었다. Secret 값은 출력하지 않고 프로그램 메모리에서 비교했다. 이 검사는 명시한 범위의 검사 시점 결과이며 다른 대화·외부 계정까지 검사했다는 뜻은 아니다.
 
-## 최종 전환 순서
+## 수행한 최종 전환 순서
 
 1. 새 PR을 사용자가 main에 머지한다. agent는 main에 병합하지 않는다.
 2. 작업 사본을 그 main 커밋과 일치시킨 뒤 `python3 scripts/ai_cloud_handoff.py activate`를 실행한다. 등록된 Mac job이 실행 중이면 중단하지 않고 기다린다. job 해제·enabled=false 뒤 최신 원장/날짜/검토 자료를 다시 암호화한다. 결과는 staged_requires_main_check이며 아직 cloud는 비활성이다.
@@ -36,6 +36,6 @@ API Secret은 ANTHROPIC_API_KEY, 상태 복호화 Secret은 BENEFIT_AI_STATE_IDE
 
 별도 읽기 전용 리뷰가 e0e2353..e6c09c4를 검토해 Important3건을 제시했다. 기존0644 자료 복원의 선행 truncate, 미정산 상태에서 만료 종료/수동 복구 차단, 공개 JSON의 최신 hold 덮어쓰기를 각각 실패 재현 후 수정했다. 복원은600 임시 파일의 atomic 교체이며 실패 시 원본을 보존한다. 유료 admission과 검증된 control 읽기를 분리해 미정산이어도 만료 종료와 명시적 비과금 복구는 가능하다. 공개 전달은 처음 읽은 file lease가 달라지면 PUT·dispatch를 중단한다. 수정 후 전체403개 검사가 성공했다. Critical·Minor·판정 유보는 없었으며 저자 검증으로 fix pass를 완료했다.
 
-## 확인하지 않은 항목
+## 남은 관측
 
-사용자 main 머지, Mac 해제, main 최신 handoff, cloud 유료 실행, 다음 날짜의 실제 리포트는 아직 확인하지 않았다. 현재 검증 성공은 이 항목들의 완료를 뜻하지 않는다. GitHub schedule의 정시 실행·모델 사실 정확도·새 사실 자동 승인을 보장하지 않는다.
+사용자 main 머지·최신 상태 이관·Mac 해제·main 무과금 검사·cloud 활성·오늘 중복 차단은 완료했다. 11/6 이후 실제 AI 생성·공개 snapshot dispatch·Pages 배포는 다음 날짜에 관측해야 한다. 이번 이관에서 새 공개 배포나 유료 호출은 수행하지 않았다. GitHub schedule의 정시 실행·모델 사실 정확도·새 사실 자동 승인을 보장하지 않는다.
