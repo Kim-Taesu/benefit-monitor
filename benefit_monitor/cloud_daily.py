@@ -24,7 +24,7 @@ from scripts.install_age import safe_path
 def trusted_environment():
     if (os.environ.get('BENEFIT_AI_CLOUD')!='1' or os.environ.get('GITHUB_ACTIONS')!='true'
             or os.environ.get('GITHUB_REPOSITORY')!=REPOSITORY
-            or os.environ.get('GITHUB_EVENT_NAME') not in ('schedule','workflow_dispatch')):
+            or os.environ.get('GITHUB_EVENT_NAME') not in ('schedule','workflow_dispatch','workflow_run')):
         raise ValueError('trusted Actions environment required')
 
 
@@ -49,11 +49,25 @@ def disable_workflow(store):
     return True
 
 
-def preceding_refresh(store,now):
-    data=store._api('actions/workflows/briefing-pages.yml/runs?event=schedule&branch=main&per_page=20')
-    rows=[row for row in data['workflow_runs']
-          if datetime.fromisoformat(row['created_at']).astimezone(SEOUL).date()==now.date()]
-    return bool(rows) and all(row['status']=='completed' for row in rows)
+# GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
+FALLBACK_REFRESH_HOUR=10
+ATTENTION={'completed_with_provider_failure'}
+
+
+def todays_refresh(store,now):
+    """Collecting briefing runs created today (schedule or manual dispatch; push runs only deploy)."""
+    rows=[]
+    for event in ('schedule','workflow_dispatch'):
+        data=store._api('actions/workflows/briefing-pages.yml/runs?event='+event+'&branch=main&per_page=20')
+        rows+=[row for row in data['workflow_runs']
+               if datetime.fromisoformat(row['created_at']).astimezone(SEOUL).date()==now.date()]
+    if not rows:return 'missing'
+    if any(row['status']!='completed' for row in rows):return 'running'
+    return 'ready' if any(row.get('conclusion')=='success' for row in rows) else 'failed'
+
+
+def dispatch_refresh(store):
+    actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main'})
 
 
 def runner_environment(store):
@@ -86,7 +100,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     return {'status':'dispatched_not_yet_verified','snapshot_commit':commit,'code_sha':code,'ref':'main'}
 
 
-def cloud_run(root,now=None,check_only=True,store=None):
+def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False):
     trusted_environment()
     root=Path(root).resolve();now=now or datetime.now(SEOUL)
     if now.tzinfo is None:raise ValueError('timezone required')
@@ -96,6 +110,11 @@ def cloud_run(root,now=None,check_only=True,store=None):
     preflight=CloudSession.read_control(root,store)
     # Trusted runner applies the approved limit revision once with its short-lived token.
     revised=preflight.apply_limit_revision()
+    resumed=False
+    if (resume or retry) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
+        raise ValueError('halt review and day retry require a manual dispatch')
+    if resume:
+        resumed=preflight.resume_after_review(now)
     if not check_only:
         if not preflight.control['active']:return {'status':'handoff_required'}
         control=preflight.control;budget=control['budget']
@@ -111,7 +130,8 @@ def cloud_run(root,now=None,check_only=True,store=None):
     budget=TrialBudget(safe_path(root,BUDGET)).summary()
     day=now.date().isoformat()
     summary={'requests':len(budget['requests']),'exposure_microdollars':budget['exposure_microdollars'],
-             'day_status':session.control['days'].get(day,{}).get('status'),'active':session.control['active']}
+             'day_status':session.control['days'].get(day,{}).get('status'),'active':session.control['active'],
+             'halt_resumed':resumed}
     if check_only:
         data=dict(session.control)
         data['check']={'snapshot_sha256':snapshot_digest(data),'ref':os.environ.get('GITHUB_REF',''),
@@ -121,11 +141,20 @@ def cloud_run(root,now=None,check_only=True,store=None):
                     max_requests=data['budget']['max_requests'])
     if not session.control['active']:return {'status':'handoff_required'}
     if now.hour<6:return {'status':'not_due'}
-    if day in session.control['days']:
+    retried=False
+    if retry:
+        if todays_refresh(store,now)!='ready':return {'status':'waiting_for_existing_refresh'}
+        retried=session.retry_rejected_day(day,now)
+        # The remote row keeps the original outcome; the inner local mirror must not see today.
+        save(safe_path(root,'cache/ai_daily/days.json'),{'days':{k:v for k,v in session.control['days'].items() if k!=day}})
+    elif day in session.control['days']:
         return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
-    if not preceding_refresh(store,now):return {'status':'waiting_for_existing_refresh'}
+    refresh=todays_refresh(store,now)
+    if refresh=='missing' and now.hour>=FALLBACK_REFRESH_HOUR:
+        dispatch_refresh(store);return {'status':'refresh_dispatched'}  # Its completion triggers this workflow.
+    if refresh!='ready':return {'status':'waiting_for_existing_refresh','refresh':refresh}
     public_lease=restore_public(root,store,now)
-    session.mark_day(day)
+    if not retried:session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
          'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':2,
          'trial_expires_at':session.control['expires_at']})
@@ -135,7 +164,11 @@ def cloud_run(root,now=None,check_only=True,store=None):
         session.save_runtime()
         delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
         session.finish(day,'completed')
-        return {'status':'completed','delivery':delivery}
+        after=TrialBudget(safe_path(root,BUDGET)).summary();new=after['requests'][summary['requests']:]
+        failures=[row.get('error_code','unknown') for row in new if row['status']!='completed']
+        status='completed_with_provider_failure' if failures or after['halted'] else 'completed'
+        return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
+                'halted':after['halted'],'retried_day':retried}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')
@@ -150,7 +183,15 @@ def main():
     try:result=cloud_run(Path(__file__).resolve().parents[1],check_only=not args.execute)
     except Exception:
         print('cloud_stopped_requires_review');return 1
-    print(json.dumps(result,sort_keys=True));return 0
+    print(json.dumps(result,sort_keys=True));return exit_code(result)
+
+
+def exit_code(result):
+    """A finished day with provider rejections must not look green in Actions."""
+    if result.get('status') in ATTENTION:
+        print('::error::AI provider rejected '+str(len(result.get('provider_failures',[])))+' request(s); trial halted='+str(result.get('halted')))
+        return 1
+    return 0
 
 
 if __name__=='__main__':raise SystemExit(main())

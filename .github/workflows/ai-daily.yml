@@ -1,7 +1,13 @@
 name: AI daily trial
 on:
+  # Primary trigger: start right after the free briefing collection finishes.
+  # GitHub schedules were delayed for hours or dropped (2026-11-04..06).
+  workflow_run:
+    workflows: ['Daily benefit briefing']
+    types: [completed]
+    branches: [main]
   schedule:
-    # KST 06:00..23:45; delayed runs still use program admission gates.
+    # Backup only; KST 06:00..23:45. After 10:00 it dispatches a missing briefing.
     - cron: '*/15 0-14,21-23 * * *'
   workflow_dispatch:
     inputs:
@@ -9,6 +15,14 @@ on:
         description: '복원·Secret·원격 저장만 검증, Claude 호출 없음'
         type: boolean
         default: true
+      resume_reviewed_halt:
+        description: '사람이 실패 원인을 확인한 뒤 실험 중단을 해제 (실패 기록은 유지)'
+        type: boolean
+        default: false
+      retry_rejected_day:
+        description: '오늘 요청이 모두 무과금 4xx 거절이었으면 오늘을 한 번 재시도 (check_only 꺼야 함)'
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -20,6 +34,7 @@ jobs:
       github.repository == 'Kim-Taesu/benefit-monitor' &&
       github.ref == 'refs/heads/main' &&
       github.event.repository.private == false &&
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') &&
       vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -42,5 +57,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BENEFIT_AI_CLOUD: '1'
           CHECK_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.check_only && 'true' || 'false' }}
+          RESUME_REVIEWED_HALT: ${{ github.event_name == 'workflow_dispatch' && inputs.resume_reviewed_halt && 'true' || 'false' }}
+          RETRY_REJECTED_DAY: ${{ github.event_name == 'workflow_dispatch' && inputs.retry_rejected_day && 'true' || 'false' }}
         run: |
           python scripts/run_ai_cloud.py

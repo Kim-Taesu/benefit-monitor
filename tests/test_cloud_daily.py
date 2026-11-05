@@ -94,7 +94,7 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'disable_workflow') as disable:
             self.assertEqual(m.cloud_run(self.root,now=NOW.replace(hour=5),check_only=False,store=self.fixture.store())['status'],'not_due')
             self.assertEqual(m.cloud_run(self.root,now=NOW.replace(day=10),check_only=False,store=self.fixture.store())['status'],'trial_expired');disable.assert_called_once()
-            with patch.object(m,'preceding_refresh',return_value=False):
+            with patch.object(m,'todays_refresh',return_value='running'):
                 self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'waiting_for_existing_refresh')
             data=json.loads(self.fixture.store().read('control')[0]);data['active']=False
             _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
@@ -108,7 +108,7 @@ class CloudDailyTests(unittest.TestCase):
             self.assertEqual(control['days']['2026-11-06']['status'],'attempted')
             self.assertNotIn('2026-11-06',load(self.root/'cache/ai_daily/days.json',{})['days'])
             raise RuntimeError('fixture failure')
-        with patch.object(m,'preceding_refresh',return_value=True),patch.object(m,'daily',side_effect=inner):
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner):
             with self.assertRaises(RuntimeError):m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
         with patch.object(m,'daily',side_effect=AssertionError('no retry')):
             self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'previous_attempt_requires_review')
@@ -120,7 +120,7 @@ class CloudDailyTests(unittest.TestCase):
         def inner(*args,**kwargs):
             self.assertEqual(events,['public_holds_restored'])
             return {'status':'completed'}
-        with patch.object(m,'restore_public',side_effect=restored),patch.object(m,'preceding_refresh',return_value=True),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+        with patch.object(m,'restore_public',side_effect=restored),patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
             m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
 
     def test_expired_unresolved_budget_still_disables_workflow_without_collecting(self):
@@ -179,10 +179,132 @@ class CloudDailyTests(unittest.TestCase):
             budget=TrialBudget(self.fixture.budget_path,checkpoint=session.checkpoint_budget)
             budget.reserve('f'*64,1000);budget.settle('f'*64,100,{'input_tokens':100,'output_tokens':180},'a'*64)
             return {'status':'completed'}
-        with patch.object(m,'preceding_refresh',return_value=True),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
             result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
         remote=json.loads(self.fixture.store().read('control')[0])
         self.assertEqual(len(remote['budget']['requests']),31);self.assertEqual(remote['days']['2026-11-06']['status'],'completed')
         self.assertEqual(result['delivery']['status'],'dispatched_not_yet_verified')
+
+    def test_todays_refresh_counts_collecting_runs_and_ignores_other_days(self):
+        m=self.module()
+        def store(rows):
+            class Fake:
+                def _api(self,path):
+                    event=path.split('event=')[1].split('&')[0]
+                    return {'workflow_runs':[r for r in rows if r['event']==event]}
+            return Fake()
+        run=lambda event,day,status='completed',conclusion='success':dict(event=event,status=status,conclusion=conclusion,
+            created_at=f'2026-11-{day}T00:10:00+09:00')
+        self.assertEqual(m.todays_refresh(store([run('schedule','05')]),NOW),'missing')
+        self.assertEqual(m.todays_refresh(store([run('workflow_dispatch','06')]),NOW),'ready')
+        self.assertEqual(m.todays_refresh(store([run('schedule','06'),run('workflow_dispatch','06','in_progress',None)]),NOW),'running')
+        self.assertEqual(m.todays_refresh(store([run('schedule','06',conclusion='failure')]),NOW),'failed')
+
+    def test_missing_refresh_is_dispatched_once_only_after_ten(self):
+        m=self.module()
+        with patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'todays_refresh',return_value='missing'),\
+                patch.object(m,'dispatch_refresh') as dispatch:
+            early=m.cloud_run(self.root,now=NOW.replace(hour=9),check_only=False,store=self.fixture.store())
+            dispatch.assert_not_called()
+            late=m.cloud_run(self.root,now=NOW.replace(hour=10),check_only=False,store=self.fixture.store())
+            dispatch.assert_called_once()
+        self.assertEqual((early['status'],early['refresh'],late['status']),('waiting_for_existing_refresh','missing','refresh_dispatched'))
+        with patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'todays_refresh',return_value='running'),\
+                patch.object(m,'dispatch_refresh',side_effect=AssertionError('no second dispatch')):
+            self.assertEqual(m.cloud_run(self.root,now=NOW.replace(hour=11),check_only=False,store=self.fixture.store())['status'],
+                             'waiting_for_existing_refresh')
+        self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
+
+    def test_workflow_run_event_is_trusted(self):
+        m=self.module()
+        with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'workflow_run'}):m.trusted_environment()
+        with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'pull_request_target'}),self.assertRaises(ValueError):m.trusted_environment()
+
+    def test_provider_rejection_finishes_day_but_exits_red(self):
+        m=self.module()
+        def inner(*args,**kwargs):
+            from benefit_monitor.cloud_state import CloudSession
+            from benefit_monitor.trial_budget import TrialBudget
+            session=CloudSession.from_context(self.root,self.fixture.store())
+            budget=TrialBudget(self.fixture.budget_path,checkpoint=session.checkpoint_budget)
+            budget.reserve('f'*64,1000);budget.fail('f'*64,'http_400','grammar too large')
+            return {'status':'completed'}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        self.assertEqual((result['status'],result['provider_failures'],result['halted']),('completed_with_provider_failure',['http_400'],True))
+        self.assertEqual(m.exit_code(result),1)
+        self.assertEqual(m.exit_code({'status':'completed'}),0)
+        self.assertEqual(json.loads(self.fixture.store().read('control')[0])['days']['2026-11-06']['status'],'completed')
+
+    def test_reviewed_halt_is_released_only_by_manual_dispatch_and_keeps_rows(self):
+        m=self.module()
+        control=json.loads(self.fixture.store().read('control')[0])
+        control['budget']['requests'].append({'id':'f'*64,'status':'failed','reserved_microdollars':100,'charged_microdollars':0,
+                                              'started_at':NOW.isoformat(),'error_code':'http_400'})
+        control['budget']['halted']=True
+        _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(control).encode(),sha)
+        with patch.object(m,'daily',side_effect=AssertionError('no paid work')):
+            with self.assertRaises(ValueError):m.cloud_run(self.root,now=NOW,store=self.fixture.store())
+            with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'schedule'}),self.assertRaisesRegex(ValueError,'manual'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),resume=True)
+            result=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),resume=True)
+            again=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),resume=True)
+        self.assertEqual((result['status'],result['halt_resumed'],again['halt_resumed']),('check_passed',True,False))
+        remote=json.loads(self.fixture.store().read('control')[0])['budget']
+        self.assertFalse(remote['halted']);self.assertEqual(remote['requests'],control['budget']['requests'])
+        self.assertEqual(len(remote['manual_reviews']),len(control['budget'].get('manual_reviews',[]))+1)
+        reserved=json.loads(self.fixture.store().read('control')[0])
+        reserved['budget']['halted']=True
+        reserved['budget']['requests'].append({'id':'e'*64,'status':'reserved','reserved_microdollars':100,'charged_microdollars':0,'started_at':NOW.isoformat()})
+        _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(reserved).encode(),sha)
+        with self.assertRaisesRegex(ValueError,'inflight'):m.cloud_run(self.root,now=NOW,store=self.fixture.store(),resume=True)
+
+    def put_control(self,mutate):
+        control=json.loads(self.fixture.store().read('control')[0]);mutate(control)
+        _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(control).encode(),sha)
+        return control
+
+    def rejected_today(self,control,code='http_400',charged=0,status='failed'):
+        control['days']['2026-11-06']={'status':'completed'}
+        control['budget']['requests'].append({'id':'f'*64,'status':status,'reserved_microdollars':13012,'charged_microdollars':charged,
+                                              'started_at':'2026-11-05T23:02:15+00:00','error_code':code})
+
+    def test_rejected_day_is_retried_once_by_manual_dispatch_and_keeps_history(self):
+        m=self.module();seen=[]
+        before=self.put_control(lambda c:(self.rejected_today(c),c['budget'].update(halted=True)))
+        def inner(*args,**kwargs):
+            seen.append(load(self.root/'cache/ai_daily/days.json',{})['days'])
+            self.assertEqual(json.loads(self.fixture.store().read('control')[0])['days']['2026-11-06']['status'],'attempted')
+            return {'status':'completed'}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),\
+                patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'schedule'}),self.assertRaisesRegex(ValueError,'manual'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True,resume=True)
+            with self.assertRaisesRegex(ValueError,'not eligible'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
+            self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'already_completed_today')
+        self.assertEqual((result['status'],result['retried_day']),('completed',True))
+        self.assertFalse(json.loads(self.fixture.store().read('control')[0])['budget']['halted'])
+        self.assertNotIn('2026-11-06',seen[0])
+        remote=json.loads(self.fixture.store().read('control')[0])
+        day=remote['days']['2026-11-06']
+        self.assertEqual((day['status'],day['retry_of']['status'],day['retry_of']['request_ids']),('completed','completed',['f'*64]))
+        self.assertEqual(remote['budget']['requests'],before['budget']['requests'])
+        self.assertEqual(len(remote['days']),len(before['days']))
+
+    def test_retry_refuses_billed_or_non_rejection_days(self):
+        m=self.module()
+        base=json.loads(self.fixture.store().read('control')[0])
+        cases={'billed':dict(charged=5),'server error':dict(code='http_529'),'completed request':dict(status='completed',code='')}
+        for name,kwargs in cases.items():
+            with self.subTest(name=name):
+                self.put_control(lambda c:(c.clear(),c.update(json.loads(json.dumps(base))),self.rejected_today(c,**kwargs)))
+                with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=AssertionError('no paid work')),\
+                        self.assertRaisesRegex(ValueError,'rejected unbilled'):
+                    m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
+        self.put_control(lambda c:(c.clear(),c.update(json.loads(json.dumps(base)))))
+        with patch.object(m,'todays_refresh',return_value='ready'),self.assertRaisesRegex(ValueError,'not eligible'):
+            m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
 
 if __name__=='__main__':unittest.main()

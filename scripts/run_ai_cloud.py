@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:sys.path.insert(0,str(ROOT))
-from benefit_monitor.cloud_daily import cloud_run,trusted_environment
+from benefit_monitor.cloud_daily import cloud_run,exit_code,trusted_environment
 from benefit_monitor.trial_budget import secure_open
 from scripts.install_age import safe_path
 import json
@@ -19,8 +19,10 @@ def main():
         if not value or len(value)>4096:raise ValueError('state identity Secret required')
         with os.fdopen(secure_open(identity,os.O_WRONLY|os.O_CREAT|os.O_EXCL),'w') as stream:
             created=True;stream.write(value)
-        result=cloud_run(ROOT,check_only=os.environ.get('CHECK_ONLY','true')!='false')
-        print(json.dumps(result,sort_keys=True));return 0
+        result=cloud_run(ROOT,check_only=os.environ.get('CHECK_ONLY','true')!='false',
+                         resume=os.environ.get('RESUME_REVIEWED_HALT')=='true',
+                         retry=os.environ.get('RETRY_REJECTED_DAY')=='true')
+        print(json.dumps(result,sort_keys=True));return exit_code(result)
     except Exception:
         print('cloud_stopped_requires_review');return 1
     finally:
