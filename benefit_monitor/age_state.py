@@ -5,6 +5,8 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
+import stat
+import tempfile
 import tarfile
 
 from scripts.install_age import safe_path,verify_installation
@@ -59,13 +61,24 @@ def restore_runtime(root,raw):
             for item in archive:
                 if (not item.isfile() or not _allowed(item.name) or item.name in entries
                         or len(entries)>=MAX_FILES):raise ValueError('unsafe runtime archive member')
-                safe_path(root,item.name);total+=item.size
+                target=safe_path(root,item.name)
+                if target.exists():
+                    info=target.stat()
+                    if not stat.S_ISREG(info.st_mode) or info.st_uid!=os.getuid():
+                        raise ValueError('unsafe existing runtime destination')
+                total+=item.size
                 if total>MAX_RUNTIME_BYTES:raise ValueError('runtime archive too large')
                 entries[item.name]=archive.extractfile(item).read()
         # Validate the entire archive before restoring any file.
         for name,content in entries.items():
             path=safe_path(root,name);path.parent.mkdir(parents=True,exist_ok=True)
-            with os.fdopen(secure_open(path,os.O_WRONLY|os.O_CREAT|os.O_TRUNC),'wb') as stream:stream.write(content)
+            fd,temporary=tempfile.mkstemp(dir=path.parent,prefix='.restore-')
+            try:
+                with os.fdopen(fd,'wb') as stream:
+                    stream.write(content);stream.flush();os.fsync(stream.fileno())
+                os.replace(temporary,path)
+            finally:
+                if os.path.exists(temporary):os.unlink(temporary)
     except (OSError,EOFError,tarfile.TarError):raise ValueError('invalid runtime archive') from None
 
 

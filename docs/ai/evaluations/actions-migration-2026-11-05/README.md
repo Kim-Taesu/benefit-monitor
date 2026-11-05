@@ -1,6 +1,6 @@
 # GitHub Actions 전환 검증
 
-상태: 구현·작업 브랜치 무과금 검증 완료, 최종 리뷰·PR 준비 중. 사용자 main 머지와 최신 상태 handoff는 아직 수행하지 않았다. Mac 스케줄이 현재 실행 주체이며 cloud control은 active=false다.
+상태: 구현·작업 브랜치 무과금 검증 완료, 전체 리뷰의 중요3건 수정·PR 준비 중. 사용자 main 머지와 최신 상태 handoff는 아직 수행하지 않았다. Mac 스케줄이 현재 실행 주체이며 cloud control은 active=false다.
 
 ## 승인 범위와 보존한 한도
 
@@ -14,8 +14,9 @@ API Secret은 ANTHROPIC_API_KEY, 상태 복호화 Secret은 BENEFIT_AI_STATE_IDE
 - 검증 전후 로컬·원격 API 요청30회, 실패2건의 예약을 포함한 점유106768 microUSD, usage 계산75924 microUSD. 이는 공급자 계정 전체 청구·세금 보장이 아니다.
 - 이미 완료한2026-11-05 실행을1회로 이관했다. 같은 날짜의 실행은 재시도하지 않는다. 모의 제어 테스트에서 완료일 중복·실패일 중복·만료·4회·40요청·미정산·잘못된 Secret에 수집/유료 호출0을 확인했다.
 - 제어 상태와 검토 자료는 기존 briefing-data의 ai-control.age·ai-runtime.age에 암호문으로 보존했다. 매 예약·정산은 Contents 파일 SHA 조건으로 원격에 저장하고 확인한다. 저장 실패 시 Claude HTTP를 보내지 않는다.
+- 공개 JSON은 최초 복원 때의 파일 SHA로 CAS 저장해, 실행 중 다른 수집기가 게시한 보류를 덮지 않는다. 다른 control/runtime 파일의 branch 변경은 허용한다.
 - runtime 업로드와 control pointer 갱신 사이 중단은 이전 immutable blob을 복원한다. archive는 budget/days·링크·탈출 경로·credential 파일을 복원하지 않는다. control이 항상 원장·날짜의 권위다.
-- Linux runner의 Python393개·프런트52개·브라우저43개 검사가 성공했다. 이후 추가한 이관 경계와 최신 무료 수집 보류 복원 검사를 포함해 로컬 Python397개가 통과했다. 최종 HEAD 검증 결과는 별도 결과 JSON에 기록한다.
+- Linux runner의 Python393개·프런트52개·브라우저43개 검사가 성공했다. 이후 추가한 이관 경계와 최신 무료 수집 보류 복원 검사를 포함해 로컬 Python403개가 통과했다. 최종 HEAD 검증 결과는 별도 결과 JSON에 기록한다.
 
 공식 조회의 robots·TLS·허용목록·HTTP75/hard cap100·구6시간 캐시·실패900초와 공개 승인·주제 의미 검사·화면 fallback은 유지한다. AI가 추출한 새 사실은 계속 비공개 사람 검토 대기다.
 
@@ -28,6 +29,10 @@ API Secret은 ANTHROPIC_API_KEY, 상태 복호화 Secret은 BENEFIT_AI_STATE_IDE
 5. AI daily trial을 check_only=false로 실행해 당일 중복 차단을 확인한다. 실제 다음 날짜의 생성·배포는 후속 관측이다. dispatch 수락과 Pages 배포 성공을 구분한다.
 
 실패 시 로컬을 임의 재활성화하지 않는다. 원격이 더 최신일 수 있으므로 먼저 control과 예약을 대조한다. `python3 scripts/ai_cloud_handoff.py restore`는 로컬 writer가 중단된 경우에만 최신 자료를 복원하며 스케줄을 켜지 않는다. 원본 로컬 산출물은 삭제하지 않는다.
+
+## 전체 리뷰와 수정
+
+별도 읽기 전용 리뷰가 e0e2353..e6c09c4를 검토해 Important3건을 제시했다. 기존0644 자료 복원의 선행 truncate, 미정산 상태에서 만료 종료/수동 복구 차단, 공개 JSON의 최신 hold 덮어쓰기를 각각 실패 재현 후 수정했다. 복원은600 임시 파일의 atomic 교체이며 실패 시 원본을 보존한다. 유료 admission과 검증된 control 읽기를 분리해 미정산이어도 만료 종료와 명시적 비과금 복구는 가능하다. 공개 전달은 처음 읽은 file lease가 달라지면 PUT·dispatch를 중단한다. 수정 후 전체403개 검사가 성공했다. Critical·Minor·판정 유보는 없었으며 저자 검증으로 fix pass를 완료했다.
 
 ## 확인하지 않은 항목
 

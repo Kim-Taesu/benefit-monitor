@@ -183,7 +183,7 @@ def main():
         elif args.command=='restore':
             if local_loaded(root) or load(safe_path(root,'ai-automation.json'),{}).get('enabled') is not False:
                 raise ValueError('stop local writer before restore; never auto-resume')
-            session=CloudSession.restore(root,store);result={'status':'restored_local_still_disabled','requests':len(session.control['budget']['requests'])}
+            session=CloudSession.restore(root,store,allow_unresolved=True);result={'status':'restored_local_still_disabled','requests':len(session.control['budget']['requests'])}
         else:
             main_sha=api('branches/main')['commit']['sha']
             head=subprocess.run(['git','rev-parse','HEAD'],cwd=root,capture_output=True,text=True,check=True).stdout.strip()

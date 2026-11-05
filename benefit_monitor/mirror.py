@@ -6,7 +6,7 @@ import subprocess
 from pathlib import Path
 
 
-def run(root, repository, env=None, content=None):
+def run(root, repository, env=None, content=None, expected_sha=None):
     content = content if content is not None else (Path(root) / "delivery/public/briefing.json").read_bytes()
     data=json.loads(content)
     if data.get("status")=="collection_failed":
@@ -20,6 +20,8 @@ def run(root, repository, env=None, content=None):
     current = subprocess.run(
         ["gh", "api", "--method", "GET", endpoint + "?ref=briefing-data", "--jq", ".sha"],
         check=True, capture_output=True, text=True, env=env).stdout.strip()
+    if expected_sha is not None and current!=expected_sha:
+        raise ValueError('public snapshot changed during AI run; preserve the newer export')
     payload = dict(message="Update public briefing JSON", branch="briefing-data", sha=current,
                    content=base64.b64encode(content).decode("ascii"))
     result=subprocess.run(["gh", "api", "--method", "PUT", endpoint, "--input", "-"],
@@ -50,6 +52,7 @@ def restore(root, repository, now=None, env=None):
         if row.get('hold_at') and (not old.get('hold_at') or datetime.fromisoformat(row['hold_at'])>datetime.fromisoformat(old['hold_at'])):
             state['items'][key]=row
     save(root/"cache/operational_state.json",state)
+    return envelope.get("sha")
 
 
 def main():

@@ -133,6 +133,15 @@ class CloudStateTests(unittest.TestCase):
         self.assertFalse(any(self.root.rglob('*.sent')))
         with self.assertRaises(ValueError):module.CloudSession.restore(self.root,self.store())
 
+    def test_manual_nonspending_restore_can_preserve_unsettled_reservation_for_review(self):
+        import inspect
+        module=self.module();session=self.session()
+        budget=TrialBudget(self.budget_path,checkpoint=session.checkpoint_budget);budget.reserve('e'*64,1000)
+        self.assertIn('allow_unresolved',inspect.signature(module.CloudSession.restore).parameters,'비과금 수동 복구 경로 필요')
+        restored=module.CloudSession.restore(self.root,self.store(),allow_unresolved=True)
+        self.assertEqual(restored.control['budget']['requests'][-1]['status'],'reserved')
+        with self.assertRaises(ValueError):module.CloudSession.restore(self.root,self.store())
+
     def test_parent_reloads_budget_after_child_checkpoint(self):
         module=self.module();parent=self.session();parent.mark_day('2026-11-06')
         child=module.CloudSession.from_context(self.root,self.store())

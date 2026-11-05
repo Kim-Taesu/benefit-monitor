@@ -76,6 +76,24 @@ class AgeStateTests(unittest.TestCase):
             with self.assertRaises(ValueError):module.restore_runtime(self.root,raw)
         self.assertFalse((self.root/'cache/ai_review/a.json').exists())
 
+    def test_restore_replaces_owned_0644_file_atomically_with_private_mode(self):
+        module=self.module('benefit_monitor.age_state')
+        path=self.root/'.tools/claude-trial/live/runs/example/input.json'
+        path.parent.mkdir(parents=True);path.write_bytes(b'original private evidence');path.chmod(0o644)
+        raw=gzip.compress(archive([(path.relative_to(self.root).as_posix(),b'restored evidence',tarfile.REGTYPE)]))
+        module.restore_runtime(self.root,raw)
+        self.assertEqual(path.read_bytes(),b'restored evidence')
+        self.assertEqual(path.stat().st_mode&0o777,0o600)
+
+    def test_failed_atomic_restore_keeps_original_bytes(self):
+        module=self.module('benefit_monitor.age_state')
+        path=self.root/'cache/ai_review/existing.json'
+        path.parent.mkdir(parents=True);path.write_bytes(b'original');path.chmod(0o600)
+        raw=gzip.compress(archive([('cache/ai_review/existing.json',b'replacement',tarfile.REGTYPE)]))
+        with patch.object(module.os,'replace',side_effect=OSError('fixture disk failure')):
+            with self.assertRaises(ValueError):module.restore_runtime(self.root,raw)
+        self.assertEqual(path.read_bytes(),b'original')
+
     def test_runtime_link_and_size_limits_are_enforced(self):
         module=self.module('benefit_monitor.age_state')
         folder=self.root/'cache/ai_review';folder.mkdir(parents=True)

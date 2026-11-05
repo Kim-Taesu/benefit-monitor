@@ -64,10 +64,13 @@ def runner_environment(store):
 
 def restore_public(root,store,now):
     # The preceding free run may have observed newer holds than the AI archive.
-    restore_mirror(root,REPOSITORY,now=now,env=runner_environment(store))
+    sha=restore_mirror(root,REPOSITORY,now=now,env=runner_environment(store))
+    if not isinstance(sha,str) or not re.fullmatch('[0-9a-f]{40}',sha):raise ValueError('initial public file lease required')
+    return sha
 
 
-def publish_snapshot(root,store,now,key):
+def publish_snapshot(root,store,now,key,*,expected_sha):
+    if not isinstance(expected_sha,str) or not re.fullmatch('[0-9a-f]{40}',expected_sha):raise ValueError('initial public file lease required')
     code=os.environ.get('GITHUB_SHA','')
     if os.environ.get('GITHUB_REF')!='refs/heads/main' or not re.fullmatch('[0-9a-f]{40}',code):
         raise ValueError('main code revision required for public delivery')
@@ -76,7 +79,7 @@ def publish_snapshot(root,store,now,key):
     data=load(safe_path(root,'delivery/public/briefing.json'),{})
     content=(json.dumps(validate(root,data,now),ensure_ascii=False,indent=2)+'\n').encode()
     if key.encode() in content or b'AGE-SECRET-KEY-' in content:raise ValueError('credential in public payload')
-    commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content)
+    commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content,expected_sha=expected_sha)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{
         'deploy_approved_snapshot':'true','snapshot_commit':commit,'expected_code_sha':code}})
@@ -89,9 +92,18 @@ def cloud_run(root,now=None,check_only=True,store=None):
     if now.tzinfo is None:raise ValueError('timezone required')
     now=now.astimezone(SEOUL)
     if not check_only and os.environ.get('GITHUB_REF')!='refs/heads/main':raise ValueError('paid cloud execution requires main')
-    key=configured_key(root)
     store=store or GitHubStateStore(root,os.environ.get('GH_TOKEN',''),AgeState(root,safe_path(root,'.tools/cloud-state/identity.txt')))
+    preflight=CloudSession.read_control(root,store)
+    if not check_only:
+        if not preflight.control['active']:return {'status':'handoff_required'}
+        control=preflight.control;budget=control['budget']
+        stop=('trial_expired' if now>=datetime.fromisoformat(control['expires_at']) else
+              'trial_run_limit' if len(control['days'])>=4 else
+              'trial_budget_limit' if len(budget['requests'])>=40 or TrialBudget._exposure(budget)>=5_000_000 else None)
+        if stop:
+            disable_workflow(store);return {'status':stop}
     session=CloudSession.restore(root,store)
+    key=configured_key(root)
     if hashlib.sha256(key.encode()).hexdigest()!=session.control['api_key_sha256']:
         raise ValueError('API Secret differs from approved local key')
     budget=TrialBudget(safe_path(root,BUDGET)).summary()
@@ -105,16 +117,11 @@ def cloud_run(root,now=None,check_only=True,store=None):
         session._commit(data)  # Confirms contents:write without day or provider admission.
         return dict(summary,status='check_passed')
     if not session.control['active']:return {'status':'handoff_required'}
-    stop=('trial_expired' if now>=datetime.fromisoformat(session.control['expires_at']) else
-          'trial_run_limit' if len(session.control['days'])>=4 else
-          'trial_budget_limit' if len(budget['requests'])>=40 or budget['exposure_microdollars']>=5_000_000 else None)
-    if stop:
-        disable_workflow(store);return {'status':stop}
     if now.hour<6:return {'status':'not_due'}
     if day in session.control['days']:
         return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
     if not preceding_refresh(store,now):return {'status':'waiting_for_existing_refresh'}
-    restore_public(root,store,now)
+    public_lease=restore_public(root,store,now)
     session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
          'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':2,
@@ -123,7 +130,7 @@ def cloud_run(root,now=None,check_only=True,store=None):
         result=daily(root,now=now,online=True,allow_spend=True,publish=True)
         if result['status']!='completed':raise ValueError('inner daily did not complete')
         session.save_runtime()
-        delivery=publish_snapshot(root,store,now,key)
+        delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
         session.finish(day,'completed')
         return {'status':'completed','delivery':delivery}
     except Exception:

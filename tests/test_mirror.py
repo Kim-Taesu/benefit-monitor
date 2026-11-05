@@ -36,6 +36,19 @@ class MirrorTests(unittest.TestCase):
                 mirror.run(root, "Kim-Taesu/benefit-monitor")
             self.assertEqual(len(requests), 2)
 
+    def test_initial_file_lease_is_reused_when_other_branch_files_change(self):
+        import inspect
+        self.assertIn('expected_sha',inspect.signature(mirror.run).parameters)
+        data={'status':'ready','items':[]}
+        writes=[]
+        def api(args,**kwargs):
+            if 'GET' in args:return subprocess.CompletedProcess(args,0,'a'*40+'\n','')
+            payload=json.loads(kwargs['input']);writes.append(payload)
+            return subprocess.CompletedProcess(args,0,json.dumps({'commit':{'sha':'c'*40}}),'')
+        with patch('benefit_monitor.mirror.subprocess.run',side_effect=api):
+            result=mirror.run(Path('.'),'Kim-Taesu/benefit-monitor',content=json.dumps(data).encode(),expected_sha='a'*40)
+        self.assertEqual(result,'c'*40);self.assertEqual(writes[0]['sha'],'a'*40)
+
     def test_missing_export_does_not_send_a_request(self):
         with tempfile.TemporaryDirectory() as directory:
             with patch("benefit_monitor.mirror.subprocess.run") as api:
@@ -49,9 +62,10 @@ class MirrorTests(unittest.TestCase):
             root=Path(directory)
             save(root/'sources.yaml',{'sources':[{'id':'test'}]})
             remote={'operational_state':{'schema_version':1,'items':{},'profile':'do not copy'},'items':[{'conditions':'do not restore'}]}
-            response=json.dumps({'content':base64.b64encode(json.dumps(remote).encode()).decode(),'encoding':'base64'})
+            response=json.dumps({'sha':'a'*40,'content':base64.b64encode(json.dumps(remote).encode()).decode(),'encoding':'base64'})
             with patch('benefit_monitor.mirror.subprocess.run',return_value=subprocess.CompletedProcess([],0,response,'')):
-                mirror.restore(root,'Kim-Taesu/benefit-monitor',datetime.fromisoformat('2026-10-28T07:00:00+09:00'))
+                lease=mirror.restore(root,'Kim-Taesu/benefit-monitor',datetime.fromisoformat('2026-10-28T07:00:00+09:00'))
+                self.assertEqual(lease,'a'*40)
             state=json.loads((root/'cache/operational_state.json').read_text())
             self.assertEqual(state,{'schema_version':1,'items':{},'sources':{}})
             self.assertFalse((root/'cache/verified_items.json').exists())

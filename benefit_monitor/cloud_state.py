@@ -130,12 +130,16 @@ class CloudSession:
         if self.control['recipient']!=store.crypto.recipient:raise ValueError('cloud identity differs from approved recipient')
 
     @classmethod
-    def restore(cls,root,store):
+    def read_control(cls,root,store):
         raw,sha=store.read('control')
         try:data=json.loads(raw)
         except (ValueError,TypeError):raise ValueError('invalid cloud control JSON') from None
-        result=cls(root,store,data,sha)
-        if data['budget']['halted'] or any(row['status']=='reserved' for row in data['budget']['requests']):
+        return cls(root,store,data,sha)
+
+    @classmethod
+    def restore(cls,root,store,*,allow_unresolved=False):
+        result=cls.read_control(root,store);data=result.control
+        if not allow_unresolved and (data['budget']['halted'] or any(row['status']=='reserved' for row in data['budget']['requests'])):
             raise ValueError('unresolved cloud budget requires manual review')
         if data['runtime_sha'] is not None:
             runtime,_=store.read('runtime',data['runtime_sha']);restore_runtime(result.root,runtime)

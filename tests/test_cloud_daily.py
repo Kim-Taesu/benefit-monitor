@@ -98,6 +98,39 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(m,'restore_public',side_effect=restored),patch.object(m,'preceding_refresh',return_value=True),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
             m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
 
+    def test_expired_unresolved_budget_still_disables_workflow_without_collecting(self):
+        m=self.module()
+        base=json.loads(self.fixture.store().read('control')[0])
+        for kind in ('reserved','halted'):
+            data=json.loads(json.dumps(base))
+            if kind=='halted':data['budget']['halted']=True
+            else:data['budget']['requests'].append({'id':'e'*64,'status':'reserved','reserved_microdollars':100,'charged_microdollars':0})
+            _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
+            with self.subTest(kind=kind),patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'disable_workflow') as disable:
+                self.assertEqual(m.cloud_run(self.root,now=NOW.replace(day=10),check_only=False,store=self.fixture.store())['status'],'trial_expired')
+                disable.assert_called_once()
+
+    def test_new_public_hold_cannot_be_overwritten_or_dispatched(self):
+        import inspect,subprocess
+        from benefit_monitor.store import save
+        m=self.module();store=self.fixture.store()
+        self.assertIn('expected_sha',inspect.signature(m.publish_snapshot).parameters,'초기 공개 파일 lease 전달 필요')
+        stale={'status':'ready','items':[{'id':'old-item'}]}
+        newer={'status':'ready','items':[],'operational_state':{'items':{'old-item':{'hold_reason':'body_changed'}}}}
+        save(self.root/'delivery/public/briefing.json',stale)
+        remote={'data':newer}
+        original_api=store._api
+        def api(path):return {'private':False,'full_name':'Kim-Taesu/benefit-monitor'} if not path else original_api(path)
+        def gh(args,**kwargs):
+            if 'GET' in args:return subprocess.CompletedProcess(args,0,'b'*40+'\n','')
+            import base64
+            remote['data']=json.loads(base64.b64decode(json.loads(kwargs['input'])['content']))
+            return subprocess.CompletedProcess(args,0,json.dumps({'commit':{'sha':'c'*40}}),'')
+        with patch.object(store,'_api',side_effect=api),patch.object(m,'validate',return_value=stale),patch('benefit_monitor.mirror.subprocess.run',side_effect=gh),patch.object(m,'actions_request') as dispatch:
+            with self.assertRaises(ValueError):m.publish_snapshot(self.root,store,NOW,KEY,expected_sha='a'*40)
+            dispatch.assert_not_called()
+        self.assertEqual(remote['data'],newer)
+
     def test_global_daily_and_request_caps_stop_without_collection(self):
         m=self.module()
         base=json.loads(self.fixture.store().read('control')[0])
