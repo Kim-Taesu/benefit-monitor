@@ -324,31 +324,30 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(state['confirmed_microdollars'],0)
         self.assertGreater(state['exposure_microdollars'],0)
 
-    def test_cli_compact_response_is_assembled_without_real_network(self):
+    def test_cli_structured_wire_response_is_assembled_without_real_network(self):
         import hashlib,shutil
         from contextlib import redirect_stdout
         from benefit_monitor.claude_trial import main
+        from benefit_monitor.wire_format import RESEARCH_WIRE, FIELDS, limits
         root=self.root
-        (root/'docs/ai/schemas').mkdir(parents=True)
-        for name in ('README.md','research.md','research-extraction.md','output-contract.md'):
-            (root/'docs/ai'/name).write_text('테스트 지침')
-        for name in ('research-extraction.schema.json','research-extraction-v3.schema.json','research-result.schema.json'):
-            shutil.copy(ROOT/'docs/ai/schemas'/name,root/'docs/ai/schemas'/name)
+        (root/'docs/ai/prompts').mkdir(parents=True)
+        for name in ('research-system.md','topic-system.md'):
+            shutil.copy(ROOT/'docs/ai/prompts'/name,root/'docs/ai/prompts'/name)
         (root/'sources.yaml').write_text(json.dumps({'sources':[{'id':'seoul','domains':['www.seoul.go.kr']}]}))
         live=root/'.tools/claude-trial/live'
         TrialBudget.initialize(live/'budget.json','claude-haiku-5-5','0.10','0.50')
-        body='공식 원문 테스트'
+        body='공식 원문 테스트. 관람료는 무료입니다.'
         doc=dict(id='doc',source_id='seoul',requested_url='https://www.seoul.go.kr/example',final_url='https://www.seoul.go.kr/example',
                  publisher_type='issuer',document_role='notice',retrieved_at='2026-11-05T12:00:00+09:00',published_at=None,
                  body_hash=hashlib.sha256(body.encode()).hexdigest(),hash_algorithm='sha256-utf8-exact',extraction_scope='test',fetch_status='ok',body=body)
         host=dict(mode='api_agent',synthetic=False,now='2026-11-05T12:00:00+09:00',output_schema_version='research-draft-v1',budget={},
                   candidates=[dict(candidate_id='candidate',source_id='seoul',document_ids=['doc'])],documents=[doc])
         path=root/'input.json';path.write_text(json.dumps(host))
-        compact=dict(schema_version='research-extraction-v3',status='completed',errors=[],records=[dict(candidate_id='candidate',research_status='completed',
-                     facts=[dict(field='conditions',value='원문 확인',status='supported',evidence=[dict(source_ref='doc',quote=body,locator=None)],unknown_reason=None)],stop_reason='sufficient_evidence')])
-        for field in ('eligibility','event_period','application_period','fee_status','cost_details','payment_conditions','selection','capacity','application_method','cancellation','restrictions','availability'):
-            compact['records'][0]['facts'].append(dict(field=field,value=None,status='unknown',evidence=[],unknown_reason='조건 미확인'))
-        response=self.message(content=[{'type':'text','text':json.dumps(compact)}])
+        facts={field:{'status':'unknown','unknown_reason':'조건 미확인'} for field in FIELDS}
+        facts['fee_status']={'status':'supported','value':'free','evidence':[{'segment_id':'d1s2'}]}
+        wire=dict(wire_version=RESEARCH_WIRE,status='completed',errors=[],records=[dict(candidate_id='candidate',research_status='completed',
+                  stop_reason='sufficient_evidence',facts=facts)])
+        response=self.message(content=[{'type':'text','text':json.dumps(wire,ensure_ascii=False)}])
         output=io.StringIO()
         sent=[]
         def transport(request):
@@ -359,10 +358,20 @@ class ClaudeTrialTests(unittest.TestCase):
              patch('benefit_monitor.claude_trial.load_key',return_value='fake-secret-for-tests'), \
              patch('benefit_monitor.claude_trial.network_open',side_effect=transport),redirect_stdout(output):
             self.assertEqual(main(),0)
-        self.assertIn('"research-extraction-v3"',sent[0]['system'])
+        request=sent[0]
+        self.assertIn('research-system-v1',request['system'])
+        self.assertNotIn('Phase',request['system'])
+        schema=request['output_config']['format']['schema']
+        self.assertEqual(request['output_config']['format']['type'],'json_schema')
+        self.assertLessEqual(limits(schema)['unions'],16)
+        sent_doc=json.loads(request['messages'][0]['content'])['documents'][0]
+        self.assertNotIn('body',sent_doc)
+        self.assertEqual([x['text'] for x in sent_doc['segments']],['공식 원문 테스트.','관람료는 무료입니다.'])
         status=json.loads(output.getvalue())
         self.assertFalse(status['publication_approved'])
         result=json.loads((Path(status['output'])/'result.json').read_text())
+        claim=next(c for c in result['records'][0]['claims'] if c['field']=='fee_status')
+        self.assertEqual(claim['evidence'][0]['quote'],'관람료는 무료입니다.')
         self.assertEqual(result['records'][0]['sources'][0]['body_hash'],doc['body_hash'])
         self.assertRegex(result['records'][0]['claims'][0]['id'],r'^claim-[0-9a-f]{24}$')
         self.assertEqual(TrialBudget(live/'budget.json').summary()['request_count'],1)

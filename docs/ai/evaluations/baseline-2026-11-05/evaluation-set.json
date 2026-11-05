@@ -1,0 +1,311 @@
+{
+  "schema_version": "evaluation-set-v1",
+  "lock_sha256": "e70829c83258491fd1df1cd95122e3e92a2ff4649091b370638b2795da922694",
+  "counts": {
+    "dev": 15,
+    "holdout": 8,
+    "excluded_dev_variant": 5
+  },
+  "by_source": {
+    "dev": {
+      "culture": 9,
+      "seoul": 3,
+      "retail": 3
+    },
+    "holdout": {
+      "culture": 8
+    },
+    "excluded_dev_variant": {
+      "culture": 5
+    }
+  },
+  "documents": [
+    {
+      "split": "dev",
+      "body_sha256": "0dbb33578ac57ad073c3d60b75620563024fd2f9748eacf8deef1a4248794ceb",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "document_id": "doc-3e7c6b1f9c0faa9f",
+      "retrieved_at": "2026-11-04T15:16:04.987778+00:00",
+      "characters": 2396,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "1fbd988cdfb2d69f6aaeac3e3e0ecd1054b6ff949a54cf6bef3453141860559e",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "document_id": "doc-8d0fdd0ca3f959f8",
+      "retrieved_at": "2026-11-04T15:16:04.819172+00:00",
+      "characters": 1398,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "25a11f99c7399dc7ae12b37b729a6e2e9fdc64b1ec30c5edcf4966f09417f37e",
+      "source_id": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019931",
+      "document_id": "doc-25a11f99c7399dc7ae12b37b",
+      "retrieved_at": "2026-11-05T11:08:03.743918+09:00",
+      "characters": 1475,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "33b83dfb2bff7437849c3ecc853eb60a3ec91014989428f64b2b3457e709e233",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104092144798161",
+      "document_id": "doc-9ac0484ca619436e",
+      "retrieved_at": "2026-11-04T15:14:33.632699+00:00",
+      "characters": 2516,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "3493f47605d686eabd64e6a4779e9c88f460ebe405023dc5da9058642dacd80d",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "document_id": "doc-628a7bf6946c7d8f",
+      "retrieved_at": "2026-11-04T15:16:05.187680+00:00",
+      "characters": 2323,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "3a08d1c75a308ff1be715aaa2f5c8c7663de465164b1fe2fefc0f145fc958e7c",
+      "source_id": "retail",
+      "url": "https://www.shinsegaegroupnewsroom.com/beauty-fashion-emart24-launch-store/",
+      "document_id": "doc-8122ac814cbfacb6",
+      "retrieved_at": "2026-11-04T16:46:55.996151+00:00",
+      "characters": 1794,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "3d210ca8e527323979518392ba59fa6113680045841612a57c293d479c6431e3",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135238694872",
+      "document_id": "doc-6d2b429b4f6fdf1a",
+      "retrieved_at": "2026-11-04T15:14:34.072781+00:00",
+      "characters": 2881,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "69f0b63c795beb462bbace35162d9fd9966a8a298906131a71b7a479cf5cde8b",
+      "source_id": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019903",
+      "document_id": "doc-69f0b63c795beb462bbace35",
+      "retrieved_at": "2026-11-05T13:12:05.196511+09:00",
+      "characters": 3117,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "7e96daad4da7b695a050c59b8a78c6d2a5c7daaf21894928db1e3819d6321aed",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104103736889031",
+      "document_id": "doc-3e7c6b1f9c0faa9f",
+      "retrieved_at": "2026-11-04T15:16:04.987778+00:00",
+      "characters": 2498,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "c8b971caef8e3e6231c182585a4dee0b39da7cf15426fafaf0ea7a8972e722de",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "document_id": "doc-f8316e73198bf636",
+      "retrieved_at": "2026-11-04T15:16:05.781560+00:00",
+      "characters": 1769,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "ca2c9d2cbe8cbcfba606d19ea1d70b1d953b01e52aa6e1c5ee4b115dba363362",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "document_id": "doc-e7c820e248d71535",
+      "retrieved_at": "2026-11-04T15:16:05.377764+00:00",
+      "characters": 2189,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "ce030379d40521fab98247db448ee3dcf821eb7ed2aa8d24cfbef171f8dc9c39",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "document_id": "doc-20df9410e84ac7a4",
+      "retrieved_at": "2026-11-04T15:16:05.545148+00:00",
+      "characters": 2192,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "d4f6d3348a48f90410bc97e64c55fd9017374f6dfbcc3b022f346c891ce1aaf7",
+      "source_id": "seoul",
+      "url": "https://mediahub.seoul.go.kr/archives/2019915",
+      "document_id": "doc-d4f6d3348a48f90410bc97e6",
+      "retrieved_at": "2026-11-05T13:12:05.196511+09:00",
+      "characters": 2118,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "de972eb1f9b1101bd51e60a226df17d8f99f8b7840733938ab74c5f64df22c9e",
+      "source_id": "retail",
+      "url": "https://www.shinsegaegroupnewsroom.com/emart24-launches-a-sandwich-in-collaboration-with-qwer/",
+      "document_id": "doc-d82a7707a6822118",
+      "retrieved_at": "2026-11-04T16:44:30.259227+00:00",
+      "characters": 1649,
+      "private_path": null
+    },
+    {
+      "split": "dev",
+      "body_sha256": "e9740d4825ad55286aeff779ffce67925d1597acca93eb4289234ce610714ed8",
+      "source_id": "retail",
+      "url": "https://www.shinsegaegroupnewsroom.com/emart24-offers-a-wealth-of-benefits-for-pepero-day/",
+      "document_id": "doc-6c1fdef25a7576d9",
+      "retrieved_at": "2026-11-04T16:44:30.333111+00:00",
+      "characters": 1554,
+      "private_path": null
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "008d8daeb109786fb1fb9564271371f28a4f614865e8f48fb93af94b7a106329",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102135518608401",
+      "document_id": "doc-a06b8e4b37a10c3c",
+      "retrieved_at": "2026-11-04T16:38:46.509535+00:00",
+      "characters": 2140,
+      "private_path": ".tools/claude-trial/inputs/youth-06.json"
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "24f7f0cebf1fc02c79ec2c062675a219ace25bdcdddbee4b3c085e4eea465960",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251118144705678859",
+      "document_id": "doc-1ab6c1a6a3c3618c",
+      "retrieved_at": "2026-11-04T16:38:45.148650+00:00",
+      "characters": 3673,
+      "private_path": ".tools/claude-trial/inputs/culture-control-1.json"
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "262eef75399e301049dcbd8428c21f0cc8e79d776243266a07953cb088412831",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S251203104822013240",
+      "document_id": "doc-676e29241e845a0a",
+      "retrieved_at": "2026-11-04T16:38:45.611693+00:00",
+      "characters": 2705,
+      "private_path": ".tools/claude-trial/inputs/culture-control-3.json"
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "41c9dde19dc962d39e594d4f62586871ac9e368853b92376cd9cc7af4021c30a",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103105322721507",
+      "document_id": "doc-8c9b58846716bc63",
+      "retrieved_at": "2026-11-04T16:38:44.936588+00:00",
+      "characters": 2137,
+      "private_path": ".tools/claude-trial/inputs/culture-06.json"
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "49168ac3c73efe70345a24113ef414425645889f7be7bcdbb985a874d044c40d",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S240603093238072625",
+      "document_id": "doc-c2e8ae5b3eae499c",
+      "retrieved_at": "2026-11-04T16:38:45.411809+00:00",
+      "characters": 2502,
+      "private_path": ".tools/claude-trial/inputs/culture-control-2.json"
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "bbd16452e3b1c0f4d59b4af3b230d3a0740958ae94d450b3e8385a96f6736432",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S260320170624732091",
+      "document_id": "doc-a4faf7d0f5fad43c",
+      "retrieved_at": "2026-11-04T16:38:45.826509+00:00",
+      "characters": 1754,
+      "private_path": ".tools/claude-trial/inputs/culture-control-4.json"
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "e52de1421e4188e3a18bfe8858dc3b515eb4f032a35c87b9b7667c6a6c1afdf8",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102145223953896",
+      "document_id": "doc-c2aceb900ef403f4",
+      "retrieved_at": "2026-11-04T16:38:46.272685+00:00",
+      "characters": 2683,
+      "private_path": ".tools/claude-trial/inputs/youth-05.json"
+    },
+    {
+      "split": "holdout",
+      "body_sha256": "f81b6bb0a12075f0ef555a5290ec928c5a7e590af75ea55dd9782278f02239f1",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103101155924156",
+      "document_id": "doc-b145b9797b0f665f",
+      "retrieved_at": "2026-11-04T16:38:44.720931+00:00",
+      "characters": 1939,
+      "private_path": ".tools/claude-trial/inputs/culture-05.json"
+    },
+    {
+      "split": "excluded_dev_variant",
+      "body_sha256": "11a3e4b501a5f6606af2da5d0cab35c08db511e0af0acef473ff9dcb3c595f3c",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261103162214524828",
+      "document_id": "doc-20df9410e84ac7a4",
+      "retrieved_at": "2026-11-04T15:16:05.545148+00:00",
+      "characters": 2291,
+      "private_path": ".tools/claude-trial/inputs/youth-02.json"
+    },
+    {
+      "split": "excluded_dev_variant",
+      "body_sha256": "3aa9e3312d06e234d52c0ce38344eb04ca51dc6d64fc7ca343aed526a2bdda7d",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261028115857202391",
+      "document_id": "doc-8d0fdd0ca3f959f8",
+      "retrieved_at": "2026-11-04T15:16:04.819172+00:00",
+      "characters": 1440,
+      "private_path": ".tools/claude-trial/inputs/culture-01.json"
+    },
+    {
+      "split": "excluded_dev_variant",
+      "body_sha256": "52c7eee3b01d6b1bbdf4b75bea36de66b991b8af7ab0d8bd63faee44ab816b5c",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104090940884732",
+      "document_id": "doc-628a7bf6946c7d8f",
+      "retrieved_at": "2026-11-04T15:16:05.187680+00:00",
+      "characters": 2422,
+      "private_path": ".tools/claude-trial/inputs/culture-03.json"
+    },
+    {
+      "split": "excluded_dev_variant",
+      "body_sha256": "5adf9dace8bf0db4962974cc23f4fad6e4dc9939ed291d1b60a0cec9b92b9e79",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261104145036621912",
+      "document_id": "doc-e7c820e248d71535",
+      "retrieved_at": "2026-11-04T15:16:05.377764+00:00",
+      "characters": 2291,
+      "private_path": ".tools/claude-trial/inputs/youth-01.json"
+    },
+    {
+      "split": "excluded_dev_variant",
+      "body_sha256": "75ad117ebf7157c96ec492b58e1ca087bd649173bedf24d1d2b4eb1b59a54868",
+      "source_id": "culture",
+      "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261102150519594717",
+      "document_id": "doc-f8316e73198bf636",
+      "retrieved_at": "2026-11-04T15:16:05.781560+00:00",
+      "characters": 1799,
+      "private_path": ".tools/claude-trial/inputs/youth-03.json"
+    }
+  ],
+  "rules": [
+    "dev: 이미 모델에 전송한 원문",
+    "holdout: 같은 URL도 모델에 전송한 적 없는 원문",
+    "excluded_dev_variant: 개발용 URL의 다른 본문 버전이라 독립 표본이 아님",
+    "보류용 원문은 프롬프트·규칙 개발에 사용하지 않는다",
+    "정답 라벨은 사람이 작성하며 이 목록은 라벨을 포함하지 않는다"
+  ]
+}

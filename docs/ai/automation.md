@@ -103,11 +103,11 @@ LaunchAgent 설치와 설정 활성화는 현재 하지 않았다. 사용자 요
 
 최종 workflow41969019660은 Python362개·프런트 단위52개·빌드·snapshot 검증·Pages 배포를 통과했다. 최종 배포 코드d2c0973836180105a6d29edcfd840abdea5140e7, deployment7565342259의 성공과 실제 URL을 확인했다. [요구사항별 완료 감사](evaluations/goal-integration-2026-11-05/completion-audit.md). 운영 연결 완료와 모델 정확도 실패·향후 경과 관측을 구분한다.
 
-## GitHub Secrets 전환 준비 — 2026-11-05
+## GitHub Secrets 전환 완료 — 2026-11-05
 
-사용자가 Secrets 기반 전환 설계를 승인했다. [전환 검증과 최종 절차](evaluations/actions-migration-2026-11-05/README.md). 현재 Mac job은 유지하며 cloud는 비활성으로 준비했다. 새 PR의 사용자 main 머지 뒤에만 최신 상태 handoff와 Mac 해제를 수행한다. 앞 절의 로컬 등록 기록과 이 단계의 전환 준비를 구분한다.
+사용자가 Secrets 기반 전환 설계를 승인했다. [전환 검증과 최종 절차](evaluations/actions-migration-2026-11-05/README.md). 사용자가 PR #18을 main에 머지한 뒤 Mac job 해제·enabled=false → 최신 원장/검토 자료 암호화 업로드 → main check_only 검증 → cloud 활성화를 완료했다. 실제 main 실행은 already_completed_today로 종료했고 요청30회를 유지했다. 앞 절은 전환 전 로컬 등록 이력이다. [최종 전환 감사](evaluations/actions-migration-2026-11-05/completion-audit.md).
 
-새 `ai-daily.yml`은 공개 표준 ubuntu-24.04 runner에서 KST06:00~23:45의15분 점검을 수행한다. 당일 main 무료 수집 완료 후 최신 보류 상태를 병합하고 하루1회 처리한다. 한 concurrency group과 원격 CAS로 실행을 직렬화한다. 최초 handoff 전에는 과금하지 않는다. 누적 한도·4회·기존 만료에 도달하면 자기 AI workflow만 중지하며, API 실패로 workflow 중지에 실패해도 프로그램 gate가 호출을 막는다. 기존 무료 workflow는 유지한다.
+새 `ai-daily.yml`은 공개 표준 ubuntu-24.04 runner에서 KST06:00~23:45의15분 점검을 수행한다. 당일 main 무료 수집 완료 후 최신 보류 상태를 병합하고 하루1회 처리한다. 한 concurrency group과 원격 CAS로 실행을 직렬화한다. handoff가 완료되지 않은 control에서는 과금하지 않는다. 누적 한도·4회·기존 만료에 도달하면 자기 AI workflow만 중지하며, API 실패로 workflow 중지에 실패해도 프로그램 gate가 호출을 막는다. 기존 무료 workflow는 유지한다.
 
 키는 AI step의 ANTHROPIC_API_KEY, 암호화 identity는 BENEFIT_AI_STATE_IDENTITY Secret에서 읽는다. 명시적 cloud 모드·개인 저장소·schedule/workflow_dispatch가 아니면 환경변수 키를 받지 않는다. 로컬 기본 loader는 `.env.claude` 그대로다. runner에는 개인 장기 GitHub 토큰을 옮기지 않고 해당 job의 단기 GITHUB_TOKEN만 사용한다. frontend/npm/PR 테스트에 AI Secret을 전달하지 않는다.
 
