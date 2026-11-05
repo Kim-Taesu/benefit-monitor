@@ -50,6 +50,17 @@ def load_key(path):
         raise ValueError('invalid key file') from None
 
 
+def configured_key(root):
+    if os.environ.get('BENEFIT_AI_CLOUD')!='1':
+        return load_key(Path(root)/'.env.claude')
+    from .cloud_daily import trusted_environment
+    trusted_environment()
+    key=os.environ.get('ANTHROPIC_API_KEY','')
+    if not re.fullmatch(r'[A-Za-z0-9_\-]{16,512}',key):
+        raise ValueError('missing or invalid Actions API Secret')
+    return key
+
+
 def network_open(request):
     return build_opener(NoRedirect()).open(request, timeout=60)
 
@@ -333,7 +344,8 @@ def main():
         TrialBudget.initialize(path, args.model, '0.10', '0.50')
         print('Claude trial initialized: cumulative $5; no API call')
         return 0
-    budget = TrialBudget(path)
+    from .cloud_state import budget_checkpoint_from_environment
+    budget = TrialBudget(path, checkpoint=budget_checkpoint_from_environment(root))
     if args.command == 'resume':
         budget.resume_after_review()
         print('Manual review recorded; reservations and cumulative limit unchanged')
@@ -343,7 +355,7 @@ def main():
         print(json.dumps({k:v for k,v in s.items() if k != 'requests'}, ensure_ascii=False, indent=2))
         return 0
     if args.command == 'auth':
-        client = ClaudeClient(folder, budget, load_key(root/'.env.claude'))
+        client = ClaudeClient(folder, budget, configured_key(root))
         rows = client.models()['data']
         ids = [x['id'] for x in rows if isinstance(x.get('id'), str)]
         print(json.dumps({'authentication':'passed','configured_model_available':budget.summary()['model'] in ids,
@@ -378,7 +390,7 @@ def main():
         if not previous.resolve().is_relative_to(folder.resolve()):
             parser.error('repair path escapes trial root')
         user_input = repair_context(host,args.kind,previous)
-    client = ClaudeClient(folder, budget, load_key(root/'.env.claude'))
+    client = ClaudeClient(folder, budget, configured_key(root))
     result = client.message(system, json.dumps(user_input, ensure_ascii=False,separators=(',',':')),
                             max_tokens=8192, retry_failed_once=args.retry_failed_once)
     run_id = client.last_request_id

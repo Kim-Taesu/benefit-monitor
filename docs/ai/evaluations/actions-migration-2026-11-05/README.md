@@ -1,0 +1,41 @@
+# GitHub Actions 전환 검증
+
+상태: 구현·작업 브랜치 무과금 검증 완료, 전체 리뷰의 중요3건 수정·최종 무과금 검증 완료, PR 준비 중. 사용자 main 머지와 최신 상태 handoff는 아직 수행하지 않았다. Mac 스케줄이 현재 실행 주체이며 cloud control은 active=false다.
+
+## 승인 범위와 보존한 한도
+
+사용자가 API Secret 등록 후 [설계](../../../superpowers/specs/2026-11-05-ai-actions-migration-design.md)에 `설계대로 전환 진행`으로 승인했다. 기존 누적 USD5·40요청, 하루 조사2건·주제1회, 전체 일일 시도4회, 2026-11-09 13:09:12 KST 만료를 유지한다. 추가 결제·전역 설치·agent의 main 병합은 하지 않는다.
+
+API Secret은 ANTHROPIC_API_KEY, 상태 복호화 Secret은 BENEFIT_AI_STATE_IDENTITY다. 값은 AI 처리 step에만 주입하며 프런트 job·PR 테스트·Pages artifact에 전달하지 않는다. age v1.3.2의 공식 배포 SHA256을 고정해 프로젝트 .tools에만 설치한다. recipient와 이관 기준 해시는 공개 정책이며 private identity·API 키·평문 원장은 Git 제외600 파일에 둔다.
+
+## 확인한 결과
+
+- [실제 runner 검증](https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41980953212): 작업 브랜치 코드55fce1e28fa1866682e899c3706983c24fa7d9f3에서 Secret fingerprint 일치, 실제 age 복호화·원장 복원·Contents 쓰기 확인 성공. check_only는 수집·Claude·공개 배포를 호출하지 않는다.
+- 검증 전후 로컬·원격 API 요청30회, 실패2건의 예약을 포함한 점유106768 microUSD, usage 계산75924 microUSD. 이는 공급자 계정 전체 청구·세금 보장이 아니다.
+- 이미 완료한2026-11-05 실행을1회로 이관했다. 같은 날짜의 실행은 재시도하지 않는다. 모의 제어 테스트에서 완료일 중복·실패일 중복·만료·4회·40요청·미정산·잘못된 Secret에 수집/유료 호출0을 확인했다.
+- 제어 상태와 검토 자료는 기존 briefing-data의 ai-control.age·ai-runtime.age에 암호문으로 보존했다. 매 예약·정산은 Contents 파일 SHA 조건으로 원격에 저장하고 확인한다. 저장 실패 시 Claude HTTP를 보내지 않는다.
+- 공개 JSON은 최초 복원 때의 파일 SHA로 CAS 저장해, 실행 중 다른 수집기가 게시한 보류를 덮지 않는다. 다른 control/runtime 파일의 branch 변경은 허용한다.
+- runtime 업로드와 control pointer 갱신 사이 중단은 이전 immutable blob을 복원한다. archive는 budget/days·링크·탈출 경로·credential 파일을 복원하지 않는다. control이 항상 원장·날짜의 권위다.
+- Linux runner의 Python393개·프런트52개·브라우저43개 검사가 성공했다. 이후 추가한 이관 경계와 최신 무료 수집 보류 복원 검사를 포함해 로컬 Python403개가 통과했다. [최종 코드 검증 결과](pre-merge-verification.json): 코드5842fde32c12b1872bd74705801289e4eab19167의 [runner41982221949](https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41982221949)에서 Python403개·프런트52개·브라우저43개와 Secret/암복호화 검증이 모두 성공했다.
+
+공식 조회의 robots·TLS·허용목록·HTTP75/hard cap100·구6시간 캐시·실패900초와 공개 승인·주제 의미 검사·화면 fallback은 유지한다. AI가 추출한 새 사실은 계속 비공개 사람 검토 대기다.
+
+로컬 Git 전체 refs의606개 blob·현재 tracked260개 파일·최종 실행2개 job log·artifact18개 파일·원격 암호문2개에서 실제 API 키/private identity 및 base64 표현의 일치가0이었다. Secret 값은 출력하지 않고 프로그램 메모리에서 비교했다. 이 검사는 명시한 범위의 검사 시점 결과이며 다른 대화·외부 계정까지 검사했다는 뜻은 아니다.
+
+## 최종 전환 순서
+
+1. 새 PR을 사용자가 main에 머지한다. agent는 main에 병합하지 않는다.
+2. 작업 사본을 그 main 커밋과 일치시킨 뒤 `python3 scripts/ai_cloud_handoff.py activate`를 실행한다. 등록된 Mac job이 실행 중이면 중단하지 않고 기다린다. job 해제·enabled=false 뒤 최신 원장/날짜/검토 자료를 다시 암호화한다. 결과는 staged_requires_main_check이며 아직 cloud는 비활성이다.
+3. main의 AI daily trial을 check_only=true로 실행한다. 최신 snapshot·main SHA의 검증 receipt와 요청 수·완료 날짜를 확인한다. 이 단계는 Contents 쓰기까지 검사하며 Claude 호출은 없다.
+4. 동일 main에서 activate를 다시 실행한다. Mac 해제·최신 runtime/원장/날짜·main receipt가 모두 일치할 때만 cloud active=true로 변경한다.
+5. AI daily trial을 check_only=false로 실행해 당일 중복 차단을 확인한다. 실제 다음 날짜의 생성·배포는 후속 관측이다. dispatch 수락과 Pages 배포 성공을 구분한다.
+
+실패 시 로컬을 임의 재활성화하지 않는다. 원격이 더 최신일 수 있으므로 먼저 control과 예약을 대조한다. `python3 scripts/ai_cloud_handoff.py restore`는 로컬 writer가 중단된 경우에만 최신 자료를 복원하며 스케줄을 켜지 않는다. 원본 로컬 산출물은 삭제하지 않는다.
+
+## 전체 리뷰와 수정
+
+별도 읽기 전용 리뷰가 e0e2353..e6c09c4를 검토해 Important3건을 제시했다. 기존0644 자료 복원의 선행 truncate, 미정산 상태에서 만료 종료/수동 복구 차단, 공개 JSON의 최신 hold 덮어쓰기를 각각 실패 재현 후 수정했다. 복원은600 임시 파일의 atomic 교체이며 실패 시 원본을 보존한다. 유료 admission과 검증된 control 읽기를 분리해 미정산이어도 만료 종료와 명시적 비과금 복구는 가능하다. 공개 전달은 처음 읽은 file lease가 달라지면 PUT·dispatch를 중단한다. 수정 후 전체403개 검사가 성공했다. Critical·Minor·판정 유보는 없었으며 저자 검증으로 fix pass를 완료했다.
+
+## 확인하지 않은 항목
+
+사용자 main 머지, Mac 해제, main 최신 handoff, cloud 유료 실행, 다음 날짜의 실제 리포트는 아직 확인하지 않았다. 현재 검증 성공은 이 항목들의 완료를 뜻하지 않는다. GitHub schedule의 정시 실행·모델 사실 정확도·새 사실 자동 승인을 보장하지 않는다.

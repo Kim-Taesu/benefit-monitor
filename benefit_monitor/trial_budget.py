@@ -1,5 +1,6 @@
 """Persistent, fail-closed reservation ledger for the user-approved $5 trial."""
 from contextlib import contextmanager
+from copy import deepcopy
 from datetime import datetime, timezone
 import fcntl
 import json
@@ -22,8 +23,9 @@ def secure_open(path, flags):
 
 
 class TrialBudget:
-    def __init__(self, path):
+    def __init__(self, path, checkpoint=None):
         self.path = Path(path)
+        self.checkpoint = checkpoint
 
     @classmethod
     def initialize(cls, path, model, input_rate, output_rate):
@@ -78,6 +80,7 @@ class TrialBudget:
                     raise ValueError('trial ledger too large')
                 state = json.loads(text)
                 self._validate(state)
+                original = deepcopy(state)
                 yield state
                 self._validate(state)
                 f.seek(0)
@@ -85,6 +88,8 @@ class TrialBudget:
                 f.truncate()
                 f.flush()
                 os.fsync(f.fileno())
+                if self.checkpoint is not None and state != original:
+                    self.checkpoint(deepcopy(state))
             except json.JSONDecodeError:
                 raise ValueError('invalid trial ledger; do not reset') from None
             finally:

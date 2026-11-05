@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-05T15:44:41.308401+09:00",
+  "stage": "pre_merge_cloud_inactive_mac_active",
+  "code_commit": "5842fde32c12b1872bd74705801289e4eab19167",
+  "workflow": {
+    "run_id": 41982221949,
+    "url": "https://github.com/Kim-Taesu/benefit-monitor/actions/runs/41982221949",
+    "conclusion": "success",
+    "check_only": true,
+    "jobs": [
+      {
+        "name": "test",
+        "conclusion": "success"
+      },
+      {
+        "name": "ai-cloud-check",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "tests": {
+    "python": 403,
+    "frontend_unit": 52,
+    "browser": 43,
+    "source_policy": "passed",
+    "diff_check": "passed"
+  },
+  "trial": {
+    "requests_before": 30,
+    "requests_after": 30,
+    "completed_requests": 28,
+    "failed_requests": 2,
+    "provider_requests_added": 0,
+    "confirmed_microdollars": 75924,
+    "exposure_microdollars": 106768,
+    "cap_microdollars": 5000000,
+    "max_requests": 40,
+    "max_daily_attempts": 4,
+    "baseline_day_status": "completed",
+    "expires_at": "2026-11-09T13:09:12.753468+09:00"
+  },
+  "state": {
+    "cloud_active": false,
+    "mac_enabled": true,
+    "mac_job_loaded": true,
+    "encrypted_files": [
+      "ai-control.age",
+      "ai-runtime.age"
+    ],
+    "api_secret_matches_local_key": true,
+    "actual_age_decryption": "passed",
+    "contents_write_confirmation": "passed"
+  },
+  "security_audit": {
+    "git_blobs": 606,
+    "tracked_files": 260,
+    "job_logs": 2,
+    "artifact_members": 18,
+    "ciphertexts": 2,
+    "matches": 0,
+    "test_totals": [
+      "2026-11-05T06:42:39.2849308Z Ran 403 tests in 3.133s",
+      "2026-11-05T06:42:41.1857119Z # tests 52",
+      "2026-11-05T06:43:18.9048892Z   43 passed (18.5s)"
+    ],
+    "ai-cloud-check_totals": [],
+    "run_id": "41982221949",
+    "scope": "all local Git refs, tracked files, selected completed run logs and artifact members, remote ciphertexts"
+  },
+  "review": {
+    "method": "fresh read-only whole-branch review followed by author RED/GREEN fix pass",
+    "important_found": 3,
+    "important_fixed": 3,
+    "critical": 0,
+    "minor": 0,
+    "declined_to_judge": []
+  },
+  "not_yet_verified": [
+    "user_main_merge",
+    "latest_post_merge_handoff",
+    "mac_job_unload",
+    "main_cloud_activation_and_today_deduplication",
+    "next_day_actual_report"
+  ],
+  "spending_boundary": "program cumulative reservation limit; provider account-wide billing and tax are not guaranteed"
+}

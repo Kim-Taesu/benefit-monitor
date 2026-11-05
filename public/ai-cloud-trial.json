@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "approved": true,
+  "trial_id": "claude-2026-11-05-actions",
+  "expires_at": "2026-11-09T13:09:12.753468+09:00",
+  "model": "claude-haiku-5-5",
+  "recipient": "age1zvl04g7nxh6pzn22quhp20hk0z7swmdgj2jpevm9v24sd8wd94gq2lm028",
+  "baseline_requests": 30,
+  "baseline_requests_sha256": "07b33c5ea3e65a4f1c655502f97985fd4cf8c332a3bd1b7f969c9eb8096e9661",
+  "baseline_exposure_microdollars": 106768,
+  "baseline_days": {
+    "2026-11-05": "completed"
+  }
+}
