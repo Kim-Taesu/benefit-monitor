@@ -35,6 +35,8 @@ def deliver(root,policy,now=None):
     # Strip inherited credentials before selecting the named personal account.
     allowed=('PATH','HOME','LANG','LC_ALL','LC_CTYPE','TMPDIR')
     env={k:os.environ[k] for k in allowed if k in os.environ}
+    profile=project_path(root,'.tools/personal-gh-auth/hosts.yml')
+    if profile.exists():env['GH_CONFIG_DIR']=str(profile.parent)
     token=_run(['gh','auth','token','--hostname','github.com','--user','Kim-Taesu'],env=env)
     if not token or '\n' in token:raise ValueError('personal GitHub credential unavailable')
     env.update(GH_TOKEN=token,GH_HOST='github.com',GH_NO_UPDATE_NOTIFIER='1',GH_NO_EXTENSION_UPDATE_NOTIFIER='1')

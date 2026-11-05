@@ -89,4 +89,13 @@ class RemoteDeliveryTests(unittest.TestCase):
             with patch('benefit_monitor.remote_delivery.subprocess.run',side_effect=process),patch('benefit_monitor.remote_delivery.mirror',side_effect=AssertionError('must not upload')),patch.dict('os.environ',{'PATH':'/usr/bin:/bin'},clear=True):
                 with self.assertRaises(ValueError):deliver(self.root,self.policy,now=self.now)
 
+    def test_project_personal_auth_profile_is_selected_without_global_switch(self):
+        from benefit_monitor.remote_delivery import deliver
+        profile=self.root/'.tools/personal-gh-auth';profile.mkdir(parents=True)
+        (profile/'hosts.yml').write_text('{}')
+        with patch('benefit_monitor.remote_delivery.subprocess.run',side_effect=self.process),patch('benefit_monitor.remote_delivery.mirror',return_value='2'*40),patch.dict('os.environ',{'PATH':'/usr/bin:/bin','GH_CONFIG_DIR':'must-not-be-forwarded'},clear=True):
+            deliver(self.root,self.policy,now=self.now)
+        auth=next(kw for args,kw in self.events if args[:3]==['gh','auth','token'])
+        self.assertTrue(auth['env'].get('GH_CONFIG_DIR')==str(profile),'project personal profile was not selected')
+
 if __name__=='__main__':unittest.main()
