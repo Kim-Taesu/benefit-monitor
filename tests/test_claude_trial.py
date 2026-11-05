@@ -349,16 +349,23 @@ class ClaudeTrialTests(unittest.TestCase):
                   stop_reason='sufficient_evidence',facts=facts)])
         response=self.message(content=[{'type':'text','text':json.dumps(wire,ensure_ascii=False)}])
         output=io.StringIO()
-        sent=[]
+        sent=[];urls=[]
         def transport(request):
+            urls.append(request.full_url)
             sent.append(json.loads(request.data))
+            if request.full_url.endswith('/count_tokens'):
+                self.assertEqual(TrialBudget(live/'budget.json').summary()['request_count'],0)
+                return self.response({'input_tokens':812})
             return self.response(response)
         with patch('sys.argv',['trial','run','--root',str(root),'--kind','research','--input',str(path)]), \
              patch('benefit_monitor.claude_trial.__file__',str(root/'benefit_monitor/claude_trial.py')), \
              patch('benefit_monitor.claude_trial.load_key',return_value='fake-secret-for-tests'), \
              patch('benefit_monitor.claude_trial.network_open',side_effect=transport),redirect_stdout(output):
             self.assertEqual(main(),0)
-        request=sent[0]
+        self.assertEqual(urls,['https://api.anthropic.com/v1/messages/count_tokens','https://api.anthropic.com/v1/messages'])
+        self.assertNotIn('max_tokens',sent[0])
+        self.assertEqual(sent[0]['output_config'],sent[1]['output_config'])
+        request=sent[1]
         self.assertIn('research-system-v1',request['system'])
         self.assertNotIn('Phase',request['system'])
         schema=request['output_config']['format']['schema']
@@ -375,6 +382,34 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(result['records'][0]['sources'][0]['body_hash'],doc['body_hash'])
         self.assertRegex(result['records'][0]['claims'][0]['id'],r'^claim-[0-9a-f]{24}$')
         self.assertEqual(TrialBudget(live/'budget.json').summary()['request_count'],1)
+        metadata=json.loads((Path(status['output'])/'metadata.json').read_text())
+        self.assertEqual(metadata['preflight']['input_tokens'],812)
+        self.assertFalse(metadata['preflight']['billed'])
+
+    def test_preflight_rejection_stops_before_reservation(self):
+        client=ClaudeClient(self.root,self.budget,'fake-secret-for-tests')
+        error=HTTPError('https://api.anthropic.com/v1/messages/count_tokens',400,'bad',{},
+                        io.BytesIO(b'{"error":{"message":"output_config: Extra inputs are not permitted fake-secret-for-tests"}}'))
+        with patch('benefit_monitor.claude_trial.network_open',side_effect=error):
+            with self.assertRaisesRegex(TrialError,'preflight rejected before reservation: http_400'):
+                client.message('s','u',output_schema={'type':'object','properties':{},'required':[],'additionalProperties':False},preflight=True)
+        summary=self.budget.summary()
+        self.assertEqual((summary['request_count'],summary['exposure_microdollars']),(0,0))
+        failures=json.loads((self.root/'preflight-failures.json').read_text())
+        self.assertEqual(failures[-1]['code'],'http_400')
+        self.assertNotIn('fake-secret-for-tests',json.dumps(failures))
+        with patch('benefit_monitor.claude_trial.network_open',side_effect=OSError('down')):
+            with self.assertRaisesRegex(TrialError,'no request reserved'):
+                client.message('s','u',preflight=True)
+        self.assertEqual(self.budget.summary()['request_count'],0)
+
+    def test_preflight_rejects_odd_token_count(self):
+        client=ClaudeClient(self.root,self.budget,'fake-secret-for-tests')
+        for body in ({'input_tokens':0},{'input_tokens':'12'},{'tokens':12}):
+            with patch('benefit_monitor.claude_trial.network_open',return_value=self.response(body)):
+                with self.assertRaises(TrialError):
+                    client.message('s','u',preflight=True)
+        self.assertEqual(self.budget.summary()['request_count'],0)
 
     def test_trial_consumer_blocks_structurally_valid_topic_without_basis(self):
         from benefit_monitor.claude_trial import evaluate_draft
