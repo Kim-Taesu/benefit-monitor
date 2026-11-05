@@ -102,3 +102,17 @@ LaunchAgent 설치와 설정 활성화는 현재 하지 않았다. 사용자 요
 즉시 중단하려면 프로젝트 `ai-automation.json`의 enabled를 false로 바꾼다. 등록 자체를 해제하려면 개인 사용자 세션에서 `launchctl bootout gui/501/com.benefit-monitor.ai-daily`를 실행한다. 이는 승인한 job 하나에만 적용한다. 기간 만료는 작업 동작을 중단하며 plist 파일·등록을 자동 삭제하지 않는다. 이미 공개된 데이터의 표시기한 검사는 계속 적용된다.
 
 최종 workflow41969019660은 Python362개·프런트 단위52개·빌드·snapshot 검증·Pages 배포를 통과했다. 최종 배포 코드d2c0973836180105a6d29edcfd840abdea5140e7, deployment7565342259의 성공과 실제 URL을 확인했다. [요구사항별 완료 감사](evaluations/goal-integration-2026-11-05/completion-audit.md). 운영 연결 완료와 모델 정확도 실패·향후 경과 관측을 구분한다.
+
+## GitHub Secrets 전환 준비 — 2026-11-05
+
+사용자가 Secrets 기반 전환 설계를 승인했다. [전환 검증과 최종 절차](evaluations/actions-migration-2026-11-05/README.md). 현재 Mac job은 유지하며 cloud는 비활성으로 준비했다. 새 PR의 사용자 main 머지 뒤에만 최신 상태 handoff와 Mac 해제를 수행한다. 앞 절의 로컬 등록 기록과 이 단계의 전환 준비를 구분한다.
+
+새 `ai-daily.yml`은 공개 표준 ubuntu-24.04 runner에서 KST06:00~23:45의15분 점검을 수행한다. 당일 main 무료 수집 완료 후 최신 보류 상태를 병합하고 하루1회 처리한다. 한 concurrency group과 원격 CAS로 실행을 직렬화한다. 최초 handoff 전에는 과금하지 않는다. 누적 한도·4회·기존 만료에 도달하면 자기 AI workflow만 중지하며, API 실패로 workflow 중지에 실패해도 프로그램 gate가 호출을 막는다. 기존 무료 workflow는 유지한다.
+
+키는 AI step의 ANTHROPIC_API_KEY, 암호화 identity는 BENEFIT_AI_STATE_IDENTITY Secret에서 읽는다. 명시적 cloud 모드·개인 저장소·schedule/workflow_dispatch가 아니면 환경변수 키를 받지 않는다. 로컬 기본 loader는 `.env.claude` 그대로다. runner에는 개인 장기 GitHub 토큰을 옮기지 않고 해당 job의 단기 GITHUB_TOKEN만 사용한다. frontend/npm/PR 테스트에 AI Secret을 전달하지 않는다.
+
+평문 원장·검토 대기·모델 응답은 cache/artifact로 올리지 않는다. 공식 SHA256을 검증한 프로젝트 내부 age가 기존 briefing-data에 control/runtime 암호문을 저장한다. control은 비용 예약 전 원격 확인과 최신 날짜 기록을 담당하며, 이전 runtime이 원장을 되돌릴 수 없다. 누락·손상·미정산·충돌은 자동 초기화하지 않고 중단한다. 공개 전달은 기존 validator를 통과한 JSON의 고정 snapshot과 main SHA로 기존 Pages workflow를 dispatch한다.
+
+무과금 점검은 Actions의 Frontend P0 checks → Run workflow → 작업 브랜치 → check_ai_cloud=true로 실행한다. 이 경로는 등록된 Secret과 암복호화·원격 쓰기만 검증하며 당일 시도·Claude·배포를 수행하지 않는다. main 반영 후에는 AI daily trial의 check_only=true도 같은 검증을 수행한다.
+
+중단은 Actions의 AI daily trial에서 Disable workflow를 선택한다. 진행 중 작업까지 이미 지출한 비용을 되돌리지는 않는다. cloud 전환 후 Mac enabled를 임의로 다시 켜지 않는다. 최신 원격 원장과 미정산 예약을 복원·대조한 뒤 하나의 실행 주체만 재개해야 한다. 복구 명령은 `python3 scripts/ai_cloud_handoff.py restore`이며 스케줄을 자동 재개하지 않는다.
