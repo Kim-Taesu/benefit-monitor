@@ -106,6 +106,16 @@ class AIReviewTests(unittest.TestCase):
             normal=run(self.root,path,now=NOW)
         self.assertNotIn('ai_review',normal)
 
+    def test_image_only_event_sources_never_reach_paid_research(self):
+        from benefit_monitor.cli import run
+        self.config['sources'][0]['ai_review']=False
+        (self.root/'sources.yaml').write_text(json.dumps(self.config))
+        path=self.root/'incoming.json';path.write_text(json.dumps([self.candidate]))
+        with patch('benefit_monitor.official_reader.network_open',side_effect=AssertionError('no body read')),patch('benefit_monitor.ai_review.invoke',side_effect=AssertionError('no model call')):
+            report=run(self.root,path,online=True,now=NOW,ai_review=True,ai_execute=True)
+        self.assertEqual(report['ai_review']['awaiting_api']+report['ai_review']['queued'],0)
+        self.assertEqual(report['ai_review']['rows'],[])
+
     def test_ai_body_change_holds_previously_approved_facts(self):
         from benefit_monitor.cli import run
         approved=dict(self.candidate,needs_recheck=False,verified_at=NOW.isoformat(),valid_until='2026-11-30',evidence='테스트 승인 근거')

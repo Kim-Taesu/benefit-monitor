@@ -76,7 +76,10 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         ai_result = None
         if ai_review:
             from .ai_review import review_candidates
-            ai_result = review_candidates(root, incoming + [i.data() for i in explicit_items], now,
+            # Sources whose details hold conditions only in images are not sent to paid research.
+            ai_candidates = [c for c in incoming + [i.data() for i in explicit_items]
+                             if sources.get(c['source'], {}).get('ai_review', True)]
+            ai_result = review_candidates(root, ai_candidates, now,
                                           max_candidates=ai_max_candidates, execute=ai_execute)
             for cid in ai_result['changed_ids']:
                 operational_state.setdefault('items',{}).setdefault(cid,{}).update(
