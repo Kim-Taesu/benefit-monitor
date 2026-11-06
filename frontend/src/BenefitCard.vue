@@ -15,6 +15,8 @@ onMounted(()=>window.addEventListener('popstate',popDetails));
 onBeforeUnmount(()=>{window.removeEventListener('popstate',popDetails);if(dialog.value?.open){document.body.style.overflow=previousOverflow;dialog.value.close();if(history.state?.benefitDialog===titleId){const state={...history.state};delete state.benefitDialog;history.replaceState(state,'');}}});
 const status=computed(()=>timing(props.item,props.now));
 const paymentNames:Record<string,string>={method:'결제 방식',funding_source:'결제 재원',excluded_methods:'제외 수단',minimum_spend:'최소 지출',limit:'혜택 한도'};
+// Approved payment terms always carry all five fields; otherwise none are known.
+const paymentRows=computed(()=>Object.entries(paymentNames).filter(([key])=>props.item.payment_terms[key]).map(([key,label])=>({key,label,value:props.item.payment_terms[key]})));
 </script>
 <template>
   <article class="benefit-card">
@@ -30,18 +32,22 @@ const paymentNames:Record<string,string>={method:'결제 방식',funding_source:
       <div class="details-body">
         <p v-if="item.title!==item.summary" class="original-title">원문 제목: {{ item.title }}</p>
         <section v-if="item.benefitValue" class="value-evidence" aria-label="혜택 수치 근거"><p><strong>{{ benefitValueLabel(item.benefitValue) }}</strong></p><p>수치 적용 조건: {{ item.benefitValue.conditions }}</p><p>근거 문구: {{ item.benefitValue.evidence_quote }}</p><a :href="item.benefitValue.evidence_url" target="_blank" rel="noopener noreferrer">금액 근거 원문<span class="sr-only"> (새 창)</span></a><p class="fine-print">공식 확인 시점의 조건부 수치이며 개인별 수령·절약액을 보장하지 않습니다. 참여 비용·최소 지출·결제 한도와 구분하세요.</p></section>
-        <dl>
+        <section v-if="paymentRows.length" class="payment-terms" :aria-labelledby="titleId+'-payment'">
+          <h3 :id="titleId+'-payment'">결제 조건</h3>
+          <dl><template v-for="row in paymentRows" :key="row.key"><dt>{{ row.label }}</dt><dd>{{ row.value }}</dd></template></dl>
+          <a v-if="item.payment_terms.evidence_url" :href="item.payment_terms.evidence_url" target="_blank" rel="noopener noreferrer">결제 조건 원문 <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a>
+        </section>
+        <dl class="detail-list">
           <dt>적용기간</dt><dd>{{ formatDate(item.valid_from) }} ~ {{ item.validity_kind==='ongoing'?'상시 안내':formatDate(item.valid_until) }}</dd>
           <dt>신청 마감</dt><dd>{{ formatDate(item.deadline_at) }}</dd>
           <dt>참여 비용</dt><dd>{{ fees[item.fee_status] }} · 구체적 금액과 추가 비용은 아래 조건 및 공식 안내 확인</dd>
           <dt>대상</dt><dd>{{ item.labels.audience || '공식 안내 확인 필요' }}</dd>
           <dt>지역</dt><dd>{{ item.regions.join(' · ') || '공식 안내 확인 필요' }}</dd>
           <dt>이용 방법</dt><dd>{{ item.labels.action || '공식 안내 확인 필요' }}</dd>
-          <template v-for="(label,key) in paymentNames" :key="key"><dt>{{ label }}</dt><dd>{{ item.payment_terms[key] || '구조화된 조건 미확인 · 공식 안내 확인 필요' }}</dd></template>
+          <template v-if="!paymentRows.length"><dt>결제 조건</dt><dd class="muted-value">결제 조건 따로 정리 안 됨 · 아래 조건 전문과 공식 안내 확인</dd></template>
           <dt>조건 전문</dt><dd class="full-conditions">{{ item.conditions || '공식 안내 확인 필요' }}</dd>
           <dt>표시 유효기한</dt><dd>{{ formatDate(item.display_until) }} · 검증 유효기한이며 행사 종료와 다를 수 있습니다.</dd>
         </dl>
-        <a v-if="item.payment_terms.evidence_url" :href="item.payment_terms.evidence_url" target="_blank" rel="noopener noreferrer">결제조건 원문 <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a>
         <p class="fine-print">개인 자격·잔여석·재고·조기 마감은 확인하지 않았습니다. 신청 마감과 실제 이용 기간은 다를 수 있습니다.</p>
       </div>
 

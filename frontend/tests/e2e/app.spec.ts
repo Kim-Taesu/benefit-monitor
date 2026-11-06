@@ -56,6 +56,13 @@ test('official links and complete detail conditions',async({page})=>{
  await setup(page);await page.goto('./');
  const card=page.locator('article').filter({hasText:'[테스트] 결제 시 할인 안내'});
  await card.locator('.card-open').click();await expect(card).toContainText('테스트 충전금');
+ const terms=card.locator('.payment-terms');await expect(terms.locator('dt')).toHaveText(['결제 방식','결제 재원','제외 수단','최소 지출','혜택 한도']);
+ await expect(card.locator('.detail-list')).not.toContainText('결제 재원');
+ await page.getByRole('dialog').getByRole('button',{name:'상세 조건 닫기'}).click();
+ const plain=page.locator('article').filter({hasNot:page.locator('.payment-terms')}).first();await plain.locator('.card-open').click();
+ await expect(plain.locator('.detail-list')).toContainText('결제 조건 따로 정리 안 됨');await expect(plain).not.toContainText('결제 재원');
+ await capture(page,'details-plain');await page.getByRole('dialog').getByRole('button',{name:'상세 조건 닫기'}).click();
+ await card.locator('.card-open').click();
  for(const link of await card.locator('a').all()){
   await expect(link).toHaveAttribute('rel','noopener noreferrer');await expect(link).toHaveAttribute('href',/^https:\/\/mediahub.seoul.go.kr\//);
  }
