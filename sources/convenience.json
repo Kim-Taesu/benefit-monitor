@@ -26,6 +26,9 @@
     ],
     "collection_scope": "CU 공식 제휴 멤버십 안내 · 다른 편의점·앱 전용 행사 미포함"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-06",
     "entry_urls": [

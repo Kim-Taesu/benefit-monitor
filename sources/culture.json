@@ -34,6 +34,9 @@
     ],
     "collection_scope": "서울 공공서비스예약 첫 화면 공개 목록 · 잔여석·예약 성공 미확인"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

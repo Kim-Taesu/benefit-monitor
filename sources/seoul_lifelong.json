@@ -22,6 +22,9 @@
     ],
     "collection_scope": "평생학습포털 첫 화면 공식 이벤트 · 강좌 전체 수집 아님"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

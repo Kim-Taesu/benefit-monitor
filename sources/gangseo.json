@@ -19,6 +19,9 @@
     "district_feed": "강서구",
     "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

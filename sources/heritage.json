@@ -24,6 +24,11 @@
     "include_next_month": true,
     "collection_scope": "국가유산청 월별 행사 공개 목록(이번 달·다음 달, 서울) · 행사별 예약·잔여석 미확인"
   },
+  "monitoring": {
+    "expect": "known_failing",
+    "since": "2026-11-06",
+    "reason": "GitHub 러너에서 연결 실패로 5회 연속 실패, 클라우드 성공 기록 없음."
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

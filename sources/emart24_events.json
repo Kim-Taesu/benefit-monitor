@@ -29,6 +29,9 @@
     "ai_review": false,
     "collection_scope": "이마트24 진행 중 이벤트 목록의 제목·게시 기간 · 상세 조건은 이미지라 사람 확인 필요 · 앱 잔량 미포함"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-06",
     "entry_urls": [

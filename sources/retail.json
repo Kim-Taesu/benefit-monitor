@@ -31,6 +31,9 @@
     ],
     "collection_scope": "신세계그룹 공식 이마트 뉴스 · 홈플러스 전단 자동 수집 미연결"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

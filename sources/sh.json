@@ -20,6 +20,9 @@
     ],
     "collection_scope": "SH 주택임대·분양 공고 게시판 첫 페이지 · 제목 기준 후보, 신청 자격·접수 상태 미확인"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

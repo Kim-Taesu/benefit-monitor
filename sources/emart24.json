@@ -21,6 +21,9 @@
     ],
     "collection_scope": "공식 제휴 서비스 안내 · 행사 전체·앱 잔량 미포함"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-06",
     "entry_urls": [

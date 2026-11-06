@@ -28,6 +28,9 @@
     ],
     "collection_scope": "공유누리 서울 인터넷 예약 자원 검색 첫 페이지 · 이용료 제한 없음 · 실시간 예약 가능 여부 미확인"
   },
+  "monitoring": {
+    "expect": "working"
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

@@ -29,6 +29,11 @@
       "페스티벌"
     ]
   },
+  "monitoring": {
+    "expect": "known_failing",
+    "since": "2026-11-05",
+    "reason": "GitHub 러너와 로컬 모두 RSS TLS handshake 실패(SSLV3_ALERT_HANDSHAKE_FAILURE). 2026-11-06 공개 기록 5회 연속 실패."
+  },
   "runbook": {
     "checked_at": "2026-11-05",
     "entry_urls": [

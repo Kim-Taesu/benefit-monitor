@@ -57,4 +57,4 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 
 ## 출처 정의 관리 — 2026-11-06
 
-출처 설정은 `sources/<id>.json`에서 고친다. `sources.yaml`은 `scripts/generate_sources.py`가 만드는 생성물이라 직접 고치지 않는다. runbook의 접근 정보는 실제 확인한 것만 적고 모르면 `unknown`으로 둔다. 자세한 규칙은 [docs/sources.md](docs/sources.md).
+출처 설정은 `sources/<id>.json`에서 고친다. `sources.yaml`은 `scripts/generate_sources.py`가 만드는 생성물이라 직접 고치지 않는다. runbook의 접근 정보는 실제 확인한 것만 적고 모르면 `unknown`으로 둔다. 자세한 규칙은 [docs/sources.md](docs/sources.md). 일일 수집 뒤 `Source health` workflow가 출처별 `monitoring.expect`와 실제 상태를 비교해 `working` 출처가 실패하면 CI를 실패로 만든다. 알려진 고장은 `known_failing`으로 이유와 날짜를 남기고, 고쳐지면 `working`으로 돌린다.

@@ -58,8 +58,13 @@ def validate(definition, schema, filename=None):
     status = definition["status"]
     if status == "active" and "collect" not in definition:
         errors.append(f"{definition['id']}: active source needs collect")
-    if status != "active" and ("collect" in definition or "reason" not in definition):
-        errors.append(f"{definition['id']}: {status} source needs reason and no collect")
+    if status != "active" and ("collect" in definition or "monitoring" in definition or "reason" not in definition):
+        errors.append(f"{definition['id']}: {status} source needs reason and no collect or monitoring")
+    monitoring = definition.get("monitoring")
+    if status == "active" and monitoring is None:
+        errors.append(f"{definition['id']}: active source needs monitoring")
+    if monitoring and monitoring["expect"] != "working" and not {"since", "reason"} <= set(monitoring):
+        errors.append(f"{definition['id']}: {monitoring['expect']} needs since and reason")
     if filename and filename != definition["id"] + ".json":
         errors.append(f"{definition['id']}: file name must be {definition['id']}.json")
     return errors
