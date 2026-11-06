@@ -1,0 +1,58 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "emart24",
+  "name": "이마트24 공식 제휴",
+  "status": "active",
+  "collect": {
+    "tier": "C",
+    "domains": [
+      "emart24.co.kr",
+      "www.emart24.co.kr"
+    ],
+    "routes": [
+      "https://emart24.co.kr/service/alliance"
+    ],
+    "feed_url": null,
+    "html_url": "https://emart24.co.kr/service/alliance",
+    "article_path_pattern": "/service/alliance",
+    "keywords": [
+      "제휴"
+    ],
+    "collection_scope": "공식 제휴 서비스 안내 · 행사 전체·앱 잔량 미포함"
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://emart24.co.kr/service/alliance"
+    ],
+    "access": {
+      "robots": "partly_disallowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown",
+      "notes": [
+        "robots는 /founded/brief/req, /founded/recommend만 막는다."
+      ]
+    },
+    "extraction": [
+      "제휴 서비스 안내 페이지의 /service/alliance 링크 중 \"제휴\"가 든 제목을 받는다."
+    ],
+    "pitfalls": [
+      "진행 중 행사는 emart24_events 출처가 따로 맡는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe emart24"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "timezone": "Asia/Seoul",
+  "expiring_days": 7,
+  "max_age_days": 14,
+  "seoul_district_coverage": true,
+  "max_http_requests": 75,
+  "cost_policy": {
+    "mode": "free_public_only",
+    "paid_services_allowed": false
+  },
+  "body_checks_per_run": 5,
+  "source_order": [
+    "seoul",
+    "gangseo",
+    "eunpyeong",
+    "seongnam",
+    "government",
+    "culture",
+    "kt",
+    "retail",
+    "convenience",
+    "seoul_lifelong",
+    "seven",
+    "emart24",
+    "emart24_events",
+    "seven_events",
+    "sh",
+    "eshare",
+    "heritage"
+  ]
+}

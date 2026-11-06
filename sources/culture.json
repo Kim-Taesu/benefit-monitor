@@ -1,0 +1,70 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "culture",
+  "name": "문화·예약",
+  "status": "active",
+  "collect": {
+    "tier": "B",
+    "domains": [
+      "yeyak.seoul.go.kr",
+      "mediahub.seoul.go.kr"
+    ],
+    "routes": [
+      "https://yeyak.seoul.go.kr/web/main.do",
+      "https://mediahub.seoul.go.kr/"
+    ],
+    "feed_url": null,
+    "html_url": "https://yeyak.seoul.go.kr/web/main.do",
+    "article_path_pattern": "/web/reservation/selectReservView.do",
+    "keywords": [
+      "모집",
+      "체험",
+      "행사",
+      "교육",
+      "강좌",
+      "전시",
+      "관람",
+      "숲",
+      "운동회",
+      "워크숍",
+      "클래스",
+      "활쏘기",
+      "티톡"
+    ],
+    "collection_scope": "서울 공공서비스예약 첫 화면 공개 목록 · 잔여석·예약 성공 미확인"
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://yeyak.seoul.go.kr/web/main.do"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "공공서비스예약 첫 화면의 selectReservView.do 링크를 읽고 링크 title 속성을 제목으로 쓴다."
+    ],
+    "pitfalls": [
+      "화면 상태 파라미터 reSvc는 지운다. 남기면 같은 서비스가 중복 후보가 된다.",
+      "예약 정원은 잔여석이 아니다. 예약 성공도 확인하지 않는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe culture",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

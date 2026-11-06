@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "cu_events",
+  "name": "CU 행사·새소식",
+  "status": "deferred",
+  "reason": "이벤트 첫 화면은 404이고 새소식 목록은 화면이 뜬 뒤 따로 불러와 서버 HTML에 없다.",
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://cu.bgfretail.com/brand_info/news_list.do?category=brand_info&depth2=5&sf=N"
+    ],
+    "access": {
+      "robots": "missing_404",
+      "rendering": "javascript_only",
+      "detail_access": "get",
+      "conditions_in": "unknown",
+      "notes": [
+        "첫 화면 HTML에는 news_view.do?idx=<번호> 상세 링크 몇 개가 있다."
+      ]
+    },
+    "extraction": [
+      "아직 연결하지 않았다."
+    ],
+    "pitfalls": [
+      "첫 화면 링크만으로는 전체 새소식이 아니다."
+    ],
+    "manual_check": [
+      "첫 화면 https://cu.bgfretail.com/index.do 의 news_view.do 링크 수를 본다."
+    ],
+    "on_failure": [
+      "연결 전이라 해당 없음."
+    ],
+    "code": []
+  }
+}

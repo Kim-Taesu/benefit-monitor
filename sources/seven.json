@@ -1,0 +1,60 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "seven",
+  "name": "세븐일레븐 공식 제휴",
+  "status": "active",
+  "collect": {
+    "tier": "C",
+    "domains": [
+      "www.7-eleven.co.kr"
+    ],
+    "routes": [
+      "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2"
+    ],
+    "feed_url": null,
+    "html_url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+    "article_path_pattern": "/product/cardInfo.asp",
+    "keywords": [
+      "할인 카드",
+      "멤버십 카드"
+    ],
+    "collection_scope": "세븐일레븐 공식 카드 제휴 · 이미지 행사·앱 잔량 미포함"
+  },
+  "monitoring": {
+    "expect": "known_failing",
+    "since": "2026-11-06",
+    "reason": "GitHub 러너에서 시간 초과로 4회 연속 실패. 로컬에서는 2026-11-06에도 정상이었다."
+  },
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2"
+    ],
+    "access": {
+      "robots": "partly_disallowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown",
+      "notes": [
+        "robots는 /front/, /upload/ 등만 막는다."
+      ]
+    },
+    "extraction": [
+      "할인 카드·멤버십 카드 탭 링크 javascript: fncTab('2'|'3')만 cardInfo.asp?gbn=2|3 주소로 바꿔 읽는다."
+    ],
+    "pitfalls": [
+      "자바스크립트를 실행하지 않는다. 관찰된 두 탭 외의 fncTab은 버린다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe seven"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

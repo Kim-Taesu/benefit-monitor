@@ -1,0 +1,71 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "seoul",
+  "name": "서울시",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "mediahub.seoul.go.kr",
+      "www.seoul.go.kr",
+      "mkt.naver.com"
+    ],
+    "routes": [
+      "https://mediahub.seoul.go.kr/"
+    ],
+    "feed_url": null,
+    "html_url": "https://mediahub.seoul.go.kr/",
+    "article_path_pattern": "/archives/\\d+",
+    "keywords": [
+      "혜택",
+      "할인",
+      "지원",
+      "상품권",
+      "무료",
+      "모집",
+      "접수",
+      "신청",
+      "공모",
+      "체험",
+      "포인트",
+      "행사",
+      "전시"
+    ]
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://mediahub.seoul.go.kr/news/newsMain.do"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "서울시 미디어허브 첫 화면의 /archives/<번호> 링크를 읽는다.",
+      "링크 글자 또는 제목 태그만 키워드로 거른다. 본문 요약 단어로는 채택하지 않는다."
+    ],
+    "pitfalls": [
+      "seoul_district_coverage가 켜져 있으면 이 출처 정의가 25개 구 자치구 뉴스 수집(districts.py)에도 쓰인다. domains를 줄이면 구별 수집이 깨진다.",
+      "구별 목록은 6시간 캐시와 실패 15분 대기를 지킨다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe seoul",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py",
+      "benefit_monitor/collectors/districts.py"
+    ]
+  }
+}

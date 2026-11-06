@@ -1,0 +1,65 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "government",
+  "name": "정부",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.mss.go.kr",
+      "www.korea.kr"
+    ],
+    "routes": [
+      "https://www.mss.go.kr/",
+      "https://www.korea.kr/"
+    ],
+    "feed_url": null,
+    "html_url": "https://www.korea.kr/news/policyNewsList.do",
+    "article_path_pattern": "/news/policyNewsView.do",
+    "keywords": [
+      "혜택",
+      "할인",
+      "지원",
+      "상품권",
+      "무료",
+      "모집",
+      "접수",
+      "신청",
+      "환급",
+      "적립"
+    ]
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://www.korea.kr/news/policyNewsList.do"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "정책브리핑 정책뉴스 목록의 /news/policyNewsView.do 링크 제목을 키워드로 거른다."
+    ],
+    "pitfalls": [
+      "추적용 쿼리 pWise·pWiseSub는 지워 같은 기사가 두 후보가 되지 않게 한다(html.py)."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe government",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

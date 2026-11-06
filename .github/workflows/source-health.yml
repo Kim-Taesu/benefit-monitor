@@ -1,0 +1,35 @@
+name: Source health
+# Runs after each daily collection and compares the published per-source status with
+# sources/<id>.json monitoring.expect. Kept separate from the briefing run so a source
+# failure turns this workflow red without stopping deployment or the AI daily trigger.
+on:
+  workflow_run:
+    workflows: ['Daily benefit briefing']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # Push runs of the briefing only test and deploy; they do not collect.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.event != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Read the published briefing from briefing-data
+        run: |
+          git fetch --depth 1 origin briefing-data
+          git show FETCH_HEAD:briefing.json > "$RUNNER_TEMP/briefing.json"
+      - name: Compare source status with expectations
+        env:
+          STARTED_AT: ${{ github.event.workflow_run.run_started_at }}
+        run: python -m benefit_monitor.source_check --briefing "$RUNNER_TEMP/briefing.json" ${STARTED_AT:+--started-at "$STARTED_AT"}
