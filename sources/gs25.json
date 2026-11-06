@@ -1,0 +1,44 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "gs25",
+  "name": "GS25",
+  "status": "excluded",
+  "reason": "행사 데이터가 robots가 모든 수집기에 막은 /api/ 경로에서만 오고, 방문 허용 시간도 브리핑 실행 시각과 맞지 않는다.",
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://www.gsretail.com/brand/gs25"
+    ],
+    "access": {
+      "robots": "partly_disallowed",
+      "rendering": "javascript_only",
+      "detail_access": "unknown",
+      "conditions_in": "unknown",
+      "notes": [
+        "robots: User-agent * 에 Disallow /api/, Crawl-delay 10, Visit-time 0400-0845 UTC(KST 13:00~17:45).",
+        "브랜드 페이지는 자바스크립트 화면이고 행사 데이터는 /api/gsapi/... 에서 온다."
+      ]
+    },
+    "extraction": [
+      "수집하지 않는다."
+    ],
+    "pitfalls": [
+      "gs25.gsretail.com은 www.gsretail.com/brand/gs25로 301 이동한다.",
+      "뉴스 기사 속 GS25 행사는 공식 출처가 아니다."
+    ],
+    "manual_check": [
+      "curl -A BenefitMonitor/0.1 https://www.gsretail.com/robots.txt 로 /api/ 차단이 풀렸는지 본다."
+    ],
+    "on_failure": [
+      "robots가 바뀌어 공개 HTML 목록이 생기면 deferred로 바꾸고 다시 조사한다."
+    ],
+    "code": [],
+    "history": [
+      {
+        "date": "2026-11-06",
+        "note": "사용자 결정으로 제외."
+      }
+    ]
+  }
+}

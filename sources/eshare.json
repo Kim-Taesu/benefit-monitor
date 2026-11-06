@@ -1,0 +1,60 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "eshare",
+  "name": "공유누리 공공시설",
+  "status": "active",
+  "collect": {
+    "tier": "B",
+    "domains": [
+      "www.eshare.go.kr"
+    ],
+    "routes": [
+      "https://www.eshare.go.kr/UserPortal/adv/unifdSearch/UnifiedSearchMainView.do"
+    ],
+    "feed_url": null,
+    "collector": "eshare",
+    "queries": [
+      {
+        "keyword": "체험",
+        "ctrd": "11",
+        "reservable": true
+      },
+      {
+        "keyword": "강좌",
+        "ctrd": "11",
+        "reservable": true
+      }
+    ],
+    "collection_scope": "공유누리 서울 인터넷 예약 자원 검색 첫 페이지 · 이용료 제한 없음 · 실시간 예약 가능 여부 미확인"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://www.eshare.go.kr/UserPortal/adv/unifdSearch/UnifiedSearchMainView.do"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "search_post",
+      "detail_access": "get",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "검색 첫 화면으로 쿠키를 받은 뒤 ConditionsSearch.do에 queries의 검색어·지역(ctrd 11=서울)을 POST로 보낸다.",
+      "결과 카드의 자원 번호로 상세 주소를 만든다."
+    ],
+    "pitfalls": [
+      "이용료로 거르지 않는다. 실시간 예약 가능 여부는 확인하지 않는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe eshare",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "검색 응답 구조가 바뀌면 후보 0건으로 실패한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/public.py"
+    ]
+  }
+}

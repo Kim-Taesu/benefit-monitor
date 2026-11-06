@@ -1,0 +1,47 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "kt",
+  "name": "KT",
+  "status": "active",
+  "collect": {
+    "tier": "B",
+    "domains": [
+      "membership.kt.com"
+    ],
+    "routes": [
+      "https://membership.kt.com/"
+    ],
+    "feed_url": null
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://membership.kt.com/"
+    ],
+    "access": {
+      "robots": "unknown",
+      "rendering": "unknown",
+      "detail_access": "unknown",
+      "conditions_in": "unknown",
+      "notes": [
+        "2026-11-05 접속이 시간 초과로 끝났다."
+      ]
+    },
+    "extraction": [
+      "자동 수집기가 없다. 실행마다 사람 확인 대상(handoff)으로 넘어간다."
+    ],
+    "pitfalls": [
+      "membership.kt.com은 convenience 출처의 허용 도메인에도 들어 있다."
+    ],
+    "manual_check": [
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "시간 초과를 재시도 반복으로 우회하지 않는다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

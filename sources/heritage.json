@@ -1,0 +1,58 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "heritage",
+  "name": "국가유산 행사",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.khs.go.kr",
+      "royal.khs.go.kr",
+      "www.heritage.go.kr",
+      "www.chf.or.kr",
+      "www.kh.or.kr"
+    ],
+    "routes": [
+      "https://www.khs.go.kr/cha/openapi/selectEventListOpenapi.do"
+    ],
+    "feed_url": null,
+    "collector": "heritage_events",
+    "regions": [
+      "서울"
+    ],
+    "include_next_month": true,
+    "collection_scope": "국가유산청 월별 행사 공개 목록(이번 달·다음 달, 서울) · 행사별 예약·잔여석 미확인"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://www.khs.go.kr/cha/openapi/selectEventListOpenapi.do"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "xml_api",
+      "detail_access": "get",
+      "conditions_in": "unknown",
+      "notes": [
+        "키 없는 공개 XML이다."
+      ]
+    },
+    "extraction": [
+      "이번 달과 다음 달(include_next_month)의 행사 XML에서 regions(서울) 항목을 읽는다."
+    ],
+    "pitfalls": [
+      "행사별 예약·잔여석은 확인하지 않는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe heritage",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "XML 구조가 바뀌면 파싱 실패로 기록된다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/public.py"
+    ]
+  }
+}

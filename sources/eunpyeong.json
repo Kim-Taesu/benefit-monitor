@@ -1,0 +1,52 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "eunpyeong",
+  "name": "은평구",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.ep.go.kr",
+      "mediahub.seoul.go.kr"
+    ],
+    "routes": [
+      "https://www.ep.go.kr/",
+      "https://mediahub.seoul.go.kr/"
+    ],
+    "feed_url": null,
+    "district_feed": "은평구",
+    "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://www.ep.go.kr/"
+    ],
+    "access": {
+      "robots": "disallowed",
+      "rendering": "unknown",
+      "detail_access": "unknown",
+      "conditions_in": "unknown",
+      "notes": [
+        "www.ep.go.kr는 robots 차단. 대기 시간이 지나도 허용으로 바꾸지 않는다."
+      ]
+    },
+    "extraction": [
+      "서울시 공식 자치구 뉴스에서 \"은평구\" 목록 첫 페이지를 읽는다(district_feed)."
+    ],
+    "pitfalls": [
+      "구청 사이트 직접 수집은 robots 차단으로 하지 않는다."
+    ],
+    "manual_check": [
+      "전체 수집 실행에서 district_coverage의 은평구 상태를 본다.",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "자치구 뉴스가 막히면 DistrictFeedUnavailable로 기록된다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/districts.py"
+    ]
+  }
+}

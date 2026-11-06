@@ -1,0 +1,34 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "youth_policy",
+  "name": "청년 정책 포털",
+  "status": "deferred",
+  "reason": "온통청년·청년몽땅정보통 목록이 자바스크립트로 그려지고, 온통청년 공개 API는 키 발급이 필요해 키 없는 공개 페이지 규칙에 어긋난다.",
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://www.youthcenter.go.kr/youthPolicy/ythPlcyTotalSearch",
+      "https://youth.seoul.go.kr/index.do"
+    ],
+    "access": {
+      "robots": "missing_404",
+      "rendering": "javascript_only",
+      "detail_access": "unknown",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "아직 연결하지 않았다. 정부 보도자료는 government 출처가 맡는다."
+    ],
+    "pitfalls": [
+      "청년몽땅정보통 첫 화면은 안내 문구만 있고 정책 목록이 없다."
+    ],
+    "manual_check": [
+      "두 주소의 HTML에 정책 목록이 글로 나오는지 본다."
+    ],
+    "on_failure": [
+      "연결 전이라 해당 없음."
+    ],
+    "code": []
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "gangseo",
+  "name": "강서구",
+  "status": "active",
+  "collect": {
+    "tier": "B",
+    "domains": [
+      "www.gangseo.seoul.kr",
+      "gangseo.seoul.kr",
+      "mediahub.seoul.go.kr"
+    ],
+    "routes": [
+      "https://www.gangseo.seoul.kr/",
+      "https://mediahub.seoul.go.kr/"
+    ],
+    "feed_url": null,
+    "district_feed": "강서구",
+    "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://www.gangseo.seoul.kr/index"
+    ],
+    "access": {
+      "robots": "partly_disallowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown",
+      "notes": [
+        "구 공지 /gs040101은 robots 차단이라 요청하지 않는다.",
+        "/munhwa는 302로 /munhwa/index에 가며 따라가지 않았다(별도 정책 검토 필요)."
+      ]
+    },
+    "extraction": [
+      "구청 사이트를 직접 읽지 않는다. 서울시 공식 자치구 뉴스에서 \"강서구\" 목록 첫 페이지를 읽는다(district_feed)."
+    ],
+    "pitfalls": [
+      "구청 공지 전체 수집이 아니다. 화면에 전체 수집으로 표시하지 않는다."
+    ],
+    "manual_check": [
+      "전체 수집 실행에서 district_coverage의 강서구 상태를 본다.",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "자치구 뉴스가 막히면 DistrictFeedUnavailable로 기록되고 사람 확인으로 넘어간다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/districts.py"
+    ]
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "seven_events",
+  "name": "세븐일레븐 진행 중 이벤트",
+  "status": "active",
+  "collect": {
+    "tier": "C",
+    "domains": [
+      "www.7-eleven.co.kr"
+    ],
+    "routes": [
+      "https://www.7-eleven.co.kr/event/eventList.asp"
+    ],
+    "feed_url": null,
+    "html_url": "https://www.7-eleven.co.kr/event/eventList.asp",
+    "article_path_pattern": "/event/eventList.asp",
+    "keywords": [
+      "*"
+    ],
+    "ai_review": false,
+    "collection_scope": "세븐일레븐 진행 중 이벤트 목록 첫 화면의 제목 · 상세는 목록에서 직접 열어야 함 · 기간·조건 미확인"
+  },
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://www.7-eleven.co.kr/event/eventList.asp"
+    ],
+    "access": {
+      "robots": "partly_disallowed",
+      "rendering": "server_html",
+      "detail_access": "post_only",
+      "conditions_in": "image",
+      "notes": [
+        "상세는 eventView.asp에 seqNo를 POST로 보내야 열린다. GET 주소로는 내용이 비어 있다."
+      ]
+    },
+    "extraction": [
+      "javascript: fncGoView('<번호>', '<순서>') 링크의 번호를 읽어 목록 주소#seqNo=<번호>로 후보를 구분한다.",
+      "제목은 썸네일 img의 alt에서 읽는다. 기간은 링크 밖에 있어 받지 않는다."
+    ],
+    "pitfalls": [
+      "ai_review: false. 조각 주소로는 상세를 열 수 없고 조건은 이미지다.",
+      "keywords [\"*\"]: 이 페이지는 진행 중 행사만 나열한다. 목록 자기 링크는 제외한다.",
+      "\"진행 중\" 목록에도 2025년 기간의 오래된 항목이 섞여 나온다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe seven_events",
+      "브라우저에서 목록을 열고 해당 행사를 눌러 상세를 본다."
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py",
+      "tests/test_remaining_sources.py"
+    ],
+    "history": [
+      {
+        "date": "2026-11-06",
+        "note": "PR #25로 추가. 첫 실측 9건, 요청 2회."
+      }
+    ]
+  }
+}

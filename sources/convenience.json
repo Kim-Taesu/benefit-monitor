@@ -1,0 +1,60 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "convenience",
+  "name": "편의점 공식 제휴",
+  "status": "active",
+  "collect": {
+    "tier": "C",
+    "domains": [
+      "membership.kt.com",
+      "pay.naver.com",
+      "www.gsretail.com",
+      "cu.bgfretail.com"
+    ],
+    "routes": [
+      "https://membership.kt.com/",
+      "https://pay.naver.com/",
+      "https://cu.bgfretail.com/service/credit_info.do?category=service&depth2=2&sf=N",
+      "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1"
+    ],
+    "feed_url": null,
+    "html_url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+    "article_path_pattern": "/service/membership_info.do",
+    "keywords": [
+      "제휴"
+    ],
+    "collection_scope": "CU 공식 제휴 멤버십 안내 · 다른 편의점·앱 전용 행사 미포함"
+  },
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1"
+    ],
+    "access": {
+      "robots": "missing_404",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown",
+      "notes": [
+        "2026-11-06: CU 이벤트 첫 화면 /event/index.do는 404, 새소식 목록은 화면이 뜬 뒤 따로 불러와 HTML에 없다."
+      ]
+    },
+    "extraction": [
+      "CU 제휴 멤버십 안내 페이지의 링크 중 \"제휴\"가 든 제목만 받는다."
+    ],
+    "pitfalls": [
+      "GS25·다른 편의점 앱 전용 행사는 이 출처 범위가 아니다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe convenience"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

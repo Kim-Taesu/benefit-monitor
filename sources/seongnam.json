@@ -1,0 +1,64 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "seongnam",
+  "name": "성남시",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.seongnam.go.kr",
+      "snvision.seongnam.go.kr"
+    ],
+    "routes": [
+      "https://www.seongnam.go.kr/",
+      "https://snvision.seongnam.go.kr/"
+    ],
+    "feed_url": "https://snvision.seongnam.go.kr/rss/rss_news.php",
+    "keywords": [
+      "혜택",
+      "할인",
+      "지원",
+      "상품권",
+      "무료",
+      "모집",
+      "접수",
+      "신청",
+      "체험",
+      "축제",
+      "페스티벌"
+    ]
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://snvision.seongnam.go.kr/rss/rss_news.php"
+    ],
+    "access": {
+      "robots": "unknown",
+      "rendering": "rss",
+      "detail_access": "unknown",
+      "conditions_in": "unknown",
+      "notes": [
+        "2026-11-05 RSS 요청이 TLS handshake 실패(SSLV3_ALERT_HANDSHAKE_FAILURE)로 끝났다."
+      ]
+    },
+    "extraction": [
+      "RSS 항목의 제목·링크를 키워드로 거른다.",
+      "서울에도 적용되는 전국 혜택만 의미가 있다. 성남 전용은 제외한다."
+    ],
+    "pitfalls": [
+      "TLS 오류를 검증 끄기 등으로 우회하지 않는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe seongnam",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "TLS 오류가 계속되면 실패로 남기고 사람 확인으로 넘긴다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/rss.py"
+    ]
+  }
+}

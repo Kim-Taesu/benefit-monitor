@@ -1,0 +1,66 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "retail",
+  "name": "마트",
+  "status": "active",
+  "collect": {
+    "tier": "B",
+    "domains": [
+      "my.homeplus.co.kr",
+      "eapp.emart.com",
+      "www.shinsegaegroupnewsroom.com"
+    ],
+    "routes": [
+      "https://my.homeplus.co.kr/leaflet",
+      "https://eapp.emart.com/",
+      "https://www.shinsegaegroupnewsroom.com/family/emart/"
+    ],
+    "feed_url": null,
+    "html_url": "https://www.shinsegaegroupnewsroom.com/family/emart/",
+    "article_path_pattern": "/[a-z0-9-]+/",
+    "keywords": [
+      "할인",
+      "행사",
+      "쓱데이",
+      "혜택",
+      "세일",
+      "최저가",
+      "페스티벌",
+      "특가"
+    ],
+    "collection_scope": "신세계그룹 공식 이마트 뉴스 · 홈플러스 전단 자동 수집 미연결"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://www.shinsegaegroupnewsroom.com/family/emart/"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown",
+      "notes": [
+        "홈플러스 전단(my.homeplus.co.kr)은 robots 오류로 자동 수집에 연결하지 않았다."
+      ]
+    },
+    "extraction": [
+      "신세계그룹 뉴스룸 이마트 목록의 기사 링크 제목을 키워드로 거른다."
+    ],
+    "pitfalls": [
+      "홈플러스·이마트 앱 경로는 routes에만 있고 자동 수집하지 않는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe retail",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

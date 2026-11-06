@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "source.schema.json",
+  "title": "출처 정의",
+  "description": "출처 하나의 수집 설정(collect)과 유지보수 안내(runbook). sources/<id>.json 한 파일이 출처 하나다. 운영 sources.yaml은 scripts/generate_sources.py가 이 파일들에서 만든다. 상태별 규칙: active는 collect가 있어야 하고, excluded·deferred는 collect 없이 reason이 있어야 한다.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "id", "name", "status", "runbook"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema_version": {"const": 1},
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "description": "파일 이름과 같아야 한다."},
+    "name": {"type": "string", "minLength": 1},
+    "status": {"enum": ["active", "excluded", "deferred"], "description": "active: 운영 수집 중. excluded: 정책상 수집하지 않음. deferred: 가능성은 있으나 아직 연결하지 않음."},
+    "reason": {"type": "string", "minLength": 1, "description": "excluded·deferred의 판정 이유."},
+    "collect": {"$ref": "#/$defs/collect"},
+    "runbook": {"$ref": "#/$defs/runbook"}
+  },
+  "$defs": {
+    "text_list": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "https_url": {"type": "string", "pattern": "^https://[^\\s]+$"},
+    "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"},
+    "collect": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "운영 sources.yaml의 출처 항목에서 id·name을 뺀 나머지. 키 순서가 그대로 생성물에 쓰인다.",
+      "required": ["tier", "domains", "routes", "feed_url"],
+      "properties": {
+        "tier": {"enum": ["A", "B", "C"]},
+        "domains": {"type": "array", "minItems": 1, "items": {"type": "string", "pattern": "^[a-z0-9.-]+$"}},
+        "routes": {"type": "array", "items": {"$ref": "#/$defs/https_url"}},
+        "feed_url": {"type": ["string", "null"]},
+        "html_url": {"$ref": "#/$defs/https_url"},
+        "article_path_pattern": {"type": "string", "minLength": 1},
+        "keywords": {"$ref": "#/$defs/text_list", "description": "제목에 하나라도 있어야 후보. [\"*\"]는 진행 중 행사만 나열하는 목록에서 모든 제목을 받는다."},
+        "district_feed": {"type": "string", "minLength": 1},
+        "collector": {"enum": ["sh_notice", "eshare", "heritage_events"]},
+        "boards": {"$ref": "#/$defs/text_list"},
+        "queries": {"type": "array", "items": {"type": "object"}},
+        "regions": {"$ref": "#/$defs/text_list"},
+        "include_next_month": {"type": "boolean"},
+        "ai_review": {"type": "boolean", "description": "false면 유료 AI 조사 후보에서 뺀다. 상세 조건이 이미지뿐인 출처에 쓴다."},
+        "collection_scope": {"type": "string", "minLength": 1}
+      }
+    },
+    "runbook": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checked_at", "entry_urls", "access", "extraction", "pitfalls", "manual_check", "on_failure", "code"],
+      "properties": {
+        "checked_at": {"$ref": "#/$defs/date", "description": "아래 접근 정보를 실제로 확인한 마지막 날(KST). 확인 없이 날짜를 바꾸지 않는다."},
+        "entry_urls": {"type": "array", "items": {"$ref": "#/$defs/https_url"}},
+        "access": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["robots", "rendering", "detail_access", "conditions_in"],
+          "properties": {
+            "robots": {"enum": ["allowed", "missing_404", "partly_disallowed", "disallowed", "unknown"]},
+            "rendering": {"enum": ["server_html", "rss", "xml_api", "search_post", "javascript_only", "unknown"]},
+            "detail_access": {"enum": ["get", "post_only", "none", "unknown"]},
+            "conditions_in": {"enum": ["text", "image", "mixed", "unknown"]},
+            "notes": {"$ref": "#/$defs/text_list"}
+          }
+        },
+        "extraction": {"$ref": "#/$defs/text_list", "description": "목록에서 제목·주소·기간을 읽는 방법."},
+        "pitfalls": {"$ref": "#/$defs/text_list", "description": "알려진 함정과 일부러 하지 않는 것."},
+        "manual_check": {"$ref": "#/$defs/text_list", "description": "사람이 상태를 확인하는 명령이나 절차."},
+        "on_failure": {"$ref": "#/$defs/text_list"},
+        "code": {"type": "array", "items": {"type": "string", "pattern": "^[A-Za-z0-9_./-]+$"}, "description": "관련 코드 경로. 테스트가 존재를 확인한다."},
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["date", "note"],
+            "properties": {"date": {"$ref": "#/$defs/date"}, "note": {"type": "string", "minLength": 1}}
+          }
+        }
+      }
+    }
+  }
+}

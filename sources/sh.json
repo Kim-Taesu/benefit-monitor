@@ -1,0 +1,53 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "sh",
+  "name": "SH 주택 공고",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.i-sh.co.kr"
+    ],
+    "routes": [
+      "https://www.i-sh.co.kr/app/lay2/program/S1T294C297/www/brd/m_247/list.do?multi_itm_seq=2"
+    ],
+    "feed_url": null,
+    "collector": "sh_notice",
+    "boards": [
+      "rent",
+      "sale"
+    ],
+    "collection_scope": "SH 주택임대·분양 공고 게시판 첫 페이지 · 제목 기준 후보, 신청 자격·접수 상태 미확인"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://www.i-sh.co.kr/app/lay2/program/S1T294C297/www/brd/m_247/list.do?multi_itm_seq=2"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "임대·분양 게시판 첫 페이지 #listTb 표에서 getDetailView(<번호>)와 제목을 읽는다.",
+      "제목에 모집·신청·접수·공고가 있고 당첨·마감·결과 등이 없는 것만 후보로 둔다."
+    ],
+    "pitfalls": [
+      "같은 공고가 여러 게시판에 중복 게시된다. 첫 게시판 주소만 남긴다.",
+      "제목 기준 후보일 뿐 접수 상태·신청 자격은 확인하지 않는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe sh",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "\"Unexpected SH list markup\"이면 게시판 HTML 구조가 바뀐 것이다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/public.py"
+    ]
+  }
+}

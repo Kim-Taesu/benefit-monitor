@@ -1,0 +1,45 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "gs_the_fresh",
+  "name": "GS더프레시",
+  "status": "excluded",
+  "reason": "GS25와 같은 사이트 구조라 /api/ 차단에 걸린다. 카카오톡 채널은 robots가 허용하지만 화면에 글이 없고 GS 자체 도메인도 아니다.",
+  "runbook": {
+    "checked_at": "2026-11-06",
+    "entry_urls": [
+      "https://www.gsretail.com/brand/gs-the-fresh",
+      "https://pf.kakao.com/_biwxdd"
+    ],
+    "access": {
+      "robots": "partly_disallowed",
+      "rendering": "javascript_only",
+      "detail_access": "unknown",
+      "conditions_in": "unknown",
+      "notes": [
+        "robots: User-agent * 에 Disallow /api/, Crawl-delay 10, Visit-time 0400-0845 UTC(KST 13:00~17:45).",
+        "브랜드 페이지는 자바스크립트 화면이고 행사 데이터는 /api/gsapi/... 에서 온다."
+      ]
+    },
+    "extraction": [
+      "수집하지 않는다."
+    ],
+    "pitfalls": [
+      "gsthefresh.gsretail.com은 www.gsretail.com/brand/gs-the-fresh로 301 이동한다.",
+      "카카오 채널(pf.kakao.com)은 robots가 허용하지만 GS 자체 도메인이 아니고 글이 없다."
+    ],
+    "manual_check": [
+      "curl -A BenefitMonitor/0.1 https://www.gsretail.com/robots.txt"
+    ],
+    "on_failure": [
+      "robots 변경 시 gs25와 함께 다시 조사한다."
+    ],
+    "code": [],
+    "history": [
+      {
+        "date": "2026-11-06",
+        "note": "사용자 결정으로 제외."
+      }
+    ]
+  }
+}

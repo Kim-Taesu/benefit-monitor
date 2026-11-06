@@ -1,0 +1,54 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "seoul_lifelong",
+  "name": "서울시 평생학습포털",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "sll.seoul.go.kr"
+    ],
+    "routes": [
+      "https://sll.seoul.go.kr/lms/simin_course/courseRequest/doListView.do?main_se=ssu&simin_yn=M%2CDC%2CMD%2CO%2CR%2CRG&mnid=202501604868"
+    ],
+    "feed_url": null,
+    "html_url": "https://sll.seoul.go.kr/",
+    "article_path_pattern": "/lms/front/event/doJoinListEvent.do",
+    "keywords": [
+      "이벤트",
+      "EVENT",
+      "경품"
+    ],
+    "collection_scope": "평생학습포털 첫 화면 공식 이벤트 · 강좌 전체 수집 아님"
+  },
+  "runbook": {
+    "checked_at": "2026-11-05",
+    "entry_urls": [
+      "https://sll.seoul.go.kr/"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "평생학습포털 첫 화면의 doJoinListEvent.do 이벤트 링크를 읽는다."
+    ],
+    "pitfalls": [
+      "강좌 전체 수집이 아니다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe seoul_lifelong",
+      "2026-11-05 접근 실사 기록: docs/ai/phase01/source-audit-2026-11-05.json"
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록 구조나 제목 단어가 바뀐 것이다. 원문 HTML을 저장해 링크 구조를 다시 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}
