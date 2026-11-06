@@ -185,6 +185,8 @@ test('compact header and Seoul-only filters ignore legacy hidden categories',asy
  await expect(page.locator('#category')).toHaveCount(0);
  await expect(page.locator('article')).toHaveCount(6);
  await expect(page.locator('header .overview')).toContainText('공개 혜택');
+ await expect(page.locator('header .overview')).toContainText('데이터 갱신');
+ await expect(page.locator('header .overview')).toContainText('마지막 사람 승인');
  await expect(page).not.toHaveURL(/category=/);
 });
 
