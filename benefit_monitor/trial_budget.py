@@ -128,13 +128,15 @@ class TrialBudget:
             state['requests'].append(row)
             return dict(row)
 
-    def fail(self, request_id, code, detail=None):
+    def fail(self, request_id, code, detail=None, halt=True):
+        """halt=False only for an unbilled grammar-probe rejection; the row is still kept."""
         with self._locked() as state:
             row = next(r for r in state['requests'] if r['id'] == request_id)
             row.update(status='failed', error_code=code)
             if detail:
                 row['error_detail'] = detail[:400]
-            state['halted'] = True
+            if halt:
+                state['halted'] = True
 
     def settle(self, request_id, amount, usage, response_hash):
         if type(amount) is not int or amount < 0 or not re.fullmatch('[0-9a-f]{64}', response_hash):

@@ -143,3 +143,4 @@ GitHub 예약 실행이 크게 늦거나 빠져서 트리거를 바꿨다. 모�
 - 요청이 공급자에게 거절된 날은 브리핑 공개는 그대로 하되 Actions 결과를 실패로 표시한다.
 - 원장이 중단되면 사람이 원인을 확인한 뒤 Actions → AI daily trial → Run workflow에서 `resume_reviewed_halt`를 켜서 해제한다. `check_only`를 함께 켜면 Claude 호출 없이 해제만 한다.
 - 그날 요청이 모두 무과금 4xx 거절이었다면 같은 수동 실행에서 `retry_rejected_day`(check_only 끔)를 켜서 그날을 한 번 다시 시도할 수 있다. 실행일 수는 늘지 않고 원래 결과는 `retry_of`에 남는다.
+- 수동 실행에서 `grammar_probe_only`를 켜면 조사 스키마의 문법 컴파일만 유료 1건(출력 16토큰, $0.001 미만)으로 시험한다. 날짜 기록을 쓰지 않고, 거절되면 실험을 멈추지 않은 채 Actions 결과만 실패로 표시한다.

@@ -21,7 +21,8 @@ def main():
             created=True;stream.write(value)
         result=cloud_run(ROOT,check_only=os.environ.get('CHECK_ONLY','true')!='false',
                          resume=os.environ.get('RESUME_REVIEWED_HALT')=='true',
-                         retry=os.environ.get('RETRY_REJECTED_DAY')=='true')
+                         retry=os.environ.get('RETRY_REJECTED_DAY')=='true',
+                         probe_only=os.environ.get('GRAMMAR_PROBE_ONLY')=='true')
         print(json.dumps(result,sort_keys=True));return exit_code(result)
     except Exception:
         print('cloud_stopped_requires_review');return 1

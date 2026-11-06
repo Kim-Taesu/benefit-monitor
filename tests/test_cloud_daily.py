@@ -307,4 +307,24 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(m,'todays_refresh',return_value='ready'),self.assertRaisesRegex(ValueError,'not eligible'):
             m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),retry=True)
 
+    def test_grammar_probe_only_is_manual_marks_no_day_and_reports_red_on_rejection(self):
+        m=self.module();made=[]
+        class Fake:
+            def __init__(self,folder,budget,key):made.append(budget)
+            def grammar_probe(self,schema):
+                self.schema=schema;return {'status':outcome[0],'schema_sha256':'0'*64,'cached':False}
+        outcome=['passed']
+        with patch.object(m,'ClaudeClient',Fake),patch.object(m,'daily',side_effect=AssertionError('no daily')),\
+                patch.object(m,'disable_workflow') as disable:
+            with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'schedule'}),self.assertRaisesRegex(ValueError,'manual'):
+                m.cloud_run(self.root,now=NOW,store=self.fixture.store(),probe_only=True)
+            passed=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),probe_only=True)
+            outcome[0]='rejected'
+            rejected=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),probe_only=True)
+            expired=m.cloud_run(self.root,now=NOW.replace(day=20),store=self.fixture.store(),probe_only=True)
+        self.assertEqual((passed['status'],rejected['status'],expired['status']),('probe_passed','probe_rejected','trial_expired'))
+        self.assertEqual((m.exit_code(passed),m.exit_code(rejected)),(0,1))
+        self.assertEqual(len(made),2);disable.assert_called_once()
+        self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
+
 if __name__=='__main__':unittest.main()

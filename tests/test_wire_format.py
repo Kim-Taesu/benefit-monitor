@@ -23,21 +23,30 @@ def host(body=BODY):
                 budget={}, candidates=[dict(candidate_id='c1', source_id='seoul', document_ids=['doc-a'])], documents=[doc])
 
 
-BLANK = {'eligibility': {'scope': 'disputed', 'required': [], 'not_confirmed': []},
-         'event_period': {'start': '', 'end': ''}, 'application_period': {'start': '', 'end': ''},
-         'fee_status': 'conditional', 'capacity': 0, 'districts': []}
-
-
-def fact(status='unknown', value=None, evidence=(), reason=''):
-    return {'status': status, 'value': value, 'evidence': list(evidence), 'unknown_reason': reason}
+def slots(field, given):
+    """Readable test facts (status/value/evidence) mapped onto the generic wire slots."""
+    out = dict(field=field, status=given.get('status', 'unknown'), text='', items=[], not_confirmed=[], start='', end='',
+               number=0, segment_ids=[e['segment_id'] for e in given.get('evidence', [])],
+               unknown_reason=given.get('unknown_reason', ''))
+    value = given.get('value')
+    if value is not None:
+        if field == 'eligibility':
+            out.update(text=value['scope'], items=value['required'], not_confirmed=value['not_confirmed'])
+        elif field in ('event_period', 'application_period'):
+            out.update(start=value['start'], end=value['end'])
+        elif field == 'capacity':
+            out['number'] = value
+        elif field == 'districts':
+            out['items'] = value
+        else:
+            out['text'] = value
+    return out
 
 
 def wire(**facts):
-    base = {field: fact(value=BLANK.get(field, ''), reason='원문에 없음') for field in w.FIELDS}
-    for field, given in facts.items():
-        base[field] = dict(fact(value=BLANK.get(field, '')), **given)
+    rows = [slots(field, facts.get(field, {'unknown_reason': '원문에 없음'})) for field in w.FIELDS]
     return dict(wire_version=w.RESEARCH_WIRE, status='completed', errors=[],
-                records=[dict(candidate_id='c1', research_status='completed', stop_reason='sufficient_evidence', facts=base)])
+                records=[dict(candidate_id='c1', research_status='completed', stop_reason='sufficient_evidence', facts=rows)])
 
 
 def conforms(value, node, root):
@@ -69,18 +78,19 @@ class ResearchWireTests(unittest.TestCase):
     def test_shared_shapes_use_resolvable_defs_and_samples_conform(self):
         schema = w.research_wire_schema()
         text = json.dumps(schema)
-        self.assertEqual(set(schema['$defs']), {'evidence'})
+        self.assertNotIn('$defs', schema)
         self.assertNotIn('anyOf', text)
+        self.assertLess(len(text), 2500)
         self.assertNotIn('pattern', text)
         sample = wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': [{'segment_id': 'd1s4'}]},
                       event_period={'status': 'supported', 'value': {'start': '2026-11-07', 'end': ''},
                                     'evidence': [{'segment_id': 'd1s1'}]})
         self.assertTrue(conforms(sample, schema, schema))
-        schema_bad = [wire(availability={'status': 'supported', 'value': 'x', 'evidence': [{'segment_id': 'd1s1'}]}),
-                      wire(fee_status={'status': 'supported', 'value': 'maybe', 'evidence': [{'segment_id': 'd1s4'}]})]
         broken = wire()
-        del broken['records'][0]['facts']['selection']['unknown_reason']
-        for value in schema_bad + [broken]:
+        del broken['records'][0]['facts'][0]['unknown_reason']
+        renamed = wire()
+        renamed['records'][0]['facts'][0]['field'] = 'age_limit'
+        for value in (broken, renamed):
             self.assertFalse(conforms(value, schema, schema))
 
     def test_constraints_moved_out_of_the_grammar_are_host_rejections(self):
@@ -88,7 +98,20 @@ class ResearchWireTests(unittest.TestCase):
                  'period format': wire(event_period={'status': 'supported', 'value': {'start': '11월 7일', 'end': ''},
                                                      'evidence': [{'segment_id': 'd1s1'}]}),
                  'districts': wire(districts={'status': 'supported', 'value': [], 'evidence': [{'segment_id': 'd1s1'}]}),
-                 'reason': wire(selection={'status': 'unknown', 'unknown_reason': ' '})}
+                 'reason': wire(selection={'status': 'unknown', 'unknown_reason': ' '}),
+                 'availability': wire(availability={'status': 'supported', 'value': 'x', 'evidence': [{'segment_id': 'd1s1'}]}),
+                 'fee_status': wire(fee_status={'status': 'supported', 'value': 'maybe', 'evidence': [{'segment_id': 'd1s4'}]}),
+                 'scope': wire(eligibility={'status': 'supported', 'evidence': [{'segment_id': 'd1s2'}],
+                                            'value': {'scope': 'everyone', 'required': [], 'not_confirmed': []}}),
+                 'empty': wire(selection={'status': 'supported', 'value': ' ', 'evidence': [{'segment_id': 'd1s1'}]})}
+        district = wire(districts={'status': 'supported', 'value': ['강남'], 'evidence': [{'segment_id': 'd1s1'}]})
+        cases['district names'] = district
+        duplicate = wire()
+        duplicate['records'][0]['facts'].append(dict(duplicate['records'][0]['facts'][0]))
+        missing = wire()
+        missing['records'][0]['facts'].pop()
+        cases['duplicate'] = duplicate
+        cases['missing'] = missing
         schema = w.research_wire_schema()
         for message, value in cases.items():
             self.assertTrue(conforms(value, schema, schema), message)
@@ -115,7 +138,8 @@ class ResearchWireTests(unittest.TestCase):
         self.assertEqual(found['optional'], 0)
         self.assertEqual(found['unsupported'], [])
         self.assertNotIn('minLength', json.dumps(schema))
-        self.assertEqual(set(schema['properties']['records']['items']['properties']['facts']['properties']), set(w.FIELDS))
+        fact = schema['properties']['records']['items']['properties']['facts']['items']
+        self.assertEqual(fact['properties']['field']['enum'], list(w.FIELDS))
 
     def test_over_limit_schema_is_refused(self):
         many = {'type': 'object', 'additionalProperties': False, 'required': [],

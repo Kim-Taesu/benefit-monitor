@@ -13,6 +13,11 @@ research schema with 14 unions and 5 regex patterns was rejected with HTTP 400
 "The compiled grammar is too large" although count_tokens accepted it. Unions are
 documented as exponentially expensive, so both schemas now use zero unions and zero
 patterns; the host enforces the removed constraints before rebuilding v3 drafts.
+
+The union-free version was rejected the same way: 15 distinct fact shapes, a 25-name
+enum and repeated nested evidence still compiled too large. Research facts are now one
+generic slot shape repeated in an array; field-specific value rules are host checks.
+A paid grammar probe (claude_trial) verifies each new schema before real requests.
 """
 from copy import deepcopy
 import json
@@ -37,6 +42,10 @@ OPTIONAL_FIELDS = tuple(f for f in FIELDS if f not in REQUIRED_FIELDS)
 DATE_OR_EMPTY = '^([0-9]{4}-[0-9]{2}-[0-9]{2})?$'
 TIMESTAMP_OR_EMPTY = '^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?(Z|[+-][0-9]{2}:[0-9]{2}))?$'
 FACT_STATUSES = ['supported', 'disputed', 'unknown']
+TEXT_FIELDS = ('cost_details', 'payment_conditions', 'selection', 'application_method',
+               'cancellation', 'restrictions', 'summary', 'conditions')
+SCOPES = ('restricted', 'unrestricted', 'disputed')
+FEES = ('free', 'paid', 'conditional')
 ERROR_CODES = ['missing_input', 'policy_blocked', 'environment_unavailable', 'tool_failure', 'budget_exhausted']
 STATUSES = ['completed', 'partial', 'blocked', 'failed']
 SENTENCE = re.compile(r'.+?(?:[.!?。](?=\s|$)|$)')
@@ -131,49 +140,53 @@ def _districts():
     return [d['name'] for d in data['districts']]
 
 
-def _research_values():
-    text = _string()
-    period = _object({'start': text, 'end': text})
-    values = {field: text for field in ('cost_details', 'payment_conditions', 'selection', 'application_method',
-                                        'cancellation', 'restrictions', 'summary', 'conditions')}
-    values.update(
-        eligibility=_object({'scope': {'enum': ['restricted', 'unrestricted', 'disputed']},
-                             'required': {'type': 'array', 'items': text},
-                             'not_confirmed': {'type': 'array', 'items': text}}),
-        event_period=period,
-        application_period=period,
-        fee_status={'enum': ['free', 'paid', 'conditional']},
-        capacity={'type': 'integer'},
-        districts={'type': 'array', 'items': {'enum': _districts()}})
-    return values
-
-
 def research_wire_schema():
-    """Static, union-free schema: every fact has the same four slots.
+    """Static schema: one generic fact shape, no unions, patterns or field-specific branches.
 
-    status=unknown facts must give unknown_reason; the host discards their value and
-    evidence. Known facts must cite at least one segment. Both rules, date formats and
-    segment membership are host checks in research_from_wire, so a violation is a
-    rejection, never a silent repair.
+    Slots per field: text fields and fee_status use `text`; eligibility uses text=scope,
+    items=required and not_confirmed; periods use start/end; capacity uses number;
+    districts use items. Unused slots are empty. research_from_wire enforces all of it.
     """
-    defs = {'evidence': {'type': 'array', 'items': _object({'segment_id': _string()})}}
-    evidence = {'$ref': '#/$defs/evidence'}
-    values = _research_values()
-    facts = {}
-    for field in FIELDS:
-        status = FACT_STATUSES if field in values else ['unknown']
-        value = values.get(field, _string())
-        facts[field] = _object({'status': {'enum': status}, 'value': value, 'evidence': evidence,
-                                'unknown_reason': _string()})
+    text, texts = _string(), {'type': 'array', 'items': _string()}
+    fact = _object({'field': {'enum': list(FIELDS)}, 'status': {'enum': FACT_STATUSES}, 'text': text,
+                    'items': texts, 'not_confirmed': texts, 'start': text, 'end': text,
+                    'number': {'type': 'integer'}, 'segment_ids': texts, 'unknown_reason': text})
     record = _object({'candidate_id': _string(), 'research_status': {'enum': STATUSES},
                       'stop_reason': {'enum': ['sufficient_evidence', 'budget_exhausted', 'access_blocked',
                                                'unsupported_document', 'unresolved_conflict', 'tool_failure']},
-                      'facts': _object(facts)})
+                      'facts': {'type': 'array', 'items': fact}})
     schema = _object({'wire_version': {'enum': [RESEARCH_WIRE]}, 'status': {'enum': STATUSES},
                       'errors': _errors(), 'records': {'type': 'array', 'items': record}})
-    schema['$defs'] = defs
     check_limits(schema)
     return schema
+
+
+def _fact_value(field, fact):
+    """Field-specific value rules that used to live in the grammar."""
+    if field in TEXT_FIELDS:
+        if not fact['text'].strip():
+            raise ValueError('known text fact is empty')
+        return fact['text']
+    if field == 'fee_status':
+        if fact['text'] not in FEES:
+            raise ValueError('invalid fee_status')
+        return fact['text']
+    if field == 'eligibility':
+        if fact['text'] not in SCOPES:
+            raise ValueError('invalid eligibility scope')
+        return {'scope': fact['text'], 'required': list(fact['items']), 'not_confirmed': list(fact['not_confirmed'])}
+    if field in ('event_period', 'application_period'):
+        pattern = DATE_OR_EMPTY if field == 'event_period' else TIMESTAMP_OR_EMPTY
+        if any(not re.fullmatch(pattern, fact[key]) for key in ('start', 'end')):
+            raise ValueError('invalid period format')
+        return {key: fact[key] or None for key in ('start', 'end')}
+    if field == 'capacity':
+        return fact['number']
+    if field == 'districts':
+        if not fact['items'] or any(name not in _districts() for name in fact['items']):
+            raise ValueError('known districts must be non-empty Seoul district names')
+        return list(fact['items'])
+    raise ValueError('availability may only be unknown')
 
 
 def research_from_wire(wire, host):
@@ -183,9 +196,16 @@ def research_from_wire(wire, host):
     pieces = segment_map(host)
     records = []
     for record in wire['records']:
+        by_field = {}
+        for fact in record['facts']:
+            if fact['field'] in by_field:
+                raise ValueError('duplicate fact field')
+            by_field[fact['field']] = fact
+        if set(by_field) != set(FIELDS):
+            raise ValueError('missing fact field')
         facts = []
         for field in FIELDS:
-            fact = record['facts'][field]
+            fact = by_field[field]
             if fact['status'] == 'unknown':
                 if not fact['unknown_reason'].strip():
                     raise ValueError('unknown fact without reason')
@@ -194,21 +214,11 @@ def research_from_wire(wire, host):
                 facts.append({'field': field, 'value': None, 'status': 'unknown', 'evidence': [],
                               'unknown_reason': fact['unknown_reason'].strip()})
                 continue
-            if field == 'availability':
-                raise ValueError('availability may only be unknown')
-            if not fact['evidence']:
+            if not fact['segment_ids']:
                 raise ValueError('known fact without evidence')
-            value = deepcopy(fact['value'])
-            if field in ('event_period', 'application_period'):
-                pattern = DATE_OR_EMPTY if field == 'event_period' else TIMESTAMP_OR_EMPTY
-                if any(not re.fullmatch(pattern, value[key]) for key in ('start', 'end')):
-                    raise ValueError('invalid period format')
-                value = {key: value[key] or None for key in ('start', 'end')}
-            if field == 'districts' and not value:
-                raise ValueError('known districts must not be empty')
+            value = _fact_value(field, fact)
             evidence, seen = [], set()
-            for ref in fact['evidence']:
-                sid = ref['segment_id']
+            for sid in fact['segment_ids']:
                 if sid not in pieces:
                     raise ValueError('unknown evidence segment')
                 if sid in seen:

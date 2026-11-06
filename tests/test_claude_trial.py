@@ -324,6 +324,36 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(state['confirmed_microdollars'],0)
         self.assertGreater(state['exposure_microdollars'],0)
 
+    def test_grammar_probe_rejection_is_recorded_once_without_halting(self):
+        from benefit_monitor.wire_format import research_wire_schema
+        body={'type':'error','error':{'type':'invalid_request_error','message':'The compiled grammar is too large'}}
+        calls=[]
+        def reject(request):
+            calls.append(json.loads(request.data))
+            raise HTTPError(request.full_url,400,'bad',{},self.response(body))
+        with patch('benefit_monitor.claude_trial.network_open',side_effect=reject):
+            first=self.client().grammar_probe(research_wire_schema())
+            second=self.client().grammar_probe(research_wire_schema())
+        self.assertEqual((first['status'],first['cached'],second['status'],second['cached']),('rejected',False,'rejected',True))
+        self.assertEqual(len(calls),1);self.assertEqual(calls[0]['max_tokens'],16)
+        state=self.budget.summary()
+        self.assertFalse(state['halted']);self.assertEqual(state['request_count'],1)
+        self.assertEqual((state['requests'][0]['status'],state['requests'][0]['error_code']),('failed','http_400'))
+        self.assertIn('grammar',first['detail'])
+
+    def test_grammar_probe_pass_is_cached_and_server_errors_still_halt(self):
+        from benefit_monitor.wire_format import research_wire_schema
+        reply=self.message(content=[{'type':'text','text':'{"w'}],stop_reason='max_tokens',usage={'input_tokens':700,'output_tokens':16})
+        with patch('benefit_monitor.claude_trial.network_open',return_value=self.response(reply)) as net:
+            self.assertEqual(self.client().grammar_probe(research_wire_schema())['status'],'passed')
+            self.assertTrue(self.client().grammar_probe(research_wire_schema())['cached'])
+        self.assertEqual(net.call_count,1)
+        other={'type':'object','properties':{'a':{'type':'string'}},'required':['a'],'additionalProperties':False}
+        def overloaded(request):raise HTTPError(request.full_url,529,'busy',{},self.response({}))
+        with patch('benefit_monitor.claude_trial.network_open',side_effect=overloaded),self.assertRaises(TrialError):
+            self.client().grammar_probe(other)
+        self.assertTrue(self.budget.summary()['halted'])
+
     def test_cli_structured_wire_response_is_assembled_without_real_network(self):
         import hashlib,shutil
         from contextlib import redirect_stdout
@@ -343,8 +373,9 @@ class ClaudeTrialTests(unittest.TestCase):
         host=dict(mode='api_agent',synthetic=False,now='2026-11-05T12:00:00+09:00',output_schema_version='research-draft-v1',budget={},
                   candidates=[dict(candidate_id='candidate',source_id='seoul',document_ids=['doc'])],documents=[doc])
         path=root/'input.json';path.write_text(json.dumps(host))
-        facts={field:{'status':'unknown','unknown_reason':'조건 미확인'} for field in FIELDS}
-        facts['fee_status']={'status':'supported','value':'free','evidence':[{'segment_id':'d1s2'}]}
+        blank=dict(text='',items=[],not_confirmed=[],start='',end='',number=0,segment_ids=[])
+        facts=[dict(blank,field=field,status='unknown',unknown_reason='조건 미확인') for field in FIELDS]
+        facts[FIELDS.index('fee_status')]=dict(blank,field='fee_status',status='supported',text='free',segment_ids=['d1s2'],unknown_reason='')
         wire=dict(wire_version=RESEARCH_WIRE,status='completed',errors=[],records=[dict(candidate_id='candidate',research_status='completed',
                   stop_reason='sufficient_evidence',facts=facts)])
         response=self.message(content=[{'type':'text','text':json.dumps(wire,ensure_ascii=False)}])
@@ -354,18 +385,25 @@ class ClaudeTrialTests(unittest.TestCase):
             urls.append(request.full_url)
             sent.append(json.loads(request.data))
             if request.full_url.endswith('/count_tokens'):
-                self.assertEqual(TrialBudget(live/'budget.json').summary()['request_count'],0)
+                self.assertEqual(TrialBudget(live/'budget.json').summary()['request_count'],1)
                 return self.response({'input_tokens':812})
+            if sent[-1]['max_tokens']==16:
+                return self.response(self.message(content=[{'type':'text','text':'{"wire'}],stop_reason='max_tokens',
+                                                  usage={'input_tokens':900,'output_tokens':16}))
             return self.response(response)
         with patch('sys.argv',['trial','run','--root',str(root),'--kind','research','--input',str(path)]), \
              patch('benefit_monitor.claude_trial.__file__',str(root/'benefit_monitor/claude_trial.py')), \
              patch('benefit_monitor.claude_trial.load_key',return_value='fake-secret-for-tests'), \
              patch('benefit_monitor.claude_trial.network_open',side_effect=transport),redirect_stdout(output):
             self.assertEqual(main(),0)
-        self.assertEqual(urls,['https://api.anthropic.com/v1/messages/count_tokens','https://api.anthropic.com/v1/messages'])
-        self.assertNotIn('max_tokens',sent[0])
-        self.assertEqual(sent[0]['output_config'],sent[1]['output_config'])
-        request=sent[1]
+        self.assertEqual(urls,['https://api.anthropic.com/v1/messages','https://api.anthropic.com/v1/messages/count_tokens',
+                               'https://api.anthropic.com/v1/messages'])
+        self.assertEqual((sent[0]['max_tokens'],sent[0]['messages'][0]['content']),(16,'probe'))
+        self.assertNotIn('max_tokens',sent[1])
+        self.assertEqual(sent[0]['output_config'],sent[2]['output_config'])
+        self.assertEqual(sent[1]['output_config'],sent[2]['output_config'])
+        self.assertEqual(json.loads((live/'grammar-probes.json').read_text()).popitem()[1]['status'],'passed')
+        request=sent[2]
         self.assertIn('research-system-v1',request['system'])
         self.assertNotIn('Phase',request['system'])
         schema=request['output_config']['format']['schema']
@@ -381,7 +419,7 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(claim['evidence'][0]['quote'],'관람료는 무료입니다.')
         self.assertEqual(result['records'][0]['sources'][0]['body_hash'],doc['body_hash'])
         self.assertRegex(result['records'][0]['claims'][0]['id'],r'^claim-[0-9a-f]{24}$')
-        self.assertEqual(TrialBudget(live/'budget.json').summary()['request_count'],1)
+        self.assertEqual(TrialBudget(live/'budget.json').summary()['request_count'],2)  # grammar probe + real request
         metadata=json.loads((Path(status['output'])/'metadata.json').read_text())
         self.assertEqual(metadata['preflight']['input_tokens'],812)
         self.assertFalse(metadata['preflight']['billed'])
