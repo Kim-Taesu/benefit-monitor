@@ -7,6 +7,10 @@ from .rss import AGENT, fetch
 from ..validation import official
 from ..robots import allowed
 
+SEVEN_EVENTS = "/event/eventList.asp"
+SEVEN_VIEW = re.compile(r"javascript:\s*fncGoView\('(\d+)',\s*'\d+'\);?")
+PERIOD_FIRST = re.compile(r"(\d{4}-\d\d-\d\d ~ \d{4}-\d\d-\d\d)\s+(.+)")
+
 class ArticleLinks(HTMLParser):
     def __init__(self, route, domains, pattern, keywords):
         super().__init__()
@@ -20,6 +24,9 @@ class ArticleLinks(HTMLParser):
             self.href, self.parts = dict(attrs).get("href"), []
             self.link_title = dict(attrs).get("title", "")
             self.title_parts, self.title_tag = [], None
+        # Seven-Eleven's event list puts the event name only in the thumbnail's alt text.
+        if tag == "img" and self.href and SEVEN_VIEW.fullmatch(self.href):
+            self.link_title = dict(attrs).get("alt", "")
         if self.href and (tag in ("h1", "h2", "h3", "strong") or set(dict(attrs).get("class", "").split()) & {"tit", "item-title", "title"}):
             self.title_tag = tag
     def handle_data(self, data):
@@ -39,6 +46,11 @@ class ArticleLinks(HTMLParser):
         tab = re.fullmatch(r"javascript:\s*fncTab\('([23])'\);?", self.href)
         if tab and urlsplit(self.route).hostname == "www.7-eleven.co.kr" and urlsplit(self.route).path == "/product/cardInfo.asp":
             self.href = "/product/cardInfo.asp?gbn=" + tab.group(1)
+        # Seven-Eleven event details open only by form POST, so each event keeps the list URL
+        # with its sequence number as a fragment. The page is never fetched by that fragment.
+        view = SEVEN_VIEW.fullmatch(self.href)
+        if view and urlsplit(self.route).hostname == "www.7-eleven.co.kr" and urlsplit(self.route).path == SEVEN_EVENTS:
+            self.href = SEVEN_EVENTS + "#seqNo=" + view.group(1)
         url = urljoin(self.route, self.href)
         parts = urlsplit(url)
         if parts.hostname == "www.7-eleven.co.kr" and parts.path == "/product/cardInfo.asp":
@@ -56,8 +68,13 @@ class ArticleLinks(HTMLParser):
                 self.title_parts = [self.link_title]
         text = " ".join(" ".join(self.title_parts or self.parts).split()) or self.link_title
         title = re.sub(r"^\d{1,2}\s+", "", text)
+        # emart24 event cards start with the listed period; keep it, after the name.
+        period = PERIOD_FIRST.fullmatch(title) if parts.hostname in ("emart24.co.kr", "www.emart24.co.kr") else None
+        if period:
+            title = f"{period.group(2)} ({period.group(1)})"
+        # "*" is used only by pages that list nothing but ongoing events.
         if (title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path)
-                and any(word in title for word in self.keywords)):
+                and (("*" in self.keywords and url != self.route) or any(word in title for word in self.keywords))):
             self.items.setdefault(url, title[:240])
         self.href = None
 

@@ -87,6 +87,19 @@
         "www.emart24.co.kr"
       ]
     },
+    "emart24_events": {
+      "name": "이마트24 진행 중 이벤트",
+      "domains": [
+        "emart24.co.kr",
+        "www.emart24.co.kr"
+      ]
+    },
+    "seven_events": {
+      "name": "세븐일레븐 진행 중 이벤트",
+      "domains": [
+        "www.7-eleven.co.kr"
+      ]
+    },
     "sh": {
       "name": "SH 주택 공고",
       "domains": [
