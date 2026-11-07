@@ -263,6 +263,50 @@ class AutoPublishTests(unittest.TestCase):
         self.assertEqual(result, {'publish': False, 'reasons': ['contract'], 'record': None})
 
 
+    def test_published_at_year_must_be_in_the_quote(self):
+        body = O1.replace('게시일 2026-10-01.', '게시일 10.01.')
+        result = self.decide(host(body, O2), ongoing_facts())
+        self.assertFalse(result['publish'])
+        self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_ongoing_hidden_ending_phrases_hold(self):
+        phrases = ['신청은 11월 30일 오후 6시까지 받습니다.', '신청은 11월 30일 18시까지 받습니다.',
+                   '신청은 30일까지 받습니다.', '신청은 11월 말까지 받습니다.', '기간: 11.1 - 11.30',
+                   '기간: 11.1 – 11.30', '기간: 11.1 — 11.30', '기간: 11월 1일 ~ 30일',
+                   '신청은 11월 30일까지 받습니다.', '기간: ~ 11.30']
+        for phrase in phrases:
+            with self.subTest(phrase=phrase):
+                result = self.decide(host(O1 + '\n' + phrase, O2), ongoing_facts())
+                self.assertFalse(result['publish'])
+                self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_opening_hours_are_not_an_ending(self):
+        from benefit_monitor.auto_publish import ENDING_DATE
+        self.assertIsNone(ENDING_DATE.search('운영 시간 09:00~18:00'))
+        self.assertIsNone(ENDING_DATE.search(O1 + O2))
+        result = self.decide(host(O1 + '\n운영 시간 09:00~18:00', O2), ongoing_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+
+    def test_period_item_with_year_less_application_deadline_holds(self):
+        result = self.decide(host(D1 + '\n신청은 11월 10일까지 받습니다.', D2), period_facts())
+        self.assertFalse(result['publish'])
+        self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_public_fee_mapping(self):
+        from benefit_monitor.auto_publish import public_fee
+        self.assertEqual([public_fee(v) for v in ('free', 'paid', 'mixed', 'conditional', 'unknown', None)],
+                         ['free', 'paid', 'mixed', 'mixed', 'unknown', 'unknown'])
+        facts = period_facts(fee_status=sup('conditional', 'd1s3', 'd2s3'), cost_details=sup('관람료 안내', 'd1s3'))
+        result = self.decide(host(D1, D2), facts)
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual(result['record']['fee_status'], 'mixed')
+
+    def test_year_strip_respects_digit_boundaries(self):
+        from benefit_monitor.auto_publish import title_key
+        self.assertEqual(title_key('제12020회 행사', ''), '제12020회행사|')
+        self.assertEqual(title_key('2026년 행사', ''), '행사|')
+
+
 class AutoPublishIntegrationTests(unittest.TestCase):
     """review_candidates stores the gate result next to the private review queue."""
 
@@ -308,6 +352,21 @@ class AutoPublishIntegrationTests(unittest.TestCase):
         decisions = json.loads((self.root/'cache/ai_publish/decisions.json').read_text())
         self.assertFalse(decisions[cid]['publish'])
         self.assertIn('taken_down', decisions[cid]['reasons'])
+
+    def test_corrupt_takedowns_or_decide_crash_hold_without_crashing(self):
+        from benefit_monitor import ai_review
+        path = self.root/'cache/ai_publish/takedowns.json'; path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text('{not json')
+        with patch('benefit_monitor.ai_review.load_run', return_value=(draft_for(self.base, **period_facts()), self.base)):
+            self.assertEqual(ai_review.auto_decide(self.root, 'f' * 64, NOW)['reasons'], ['contract'])
+            path.write_text(json.dumps(['junk', 3, {'candidate_id': 'zz', 'title_key': ''}]))
+            self.assertTrue(ai_review.auto_decide(self.root, 'f' * 64, NOW)['publish'])
+            with patch('benefit_monitor.auto_publish.decide', side_effect=RuntimeError('boom')):
+                self.assertEqual(ai_review.auto_decide(self.root, 'f' * 64, NOW)['reasons'], ['contract'])
+        path.write_text('{not json')
+        cid, result = self.run_with(self.base, period_facts())
+        decisions = json.loads((self.root/'cache/ai_publish/decisions.json').read_text())
+        self.assertEqual(decisions[cid]['reasons'], ['contract'])
 
     def test_missing_run_output_is_held_as_contract(self):
         from benefit_monitor import ai_review

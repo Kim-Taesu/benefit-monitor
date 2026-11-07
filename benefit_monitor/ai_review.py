@@ -51,11 +51,16 @@ def load_run(run_id):
 
 
 def auto_decide(root,run_id,now):
-    """Deterministic gate; any unreadable run is held as a contract failure."""
-    takedowns=load(project_path(root,'cache/ai_publish/takedowns.json'),[])
-    try:draft,host=load_run(run_id)
-    except (OSError,ValueError,TypeError):return {'publish':False,'reasons':['contract'],'record':None}
-    return auto_publish.decide(draft,host,now,takedowns if isinstance(takedowns,list) else [])
+    """Deterministic gate; any unreadable run, bad takedown file or gate error is held as a contract failure."""
+    hold={'publish':False,'reasons':['contract'],'record':None}
+    try:
+        takedowns=load(project_path(root,'cache/ai_publish/takedowns.json'),[])
+        if not isinstance(takedowns,list):return hold
+        draft,host=load_run(run_id)
+        return auto_publish.decide(draft,host,now,[t for t in takedowns if isinstance(t,dict)])
+    except Exception:
+        # Never crash after a paid request; the private review row still exists.
+        return hold
 
 
 def _store_decision(root,cid,decision,row,now):

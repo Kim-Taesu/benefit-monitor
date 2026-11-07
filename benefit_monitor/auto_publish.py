@@ -15,24 +15,32 @@ KST = ZoneInfo('Asia/Seoul')
 PROJECT = Path(__file__).resolve().parents[1]
 PAST_SIGNAL = re.compile(r'종료|마감되었|마감됨|결과\s*발표|지난\s*(?:차수|행사)|\d{4}년\s*(?:행사|차)\s*(?:종료|결과)')
 # Ongoing items must not hide an ending the model did not report (e.g. year-less "11월 30일까지").
-ENDING_DATE = re.compile(r'(?:\d{1,2}\s*월\s*\d{1,2}\s*일|\d{1,2}\s*[./-]\s*\d{1,2}\.?)\s*(?:\([^)]{1,4}\))?\s*'
-                         r'(?:\d{1,2}:\d{2}\s*)?(?:까지|마감)'
-                         r'|[~～∼]\s*(?:\d{4}\s*[./년-]\s*)?\d{1,2}\s*[./월-]\s*\d{1,2}')
+_DATE = (r'(?<![\d./-])(?:(?:\d{4}\s*[./년-]\s*)?\d{1,2}\s*[./월-]\s*\d{1,2}\s*일?\.?'
+         r'|\d{1,2}\s*월\s*말|\d{1,2}\s*일)')
+_TIME = r'(?:\s*\([^)]{1,4}\))?(?:\s*(?:오전|오후)?\s*\d{1,2}\s*(?:시(?:\s*\d{1,2}\s*분)?|:\d{2}))?'
+# Deadlines ("…까지/마감") and date ranges ("11.1 - 11.30", "11월 1일 ~ 30일", "~ 11.30"); never "09:00~18:00".
+ENDING_DATE = re.compile(_DATE + _TIME + r'\s*(?:까지|마감)'
+                         r'|(?:' + _DATE + _TIME + r')?\s*[-–—~～∼]\s*' + _DATE)
+FOUR_DIGIT_YEAR = re.compile(r'(?<!\d)\d{4}(?!\d)')
 CORE = ('summary', 'conditions', 'fee_status', 'eligibility')
 COST = ('cost_details', 'payment_conditions')
 PAID = ('paid', 'mixed', 'conditional')
-# Public Benefit fee values; 'conditional' is not one (review_desk also leaves it unknown).
-PUBLIC_FEE = {'free': 'free', 'paid': 'paid', 'mixed': 'mixed'}
+# Public Benefit fee values; a conditional fee is shown as mixed (ruling R11).
+PUBLIC_FEE = {'free': 'free', 'paid': 'paid', 'mixed': 'mixed', 'conditional': 'mixed'}
 ONGOING_DAYS = 90
 PUBLISHED_MAX_DAYS = 365
 FRESH_HOURS = 30
 BRACKETS = re.compile(r'[()\[\]{}<>（）［］｛｝〈〉《》「」『』【】〔〕]')
-YEAR = re.compile(r'(?:19|20)\d{2}\s*년?')
+YEAR = re.compile(r'(?<!\d)(?:19|20)\d{2}(?!\d)\s*년?')
 
 
 def _norm(text):
     text = unicodedata.normalize('NFKC', text or '').lower()
     return re.sub(r'\s+', '', BRACKETS.sub('', YEAR.sub('', text)))
+
+
+def public_fee(value):
+    return PUBLIC_FEE.get(value, 'unknown')
 
 
 def title_key(title, organizer):
@@ -42,7 +50,8 @@ def title_key(title, organizer):
 
 def takedown_matches(item, takedowns):
     cid, key = item.get('candidate_id'), item.get('title_key')
-    return any((cid and t.get('candidate_id') == cid) or (key and t.get('title_key') == key) for t in takedowns)
+    return any(isinstance(t, dict) and ((cid and t.get('candidate_id') == cid) or (key and t.get('title_key') == key))
+               for t in takedowns)
 
 
 def _organizer_names():
@@ -123,6 +132,9 @@ def decide(draft, host, now, takedowns):
 
     published = supported('published_at')
     published_day = date.fromisoformat(published) if published else None
+    # Like period endings, the posting year must be written in the cited official text.
+    published_stated = published_day is not None and any(
+        str(published_day.year) in e['quote'] for e in facts['published_at']['evidence'])
     host_published = [date.fromisoformat(str(d['published_at'])[:10]) for d in host['documents'] if d.get('published_at')]
     for day in ([published_day] if published_day else []) + host_published:
         if day > today or (today - day).days > PUBLISHED_MAX_DAYS:
@@ -131,11 +143,15 @@ def decide(draft, host, now, takedowns):
     operating = evidence('summary', 'conditions')
     if ends:
         kind = 'fixed'
+        # An unreported year-less application deadline could already have passed.
+        if supported('application_period') is None and any(
+                not FOUR_DIGIT_YEAR.search(m.group()) for d in host['documents'] for m in ENDING_DATE.finditer(d['body'])):
+            period_ok = False
     else:
         kind = 'ongoing'
         two_docs = len(hashes(operating)) >= 2
         hidden_end = any(ENDING_DATE.search(d['body']) for d in host['documents'])
-        recent = published_day is not None and today - timedelta(days=ONGOING_DAYS) <= published_day <= today
+        recent = published_stated and today - timedelta(days=ONGOING_DAYS) <= published_day <= today
         period_ok = recent and two_docs and not hidden_end
         single_ok = two_docs
     if not period_ok:
@@ -187,7 +203,7 @@ def decide(draft, host, now, takedowns):
     record = dict(
         schema_version=1, candidate_id=candidate['candidate_id'], source=candidate['source_id'],
         url=first_doc.get('final_url') or first_doc['requested_url'], title=candidate.get('title', ''),
-        summary=supported('summary'), conditions=conditions, fee_status=PUBLIC_FEE.get(fee, 'unknown'),
+        summary=supported('summary'), conditions=conditions, fee_status=public_fee(fee),
         districts=list(supported('districts') or []), valid_from=valid_from, valid_until=valid_until,
         deadline_at=deadline_at, validity_kind=kind, labels=labels, payment_terms={},
         review=dict(kind='ai_auto', documents=documents, document_count=len({d['body_hash'] for d in documents}),
