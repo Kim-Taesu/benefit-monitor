@@ -7,6 +7,7 @@ import unittest
 from unittest.mock import patch
 
 from benefit_monitor import wire_format as w
+from benefit_monitor.ai_contract import validate
 from benefit_monitor.claude_trial import ClaudeClient, evaluate_draft
 from benefit_monitor.trial_budget import TrialBudget
 
@@ -141,6 +142,14 @@ class ResearchWireTests(unittest.TestCase):
         unknown = w.research_from_wire(wire(), host())
         self.assertNotIn('published_at', {f['field'] for f in unknown['records'][0]['facts']})
 
+    def test_published_at_end_slot_is_rejected(self):
+        value = wire(published_at={'status': 'supported', 'value': '2026-10-30', 'evidence': [{'segment_id': 'd1s1'}]})
+        for fact in value['records'][0]['facts']:
+            if fact['field'] == 'published_at':
+                fact['end'] = '2026-10-31'
+        with self.assertRaisesRegex(ValueError, 'invalid period format'):
+            w.research_from_wire(value, host())
+
     def test_multi_document_segments_map_to_their_document(self):
         base = host()
         second = dict(base['documents'][0], id='doc-b', body='게시일 2026-10-30. 참가비는 무료입니다.')
@@ -171,9 +180,14 @@ class ResearchWireTests(unittest.TestCase):
         draft = w.research_from_wire(wire(**facts), base)
         report = evaluate_draft(draft, base, 'research')[1]
         self.assertTrue(report['structural_valid'], report)
-        bad = json.loads(json.dumps(draft))
-        bad['records'][0]['facts'][0]['evidence'] = [{'source_ref': 'doc-z', 'quote': 'x', 'locator': None}]
-        self.assertFalse(evaluate_draft(bad, base, 'research')[1]['valid'])
+        full = evaluate_draft(draft, base, 'research')[0]
+        foreign = dict(base['documents'][0], id='doc-z')
+        base['documents'].append(foreign)
+        source = {k: foreign[k] for k in full['records'][0]['sources'][0]}
+        full['records'][0]['sources'].append(source)
+        result = validate(full, base, 'research')
+        self.assertFalse(result['valid'])
+        self.assertIn('document belongs to another candidate', result['errors'])
 
     def test_unknown_fact_value_and_evidence_are_discarded(self):
         draft = w.research_from_wire(wire(capacity={'status': 'unknown', 'value': 99, 'evidence': [{'segment_id': 'd1s1'}],

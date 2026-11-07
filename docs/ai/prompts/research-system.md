@@ -37,7 +37,7 @@
 | cancellation | 취소, 노쇼, 지각 조건 |
 | restrictions | 그 밖의 필수 제한 |
 | availability | 항상 unknown. 남은 자리는 실시간 확인이 필요하다 |
-| published_at | 원문에 적힌 게시일 또는 수정일, `YYYY-MM-DD`를 `start`에 쓴다. 근거 조각이 필요하다. 원문에 게시일·수정일이 없으면 unknown |
+| published_at | 원문에 적힌 게시일 또는 수정일, `YYYY-MM-DD`를 `start`에 쓴다. 근거 조각이 필요하다. 원문에 게시일·수정일이 없거나 연도가 없으면(예: "10월 30일") unknown이고 unknown_reason에 원문 날짜를 적는다. 연도 없는 값을 쓰면 호스트가 응답 전체를 거부한다 |
 | summary | 혜택 한 문장 요약 |
 | conditions | 이용자가 알아야 할 핵심 조건 묶음 |
 | districts | 혜택이 적용되는 서울 자치구. 주최 기관 주소만으로 정하지 않는다 |
