@@ -307,6 +307,33 @@ class AutoPublishTests(unittest.TestCase):
                 result = self.decide(host(D1 + '\n' + phrase, D2), period_facts())
                 self.assertTrue(result['publish'], result['reasons'])
 
+    def test_body_deadline_without_application_period_lowers_the_display_cutoff(self):
+        # A future year-dated deadline in the body hides the item after it, not after the event end.
+        result = self.decide(host(D1 + '\n신청 2026년 11월 20일까지 받습니다.', D2), period_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual((result['record']['valid_until'], result['record']['deadline_at']), ('2026-11-20', None))
+        result = self.decide(host(D1 + '\n신청 2026년 11월 20일까지, 접수 2026.11.1 ~ 11.15', D2), period_facts())
+        self.assertEqual(result['record']['valid_until'], '2026-11-15')
+        # A stated time on the deadline day keeps that time (KST).
+        result = self.decide(host(D1 + '\n신청 2026년 11월 8일(일) 오후 6시까지 받습니다.', D2), period_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual((result['record']['valid_until'], result['record']['deadline_at']),
+                         ('2026-11-08', '2026-11-08T18:00:00+09:00'))
+        from benefit_monitor.validation import validate
+        sources = {s['id']: s for s in json.loads((ROOT/'sources.yaml').read_text())['sources']}
+        record = result['record']
+        validate({k: record[k] for k in ('source', 'url', 'title', 'summary', 'conditions', 'districts', 'valid_from',
+                                         'valid_until', 'deadline_at', 'validity_kind', 'fee_status', 'payment_terms',
+                                         'labels')}, sources, NOW)
+
+    def test_same_day_body_deadline_past_or_with_an_unreadable_time_holds(self):
+        for phrase in ('신청 2026년 11월 8일 오전 10시까지 받습니다.', '신청 2026년 11월 8일 11:30 마감',
+                       '신청 2026년 11월 8일 25시까지 받습니다.'):
+            with self.subTest(phrase=phrase):
+                result = self.decide(host(D1 + '\n' + phrase, D2), period_facts())
+                self.assertFalse(result['publish'])
+                self.assertIn('no_current_evidence', result['reasons'])
+
     def test_public_fee_mapping(self):
         from benefit_monitor.auto_publish import public_fee
         self.assertEqual([public_fee(v) for v in ('free', 'paid', 'mixed', 'conditional', 'unknown', None)],
@@ -382,6 +409,44 @@ class AutoPublishIntegrationTests(unittest.TestCase):
         cid, result = self.run_with(self.base, period_facts())
         decisions = json.loads((self.root/'cache/ai_publish/decisions.json').read_text())
         self.assertEqual(decisions[cid]['reasons'], ['contract'])
+
+    def test_rereading_an_approved_page_that_changed_or_is_gone_withdraws_whatever_the_model_says(self):
+        import io
+        from urllib.error import HTTPError
+        from benefit_monitor import ai_review
+        candidate = {'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1', 'title': '서울 미술 전시', 'summary': '검토 대기'}
+        cid = ai_review.Benefit(**candidate).id
+        base = json.loads(json.dumps(self.base)); base['candidates'][0]['candidate_id'] = cid
+        draft = draft_for(base, **period_facts())
+        for record in draft['records']:
+            record['candidate_id'] = cid
+        published = __import__('benefit_monitor.auto_publish', fromlist=['decide']).decide(draft, base, NOW, [])['record']
+        changed = dict(base['documents'][0], body=D1 + '\n신청은 마감되었습니다.', body_hash='9' * 64, links=[])
+
+        def gone(c, **k):
+            raise HTTPError(c['url'], 404, 'gone', {}, io.BytesIO())
+        for read, model, reason in ((lambda c, **k: changed, 'rejected_draft', 'body_changed'),
+                                    (lambda c, **k: changed, 'stopped_before_result', 'body_changed'),
+                                    (lambda c, **k: changed, 'credit_exhausted', 'body_changed'),
+                                    (gone, None, 'source_gone')):
+            with self.subTest(model=model, reason=reason):
+                path = self.root/'cache/ai_publish/approved.json'; path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(json.dumps({cid: dict(published, decided_at=NOW.isoformat())}))
+                (self.root/'cache/ai_review/state.json').unlink(missing_ok=True)
+                with patch.object(ai_review.OfficialReader, 'read', side_effect=read), \
+                        patch('benefit_monitor.ai_review._related_docs', return_value=[]), \
+                        patch('benefit_monitor.ai_review.invoke', return_value={'status': model, 'run_id': None}):
+                    ai_review.review_candidates(self.root, [candidate], NOW, 1, True)
+                record = json.loads(path.read_text())[cid]
+                self.assertEqual((record.get('status'), record.get('withdrawn_reason')), ('withdrawn', reason))
+        # An unchanged page is left as it is.
+        path.write_text(json.dumps({cid: dict(published, decided_at=NOW.isoformat())}))
+        (self.root/'cache/ai_review/state.json').unlink(missing_ok=True)
+        with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: dict(base['documents'][0], links=[])), \
+                patch('benefit_monitor.ai_review._related_docs', return_value=[]), \
+                patch('benefit_monitor.ai_review.invoke', return_value={'status': 'rejected_draft', 'run_id': None}):
+            ai_review.review_candidates(self.root, [candidate], NOW, 1, True)
+        self.assertNotIn('status', json.loads(path.read_text())[cid])
 
     def test_missing_run_output_is_held_as_contract(self):
         from benefit_monitor import ai_review

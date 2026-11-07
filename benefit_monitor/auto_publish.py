@@ -4,7 +4,7 @@ Every rule must pass; any doubt holds the item in the private review queue. Mode
 (unknown_reason, summaries) never decide anything here: only claim status, structured values,
 host document bodies/hashes/timestamps and the current time do.
 """
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 import json
 from pathlib import Path
 import re
@@ -48,6 +48,41 @@ def phrase_end(text):
         except ValueError:
             return None
     return end
+TIME_OF_DAY = re.compile(r'(?:(?P<half>오전|오후)\s*)?(?P<h>\d{1,2})\s*(?:시(?:\s*(?P<m>\d{1,2})\s*분)?|:(?P<mm>\d{2}))')
+
+
+def phrase_deadline(text):
+    """(last date, KST deadline or None) of an ending phrase; (None, None) when it cannot be read.
+
+    A clock time written after the last date ("2026년 11월 8일 18시까지") becomes the deadline;
+    digits there that do not read as a time make the whole phrase unreadable.
+    """
+    end = phrase_end(text)
+    if end is None:
+        return None, None
+    last = list(DATE_TOKEN.finditer(text))[-1]
+    rest = re.sub(r'\([^)]{1,4}\)', '', text[last.end():])
+    if not re.search(r'\d', rest):
+        return end, None
+    clock = TIME_OF_DAY.search(rest)
+    if clock is None or re.search(r'\d', rest[:clock.start()] + rest[clock.end():]):
+        return None, None
+    hour, minute = int(clock['h']), int(clock['m'] or clock['mm'] or 0)
+    if clock['half'] == '오후' and hour < 12:
+        hour += 12
+    elif clock['half'] == '오전' and hour == 12:
+        hour = 0
+    if (hour, minute) == (24, 0):
+        return end, None  # The end of that day.
+    if hour > 23 or minute > 59:
+        return None, None
+    return end, datetime.combine(end, time(hour, minute), KST)
+
+
+def _cutoff(day, moment):
+    return moment or datetime.combine(day + timedelta(days=1), time.min, KST)
+
+
 CORE = ('summary', 'conditions', 'fee_status', 'eligibility')
 COST = ('cost_details', 'payment_conditions')
 PAID = ('paid', 'mixed', 'conditional')
@@ -167,15 +202,19 @@ def decide(draft, host, now, takedowns):
             year_trap = True
 
     operating = evidence('summary', 'conditions')
+    body_ends = []
     if ends:
         kind = 'fixed'
         # An unreported application deadline could already have passed. Year-less phrases hold.
-        # Year-dated ones are read: a past or unreadable one holds (no_current_evidence).
+        # Year-dated ones are read: a past or unreadable one holds (no_current_evidence); a current
+        # one is kept so the item is hidden after the earliest of them (and after its time, if any).
         if supported('application_period') is None:
             for m in (m for d in host['documents'] for m in ENDING_DATE.finditer(d['body'])):
-                stated_end = phrase_end(m.group()) if FOUR_DIGIT_YEAR.search(m.group()) else None
-                if stated_end is None or stated_end < today:
+                stated_end, moment = phrase_deadline(m.group()) if FOUR_DIGIT_YEAR.search(m.group()) else (None, None)
+                if stated_end is None or stated_end < today or (moment is not None and moment <= now):
                     period_ok = False
+                else:
+                    body_ends.append((stated_end, moment))
     else:
         kind = 'ongoing'
         two_docs = len(hashes(operating)) >= 2
@@ -215,6 +254,11 @@ def decide(draft, host, now, takedowns):
         valid_until = first['day'].isoformat()
         if first['field'] == 'application_period' and first['moment']:
             deadline_at = first['raw']
+        if body_ends:
+            current = _cutoff(first['day'], _end_point(deadline_at)[1] if deadline_at else None)
+            day, moment = min(body_ends, key=lambda e: _cutoff(*e))
+            if _cutoff(day, moment) < current:
+                valid_until, deadline_at = day.isoformat(), moment.isoformat() if moment else None
     event = supported('event_period') or {}
     valid_from = event.get('start')
     if valid_from and valid_until and valid_from > valid_until:

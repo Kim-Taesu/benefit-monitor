@@ -93,6 +93,28 @@ def _store_decision(root,cid,decision,row,now):
     save(approved_path,approved)
 
 
+def _withdraw_if_changed(root,cid,body_hash,now):
+    """An auto-published page whose original body changed or is gone is withdrawn at once,
+    whatever the model then returns (rejected, stopped or credit exhausted). Never on doubt about the file."""
+    path=project_path(root,auto_release.APPROVED)
+    approved,ok=auto_release._read(path)
+    if not ok or not isinstance(approved,dict) or not isinstance(approved.get(cid),dict):return
+    review=approved[cid].get('review')
+    if not isinstance(review,dict):return
+    baseline=review.get('original_body_hash') or next(
+        (d.get('body_hash') for d in review.get('documents',[]) if isinstance(d,dict) and d.get('url')==approved[cid].get('url')),None)
+    if body_hash is not None and body_hash==baseline:return
+    if auto_release.mark_checked(approved,cid,body_hash,now)!='ok':save(path,approved)
+
+
+def _gone(error):
+    from urllib.error import HTTPError
+    from .operations import GONE_CODES
+    if not isinstance(error,HTTPError):return False
+    error.close()
+    return error.code in GONE_CODES and not str(error.url or error.filename or '').endswith('/robots.txt')
+
+
 def _related_docs(reader,cid,candidate,doc,peers,failures):
     domains=allowed_domains(reader.sources)
     docs,seen=[],{doc['body_hash']}
@@ -130,7 +152,9 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             try:doc=reader.read(candidate)
             except Exception as error:
                 result['failures'].append({'candidate_id':cid,'code':'official_fetch_failed','error_type':type(error).__name__})
+                if _gone(error):_withdraw_if_changed(root,cid,None,now)
                 continue
+            _withdraw_if_changed(root,cid,doc['body_hash'],now)
             peers=[c for pid,c in unique.items() if pid!=cid]
             domains=allowed_domains(reader.sources)
             unverified=[u for u in doc.get('links') or [] if not official(u,domains)][:10]
