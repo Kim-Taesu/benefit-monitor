@@ -58,3 +58,11 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 ## 출처 정의 관리 — 2026-11-06
 
 출처 설정은 `sources/<id>.json`에서 고친다. `sources.yaml`은 `scripts/generate_sources.py`가 만드는 생성물이라 직접 고치지 않는다. runbook의 접근 정보는 실제 확인한 것만 적고 모르면 `unknown`으로 둔다. 자세한 규칙은 [docs/sources.md](docs/sources.md). 일일 수집 뒤 `Source health` workflow가 출처별 `monitoring.expect`와 실제 상태를 비교해 `working` 출처가 실패하면 CI를 실패로 만든다. 알려진 고장은 `known_failing`으로 이유와 날짜를 남기고, 고쳐지면 `working`으로 돌린다.
+
+## 승인된 AI 품질 보강 — 2026-11-07
+
+사용자가 2026-11-07 결과 피드백(조사 eligibility 형식 거절, 주제 분류가 고정 근거를 그대로 옮김)에 "좋다. 진행."으로 승인했다. 비용 한도·요청 수·만료·원장은 바꾸지 않는다.
+
+- 조사 프롬프트에 eligibility scope 허용값(`restricted`·`unrestricted`·`disputed`)과 "결제해야 받는 할인·적립·페이백은 `paid`" 규칙을 명시한다. 스키마는 바꾸지 않는다.
+- 주제 근거에 `public/topic-basis.json`의 `keyword_policy.approved`로 켜는 고정 단어 규칙(`benefit_monitor/public_topics.py`)을 더한다. 규칙은 이미 공개 승인된 항목의 제목·요약·대상 표기만 보고 주제 후보만 추가한다. 새 사실을 만들거나 공개 승인하지 않는다. AI는 후보 안에서만 카드를 고른다.
+- 이 변경에 맞춰 `public/topic-publication.json`의 `policy_sha256`을 다시 계산한다. 주제 스키마가 바뀌므로 기존 승인대로 문법 시험 요청이 한 번 나갈 수 있다.
