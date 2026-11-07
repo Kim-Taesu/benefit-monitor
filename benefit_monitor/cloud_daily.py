@@ -18,7 +18,7 @@ from .mirror import run as mirror,restore as restore_mirror
 from .public_snapshot import validate
 from .wire_format import research_wire_schema
 from .store import load,save
-from .trial_budget import TrialBudget,CAP,MAX_REQUESTS,MAX_RUN_DAYS
+from .trial_budget import TrialBudget
 from scripts.install_age import safe_path
 
 
@@ -119,11 +119,9 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     if not check_only or probe_only:
         if not preflight.control['active']:return {'status':'handoff_required'}
         control=preflight.control;budget=control['budget']
-        stop=('trial_expired' if now>=datetime.fromisoformat(control['expires_at']) else
-              'trial_run_limit' if len(control['days'])>=MAX_RUN_DAYS else
-              'trial_budget_limit' if len(budget['requests'])>=MAX_REQUESTS or TrialBudget._exposure(budget)>=CAP else None)
-        if stop:
-            disable_workflow(store);return {'status':stop}
+        # Monthly cap reached: stop for this run only. The workflow stays enabled so the next
+        # Seoul calendar month resumes by itself; only the ledger decides.
+        if TrialBudget.exhausted(budget,now):return {'status':'trial_budget_limit'}
     session=CloudSession.restore(root,store)
     key=configured_key(root)
     if hashlib.sha256(key.encode()).hexdigest()!=session.control['api_key_sha256']:
@@ -146,7 +144,8 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
                        'code_sha':os.environ.get('GITHUB_SHA',''),'run_id':os.environ.get('GITHUB_RUN_ID','')}
         session._commit(data)  # Confirms contents:write without day or provider admission.
         return dict(summary,status='check_passed',limit_revision_applied=revised,expires_at=data['expires_at'],
-                    max_requests=data['budget']['max_requests'])
+                    cap_kind=data['budget'].get('cap_kind'),
+                    month_exposure_microdollars=TrialBudget.month_exposure(data['budget'],now))
     if not session.control['active']:return {'status':'handoff_required'}
     if now.hour<6:return {'status':'not_due'}
     retried=False

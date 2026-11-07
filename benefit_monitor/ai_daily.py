@@ -8,7 +8,6 @@ from .cli import run as collect
 from .official_reader import project_path
 from .publish import run as publish_briefing, prepare_import
 from .store import load,save,lock
-from .trial_budget import MAX_RUN_DAYS
 from .topic_refresh import refresh
 from .remote_delivery import deliver,preceding_refresh
 
@@ -19,10 +18,6 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
     if now.tzinfo is None:raise ValueError('timezone required')
     now=now.astimezone(ZoneInfo('Asia/Seoul'))
     policy=load(project_path(root,'ai-automation.json'),{'enabled':False})
-    if policy.get('trial_expires_at') is not None:
-        expiry=datetime.fromisoformat(policy['trial_expires_at'])
-        if expiry.tzinfo is None:raise ValueError('trial expiry requires timezone')
-        if now>=expiry:return {'status':'trial_expired'}
     if scheduled:
         if policy.get('enabled') is not True:return {'status':'disabled'}
         hour,minute=policy.get('hour_kst',6),policy.get('minute_kst',0)
@@ -48,8 +43,6 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
         if day in state['days']:
             previous=state['days'][day]
             return {'status':'already_completed_today' if previous['status']=='completed' else 'previous_attempt_requires_review','day':day}
-        if len(state['days'])>=MAX_RUN_DAYS:
-            return {'status':'trial_run_limit'}
         if scheduled and publish and policy.get('remote_delivery_approved') is True:
             previous_refresh=preceding_refresh(root,now)
             if previous_refresh['status']!='ready':return previous_refresh

@@ -14,19 +14,21 @@ from .age_state import AgeState,pack_runtime,restore_runtime
 from .research_probe import NoRedirect
 from .store import save,load
 from .briefing import SEOUL
-from .trial_budget import TrialBudget,secure_open,CAP,MAX_REQUESTS,MAX_RUN_DAYS
+from .trial_budget import TrialBudget,secure_open,MONTHLY_CAP
 from scripts.install_age import safe_path
 
 REPOSITORY='Kim-Taesu/benefit-monitor'
 BRANCH='briefing-data'
-MAX_CIPHER=1024*1024
-MAX_RESPONSE=2*1024*1024
+# The ledger grows without a request/day limit now; sized for the 8 MiB ledger file cap.
+MAX_CIPHER=8*1024*1024
+MAX_RESPONSE=16*1024*1024
 FILES={'control':'ai-control.age','runtime':'ai-runtime.age'}
 CONTEXT='.tools/cloud-state/context.json'
 BUDGET='.tools/claude-trial/live/budget.json'
-# Activation 2026-11-05 13:09:12 KST + 14 days, per the 2026-11-05 limit revision.
+# Upper bound for pre-revision (limit_revision < 2) controls only; revision 2 has no expiry.
 MAX_EXPIRY=datetime.fromisoformat('2026-11-19T13:09:12.753468+09:00')
-LIMIT_REVISION=1
+# 2: monthly $15 cap, no request/day limit, no expiry (user-approved 2026-11-07).
+LIMIT_REVISION=2
 
 
 def requests_digest(rows):
@@ -49,15 +51,22 @@ def validate_control(root,data):
                 or type(data['generation'])is not int or not 0<=data['generation']<=1_000_000
                 or data['recipient']!=policy['recipient']
                 or not re.fullmatch('[0-9a-f]{64}',data['api_key_sha256'])):raise ValueError
-        expiry=datetime.fromisoformat(data['expires_at']);bound=datetime.fromisoformat(policy['expires_at'])
-        if expiry.tzinfo is None or bound.tzinfo is None or not expiry<=bound<=MAX_EXPIRY:raise ValueError
+        revision=data.get('limit_revision',0)
+        if data['expires_at'] is not None:
+            expiry=datetime.fromisoformat(data['expires_at'])
+            if expiry.tzinfo is None:raise ValueError
+            if policy['expires_at'] is not None:
+                bound=datetime.fromisoformat(policy['expires_at'])
+                if bound.tzinfo is None or not expiry<=bound<=MAX_EXPIRY:raise ValueError
+        elif revision!=LIMIT_REVISION:raise ValueError
         budget=data['budget'];TrialBudget(safe_path(root,BUDGET))._validate(budget)
         if (policy['model']!='claude-haiku-5-5' or budget['model']!=policy['model']
                 or len(budget['requests'])<30 or requests_digest(budget['requests'][:30])!=policy['baseline_requests_sha256']
                 or TrialBudget._exposure(budget)<policy['baseline_exposure_microdollars']):raise ValueError
-        revision=data.get('limit_revision',0)
-        if revision not in (0,LIMIT_REVISION) or revision and budget['max_requests']!=MAX_REQUESTS:raise ValueError
-        if not isinstance(data['days'],dict) or len(data['days'])>MAX_RUN_DAYS:raise ValueError
+        if revision not in (0,1,LIMIT_REVISION):raise ValueError
+        if revision==LIMIT_REVISION and TrialBudget.is_legacy(budget):raise ValueError
+        if revision==1 and budget.get('max_requests')!=200:raise ValueError
+        if not isinstance(data['days'],dict):raise ValueError
         for day,row in data['days'].items():
             if datetime.fromisoformat(day).date().isoformat()!=day or row.get('status') not in ('attempted','failed','completed'):raise ValueError
         if policy['baseline_days'].get('2026-11-05')!='completed':raise ValueError
@@ -114,7 +123,7 @@ class GitHubStateStore:
         if kind not in FILES or expected_sha is not None and not re.fullmatch('[0-9a-f]{40}',expected_sha):
             raise ValueError('invalid cloud state file lease')
         cipher=self.crypto.encrypt(raw)
-        if len(cipher)>MAX_CIPHER:raise ValueError('encrypted state exceeds 1 MiB')
+        if len(cipher)>MAX_CIPHER:raise ValueError('encrypted state exceeds 8 MiB')
         body={'message':'Update encrypted AI '+kind,'branch':BRANCH,'content':base64.b64encode(cipher).decode()}
         if expected_sha is not None:body['sha']=expected_sha
         result=self._api('contents/'+FILES[kind],body)
@@ -177,15 +186,16 @@ class CloudSession:
         policy=load(safe_path(self.root,'public/ai-cloud-trial.json'),{})
         if policy.get('limit_revision')!=LIMIT_REVISION:return False
         data=deepcopy(self.control)
-        data['expires_at']=policy['expires_at'];data['budget']['max_requests']=MAX_REQUESTS
-        data['limit_revision']=LIMIT_REVISION
+        budget=data['budget'];budget.pop('max_requests',None)
+        budget['cap_microdollars']=MONTHLY_CAP;budget['cap_kind']='monthly'
+        data['expires_at']=policy['expires_at'];data['limit_revision']=LIMIT_REVISION
         self._commit(data);return True
 
     def resume_after_review(self,now):
         """Human-dispatched halt release; every failed row and reserved dollar stays in the ledger."""
         data=deepcopy(self.control);budget=data['budget']
         if not budget['halted']:return False
-        if any(row['status']=='reserved' for row in budget['requests']) or TrialBudget._exposure(budget)>=CAP:
+        if any(row['status']=='reserved' for row in budget['requests']) or TrialBudget.exhausted(budget,now):
             raise ValueError('unresolved inflight request or exhausted budget')
         budget['halted']=False
         budget.setdefault('manual_reviews',[]).append(now.astimezone(timezone.utc).isoformat())
@@ -221,7 +231,7 @@ class CloudSession:
 
     def mark_day(self,day):
         self._reload()
-        if day in self.control['days'] or len(self.control['days'])>=MAX_RUN_DAYS:raise ValueError('cloud daily attempt already used')
+        if day in self.control['days']:raise ValueError('cloud daily attempt already used')
         data=deepcopy(self.control);data['days'][day]={'status':'attempted'};self._commit(data)
 
     def finish(self,day,status):

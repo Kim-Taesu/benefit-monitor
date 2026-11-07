@@ -23,24 +23,24 @@ class ClaudeTrialTests(unittest.TestCase):
         self.budget = TrialBudget.initialize(self.path, 'claude-haiku-5-5', '0.10', '0.50')
 
     def test_reservation_survives_restart_and_cannot_reset(self):
-        self.budget.reserve('a'*64, 3_000_000)
-        with self.assertRaises(ValueError):
-            TrialBudget(self.path).reserve('b'*64, 2_000_001)
-        self.assertEqual(TrialBudget(self.path).summary()['exposure_microdollars'], 3_000_000)
+        self.budget.reserve('a'*64, 9_000_000)
+        with self.assertRaisesRegex(ValueError, 'monthly budget exhausted'):
+            TrialBudget(self.path).reserve('b'*64, 6_000_001)
+        self.assertEqual(TrialBudget(self.path).summary()['exposure_microdollars'], 9_000_000)
         with self.assertRaises(FileExistsError):
             TrialBudget.initialize(self.path, 'claude-haiku-5-5', '0.10', '0.50')
 
     def test_concurrent_reservations_do_not_overspend(self):
         def attempt(key):
             try:
-                TrialBudget(self.path).reserve(key*64, 3_000_000)
+                TrialBudget(self.path).reserve(key*64, 9_000_000)
                 return True
             except ValueError:
                 return False
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
             results = list(pool.map(attempt, ['a', 'b']))
         self.assertEqual(sum(results), 1)
-        self.assertEqual(self.budget.summary()['exposure_microdollars'], 3_000_000)
+        self.assertEqual(self.budget.summary()['exposure_microdollars'], 9_000_000)
 
     def test_failure_keeps_reservation(self):
         self.budget.reserve('a'*64, 3_000_000)
@@ -62,11 +62,10 @@ class ClaudeTrialTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.budget.summary()
 
-    def test_request_limit_includes_zero_cost_metadata(self):
-        for i in range(200):
+    def test_no_request_count_limit_only_the_monthly_amount_binds(self):
+        for i in range(250):
             self.budget.reserve(f'{i:064x}', 0)
-        with self.assertRaises(ValueError):
-            self.budget.reserve('f'*64, 0)
+        self.assertEqual(self.budget.summary()['request_count'], 250)
 
     def test_key_file_permissions_and_symlink_and_no_secret_error(self):
         p = self.root / '.env.claude'
@@ -190,13 +189,13 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertNotIn('fake-secret-for-tests',self.path.read_text())
 
     def test_manual_review_resume_never_refunds_or_resets(self):
-        self.budget.reserve('a'*64,3_000_000);self.budget.fail('a'*64,'http_400')
+        self.budget.reserve('a'*64,9_000_000);self.budget.fail('a'*64,'http_400')
         self.budget.resume_after_review()
         state=self.budget.summary()
         self.assertFalse(state['halted'])
-        self.assertEqual(state['exposure_microdollars'],3_000_000)
+        self.assertEqual(state['exposure_microdollars'],9_000_000)
         self.assertEqual(state['request_count'],1)
-        with self.assertRaises(ValueError):self.budget.reserve('b'*64,2_000_001)
+        with self.assertRaises(ValueError):self.budget.reserve('b'*64,6_000_001)
 
     def test_response_directory_cannot_escape_trial_root(self):
         outside=self.root/'other';outside.mkdir()
