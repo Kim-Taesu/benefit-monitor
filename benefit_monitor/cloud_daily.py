@@ -52,7 +52,18 @@ def disable_workflow(store):
 
 # GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
 FALLBACK_REFRESH_HOUR=10
-ATTENTION={'completed_with_provider_failure','probe_rejected'}
+ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted'}
+# Per-day paid request limits: research 20, topic 1, grammar probe 2.
+MAX_DAILY_RESEARCH=20
+STATUS_FILE='cache/ai_daily/status.json'
+
+
+def write_ai_status(root,state,day,now):
+    """Public run status; last_success_day carries over until the next ok run."""
+    path=safe_path(root,STATUS_FILE)
+    previous=load(path,{})
+    last=day if state=='ok' else previous.get('last_success_day')
+    save(path,{'state':state,'last_success_day':last,'updated_at':now.isoformat()})
 
 
 def todays_refresh(store,now):
@@ -163,22 +174,28 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     public_lease=restore_public(root,store,now)
     if not retried:session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
-         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':2,
-         'trial_expires_at':session.control['expires_at']})
+         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH})
     try:
         result=daily(root,now=now,online=True,allow_spend=True,publish=True)
-        if result['status']!='completed':raise ValueError('inner daily did not complete')
+        if result['status'] not in ('completed','credit_exhausted'):raise ValueError('inner daily did not complete')
         session.save_runtime()
         delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
+        if result['status']=='credit_exhausted':
+            # Results already received stay; the day is failed, the trial is not halted, tomorrow runs normally.
+            session.finish(day,'failed');write_ai_status(root,'credit_exhausted',day,now)
+            return {'status':'credit_exhausted','day':day,'delivery':delivery}
         session.finish(day,'completed')
         after=TrialBudget(safe_path(root,BUDGET)).summary();new=after['requests'][summary['requests']:]
         failures=[row.get('error_code','unknown') for row in new if row['status']!='completed']
         status='completed_with_provider_failure' if failures or after['halted'] else 'completed'
+        write_ai_status(root,'ok' if status=='completed' else 'failed',day,now)
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
                 'halted':after['halted'],'retried_day':retried}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')
+        except Exception:pass
+        try:write_ai_status(root,'failed',day,now)
         except Exception:pass
         raise
 
@@ -196,7 +213,8 @@ def main():
 def exit_code(result):
     """A finished day with provider rejections must not look green in Actions."""
     if result.get('status') in ATTENTION:
-        if result['status']=='probe_rejected':print('::error::grammar probe rejected the research schema; trial not halted')
+        if result['status']=='credit_exhausted':print('::error::Anthropic credit balance exhausted; today skipped, trial not halted, next day runs normally')
+        elif result['status']=='probe_rejected':print('::error::grammar probe rejected the research schema; trial not halted')
         else:print('::error::AI provider rejected '+str(len(result.get('provider_failures',[])))+' request(s); trial halted='+str(result.get('halted')))
         return 1
     return 0

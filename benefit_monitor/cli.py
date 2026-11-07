@@ -16,7 +16,7 @@ from . import operations
 from .briefing import build as build_briefing, write as write_briefing
 
 def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2):
-    if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=10):raise ValueError("AI candidate limit 1..10")
+    if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=20):raise ValueError("AI candidate limit 1..20")
     if ai_execute and not ai_review:raise ValueError("AI spend requires explicit review stage")
     if ai_review and not online:raise ValueError("AI body review requires explicit online collection")
     root = Path(root)

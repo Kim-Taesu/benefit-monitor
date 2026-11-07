@@ -28,6 +28,7 @@ def invoke(root,kind,input_path):
                          '--kind',kind,'--input',str(input_path)],cwd=trial_root,capture_output=True,text=True)
     try:
         value=json.loads(proc.stdout)
+        if value.get('status')=='credit_exhausted':return {'status':'credit_exhausted','run_id':None}
         if value.get('status') in ('validated_draft','rejected_draft'):
             return {k:value[k] for k in ('status','run_id')}
     except (ValueError,KeyError,TypeError):
@@ -37,7 +38,7 @@ def invoke(root,kind,input_path):
 
 def review_candidates(root,candidates,now,max_candidates=2,execute=False):
     root=Path(root).resolve()
-    if type(max_candidates) is not int or not 1<=max_candidates<=10:raise ValueError('candidate limit 1..10')
+    if type(max_candidates) is not int or not 1<=max_candidates<=20:raise ValueError('candidate limit 1..20')
     project_path(root,'cache/ai_review')
     result=dict(queued=0,rejected=0,awaiting_api=0,skipped_unchanged=0,changed_ids=[],failures=[],rows=[],
                 api_spend_requested=execute,cost_scope='cost_policy는 공식 HTTP 수집만 기록. Claude는 별도 누적 원장에 기록.')
@@ -75,6 +76,11 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             else:
                 save(input_path,host)
             model=invoke(root,'research',input_path) if execute else {'status':'awaiting_api_authorization','run_id':None}
+            if model['status']=='credit_exhausted':
+                # Stop the day's remaining paid research; keep results already received and retry this one later.
+                result['credit_exhausted']=True
+                state['items'][cid].pop('last_checked_at',None)
+                break
             review_file='cache/ai_review/queue/'+signature+'.json'
             row=dict(candidate_id=cid,source=candidate['source'],url=candidate['url'],body_hash=doc['body_hash'],signature=signature,
                      input_file=str(input_path.relative_to(root)),model_status=model['status'],run_id=model['run_id'],

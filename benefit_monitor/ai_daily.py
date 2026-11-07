@@ -36,7 +36,7 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
                 'public_application_approved':policy.get('public_application_approved') is True}
     if policy.get('enabled') is not True:raise ValueError('daily pipeline is disabled')
     limit=policy.get('max_ai_candidates_per_day',2)
-    if type(limit)is not int or not 1<=limit<=2:raise ValueError('daily candidate limit 1..2')
+    if type(limit)is not int or not 1<=limit<=20:raise ValueError('daily candidate limit 1..20')
     day=now.date().isoformat()
     with lock(project_path(root,'cache/ai_daily/.lock')):
         state=load(project_path(root,'cache/ai_daily/days.json'),{'days':{}})
@@ -52,12 +52,14 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
             imports=prepare_import(root,now) if project_path(root,'public/verified.json').exists() else None
             collection=collect(root,imports=imports,online=True,now=now,ai_review=True,
                                ai_execute=allow_spend,ai_max_candidates=limit)
-            topics=refresh(root,now=now,execute=allow_spend)
+            exhausted=bool((collection or {}).get('ai_review',{}).get('credit_exhausted'))
+            # The topic step is a paid call too; skip it once credit has run out.
+            topics=refresh(root,now=now,execute=allow_spend) if not exhausted else {'topics':[],'skipped':'credit_exhausted'}
             public=publish_briefing(root,now=now) if publish else None
             remote=deliver(root,policy,now=now) if publish and policy.get('remote_delivery_approved') is True else None
-            result={'status':'completed','day':day,'collection':collection,'topics':topics,'public_exported':public is not None,
+            result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'public_exported':public is not None,
                     'remote_delivery':remote,'recurring_spend_requested':allow_spend,'public_status':public.get('status') if public else None}
-            state['days'][day].update(status='completed',finished_at=now.isoformat())
+            state['days'][day].update(status='failed' if exhausted else 'completed',finished_at=now.isoformat())
             save(project_path(root,'cache/ai_daily/days.json'),state)
             save(project_path(root,'cache/ai_daily/latest.json'),result)
             return result
