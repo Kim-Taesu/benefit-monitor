@@ -24,10 +24,10 @@
 
 | field | 확인되면 채울 값 |
 |---|---|
-| eligibility | scope와 required, not_confirmed |
+| eligibility | scope와 required, not_confirmed. scope는 `restricted`, `unrestricted`, `disputed` 중 하나를 영어 그대로 쓴다 |
 | event_period | 실제 이용·행사 기간의 start, end. `YYYY-MM-DD` 또는 빈 문자열 |
 | application_period | 접수 기간의 start, end. 원문에 시각이 있을 때만 `YYYY-MM-DDTHH:MM+09:00`, 없으면 빈 문자열 |
-| fee_status | free, paid, conditional 중 하나 |
+| fee_status | free, paid, conditional 중 하나. 이용자가 돈을 전혀 내지 않을 때만 free |
 | cost_details | 참가비·재료비·최소 구매액 같은 비용 설명 |
 | payment_conditions | 결제 수단, 포인트, 중복 적용 조건 |
 | selection | 선착순, 추첨, 심사 같은 선정 방식 |
@@ -58,6 +58,8 @@
 - `unknown`이면 값 칸과 segment_ids를 비우고 unknown_reason만 쓴다. 호스트는 unknown의 값과 근거를 버린다.
 - `supported`나 `disputed`면 segment_ids에 조각을 하나 이상 고르고 unknown_reason은 빈 문자열로 둔다.
 - districts는 "강남구"처럼 서울 자치구 정식 이름으로 쓴다.
+- eligibility의 `text`에는 scope 값 하나만 쓴다. 조건 문장은 `text`가 아니라 `items`에 쓴다. 예: 65세 이상만 이용 가능하면 text=`restricted`, items=[`65세 이상`]. 대상 제한이 없으면 text=`unrestricted`, items=[].
+- fee_status의 `text`도 `free`, `paid`, `conditional` 중 하나만 쓴다. 할인·적립·페이백·환급처럼 물건이나 서비스를 사고 결제해야 받는 혜택은 `paid`다. 혜택 자체에 별도 참가비가 없다는 이유로 free를 쓰지 않는다. 무료와 유료 선택지가 섞여 있거나 조건에 따라 달라지면 `conditional`이다.
 
 ## 판단 규칙
 

@@ -14,5 +14,10 @@
         "shopping"
       ]
     }
+  },
+  "keyword_policy": {
+    "approved": true,
+    "approved_at": "2026-11-07",
+    "note": "public_topics.KEYWORD_TEXT_TOPICS 등 고정 규칙으로 공개 승인 항목에 주제 후보만 추가"
   }
 }

@@ -112,5 +112,24 @@ class PublicTopicsTests(unittest.TestCase):
         basis['category_policy']['mapping']={'문화·체험':['career']};save(self.root/'public/topic-basis.json',basis)
         with self.assertRaises(ValueError):approved_snapshot(self.root,NOW,[])
 
+    def test_keyword_rules_add_candidate_topics_only_when_policy_approved(self):
+        from benefit_monitor.public_topics import approved_snapshot
+        self.item.update(title='서울의 밤 걷기 챌린지',summary='어르신 대상 야간 걷기 포인트')
+        self.item['labels']={'category':'할인·적립'};self.report['new']=[self.item]
+        save(self.root/'report.json',self.report);save(self.root/'public/verified.json',[dict(self.item,public_release=True)])
+        basis={'schema_version':1,'items':[],'category_policy':{'approved':True,'mapping':{'할인·적립':['shopping']}}}
+        save(self.root/'public/topic-basis.json',basis)
+        self.assertEqual(approved_snapshot(self.root,NOW,[])['approved_items'][0]['topic_basis']['topic_ids'],['shopping'])
+        basis['keyword_policy']={'approved':True};save(self.root/'public/topic-basis.json',basis)
+        topics=approved_snapshot(self.root,NOW,[])['approved_items'][0]['topic_basis']['topic_ids']
+        self.assertEqual(topics,['shopping','night','outdoors','age'])
+
+    def test_keyword_rules_cover_uncategorized_items_and_family_facet(self):
+        from benefit_monitor.public_topics import keyword_topics
+        self.assertEqual(keyword_topics({'title':'희망돌보미 채용 공고','summary':'','labels':{'category':'생활지원'}}),(['career'],[]))
+        self.assertEqual(keyword_topics({'title':'어린이 기록체험실','summary':''}),(['family'],['family']))
+        self.assertEqual(keyword_topics({'title':'제휴 멤버십','summary':'KT 할인','source':'emart24'}),(['carrier','convenience'],[]))
+        self.assertEqual(keyword_topics({'title':'다도 체험','summary':'','labels':{'audience':'7세 이상'}}),([],[]))
+
 
 if __name__=='__main__':unittest.main()
