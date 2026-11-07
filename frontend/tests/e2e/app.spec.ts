@@ -214,7 +214,7 @@ test('AI 자동 공개 항목은 배지와 대조 원문 목록을 보이고 사
  await expect(page.locator('.ai-badge')).toHaveCount(1);
  const card=page.locator('article',{hasText:'[테스트] AI 정리 항목'});
  await expect(card.locator('.ai-badge')).toHaveText('AI 정리 · 공식 원문 2곳 대조');
- await expect(page.locator('article',{hasText:'[테스트] 문화 체험 안내'}).locator('.ai-badge')).toHaveCount(0);
+ await expect(page.locator('article').filter({hasNot:page.locator('.ai-badge')})).toHaveCount(1);
  await card.locator('.card-open').click();
  const links=card.getByRole('dialog').locator('.ai-review a');
  await expect(links).toHaveCount(2);
