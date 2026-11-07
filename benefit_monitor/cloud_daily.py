@@ -1,5 +1,6 @@
 """Trusted Actions orchestration with durable admission before paid work."""
 import argparse
+import base64
 from datetime import datetime
 import hashlib
 import json
@@ -14,7 +15,8 @@ from .ai_daily import daily
 from .briefing import SEOUL
 from .claude_trial import ClaudeClient,configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
-from .mirror import run as mirror,restore as restore_mirror
+from . import auto_release
+from .mirror import run as mirror,restore as restore_mirror,restore_ai,save_ai,lease as public_file_lease
 from .public_snapshot import validate
 from .wire_format import research_wire_schema
 from .store import load,save
@@ -66,6 +68,22 @@ def write_ai_status(root,state,day,now):
     save(path,{'state':state,'last_success_day':last,'updated_at':now.isoformat()})
 
 
+def upload_ai_status(root,store):
+    """Best effort copy to briefing-data ai-status.json (admin page); never masks the run result."""
+    try:
+        status=auto_release.load_status(root)
+        if status is None:return False
+        try:sha=store._api('contents/ai-status.json?ref=briefing-data').get('sha')
+        except ValueError:sha=None  # Not created yet.
+        body={'message':'Update AI run status','branch':'briefing-data',
+              'content':base64.b64encode((json.dumps(status,ensure_ascii=False)+'\n').encode()).decode()}
+        if sha:body['sha']=sha
+        store._api('contents/ai-status.json',body)
+        return True
+    except Exception:
+        return False
+
+
 def todays_refresh(store,now):
     """Collecting briefing runs created today (schedule or manual dispatch; push runs only deploy)."""
     rows=[]
@@ -92,6 +110,8 @@ def restore_public(root,store,now):
     # The preceding free run may have observed newer holds than the AI archive.
     sha=restore_mirror(root,REPOSITORY,now=now,env=runner_environment(store))
     if not isinstance(sha,str) or not re.fullmatch('[0-9a-f]{40}',sha):raise ValueError('initial public file lease required')
+    # Approval list, takedowns and last status; a failed read hides auto items and blocks the later save.
+    restore_ai(root,REPOSITORY,env=runner_environment(store))
     return sha
 
 
@@ -105,6 +125,13 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     data=load(safe_path(root,'delivery/public/briefing.json'),{})
     content=(json.dumps(validate(root,data,now),ensure_ascii=False,indent=2)+'\n').encode()
     if key.encode() in content or b'AGE-SECRET-KEY-' in content:raise ValueError('credential in public payload')
+    env=runner_environment(store)
+    if public_file_lease(REPOSITORY,env)!=expected_sha:raise ValueError('public snapshot changed during AI run; preserve the newer export')
+    # The approval list goes first so the snapshot commit carries the records its items were checked against.
+    local={cid:auto_release.public_record(r) for cid,r in auto_release.load(root)[0].items() if isinstance(r,dict)}
+    if save_ai(root,REPOSITORY,env=env)!=local:
+        # Merged with a concurrent writer: this snapshot no longer matches; the next collection publishes it.
+        return {'status':'ai_approval_merged_deferred'}
     commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content,expected_sha=expected_sha)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{
@@ -182,20 +209,20 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
         if result['status']=='credit_exhausted':
             # Results already received stay; the day is failed, the trial is not halted, tomorrow runs normally.
-            session.finish(day,'failed');write_ai_status(root,'credit_exhausted',day,now)
+            session.finish(day,'failed');write_ai_status(root,'credit_exhausted',day,now);upload_ai_status(root,store)
             return {'status':'credit_exhausted','day':day,'delivery':delivery}
         session.finish(day,'completed')
         after=TrialBudget(safe_path(root,BUDGET)).summary();new=after['requests'][summary['requests']:]
         failures=[row.get('error_code','unknown') for row in new if row['status']!='completed']
         status='completed_with_provider_failure' if failures or after['halted'] else 'completed'
-        write_ai_status(root,'ok' if status=='completed' else 'failed',day,now)
+        write_ai_status(root,'ok' if status=='completed' else 'failed',day,now);upload_ai_status(root,store)
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
                 'halted':after['halted'],'retried_day':retried}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')
         except Exception:pass
-        try:write_ai_status(root,'failed',day,now)
+        try:write_ai_status(root,'failed',day,now);upload_ai_status(root,store)
         except Exception:pass
         raise
 

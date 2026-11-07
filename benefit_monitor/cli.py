@@ -92,7 +92,12 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
             for cid in ai_result['changed_ids']:
                 operational_state.setdefault('items',{}).setdefault(cid,{}).update(
                     hold_at=now.isoformat(),hold_reason='body_changed')
-        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0)) if online else []
+        # AI auto-published records are rechecked here every day, even when the AI run fails.
+        from . import auto_release
+        auto_approved, _ = auto_release.load(root) if online else ({}, [])
+        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0), auto=auto_approved) if online else []
+        if auto_approved:
+            auto_release.save_approved(root, auto_approved)
         explicit_items = operations.observe(operational_state, [], explicit_items, now)
         if len({i.id for i in explicit_items}) != len(explicit_items):
             raise ValueError("Duplicate imported URL")

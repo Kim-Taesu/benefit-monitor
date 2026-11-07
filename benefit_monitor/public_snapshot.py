@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 
-from . import operations
+from . import auto_release,operations
 from .briefing import SEOUL,aware_time,identity
 from .publish import PUBLIC_FIELDS,payload,releases,write_export,STATUS
 from .store import load
@@ -54,7 +54,8 @@ def _coverage(root,data,config):
             'successful_districts':sum(d['status']=='checked' and d['mode']=='live' for d in districts)},districts
 
 
-def validate(root,data,now):
+def validate(root,data,now,auto=None):
+    """auto=(approved, takedowns) from the snapshot commit; defaults to the local AI approval files."""
     root=Path(root)
     if now.tzinfo is None:raise ValueError('timezone required')
     now=now.astimezone(SEOUL)
@@ -74,6 +75,9 @@ def validate(root,data,now):
         midnight=datetime.combine(now.date()+timedelta(days=1),time.min,SEOUL)
         if not now<through<=midnight:raise ValueError('invalid snapshot display cutoff')
         approved=releases(root,config,now)
+        approved_auto,takedowns=auto if auto is not None else auto_release.load(root)
+        formed,current=auto_release._current(approved_auto,takedowns,{s['id']:s for s in config['sources']},now)
+        kept={}
         trusted=[];seen=set()
         fields=set(PUBLIC_FIELDS)|{'display_until'}
         for row in data['items']:
@@ -81,8 +85,18 @@ def validate(root,data,now):
             key=identity(row)
             if key in seen:raise ValueError('duplicate snapshot item')
             seen.add(key)
+            if auto_release.is_auto(row):
+                # Same deterministic recheck as the collection path; a record that has since been
+                # taken down, withdrawn, expired or gone stale is dropped, a differing one is rejected.
+                fact=formed.get(key)
+                if fact is None or any(row.get(k)!=fact[k] for k in PUBLIC_FIELDS if k in fact):
+                    raise ValueError('snapshot fact differs from approved public release')
+                if key in current:
+                    cid=fact['review']['candidate_id'];kept[cid]=approved_auto[cid]
+                continue
             fact=approved.get(key)
-            if fact is None or any(row.get(k)!=fact[k] for k in PUBLIC_FIELDS if k!='benefit_value' or fact[k]):
+            if (fact is None or row.get('review')!={'kind':'human'}
+                    or any(row.get(k)!=fact[k] for k in PUBLIC_FIELDS if k!='review' and (k!='benefit_value' or fact[k]))):
                 raise ValueError('snapshot fact differs from approved public release')
             if not fact.get('benefit_value') and row.get('benefit_value'):raise ValueError('unapproved benefit value')
             trusted.append(fact)
@@ -91,13 +105,16 @@ def validate(root,data,now):
             raise ValueError('snapshot has no successful source observation')
         report={'verified_at':data['source_report_at'],'new':trusted,'needs_recheck':[],
                 'collection':collection,'district_coverage':districts,'complete':False}
-        clean=payload(root,now,report=report,state=state)
+        clean=payload(root,now,report=report,state=state,auto=(kept,takedowns))
         clean['valid_through']=min(aware_time(clean['valid_through']),through).isoformat()
         active={identity(row):row for row in clean['items']}
         if any(identity(row) in active and row.get('display_until')!=active[identity(row)]['display_until'] for row in data['items']):
             raise ValueError('snapshot extends or changes an item cutoff')
     else:
         raise ValueError('unknown snapshot status')
+    clean.pop('ai_status',None)
+    status=auto_release.ai_status(data.get('ai_status'))
+    if status:clean['ai_status']=status
     clean['generated_at']=data['generated_at']
     clean['run_context']={'trigger':'workflow_dispatch','status':'approved_snapshot','scheduled_run_confirmed':False}
     clean['run_id']='approved-snapshot-'+hashlib.sha256(json.dumps(clean['items'],sort_keys=True,ensure_ascii=False).encode()).hexdigest()[:16]
@@ -112,23 +129,42 @@ def validate(root,data,now):
     return clean
 
 
-def stage(root,data,now):
-    clean=validate(root,data,now)
+def stage(root,data,now,auto=None):
+    clean=validate(root,data,now,auto)
     write_export(root,clean)
     return clean
 
 
-def import_remote(root,repository,commit,now=None):
-    if repository.casefold()!=REPOSITORY.casefold() or not re.fullmatch('[0-9a-f]{40}',commit):
-        raise ValueError('personal repository and immutable commit required')
-    result=subprocess.run(['gh','api','--hostname','github.com',f'repos/{REPOSITORY}/contents/briefing.json?ref={commit}'],
-                          check=True,capture_output=True,text=True)
+def _contents(name,ref):
+    """Decoded JSON of a briefing-data file at ref, or None when it does not exist (HTTP 404)."""
+    result=subprocess.run(['gh','api','--hostname','github.com',f'repos/{REPOSITORY}/contents/{name}?ref={ref}'],
+                          capture_output=True,text=True)
+    if result.returncode!=0:
+        if 'HTTP 404' in result.stderr:return None
+        raise ValueError('snapshot file unavailable: '+name)
     if len(result.stdout)>3*LIMIT:raise ValueError('snapshot envelope too large')
     envelope=json.loads(result.stdout)
     if envelope.get('encoding')!='base64':raise ValueError('invalid snapshot encoding')
     raw=base64.b64decode(envelope['content'],validate=False)
     if len(raw)>LIMIT:raise ValueError('snapshot exceeds 2 MiB')
-    return stage(root,json.loads(raw),now or datetime.now(SEOUL))
+    return json.loads(raw)
+
+
+def import_remote(root,repository,commit,now=None):
+    if repository.casefold()!=REPOSITORY.casefold() or not re.fullmatch('[0-9a-f]{40}',commit):
+        raise ValueError('personal repository and immutable commit required')
+    data=_contents('briefing.json',commit)
+    if data is None:raise ValueError('snapshot missing')
+    approved=_contents('ai-approved.json',commit)
+    # Takedowns only remove: the commit's list plus any added since (an admin takedown must not be
+    # undone by a snapshot that was committed just before it).
+    takedowns=[]
+    for ref in (commit,'briefing-data'):
+        value=_contents('ai-takedowns.json',ref)
+        if value is None:continue
+        if not isinstance(value,list):raise ValueError('invalid takedown list')
+        takedowns+=[t for t in value if isinstance(t,dict)]
+    return stage(root,data,now or datetime.now(SEOUL),(approved if isinstance(approved,dict) else {},takedowns))
 
 
 def main():

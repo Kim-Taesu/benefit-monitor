@@ -7,6 +7,7 @@ import sys
 
 from . import cost_policy
 from . import auto_publish
+from . import auto_release
 from .cross_sources import allowed_domains, related_urls
 from .models import Benefit
 from .official_reader import OfficialReader, project_path
@@ -63,11 +64,23 @@ def auto_decide(root,run_id,now):
         return hold
 
 
+def _load_dict(path,now):
+    """A corrupt file must not crash after a paid call, nor be silently replaced by a smaller dict."""
+    try:
+        value=load(path,{})
+        if isinstance(value,dict):return value
+    except (OSError,ValueError):
+        pass
+    auto_release.move_aside(path,now)
+    return {}
+
+
 def _store_decision(root,cid,decision,row,now):
     approved_path=project_path(root,'cache/ai_publish/approved.json')
     decisions_path=project_path(root,'cache/ai_publish/decisions.json')
-    approved=load(approved_path,{});decisions=load(decisions_path,{})
-    if decision['publish']:approved[cid]=decision['record']
+    approved=_load_dict(approved_path,now);decisions=_load_dict(decisions_path,now)
+    # decided_at orders concurrent writers: a newer decision replaces an older withdrawn version.
+    if decision['publish']:approved[cid]={**decision['record'],'decided_at':now.isoformat()}
     else:approved.pop(cid,None)
     decisions[cid]=dict(publish=decision['publish'],reasons=decision['reasons'],decided_at=now.isoformat(),
                         run_id=row['run_id'],signature=row['signature'])
@@ -101,7 +114,11 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
         state=load(project_path(root,'cache/ai_review/state.json'),{'items':{}})
         reader=OfficialReader(root,now)
         prompt=fingerprint(root)
-        ordered=sorted(unique.items(),key=lambda pair:state['items'].get(pair[0],{}).get('last_checked_at',''))
+        # Auto-published records withdrawn by the daily body check are researched first.
+        try:withdrawn={k for k,r in load(project_path(root,'cache/ai_publish/approved.json'),{}).items()
+                       if isinstance(r,dict) and r.get('recheck_priority')}
+        except (OSError,ValueError,AttributeError):withdrawn=set()
+        ordered=sorted(unique.items(),key=lambda pair:(pair[0] not in withdrawn,state['items'].get(pair[0],{}).get('last_checked_at','')))
         for cid,candidate in ordered[:max_candidates]:
             state['items'].setdefault(cid,{})['last_checked_at']=now.isoformat()
             try:doc=reader.read(candidate)

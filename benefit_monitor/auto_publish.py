@@ -236,7 +236,7 @@ def decide(draft, host, now, takedowns):
         districts=list(supported('districts') or []), valid_from=valid_from, valid_until=valid_until,
         deadline_at=deadline_at, validity_kind=kind, labels=labels, payment_terms={},
         review=dict(kind='ai_auto', documents=documents, document_count=len({d['body_hash'] for d in documents}),
-                    checked_at=now.isoformat(), published_at=published,
+                    checked_at=now.isoformat(), published_at=published, original_body_hash=first_doc['body_hash'],
                     basis=dict(period_quotes=list(dict.fromkeys(q for e in ends for q in e['quotes'])),
                                operating_quotes=list(dict.fromkeys(e['quote'] for e in operating)))),
         title_key=key)

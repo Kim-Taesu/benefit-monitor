@@ -81,8 +81,54 @@ def queue(report,state,now,max_age=7):
     return rows
 
 
-def check_bodies(state,items,sources,now,limit):
-    """Detect text changes only; a successful fetch never renews verification."""
+def check_bodies(state,items,sources,now,limit,auto=None):
+    """Detect text changes only; a successful fetch never renews human verification.
+
+    auto (the AI approval dict) is checked after the human items: up to 20 records, each fetch
+    counted in the same HTTP budget. Only checked_at and the withdrawn fields change there.
+    """
+    errors=[]
+    _check_human(state,items,sources,now,limit,errors)
+    if auto:errors+=_check_auto(auto,sources,now)
+    return errors
+
+
+def _check_auto(approved,sources,now):
+    """Exact body hash of each record's original official page (the hash the AI decision used)."""
+    import hashlib
+    from urllib.parse import urlsplit
+    from urllib.error import HTTPError
+    from .auto_release import mark_checked,recheck_targets
+    from .collectors import rss
+    from .collectors.body import extract_body
+    from .robots import allowed
+    from . import cost_policy
+    errors=[]
+    for cid in recheck_targets(approved,now):
+        if cost_policy.budget.limit-cost_policy.budget.used<4:break
+        record=approved[cid]
+        try:
+            target=record['url'];domains=sources[record['source']]['domains']
+            u=urlsplit(target)
+            try:robot=rss.fetch(f'{u.scheme}://{u.netloc}/robots.txt',domains).decode('utf-8')
+            except HTTPError as e:
+                if e.code!=404:raise
+                robot=''
+            if not allowed(robot,target,rss.AGENT):raise ValueError('robots_denied')
+            try:page=rss.fetch(target,domains).decode('utf-8')
+            except HTTPError as e:
+                if e.code in (404,410):
+                    e.close();mark_checked(approved,cid,None,now);continue
+                raise
+            content,_=extract_body(page,target)
+            # A page that lost its body is treated as changed (hidden until the AI re-decides).
+            mark_checked(approved,cid,hashlib.sha256(content.encode()).hexdigest() if len(content)>=80 else '',now)
+        except Exception as error:
+            errors.append(dict(source=record.get('source'),item_id=cid,**error_info(error)))
+    return errors
+
+
+def _check_human(state,items,sources,now,limit,errors):
     from html.parser import HTMLParser
     from urllib.parse import urlsplit
     from urllib.error import HTTPError
@@ -99,7 +145,6 @@ def check_bodies(state,items,sources,now,limit):
             if tag in ('script','style','nav','footer','header'): self.skip=max(0,self.skip-1)
         def handle_data(self,text):
             if not self.skip:self.parts.append(text)
-    errors=[]
     if not limit:return errors
     records=state.setdefault('items',{})
     active=[i for i in items if not i.excluded_reason and not i.needs_recheck
