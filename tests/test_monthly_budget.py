@@ -13,6 +13,7 @@ from benefit_monitor.trial_budget import TrialBudget, MONTHLY_CAP
 ROOT = Path(__file__).resolve().parents[1]
 OCT = '2026-10-20T01:00:00+00:00'
 NOV = datetime.fromisoformat('2026-11-07T10:00:00+09:00')
+NOW_KST = NOV
 
 
 def row(n, started, amount=14_999_000):
@@ -104,6 +105,33 @@ class MonthlyBudgetTests(unittest.TestCase):
                          ('monthly', MONTHLY_CAP, 2))
         self.assertNotIn('max_requests', control['budget'])
         self.assertIsNone(control['expires_at'])
+
+    def test_past_month_overrun_does_not_block_next_month_resume(self):
+        self.seed([row(1, OCT, 15_100_000)], halted=True)
+        self.assertTrue(self.budget.summary()['halted'])
+        self.budget.resume_after_review()
+        self.assertFalse(self.budget.summary()['halted'])
+        self.budget.reserve('e' * 64, 1_000, now=NOV)
+
+    def test_cloud_resume_after_past_month_overrun(self):
+        fixture = state_fixture.CloudStateTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        save(fixture.root / 'public/ai-cloud-trial.json', dict(fixture.policy, expires_at=None, limit_revision=2))
+        fixture.control.update(expires_at=None, limit_revision=2)
+        fixture.session()
+        from benefit_monitor.cloud_state import CloudSession
+        control = json.loads(fixture.store().read('control')[0])
+        control['budget']['requests'].append(row(500, OCT, 15_100_000))
+        control['budget']['halted'] = True
+        _, sha = fixture.store().read('control')
+        fixture.store().write('control', json.dumps(control).encode(), sha)
+        session = CloudSession.read_control(fixture.root, fixture.store())
+        self.assertTrue(session.resume_after_review(NOW_KST))
+        control = json.loads(fixture.store().read('control')[0])
+        self.assertFalse(control['budget']['halted'])
+        from benefit_monitor.cloud_state import validate_control
+        validate_control(fixture.root, control)
 
     def test_no_run_day_limit(self):
         fixture = state_fixture.CloudStateTests()

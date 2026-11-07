@@ -82,12 +82,12 @@ class TrialBudget:
                 for key in ('reserved_microdollars', 'charged_microdollars'):
                     if type(row[key]) is not int or row[key] < 0:
                         raise ValueError
-            if not state['halted']:
-                if legacy:
-                    if self._exposure(state) > LEGACY_CAP:
-                        raise ValueError
-                elif max(self._month_totals(state).values(), default=0) > MONTHLY_CAP:
-                    raise ValueError
+            # Monthly ledgers: the cap is a pre-reservation check in reserve(), not an invariant over
+            # past months (an overrun halts; resuming next month must stay possible). Rows still need
+            # a valid started_at.
+            self._month_totals(state) if not legacy else None
+            if legacy and not state['halted'] and self._exposure(state) > LEGACY_CAP:
+                raise ValueError
         except (KeyError, TypeError, ValueError):
             raise ValueError('invalid trial ledger; do not reset') from None
 
@@ -119,9 +119,7 @@ class TrialBudget:
 
     @staticmethod
     def _exposure(state):
-        return sum(r['charged_microdollars'] if r['status'] == 'completed'
-                   else max(r['reserved_microdollars'], r['charged_microdollars'])
-                   for r in state['requests'])
+        return sum(TrialBudget._row_exposure(r) for r in state['requests'])
 
     @staticmethod
     def _row_exposure(row):
