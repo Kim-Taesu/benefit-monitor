@@ -94,8 +94,13 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                     hold_at=now.isoformat(),hold_reason='body_changed')
         # AI auto-published records are rechecked here every day, even when the AI run fails.
         from . import auto_release
-        auto_approved, _ = auto_release.load(root) if online else ({}, [])
-        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0), auto=auto_approved) if online else []
+        auto_approved, auto_takedowns = auto_release.load(root) if online else ({}, [])
+        auto_reader = None
+        if auto_approved:
+            from .official_reader import OfficialReader
+            auto_reader = OfficialReader(root, now)
+        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0),
+                                                auto=auto_approved, takedowns=auto_takedowns, reader=auto_reader) if online else []
         if auto_approved:
             auto_release.save_approved(root, auto_approved)
         explicit_items = operations.observe(operational_state, [], explicit_items, now)

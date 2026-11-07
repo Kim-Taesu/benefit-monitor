@@ -138,13 +138,16 @@ def candidate(record, sources):
         return None
 
 
-def display_until(record, item, now):
-    """Earliest cutoff (freshness, deadline, end date, ongoing posting age) or None when already past."""
+def display_until(record, item, now, fresh=True):
+    """Earliest cutoff (freshness, deadline, end date, ongoing posting age) or None when already past.
+
+    fresh=False leaves out the 30-hour freshness cutoff (used to pick records worth rechecking).
+    """
     review = record['review']
     checked = _aware(item['verified_at'])
     if checked > now:
         return None
-    cutoffs = [checked + timedelta(hours=FRESH_HOURS)]
+    cutoffs = [checked + timedelta(hours=FRESH_HOURS)] if fresh else []
     if item['deadline_at']:
         cutoffs.append(_aware(item['deadline_at']))
     if item['valid_until']:
@@ -158,7 +161,7 @@ def display_until(record, item, now):
     return until.astimezone(KST).isoformat() if until > now else None
 
 
-def _current(approved, takedowns, sources, now):
+def current_releases(approved, takedowns, sources, now):
     """{identity: (record, item)} of well-formed records and the subset that is public now."""
     if now.tzinfo is None:
         raise ValueError('timezone required')
@@ -183,7 +186,7 @@ def _current(approved, takedowns, sources, now):
 
 
 def public_items(approved, takedowns, sources, now):
-    return list(_current(approved, takedowns, sources, now)[1].values())
+    return list(current_releases(approved, takedowns, sources, now)[1].values())
 
 
 def is_auto(row):
@@ -227,20 +230,21 @@ def mark_checked(approved, candidate_id, body_hash, now):
     return result
 
 
-def recheck_targets(approved, now):
-    """Up to 20 published records, least recently checked first; skip ones checked in the last 6 hours."""
-    today = now.astimezone(KST).date().isoformat()
+def recheck_targets(approved, takedowns, sources, now):
+    """Up to 20 records that could still be shown (not withdrawn, taken down, ended or past 90 days),
+    least recently checked first; ones checked in the last 6 hours are skipped."""
     rows = []
     for cid, record in approved.items():
-        try:
-            checked = _aware(record['review']['checked_at'])
-            if (record.get('status') == 'withdrawn' or (record.get('valid_until') and record['valid_until'] < today)
-                    or (record.get('deadline_at') and _aware(record['deadline_at']) <= now)
-                    or now - checked < timedelta(hours=RECHECK_SKIP_HOURS)):
-                continue
-            rows.append((checked, cid))
-        except (AttributeError, KeyError, TypeError, ValueError):
+        if not isinstance(record, dict) or record.get('candidate_id') != cid or record.get('status') == 'withdrawn':
             continue
+        item = candidate(record, sources)
+        try:
+            if (item is None or takedown_matches(record, takedowns) or not display_until(record, item, now, fresh=False)
+                    or now - _aware(item['verified_at']) < timedelta(hours=RECHECK_SKIP_HOURS)):
+                continue
+        except (KeyError, TypeError, ValueError):
+            continue
+        rows.append((_aware(item['verified_at']), cid))
     return [cid for _, cid in sorted(rows)[:MAX_RECHECKS]]
 
 

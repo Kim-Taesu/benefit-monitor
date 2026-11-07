@@ -16,7 +16,7 @@ from .briefing import SEOUL
 from .claude_trial import ClaudeClient,configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
 from . import auto_release
-from .mirror import run as mirror,restore as restore_mirror,restore_ai,save_ai,lease as public_file_lease
+from .mirror import AI_BASE,run as mirror,restore as restore_mirror,restore_ai,save_ai,lease as public_file_lease
 from .public_snapshot import validate
 from .wire_format import research_wire_schema
 from .store import load,save
@@ -110,8 +110,21 @@ def restore_public(root,store,now):
     # The preceding free run may have observed newer holds than the AI archive.
     sha=restore_mirror(root,REPOSITORY,now=now,env=runner_environment(store))
     if not isinstance(sha,str) or not re.fullmatch('[0-9a-f]{40}',sha):raise ValueError('initial public file lease required')
-    # Approval list, takedowns and last status; a failed read hides auto items and blocks the later save.
-    restore_ai(root,REPOSITORY,env=runner_environment(store))
+    # Approvals packed in the encrypted runtime may not have reached briefing-data (a failed save).
+    # Three-way merge: the common base is the remote copy the previous run restored (also packed);
+    # without it the base is empty, so an empty or older pack can never delete remote approvals.
+    path=safe_path(root,auto_release.APPROVED)
+    def packed_dict(relative,key=None):
+        try:value=load(safe_path(root,relative),{})
+        except (OSError,ValueError):return {}
+        value=value.get(key) if key and isinstance(value,dict) else value
+        return value if isinstance(value,dict) else {}
+    packed=packed_dict(auto_release.APPROVED);base=packed_dict(AI_BASE,'approved')
+    if not restore_ai(root,REPOSITORY,env=runner_environment(store)):
+        raise ValueError('AI approval list restore failed; stop before any paid call')
+    remote=load(path,{})
+    merged=auto_release.merge_approved(base,packed,remote)
+    if merged!=remote:auto_release.save_approved(root,merged)
     return sha
 
 

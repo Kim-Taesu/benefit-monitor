@@ -76,7 +76,7 @@ def validate(root,data,now,auto=None):
         if not now<through<=midnight:raise ValueError('invalid snapshot display cutoff')
         approved=releases(root,config,now)
         approved_auto,takedowns=auto if auto is not None else auto_release.load(root)
-        formed,current=auto_release._current(approved_auto,takedowns,{s['id']:s for s in config['sources']},now)
+        formed,current=auto_release.current_releases(approved_auto,takedowns,{s['id']:s for s in config['sources']},now)
         kept={}
         trusted=[];seen=set()
         fields=set(PUBLIC_FIELDS)|{'display_until'}

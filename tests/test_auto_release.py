@@ -253,19 +253,29 @@ class RecheckTests(Base):
         self.assertEqual(auto_release.mark_checked(fresh, CID, None, later), 'gone')
         self.assertEqual(fresh[CID]['withdrawn_reason'], 'source_gone')
 
-    def check(self, approved, page=BODY, error=None):
+    SOURCES = {'test': SOURCE, 'two': dict(id='two', domains=['two.example'], routes=['https://two.example/'], feed_url=None)}
+
+    def check(self, approved, page=BODY, error=None, content_type='text/html; charset=utf-8', takedowns=(), now=None):
+        import io
+        from benefit_monitor.official_reader import OfficialReader
+        save(self.root / 'sources.yaml', dict(sources=list(self.SOURCES.values()), max_age_days=7))
         calls = []
 
-        def response(url, domains):
-            cost_policy.budget.consume()
+        class Response(io.BytesIO):
+            headers = {'Content-Type': content_type}
+
+        def network(request):
+            url = request.full_url
             calls.append(url)
             if url.endswith('/robots.txt'):
-                return b'User-agent: *\nAllow: /'
+                return Response(b'User-agent: *\nAllow: /')
             if error:
                 raise error
-            return page.encode()
-        with patch('benefit_monitor.collectors.rss.fetch', side_effect=response):
-            errors = operations.check_bodies({}, [], {'test': SOURCE}, NOW + timedelta(hours=7), 5, auto=approved)
+            return Response(page.encode())
+        now = now or NOW + timedelta(hours=7)
+        with patch('benefit_monitor.official_reader.network_open', side_effect=network):
+            errors = operations.check_bodies({}, [], self.SOURCES, now, 5, auto=approved, takedowns=list(takedowns),
+                                             reader=OfficialReader(self.root, now))
         return errors, calls
 
     def test_daily_collection_rechecks_auto_records_within_the_budget(self):
@@ -274,27 +284,59 @@ class RecheckTests(Base):
         self.assertEqual(calls, ['https://official.example/robots.txt', 'https://official.example/ai/1'])
         self.assertEqual(approved[CID]['review']['checked_at'], (NOW + timedelta(hours=7)).isoformat())
         approved = {CID: record()}
-        self.check(approved, page=BODY.replace('11월 30일', '12월 31일'))
+        (self.root / 'cache/ai_review/http.json').unlink()  # The reader's 6-hour page cache is per run root.
+        self.check(approved, page=BODY.replace('11월 30일', '12월 31일'), now=NOW + timedelta(hours=8))
         self.assertEqual(approved[CID]['status'], 'withdrawn')
-        approved = {CID: record()}
-        self.check(approved, error=HTTPError('https://official.example/ai/1', 404, 'Not Found', {}, None))
-        self.assertEqual(approved[CID]['withdrawn_reason'], 'source_gone')
-        approved = {CID: record()}
-        errors, _ = self.check(approved, error=TimeoutError())
-        self.assertNotIn('status', approved[CID])
-        self.assertEqual(approved[CID]['review']['checked_at'], record()['review']['checked_at'])
-        self.assertEqual(errors[0]['item_id'], CID)
-        # Up to 20 records, each counted in the HTTP budget; recently checked ones are skipped.
-        many = {f'{n:024x}': record(candidate_id=f'{n:024x}') for n in range(25)}
-        cost_policy.reset(60)
-        _, calls = self.check(many)
-        self.assertEqual(len(calls), 40)
-        self.assertEqual(cost_policy.budget.used, 40)
-        _, calls = self.check(many)
-        self.assertEqual(len([c for c in calls if not c.endswith('robots.txt')]), 5)
-        cost_policy.reset(3)
+        for code in (401, 403, 404, 410, 451):
+            with self.subTest(code=code):
+                approved = {CID: record()}
+                (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
+                self.check(approved, error=HTTPError('https://official.example/ai/1', code, 'x', {}, None), now=NOW + timedelta(hours=9 + code % 7))
+                self.assertEqual(approved[CID]['withdrawn_reason'], 'source_gone')
+        for kwargs in (dict(error=TimeoutError()), dict(error=HTTPError('https://official.example/ai/1', 500, 'x', {}, None)),
+                       dict(content_type='application/pdf')):
+            with self.subTest(kwargs=str(kwargs)):
+                approved = {CID: record()}
+                (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
+                errors, _ = self.check(approved, **kwargs)
+                self.assertNotIn('status', approved[CID])
+                self.assertEqual(approved[CID]['review']['checked_at'], record()['review']['checked_at'])
+                self.assertEqual(errors[0]['item_id'], CID)
+        cost_policy.reset(1)
+        (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
         _, calls = self.check({CID: record()})
         self.assertEqual(calls, [])
+
+    def test_robots_is_fetched_once_per_host_and_all_twenty_records_fit_the_budget(self):
+        many = {}
+        for n in range(25):
+            cid = f'{n:024x}'
+            host = 'official.example' if n % 2 else 'two.example'
+            url = f'https://{host}/ai/{n}'
+            many[cid] = record(candidate_id=cid, source='test' if n % 2 else 'two', url=url,
+                               review=dict(documents=[dict(url=url, body_hash=body_hash(url=url), title='')], document_count=1))
+        cost_policy.reset(22)
+        _, calls = self.check(many)
+        self.assertEqual(sorted(c for c in calls if c.endswith('robots.txt')),
+                         ['https://official.example/robots.txt', 'https://two.example/robots.txt'])
+        self.assertEqual(len(calls), 22)
+        self.assertEqual(sum(r['review']['checked_at'] == (NOW + timedelta(hours=7)).isoformat() for r in many.values()), 20)
+        self.assertFalse(any(r.get('status') for r in many.values()))
+        # Checked within 6 hours: the next run in the same window only checks the 5 left over.
+        cost_policy.reset(22)
+        _, calls = self.check(many, now=NOW + timedelta(hours=8))
+        self.assertEqual(len([c for c in calls if not c.endswith('robots.txt')]), 5)
+
+    def test_never_displayable_records_are_not_rechecked(self):
+        ongoing = record(valid_until=None, validity_kind='ongoing', review=dict(published_at='2026-07-01'))
+        approved = {CID: record(), 'b' * 24: dict(ongoing, candidate_id='b' * 24),
+                    'c' * 24: record(candidate_id='c' * 24, valid_until='2026-10-01'),
+                    'd' * 24: record(candidate_id='d' * 24, status='withdrawn')}
+        later = NOW + timedelta(hours=7)
+        self.assertEqual(auto_release.recheck_targets(approved, [], self.SOURCES, later), [CID])
+        self.assertEqual(auto_release.recheck_targets(approved, [{'candidate_id': CID}], self.SOURCES, later), [])
+        stale = {CID: record(review=dict(checked_at=(NOW - timedelta(hours=40)).isoformat()))}
+        self.assertEqual(auto_release.recheck_targets(stale, [], self.SOURCES, NOW), [CID], 'stale records are rechecked')
 
 
 class MergeTests(unittest.TestCase):
@@ -418,6 +460,24 @@ class MirrorTests(Base):
             with self.assertRaises(ValueError):
                 mirror.save_ai(self.root, self.REPO)
 
+    def test_corrupt_local_approval_list_is_never_uploaded(self):
+        from benefit_monitor import mirror
+        files = {'ai-approved.json': ({CID: record()}, '1' * 40)}
+        writes = []
+        with patch('benefit_monitor.mirror.subprocess.run', side_effect=self.gh(files, writes)):
+            mirror.restore_ai(self.root, self.REPO)
+        for broken in ('{half', '[1, 2]'):
+            (self.root / 'cache/ai_publish/approved.json').write_text(broken)
+            with patch('benefit_monitor.mirror.subprocess.run', side_effect=AssertionError('must not write')):
+                with self.assertRaises(ValueError):
+                    mirror.save_ai(self.root, self.REPO)
+        # Unreadable takedowns hide items but must not turn the upload into {}.
+        auto_release.save_approved(self.root, {CID: record()})
+        (self.root / 'cache/ai_publish/takedowns.json').write_text('{broken')
+        with patch('benefit_monitor.mirror.subprocess.run', side_effect=self.gh(files, writes)):
+            mirror.save_ai(self.root, self.REPO)
+        self.assertEqual(list(writes[-1][2]), [CID])
+
     def test_apply_takedowns_remote_filters_current_briefing_and_keeps_its_lease(self):
         from benefit_monitor import mirror
         data = publish.payload(self.root, now=NOW)
@@ -483,6 +543,49 @@ class SnapshotDeliveryOrderTests(Base):
                 patch.object(m, 'save_ai', side_effect=AssertionError('lease first')):
             with self.assertRaisesRegex(ValueError, 'changed during AI run'):
                 m.publish_snapshot(self.root, Store(), NOW, 'k' * 20, expected_sha='b' * 40)
+
+
+class RuntimeRestoreTests(Base):
+    def test_runtime_pack_includes_ai_publish(self):
+        from benefit_monitor.age_state import FOLDERS
+        self.assertIn('cache/ai_publish/', FOLDERS)
+
+    def test_packed_approvals_survive_restore_and_failed_restore_stops_before_paid_work(self):
+        from benefit_monitor import cloud_daily as m
+
+        class Store:
+            token = 'fixture-token'
+        newer = record(candidate_id='e' * 24)
+        held = record(candidate_id='f' * 24)
+        # Packed runtime: the previous run's restored base had CID and held; the run then held f (removed)
+        # and approved e, but its upload failed.
+        save(self.root / 'cache/ai_publish/remote.json', {'sha': '1' * 40, 'approved': {CID: record(), 'f' * 24: held}})
+        auto_release.save_approved(self.root, {CID: record(), 'e' * 24: newer})
+        remote = {CID: record(status='withdrawn', withdrawn_reason='body_changed'), 'f' * 24: held,
+                  'g' * 24: record(candidate_id='g' * 24)}
+        order = []
+
+        def restored_ai(root, repository, env=None):
+            order.append('restore_ai')
+            save(Path(root) / 'cache/ai_publish/approved.json', remote)
+            save(Path(root) / 'cache/ai_publish/remote.json', {'sha': '2' * 40, 'approved': remote})
+            return True
+        with patch.object(m, 'restore_mirror', side_effect=lambda *a, **k: order.append('restore') or 'a' * 40), \
+                patch.object(m, 'restore_ai', side_effect=restored_ai):
+            self.assertEqual(m.restore_public(self.root, Store(), NOW), 'a' * 40)
+        self.assertEqual(order, ['restore', 'restore_ai'])
+        approved, _ = auto_release.load(self.root)
+        self.assertEqual(sorted(approved), sorted([CID, 'e' * 24, 'g' * 24]))
+        self.assertEqual(approved[CID]['status'], 'withdrawn')
+        # An empty pack (first run) never deletes remote approvals.
+        (self.root / 'cache/ai_publish/remote.json').unlink()
+        auto_release.save_approved(self.root, {})
+        with patch.object(m, 'restore_mirror', return_value='a' * 40), patch.object(m, 'restore_ai', side_effect=restored_ai):
+            m.restore_public(self.root, Store(), NOW)
+        self.assertEqual(sorted(auto_release.load(self.root)[0]), sorted(remote))
+        with patch.object(m, 'restore_mirror', return_value='a' * 40), patch.object(m, 'restore_ai', return_value=False):
+            with self.assertRaisesRegex(ValueError, 'before any paid call'):
+                m.restore_public(self.root, Store(), NOW)
 
 
 class StoreDecisionTests(unittest.TestCase):

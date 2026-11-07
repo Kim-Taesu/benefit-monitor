@@ -125,13 +125,16 @@ def restore_ai(root, repository, env=None):
 
 def save_ai(root, repository, env=None):
     """Write the local approval list back with the restored sha lease; on conflict re-read once and merge."""
-    from .auto_release import load as load_ai, merge_approved, public_record
+    from .auto_release import merge_approved, public_record
     from .store import load, save
     root = Path(root)
     lease = load(root / AI_BASE, None)
     if not isinstance(lease, dict) or not isinstance(lease.get("approved"), dict):
         raise ValueError("AI approval restore required before saving")
-    approved, _ = load_ai(root)
+    # Read the file itself, never the fail-closed reader: an unreadable list must not upload {}.
+    approved = load(root / AI_FILES["ai-approved.json"], None)
+    if not isinstance(approved, dict):
+        raise ValueError("Local AI approval list missing or not an object")
     ours = {cid: public_record(r) for cid, r in approved.items() if isinstance(r, dict)}
     if _put(repository, "ai-approved.json", ours, lease.get("sha"), env):
         return ours

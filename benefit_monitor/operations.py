@@ -81,48 +81,47 @@ def queue(report,state,now,max_age=7):
     return rows
 
 
-def check_bodies(state,items,sources,now,limit,auto=None):
+def check_bodies(state,items,sources,now,limit,auto=None,takedowns=(),reader=None):
     """Detect text changes only; a successful fetch never renews human verification.
 
-    auto (the AI approval dict) is checked after the human items: up to 20 records, each fetch
-    counted in the same HTTP budget. Only checked_at and the withdrawn fields change there.
+    auto (the AI approval dict) is checked after the human items with reader (an OfficialReader:
+    per-host robots cache, no redirects, text/html only, same HTTP budget). Up to 20 displayable
+    records; only checked_at and the withdrawn fields change there.
     """
     errors=[]
     _check_human(state,items,sources,now,limit,errors)
-    if auto:errors+=_check_auto(auto,sources,now)
+    if auto and reader is not None:errors+=_check_auto(auto,takedowns,sources,now,reader)
     return errors
 
 
-def _check_auto(approved,sources,now):
+GONE_CODES=(401,403,404,410,451)
+
+
+def _check_auto(approved,takedowns,sources,now,reader):
     """Exact body hash of each record's original official page (the hash the AI decision used)."""
-    import hashlib
-    from urllib.parse import urlsplit
     from urllib.error import HTTPError
+    from urllib.parse import urlsplit
     from .auto_release import mark_checked,recheck_targets
-    from .collectors import rss
-    from .collectors.body import extract_body
-    from .robots import allowed
     from . import cost_policy
     errors=[]
-    for cid in recheck_targets(approved,now):
-        if cost_policy.budget.limit-cost_policy.budget.used<4:break
+    for cid in recheck_targets(approved,takedowns,sources,now):
         record=approved[cid]
+        # One page request each; robots.txt is fetched once per host and cached by the reader.
+        host=reader.state['hosts'].get(urlsplit(record['url']).netloc,{})
+        need=1+(now.timestamp()>=host.get('robots_until',0))
+        if cost_policy.budget.limit-cost_policy.budget.used<need:break
         try:
-            target=record['url'];domains=sources[record['source']]['domains']
-            u=urlsplit(target)
-            try:robot=rss.fetch(f'{u.scheme}://{u.netloc}/robots.txt',domains).decode('utf-8')
+            try:doc=reader.read({'source':record['source'],'url':record['url']},cooldown_on_failure=False)
             except HTTPError as e:
-                if e.code!=404:raise
-                robot=''
-            if not allowed(robot,target,rss.AGENT):raise ValueError('robots_denied')
-            try:page=rss.fetch(target,domains).decode('utf-8')
-            except HTTPError as e:
-                if e.code in (404,410):
-                    e.close();mark_checked(approved,cid,None,now);continue
+                e.close()
+                if e.code in GONE_CODES:
+                    mark_checked(approved,cid,None,now);continue
                 raise
-            content,_=extract_body(page,target)
-            # A page that lost its body is treated as changed (hidden until the AI re-decides).
-            mark_checked(approved,cid,hashlib.sha256(content.encode()).hexdigest() if len(content)>=80 else '',now)
+            except ValueError as e:
+                # A page that lost its body is treated as changed (hidden until the AI re-decides).
+                if str(e)!='insufficient official body':raise
+                mark_checked(approved,cid,'',now);continue
+            mark_checked(approved,cid,doc['body_hash'],now)
         except Exception as error:
             errors.append(dict(source=record.get('source'),item_id=cid,**error_info(error)))
     return errors
