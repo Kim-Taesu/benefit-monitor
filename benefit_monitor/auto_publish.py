@@ -16,12 +16,38 @@ PROJECT = Path(__file__).resolve().parents[1]
 PAST_SIGNAL = re.compile(r'종료|마감되었|마감됨|결과\s*발표|지난\s*(?:차수|행사)|\d{4}년\s*(?:행사|차)\s*(?:종료|결과)')
 # Ongoing items must not hide an ending the model did not report (e.g. year-less "11월 30일까지").
 _DATE = (r'(?<![\d./-])(?:(?:\d{4}\s*[./년-]\s*)?\d{1,2}\s*[./월-]\s*\d{1,2}\s*일?\.?'
-         r'|\d{1,2}\s*월\s*말|\d{1,2}\s*일)')
+         r'|(?:\d{4}\s*[./년-]\s*)?\d{1,2}\s*월\s*말|\d{1,2}\s*일)')
 _TIME = r'(?:\s*\([^)]{1,4}\))?(?:\s*(?:오전|오후)?\s*\d{1,2}\s*(?:시(?:\s*\d{1,2}\s*분)?|:\d{2}))?'
 # Deadlines ("…까지/마감") and date ranges ("11.1 - 11.30", "11월 1일 ~ 30일", "~ 11.30"); never "09:00~18:00".
 ENDING_DATE = re.compile(_DATE + _TIME + r'\s*(?:까지|마감)'
                          r'|(?:' + _DATE + _TIME + r')?\s*[-–—~～∼]\s*' + _DATE)
 FOUR_DIGIT_YEAR = re.compile(r'(?<!\d)\d{4}(?!\d)')
+DATE_TOKEN = re.compile(r'(?:(?P<y>\d{4})\s*[./년-]\s*)?(?P<m>\d{1,2})\s*(?:[./-]|월)\s*(?P<d>\d{1,2}|말)|(?P<dd>\d{1,2})\s*일')
+
+
+def phrase_end(text):
+    """Last date of an ENDING_DATE match (deadline or range end); None if it cannot be read.
+
+    Year and month carry forward from earlier dates in the same phrase ("2026.11.1 ~ 11.20",
+    "11월 1일 ~ 30일"); "말" is the last day of that month.
+    """
+    year = month = None
+    end = None
+    for token in DATE_TOKEN.finditer(text):
+        year = int(token['y']) if token['y'] else year
+        month = int(token['m']) if token['m'] else month
+        day = token['d'] or token['dd']
+        if year is None or month is None:
+            end = None
+            continue
+        try:
+            if day == '말':
+                end = (date(year + (month == 12), month % 12 + 1, 1) - timedelta(days=1))
+            else:
+                end = date(year, month, int(day))
+        except ValueError:
+            return None
+    return end
 CORE = ('summary', 'conditions', 'fee_status', 'eligibility')
 COST = ('cost_details', 'payment_conditions')
 PAID = ('paid', 'mixed', 'conditional')
@@ -143,10 +169,13 @@ def decide(draft, host, now, takedowns):
     operating = evidence('summary', 'conditions')
     if ends:
         kind = 'fixed'
-        # An unreported year-less application deadline could already have passed.
-        if supported('application_period') is None and any(
-                not FOUR_DIGIT_YEAR.search(m.group()) for d in host['documents'] for m in ENDING_DATE.finditer(d['body'])):
-            period_ok = False
+        # An unreported application deadline could already have passed. Year-less phrases hold.
+        # Year-dated ones are read: a past or unreadable one holds (no_current_evidence).
+        if supported('application_period') is None:
+            for m in (m for d in host['documents'] for m in ENDING_DATE.finditer(d['body'])):
+                stated_end = phrase_end(m.group()) if FOUR_DIGIT_YEAR.search(m.group()) else None
+                if stated_end is None or stated_end < today:
+                    period_ok = False
     else:
         kind = 'ongoing'
         two_docs = len(hashes(operating)) >= 2

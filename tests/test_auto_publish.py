@@ -292,6 +292,21 @@ class AutoPublishTests(unittest.TestCase):
         self.assertFalse(result['publish'])
         self.assertIn('no_current_evidence', result['reasons'])
 
+    def test_period_item_with_past_year_dated_deadline_holds(self):
+        for phrase in ('신청 2026년 11월 1일까지 받습니다.', '접수는 2026.10.1 ~ 2026.10.31 입니다.',
+                       '신청 2026년 10월 말까지 받습니다.', '신청 2026.11.31까지 받습니다.'):
+            with self.subTest(phrase=phrase):
+                result = self.decide(host(D1 + '\n' + phrase, D2), period_facts())
+                self.assertFalse(result['publish'])
+                self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_period_item_with_future_year_dated_deadline_publishes(self):
+        for phrase in ('신청 2026년 11월 20일까지 받습니다.', '신청 2026년 11월 말까지 받습니다.',
+                       '신청 2026년 11월 8일 18시까지 받습니다.', '접수 2026.11.1 ~ 11.20'):
+            with self.subTest(phrase=phrase):
+                result = self.decide(host(D1 + '\n' + phrase, D2), period_facts())
+                self.assertTrue(result['publish'], result['reasons'])
+
     def test_public_fee_mapping(self):
         from benefit_monitor.auto_publish import public_fee
         self.assertEqual([public_fee(v) for v in ('free', 'paid', 'mixed', 'conditional', 'unknown', None)],
