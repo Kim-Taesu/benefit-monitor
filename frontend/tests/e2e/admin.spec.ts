@@ -14,7 +14,7 @@ async function setup(page:Page,raw:unknown,takedowns:unknown[]=[]):Promise<Seen>
  const seen:Seen={origins:[],github:[]};
  const site=new URL(String(test.info().project.use.baseURL)).origin;
  await page.clock.install({time:new Date(NOW)});
- await page.route('**/*',async route=>{
+ await page.context().route('**/*',async route=>{
   const request=route.request(),u=new URL(request.url());seen.origins.push(u.origin);
   if(u.origin==='https://api.github.com'){
    seen.github.push({method:request.method(),path:u.pathname+u.search,auth:request.headers().authorization||'',body:request.postData()?JSON.parse(request.postData()!):undefined});
@@ -50,9 +50,13 @@ test('take down with a mocked GitHub API shows the delay notice; restore puts it
  const seen=await setup(page,snapshot([auto]));
  await page.goto('./admin.html');
  await page.getByLabel('GitHub 토큰').fill(TOKEN);
+ await expect(page.getByLabel('이 브라우저에 기억하기')).not.toBeChecked();
  await page.getByRole('button',{name:'토큰 저장'}).click();
  await expect(page.getByText('내린 항목이 없습니다')).toBeVisible();
+ // Default: this tab's session only, nothing in localStorage shared by other kim-taesu.github.io pages.
+ expect(await page.evaluate(()=>[sessionStorage.length,localStorage.length])).toEqual([1,0]);
  const row=page.locator(`[data-candidate="${CID}"]`);
+ await expect(row.getByLabel('메모')).toHaveAccessibleName(/공개 저장소에 기록됩니다/);
  await row.getByLabel('메모').fill('기간이 틀림');
  await row.getByRole('button',{name:'내리기'}).click();
  await expect(page.getByRole('status')).toContainText('반영까지 2~3분 걸립니다');
@@ -65,14 +69,50 @@ test('take down with a mocked GitHub API shows the delay notice; restore puts it
  await expect(down).toContainText('기간이 틀림');
  await down.getByRole('button',{name:'되살리기'}).click();
  await expect(page.getByRole('status')).toContainText('되살렸습니다');
+ await expect(page.getByRole('status')).toContainText('같은 제목 키');
  await expect(page.getByText('내린 항목이 없습니다')).toBeVisible();
- // Reloading keeps the token in this browser only; deleting it disables the actions again.
+ // A reload keeps the session copy; a new tab does not see it.
  await page.reload();
  await expect(page.getByText('내린 항목이 없습니다')).toBeVisible();
+ const other=await page.context().newPage();
+ await other.goto('./admin.html');
+ await expect(other.getByText('내린 항목 목록은 토큰을 넣어야 볼 수 있습니다')).toBeVisible();
+ await other.close();
  await page.getByRole('button',{name:'토큰 삭제'}).click();
  await expect(row.getByRole('button',{name:'내리기'})).toBeDisabled();
- expect(await page.evaluate(()=>JSON.stringify(localStorage))).not.toContain(TOKEN);
+ expect(await page.evaluate(()=>[sessionStorage.length,localStorage.length])).toEqual([0,0]);
  expect(allowed(seen)).toBe(true);
+});
+
+test('opting in remembers the token across tabs with a shared-origin warning; delete clears both',async({page})=>{
+ const seen=await setup(page,snapshot([auto]));
+ await page.goto('./admin.html');
+ await expect(page.getByText('kim-taesu.github.io')).toBeVisible();
+ await page.getByLabel('GitHub 토큰').fill(TOKEN);
+ await page.getByLabel('이 브라우저에 기억하기').check();
+ await page.getByRole('button',{name:'토큰 저장'}).click();
+ await expect(page.getByText('내린 항목이 없습니다')).toBeVisible();
+ expect(await page.evaluate(()=>[sessionStorage.length,localStorage.length])).toEqual([0,1]);
+ const other=await page.context().newPage();
+ await other.goto('./admin.html');
+ await expect(other.getByText('내린 항목이 없습니다')).toBeVisible();
+ // Leave a stale session copy too, then delete from the other tab: both stores are emptied there.
+ await other.evaluate(()=>sessionStorage.setItem('benefit-monitor.admin-token','x'));
+ await other.getByRole('button',{name:'토큰 삭제'}).click();
+ expect(await other.evaluate(()=>[sessionStorage.length,localStorage.length])).toEqual([0,0]);
+ await page.reload();
+ await expect(page.getByText('내린 항목 목록은 토큰을 넣어야 볼 수 있습니다')).toBeVisible();
+ expect(allowed(seen)).toBe(true);
+});
+
+test('the admin app does not start inside a frame',async({page})=>{
+ const seen=await setup(page,snapshot([auto]));
+ await page.route('**/frame-host.html',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><iframe src="./admin.html" title="framed"></iframe>'}));
+ await page.goto('./frame-host.html');
+ const frame=page.frameLocator('iframe');
+ await expect(frame.locator('#admin')).toContainText('다른 페이지 안에서는 열 수 없습니다');
+ await expect(frame.getByRole('button')).toHaveCount(0);
+ expect(seen.github).toHaveLength(0);
 });
 
 test('credit exhausted status is shown with the last success day',async({page})=>{

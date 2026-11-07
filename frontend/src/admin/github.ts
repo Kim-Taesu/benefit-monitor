@@ -88,10 +88,12 @@ export async function takeDown(token:string,item:{candidate_id:string;title_key:
  await redeploy(token,options);
 }
 
-export async function restore(token:string,candidate_id:string,options:Options={}):Promise<void>{
+// The backend hides an item when either id matches, so restoring removes both kinds of entry.
+export async function restore(token:string,item:{candidate_id:string;title_key:string},options:Options={}):Promise<void>{
  checkToken(token);
- if(!CID.test(candidate_id))throw new Error('항목 식별자가 올바르지 않습니다');
- const match=sameCandidate(candidate_id);
+ if(typeof item.candidate_id!=='string'||!CID.test(item.candidate_id)||typeof item.title_key!=='string')throw new Error('항목 식별자가 올바르지 않습니다');
+ const {candidate_id,title_key}=item;
+ const match=(t:unknown)=>sameCandidate(candidate_id)(t)||(!!title_key&&!!t&&typeof t==='object'&&(t as Record<string,unknown>).title_key===title_key);
  await update(token,options,raw=>raw.some(match)?raw.filter(t=>!match(t)):null,'Restore '+candidate_id);
  await redeploy(token,options);
 }

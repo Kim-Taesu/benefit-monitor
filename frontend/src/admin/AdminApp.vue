@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import {computed,onMounted,ref} from 'vue';
 import {DeployError,NOTE_MAX,REPO,readTakedowns,restore,takeDown,validToken,type Takedown} from './github';
+import {clearToken,loadToken,saveToken as storeToken} from './token-store';
 
 type Doc={url:string;title:string};
 type AutoItem={candidateId:string;titleKey:string;title:string;source:string;url:string;conditions:string;validityKind:string;
  validFrom:string;validUntil:string;deadlineAt:string;documentCount:number;documents:Doc[];checkedAt:string};
 type AiStatus={state:string;lastSuccessDay:string|null}|null;
 
-const STORAGE_KEY='benefit-monitor.admin-token';
 const text=(v:unknown)=>typeof v==='string'?v:'';
 const record=(v:unknown)=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};
 function https(url:string){try{const u=new URL(url);return u.protocol==='https:'&&!u.username&&!u.password;}catch{return false;}}
@@ -31,10 +31,8 @@ function parseStatus(raw:unknown):AiStatus{
  return ['ok','credit_exhausted','failed'].includes(text(s.state))?{state:text(s.state),lastSuccessDay:text(s.last_success_day)||null}:null;
 }
 
-function storedToken(){try{return localStorage.getItem(STORAGE_KEY)||'';}catch{return '';}}
-function storeToken(value:string){try{value?localStorage.setItem(STORAGE_KEY,value):localStorage.removeItem(STORAGE_KEY);}catch{/* works for this tab only */}}
 
-const token=ref(''),draft=ref(''),items=ref<AutoItem[]>([]),aiStatus=ref<AiStatus>(null),briefingError=ref(false);
+const token=ref(''),draft=ref(''),remember=ref(false),items=ref<AutoItem[]>([]),aiStatus=ref<AiStatus>(null),briefingError=ref(false);
 const takedowns=ref<Takedown[]|null>(null),takedownError=ref(''),message=ref(''),busy=ref(false);
 const notes=ref<Record<string,string>>({});
 
@@ -68,10 +66,11 @@ async function loadTakedowns(){
 async function saveToken(){
  const value=draft.value.trim();
  if(!validToken(value)){message.value='토큰 형식이 올바르지 않습니다. github_pat_으로 시작하는 토큰을 그대로 붙여 넣으세요.';return;}
- token.value=value;draft.value='';storeToken(value);message.value='토큰을 이 브라우저에 저장했습니다.';
+ token.value=value;draft.value='';storeToken(value,remember.value);
+ message.value=remember.value?'토큰을 이 브라우저에 기억했습니다.':'토큰을 이 탭에만 저장했습니다. 탭을 닫으면 지워집니다.';
  await loadTakedowns();
 }
-function deleteToken(){token.value='';draft.value='';storeToken('');takedowns.value=null;takedownError.value='';message.value='토큰을 삭제했습니다.';}
+function deleteToken(){token.value='';draft.value='';clearToken();takedowns.value=null;takedownError.value='';message.value='토큰을 삭제했습니다.';}
 
 async function run(action:()=>Promise<void>,done:string){
  if(!token.value||busy.value)return;
@@ -85,10 +84,10 @@ async function run(action:()=>Promise<void>,done:string){
 }
 const down=(i:AutoItem)=>run(()=>takeDown(token.value,{candidate_id:i.candidateId,title_key:i.titleKey},notes.value[i.candidateId]||''),
  '내렸습니다. 반영까지 2~3분 걸립니다.');
-const revive=(t:Takedown)=>run(()=>restore(token.value,t.candidate_id),
- '되살렸습니다. 다음 공개 실행에서 기준을 다시 통과하면 다시 공개됩니다.');
+const revive=(t:Takedown)=>run(()=>restore(token.value,{candidate_id:t.candidate_id,title_key:t.title_key}),
+ '되살렸습니다. 같은 후보 ID나 같은 제목 키로 내린 기록도 함께 지웠습니다. 다음 공개 실행에서 기준을 다시 통과하면 다시 공개됩니다.');
 
-onMounted(async()=>{token.value=storedToken();await Promise.all([loadBriefing(),loadTakedowns()]);});
+onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),loadTakedowns()]);});
 </script>
 
 <template>
@@ -98,12 +97,14 @@ onMounted(async()=>{token.value=storedToken();await Promise.all([loadBriefing(),
 
   <section aria-labelledby="token-heading">
    <h2 id="token-heading">인증</h2>
-   <p v-if="token">토큰이 이 브라우저에 저장되어 있습니다.</p>
+   <p v-if="token">토큰이 저장되어 있습니다.</p>
    <form v-else @submit.prevent="saveToken">
     <label for="token">GitHub 토큰</label>
     <input id="token" v-model="draft" type="password" autocomplete="off" spellcheck="false">
+    <label class="check"><input v-model="remember" type="checkbox"> 이 브라우저에 기억하기</label>
     <button type="submit">토큰 저장</button>
    </form>
+   <p v-if="!token" class="warn">기억하기를 켜면 같은 주소(kim-taesu.github.io)의 다른 GitHub Pages 페이지도 이 저장소를 읽을 수 있습니다. 켤 때는 만료가 짧은 토큰을 쓰세요. 끄면 이 탭에만 두고 탭을 닫으면 지웁니다.</p>
    <button v-if="token" type="button" @click="deleteToken">토큰 삭제</button>
    <details :open="!token">
     <summary>토큰 만드는 법</summary>
@@ -112,7 +113,7 @@ onMounted(async()=>{token.value=storedToken();await Promise.all([loadBriefing(),
      <li>Repository access는 Only select repositories에서 <code>{{REPO}}</code> 하나만 고릅니다.</li>
      <li>Permissions는 Contents: Read and write, Actions: Read and write 두 개만 줍니다. 만료일은 짧게 둡니다.</li>
     </ol>
-    <p>토큰은 이 브라우저(localStorage)에만 저장하고 api.github.com 호출에만 씁니다. 사이트 서버나 로그로 보내지 않습니다. 다 쓰면 토큰 삭제를 누르세요.</p>
+    <p>토큰은 이 탭(sessionStorage)에만, 기억하기를 켜면 이 브라우저(localStorage)에 저장하고 api.github.com 호출에만 씁니다. 사이트 서버나 로그로 보내지 않습니다. 다 쓰면 토큰 삭제를 누르세요.</p>
    </details>
   </section>
 
@@ -135,8 +136,8 @@ onMounted(async()=>{token.value=storedToken();await Promise.all([loadBriefing(),
     <ul><li v-for="d in i.documents" :key="d.url"><a :href="d.url" target="_blank" rel="noopener noreferrer">{{d.title}}</a></li></ul>
     <p v-if="downIds.has(i.candidateId)" class="pending">내림 목록에 있음. 반영을 기다리는 중입니다.</p>
     <div class="row">
-     <label :for="'note-'+i.candidateId">메모</label>
-     <input :id="'note-'+i.candidateId" v-model="notes[i.candidateId]" :maxlength="NOTE_MAX" placeholder="내리는 이유(선택)">
+     <label :for="'note-'+i.candidateId">메모 (공개 저장소에 기록됩니다)</label>
+     <input :id="'note-'+i.candidateId" v-model="notes[i.candidateId]" :maxlength="NOTE_MAX" placeholder="내리는 이유(선택, 공개 저장소에 기록됩니다)">
      <button type="button" :disabled="!token||busy||downIds.has(i.candidateId)" @click="down(i)">내리기</button>
     </div>
    </article>
@@ -177,4 +178,6 @@ body{margin:0;background:#f6f7f9;color:#1b1f24;font:16px/1.55 system-ui,-apple-s
 .admin .ai-status{margin:20px 0 0;padding:10px 12px;border-radius:8px;background:#fff;border:1px solid #dde1e6}
 .admin .ai-status.credit_exhausted,.admin .ai-status.failed{background:#fff3f0;border-color:#f1b5a6}
 .admin .pending{color:#8a4b00}
+.admin .check{display:flex;gap:6px;align-items:center}.admin .check input{flex:none}
+.admin .warn{font-size:.9rem;color:#8a4b00}
 </style>

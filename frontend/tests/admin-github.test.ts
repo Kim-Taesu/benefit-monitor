@@ -73,7 +73,7 @@ test('already taken down items are not duplicated but still redeployed',async()=
 test('restore removes only the matching candidate and redeploys',async()=>{
  const mine:Takedown={...existing,candidate_id:CID,title_key:'테스트 항목'};
  const {fn,calls}=fake([json(200,{encoding:'base64',sha:'sha1',content:encode([existing,mine])}),json(200,{}),new Response(null,{status:204})]);
- await restore(TOKEN,CID,{fetch:fn,now:()=>NOW});
+ await restore(TOKEN,{candidate_id:CID,title_key:'테스트 항목'},{fetch:fn,now:()=>NOW});
  assert.deepEqual(decode((calls[1].body as {content:string}).content),[existing]);
  assert.deepEqual(calls[2].body,{ref:'main',inputs:{apply_takedowns:true}});
 });
@@ -84,7 +84,7 @@ test('invalid input is refused before any request',async()=>{
  await assert.rejects(takeDown(TOKEN,{candidate_id:'../../x',title_key:'t'},'',{fetch:fn}));
  await assert.rejects(takeDown(TOKEN,{candidate_id:CID,title_key:''},'',{fetch:fn}));
  await assert.rejects(takeDown(TOKEN,{candidate_id:CID,title_key:'t'},'x'.repeat(NOTE_MAX+1),{fetch:fn}));
- await assert.rejects(restore(TOKEN,'nothex',{fetch:fn}));
+ await assert.rejects(restore(TOKEN,{candidate_id:'nothex',title_key:'t'},{fetch:fn}));
  assert.equal(calls.length,0);
 });
 
@@ -101,4 +101,12 @@ test('a failed dispatch after a saved list is reported as a deploy error',async(
  const {fn,calls}=fake([json(200,{encoding:'base64',sha:'sha1',content:encode([])}),json(200,{}),json(403,{message:'Resource not accessible'})]);
  await assert.rejects(takeDown(TOKEN,{candidate_id:CID,title_key:'t'},'',{fetch:fn,now:()=>NOW}),(e:Error)=>e instanceof DeployError&&/403/.test(e.message));
  assert.deepEqual(calls.map(c=>c.method),['GET','PUT','POST']);
+});
+
+test('restore also removes entries with the same title_key (the backend matches either)',async()=>{
+ const byKey:Takedown={...existing,candidate_id:'cccccccccccccccccccccccc',title_key:'테스트 항목'};
+ const mine:Takedown={...existing,candidate_id:CID,title_key:'테스트 항목'};
+ const {fn,calls}=fake([json(200,{encoding:'base64',sha:'sha1',content:encode([existing,byKey,mine,'unknown'])}),json(200,{}),new Response(null,{status:204})]);
+ await restore(TOKEN,{candidate_id:CID,title_key:'테스트 항목'},{fetch:fn,now:()=>NOW});
+ assert.deepEqual(decode((calls[1].body as {content:string}).content),[existing,'unknown']);
 });
