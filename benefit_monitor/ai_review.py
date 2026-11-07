@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 from . import cost_policy
+from . import auto_publish
 from .cross_sources import allowed_domains, related_urls
 from .models import Benefit
 from .official_reader import OfficialReader, project_path
@@ -36,6 +37,36 @@ def invoke(root,kind,input_path):
     except (ValueError,KeyError,TypeError):
         pass
     return {'status':'stopped_before_result','run_id':None}
+
+
+TRIAL_RUNS=Path(__file__).resolve().parents[1]/'.tools/claude-trial/live/runs'
+
+
+def load_run(run_id):
+    """Normalized v3 draft and host input that the trial CLI stored for a validated run."""
+    if not isinstance(run_id,str) or not run_id or '/' in run_id or run_id.startswith('.'):raise ValueError('invalid run id')
+    folder=TRIAL_RUNS/run_id
+    if not folder.resolve().is_relative_to(TRIAL_RUNS.resolve()):raise ValueError('run path escapes trial root')
+    return (json.loads((folder/'normalized-output.json').read_text()),json.loads((folder/'input.json').read_text()))
+
+
+def auto_decide(root,run_id,now):
+    """Deterministic gate; any unreadable run is held as a contract failure."""
+    takedowns=load(project_path(root,'cache/ai_publish/takedowns.json'),[])
+    try:draft,host=load_run(run_id)
+    except (OSError,ValueError,TypeError):return {'publish':False,'reasons':['contract'],'record':None}
+    return auto_publish.decide(draft,host,now,takedowns if isinstance(takedowns,list) else [])
+
+
+def _store_decision(root,cid,decision,row,now):
+    approved_path=project_path(root,'cache/ai_publish/approved.json')
+    decisions_path=project_path(root,'cache/ai_publish/decisions.json')
+    approved=load(approved_path,{});decisions=load(decisions_path,{})
+    if decision['publish']:approved[cid]=decision['record']
+    else:approved.pop(cid,None)
+    decisions[cid]=dict(publish=decision['publish'],reasons=decision['reasons'],decided_at=now.isoformat(),
+                        run_id=row['run_id'],signature=row['signature'])
+    save(approved_path,approved);save(decisions_path,decisions)
 
 
 def _related_docs(reader,cid,candidate,doc,peers,failures):
@@ -109,6 +140,11 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             row=dict(candidate_id=cid,source=candidate['source'],url=candidate['url'],body_hash=doc['body_hash'],signature=signature,
                      input_file=str(input_path.relative_to(root)),model_status=model['status'],run_id=model['run_id'],
                      review_status='pending_human_review',publication_approved=False,observed_at=now.isoformat())
+            if model['status']=='validated_draft':
+                decision=auto_decide(root,model['run_id'],now)
+                row['auto_publish']={'publish':decision['publish'],'reasons':decision['reasons']}
+                _store_decision(root,cid,decision,row,now)
+                result['auto_published']=result.get('auto_published',0)+decision['publish']
             save(project_path(root,review_file),row)
             state['items'][cid]={**row,'review_file':review_file,'last_checked_at':now.isoformat()}
             result['queued']+=1
