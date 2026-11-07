@@ -115,7 +115,7 @@ LaunchAgent 설치와 설정 활성화는 현재 하지 않았다. 사용자 요
 
 무과금 점검은 Actions의 Frontend P0 checks → Run workflow → 작업 브랜치 → check_ai_cloud=true로 실행한다. 이 경로는 등록된 Secret과 암복호화·원격 쓰기만 검증하며 당일 시도·Claude·배포를 수행하지 않는다. main 반영 후에는 AI daily trial의 check_only=true도 같은 검증을 수행한다.
 
-중단은 Actions의 AI daily trial에서 Disable workflow를 선택한다. 진행 중 작업까지 이미 지출한 비용을 되돌리지는 않는다. cloud 전환 후 Mac enabled를 임의로 다시 켜지 않는다. 최신 원격 원장과 미정산 예약을 복원·대조한 뒤 하나의 실행 주체만 재개해야 한다. 복구 명령은 `python3 scripts/ai_cloud_handoff.py restore`이며 미정산 예약도 보존해 검토할 수 있고 스케줄을 자동 재개하지 않는다.
+중단은 Actions의 AI daily trial에서 Disable workflow를 선택한다. 진행 중 작업까지 이미 지출한 비용을 되돌리지는 않는다. cloud 전환 후 Mac enabled를 임의로 다시 켜지 않는다. 최신 원격 원장과 미정산 예약을 복원·대조한 뒤 하나의 실행 주체만 재개해야 한다. 복구 명령은 `python3 scripts/ai_cloud_handoff.py restore`이며 미정산 예약도 보존해 검토할 수 있고 스케줄을 자동 재개하지 않는다. 원격 control 검증만 하려면 `check`를 쓴다. 전환용 `prepare`·`activate`는 은퇴했다(2026-11-07 원장 개정 뒤의 revision 2 control을 로컬 캡처로 바꾸면 안 된다). 실행하면 안내 문구와 함께 종료값 2로 멈춘다.
 
 ## 실험 한도 변경 — 2026-11-05
 
@@ -168,6 +168,12 @@ GitHub 예약 실행이 크게 늦거나 빠져서 트리거를 바꿨다. 모�
 ### 내리기와 복원
 - 어드민 페이지에서 항목을 내리면 `ai-takedowns.json`에 기록하고 `briefing-pages.yml`을 `apply_takedowns: true`로 실행해 현재 공개 브리핑에서 뺀다. 복원은 기록을 지우고 같은 방식으로 반영한다.
 - 반영까지 workflow 실행 시간만큼 걸린다. 조회 실패 때에는 모든 자동 공개 항목을 숨기는 쪽으로 동작한다.
+- 내리기 배포는 현재 `briefing.json`을 다시 쓰기 전에 자동 공개 항목을 `ai-approved.json`과 내림 목록으로 수집 경로와 똑같이 재검사한다. 철회·만료·30시간 경과·승인본과 다른 항목은 같이 빠진다. `briefing.json` 형태가 이상하면 배포하지 않고 단계를 실패시킨다.
+
+### 암호화 runtime 크기와 보관
+- briefing-data의 `ai-runtime.age`·`ai-control.age`는 1 MB를 넘으면 contents API가 본문을 주지 않는다. 그래서 sha만 contents API(object 형식)로 묻고 본문은 git blob API로 읽는다. 암호문 상한은 8 MiB다.
+- 매 AI 실행은 유료 호출과 날짜 사용 전에 오래된 비공개 자료를 정리한다. 대상은 `.tools/claude-trial/live/runs/`, `.tools/ai-inputs/`, `cache/ai_review/documents/`의 14일 넘은 항목 중 현재 검토 상태(`cache/ai_review/state.json`)·자동 공개 기록의 결정·본문 캐시 색인이 가리키지 않는 것뿐이다. 원장(`budget.json`)·응답 캐시(`responses/`)·검토 대기열은 지우지 않는다. 기준 파일이나 시각을 읽을 수 없으면 아무것도 지우지 않는다.
+- 정리 뒤에도 파일 수 3072개, 원본 24 MiB, 압축 6 MiB 중 하나를 넘으면 `runtime_too_large`로 멈추고 Actions가 실패한다. 이때는 유료 호출도, 그날 실행 기록도 남기지 않는다. 응답 캐시는 원장이 가리키므로 장기적으로 이 한도에 닿을 수 있다. 그때는 사람이 검토해 정리 방법을 정한다.
 
 ### 게이트 코드와 주제 카드 승인 해시
 자동 공개 게이트 등 공개 경로 코드를 바꾸면 `public/topic-publication.json`의 `policy_sha256`을 다시 기록해야 한다.
