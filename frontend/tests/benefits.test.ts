@@ -85,3 +85,22 @@ test('alphabetic ordering uses the displayed card headline, not the original off
  const rows=adapt(snapshot([item({title:'가 원문',summary:'하 카드'}),item({url:'https://mediahub.seoul.go.kr/archives/2',title:'하 원문',summary:'가 카드'})]),NOW).items;
  assert.equal(select(rows,{...readFilters(''),sort:'title'},NOW)[0].summary,'가 카드');
 });
+const aiReview = (over: Record<string, unknown> = {}) => ({ kind: 'ai_auto', candidate_id: 'c1', title_key: 'k1', document_count: 2, checked_at: '2026-11-04T05:00:00+09:00', documents: [{ url: 'https://mediahub.seoul.go.kr/archives/1', title: '원문 1' }, { url: 'https://www.gangseo.seoul.kr/a', title: '원문 2' }], ...over });
+test('review defaults to human and validates ai_auto documents', () => {
+  const rows = adapt(snapshot([item(), item({ url: 'https://mediahub.seoul.go.kr/archives/2', review: { kind: 'human' } }), item({ url: 'https://mediahub.seoul.go.kr/archives/3', review: aiReview() })]), NOW);
+  assert.equal(rows.withheldCount, 0);
+  assert.deepEqual(rows.items[0].review, { kind: 'human' });
+  assert.deepEqual(rows.items[1].review, { kind: 'human' });
+  assert.deepEqual(rows.items[2].review, { kind: 'ai_auto', documentCount: 2, checkedAt: '2026-11-04T05:00:00+09:00', documents: [{ url: 'https://mediahub.seoul.go.kr/archives/1', title: '원문 1' }, { url: 'https://www.gangseo.seoul.kr/a', title: '원문 2' }] });
+});
+test('ai_auto with foreign document url is withheld', () => {
+  const bad = [
+    aiReview({ documents: [{ url: 'https://evil.example/x', title: 'x' }] }),
+    aiReview({ documents: [{ url: 'http://mediahub.seoul.go.kr/a', title: 'x' }] }),
+    aiReview({ documents: [] }), aiReview({ document_count: 1 }),
+    aiReview({ checked_at: '2026-11-05T00:00:00+09:00' }), aiReview({ checked_at: 'nope' }),
+    { kind: 'robot' }, 'ai_auto',
+  ].map((review, n) => item({ url: 'https://mediahub.seoul.go.kr/archives/' + (10 + n), review }));
+  const result = adapt(snapshot(bad), NOW);
+  assert.equal(result.items.length, 0); assert.equal(result.withheldCount, bad.length);
+});

@@ -6,11 +6,13 @@ export const coverageLabels: Record<string,string>={checked:'목록 수집 성�
 export interface Filters { q:string; region:string; category:string; sort:string; status:string }
 export const valueLabels={discount_rate:'% 할인',discount_amount:'원 할인',grant_amount:'원 지원',refund_amount:'원 환급',reward_points:'포인트 적립'};
 export interface BenefitValue {kind:keyof typeof valueLabels;value:number;qualifier:'exact'|'up_to';conditions:string;evidence_url:string;evidence_quote:string}
+export interface ReviewDocument {url:string;title:string}
+export type Review={kind:'human'}|{kind:'ai_auto';documentCount:number;documents:ReviewDocument[];checkedAt:string};
 export interface Benefit {
  source:string; sourceName:string; url:string; title:string; summary:string; conditions:string;
  districts:string[]; regions:string[]; category:string; labels:Record<string,string>;
  verified_at:string; display_until:string; valid_from:string|null; valid_until:string|null;
- deadline_at:string|null; validity_kind:string; fee_status:string; payment_terms:Record<string,string>; benefitValue:BenefitValue|null;
+ deadline_at:string|null; validity_kind:string; fee_status:string; payment_terms:Record<string,string>; benefitValue:BenefitValue|null; review:Review;
 }
 export interface Coverage { name:string; source?:string; status:string; scope?:string; verified_count?:number }
 export interface Briefing {
@@ -43,6 +45,21 @@ export function formatDate(v:string|null|undefined):string {
 export function safeOfficial(url:unknown,source:string):boolean {
  try {const u=new URL(text(url));return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&!!sources[source]?.domains.includes(u.hostname);}
  catch{return false;}
+}
+const allowedHosts=new Set(Object.values(sources).flatMap(s=>s.domains));
+function httpsAllowed(url:unknown):boolean {
+ try {const u=new URL(text(url));return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&allowedHosts.has(u.hostname);}
+ catch{return false;}
+}
+function parseReview(value:unknown,now:number):Review {
+ if(value===undefined||value===null)return {kind:'human'};
+ const r=object(value);
+ if(r.kind==='human')return {kind:'human'};
+ if(r.kind!=='ai_auto'||!Array.isArray(r.documents))throw new Error('Invalid review');
+ const documents=r.documents.map(object).map(d=>({url:text(d.url),title:text(d.title)}));
+ const checked=timestamp(r.checked_at);
+ if(!documents.length||r.document_count!==documents.length||!documents.every(d=>httpsAllowed(d.url))||!Number.isFinite(checked)||checked>now)throw new Error('Invalid ai_auto review');
+ return {kind:'ai_auto',documentCount:documents.length,documents,checkedAt:text(r.checked_at)};
 }
 function parseBenefitValue(value:unknown,source:string,target:string):BenefitValue|null {
  if(value===undefined)return null;
@@ -93,6 +110,9 @@ export function adapt(value:unknown,now=Date.now()):Briefing {
   let benefitValue:BenefitValue|null;
   try{benefitValue=parseBenefitValue(i.benefit_value,source,text(object(i.payment_terms).evidence_url)||text(i.url));}
   catch{result.withheldCount++;continue;}
+  let review:Review;
+  try{review=parseReview(i.review,now);}
+  catch{result.withheldCount++;continue;}
   const info=timing(i,now);
   const badDate=['valid_from','valid_until'].some(k=>i[k]!=null&&!Number.isFinite(dateValue(i[k]))) || i.deadline_at!=null&&!Number.isFinite(timestamp(i.deadline_at));
   const valid= i.needs_recheck===false && !i.excluded_reason && text(i.title).trim() && text(i.summary).trim() && typeof i.conditions==='string' && Array.isArray(i.districts) && i.districts.every(v=>typeof v==='string') && safeOfficial(i.url,source) && Number.isFinite(verified)&&verified<=now&&now<verified+policy.maxAgeDays*DAY&&Number.isFinite(display)&&display>now&&info.cutoff>now&&!badDate && Object.hasOwn(fees,text(i.fee_status)) && ['fixed','ongoing'].includes(text(i.validity_kind)) && (i.validity_kind==='ongoing' || i.valid_until!=null || i.deadline_at!=null);
@@ -106,7 +126,7 @@ export function adapt(value:unknown,now=Date.now()):Briefing {
   const payment=object(i.payment_terms);const paymentTerms:Record<string,string>={};
   for(const k of ['method','funding_source','excluded_methods','minimum_spend','limit'])if(typeof payment[k]==='string')paymentTerms[k]=payment[k];
   if(safeOfficial(payment.evidence_url,source))paymentTerms.evidence_url=text(payment.evidence_url);
-  result.items.push({benefitValue,source,sourceName:sources[source].name,url:text(i.url),title:text(i.title),summary:text(i.summary),conditions:text(i.conditions),districts,regions,category:categories.includes(labels.category)?labels.category:'기타',labels,verified_at:text(i.verified_at),display_until:text(i.display_until),valid_from:text(i.valid_from)||null,valid_until:text(i.valid_until)||null,deadline_at:text(i.deadline_at)||null,validity_kind:text(i.validity_kind),fee_status:text(i.fee_status),payment_terms:paymentTerms});
+  result.items.push({benefitValue,review,source,sourceName:sources[source].name,url:text(i.url),title:text(i.title),summary:text(i.summary),conditions:text(i.conditions),districts,regions,category:categories.includes(labels.category)?labels.category:'기타',labels,verified_at:text(i.verified_at),display_until:text(i.display_until),valid_from:text(i.valid_from)||null,valid_until:text(i.valid_until)||null,deadline_at:text(i.deadline_at)||null,validity_kind:text(i.validity_kind),fee_status:text(i.fee_status),payment_terms:paymentTerms});
  }
  return result;
 }
