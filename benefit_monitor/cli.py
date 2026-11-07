@@ -38,9 +38,6 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         handoffs, failures = [], []
         district_coverage = []
         successful_sources = []
-        full_http_limit=cost_policy.budget.limit
-        if ai_review:
-            cost_policy.budget.limit=max(1,full_http_limit-2*ai_max_candidates)
         try:
             if config.get("seoul_district_coverage"):
                 if online:
@@ -77,7 +74,7 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                         failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
                 handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
         finally:
-            cost_policy.budget.limit=full_http_limit
+            pass
         # Explicit validated inputs take precedence over discovered candidates.
         explicit_items = [validate(d, sources, now) for d in explicit]
         operational_state = operations.sanitize(load(root/"cache/operational_state.json", {}), set(sources), now)
@@ -85,6 +82,8 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         ai_result = None
         if ai_review:
             from .ai_review import review_candidates
+            # Collection ran under the configured limit; research gets the rest up to the project max of 100.
+            cost_policy.budget.limit=100
             # Sources whose details hold conditions only in images are not sent to paid research.
             ai_candidates = [c for c in incoming + [i.data() for i in explicit_items]
                              if sources.get(c['source'], {}).get('ai_review', True)]

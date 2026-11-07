@@ -55,6 +55,7 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
             exhausted=bool((collection or {}).get('ai_review',{}).get('credit_exhausted'))
             # The topic step is a paid call too; skip it once credit has run out.
             topics=refresh(root,now=now,execute=allow_spend) if not exhausted else {'topics':[],'skipped':'credit_exhausted'}
+            exhausted=exhausted or (topics.get('model') or {}).get('status')=='credit_exhausted'
             public=publish_briefing(root,now=now) if publish else None
             remote=deliver(root,policy,now=now) if publish and policy.get('remote_delivery_approved') is True else None
             result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'public_exported':public is not None,

@@ -100,6 +100,23 @@ class DailyTests(unittest.TestCase):
             self.assertEqual(days['2026-11-07']['status'], 'failed')
 
 
+class TopicCreditTests(unittest.TestCase):
+    def test_topic_credit_exhaustion_marks_day_failed_when_research_spent_nothing(self):
+        from benefit_monitor.ai_daily import daily
+        with tempfile.TemporaryDirectory(dir=ROOT) as tmp:
+            root = Path(tmp)
+            (root / 'ai-automation.json').write_text(json.dumps({'schema_version': 1, 'enabled': True,
+                'recurring_spend_approved': True, 'public_application_approved': True,
+                'hour_kst': 6, 'minute_kst': 0, 'max_ai_candidates_per_day': 20}))
+            with patch('benefit_monitor.ai_daily.collect', return_value={'ai_review': {'skipped_unchanged': 3}}), \
+                 patch('benefit_monitor.ai_daily.refresh', return_value={'topics': [], 'model': {'status': 'credit_exhausted', 'run_id': None}}), \
+                 patch('benefit_monitor.ai_daily.publish_briefing', return_value={'status': 'partial'}):
+                result = daily(root, now=datetime.fromisoformat('2026-11-07T07:00:00+09:00'), online=True, allow_spend=True, publish=True)
+            self.assertEqual(result['status'], 'credit_exhausted')
+            days = json.loads((root / 'cache/ai_daily/days.json').read_text())['days']
+            self.assertEqual(days['2026-11-07']['status'], 'failed')
+
+
 class CloudTests(cloud_fixture.CloudDailyTests):
     """Reuses the cloud fixture; inherited tests are disabled below to avoid reruns."""
 
