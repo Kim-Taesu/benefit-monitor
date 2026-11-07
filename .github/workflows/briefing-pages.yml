@@ -92,8 +92,9 @@ jobs:
           python -m benefit_monitor.cli --online --import-items inputs/public.json
           python -m benefit_monitor.publish
       - name: Save rechecked AI approval list (check times and withdrawals only)
-        # The restore above recorded the sha lease; a failed restore refuses to save.
-        if: steps.briefing.outcome == 'success'
+        # Also after a failed collection: withdrawals already recorded must reach briefing-data.
+        # The restore above recorded the sha lease; a failed or skipped restore refuses to save.
+        if: steps.briefing.outcome != 'skipped'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}

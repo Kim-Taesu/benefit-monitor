@@ -148,15 +148,52 @@ def save_ai(root, repository, env=None):
     return merged
 
 
-def apply_takedowns_remote(root, repository, env=None):
-    """Takedown-only deploy: filter the current public briefing; no collection and no snapshot gate."""
-    from .auto_release import apply_takedowns
+PUBLIC_STATUSES = ("partial", "awaiting_verification", "collection_failed")
+
+
+def _deployable(data):
+    """Basic shape of a public briefing payload; anything else is never redeployed."""
+    from .briefing import aware_time
+    try:
+        if (not isinstance(data, dict) or data.get("schema_version") != 1 or data.get("status") not in PUBLIC_STATUSES
+                or not isinstance(data.get("items"), list) or not all(isinstance(r, dict) for r in data["items"])
+                or not isinstance(data.get("message"), str)
+                or (data["status"] == "collection_failed" and data["items"])):
+            return False
+        for key in ("generated_at", "source_report_at", "valid_through"):
+            if data.get(key) is not None:
+                aware_time(data[key])
+        aware_time(data["generated_at"])
+        return True
+    except (KeyError, TypeError, ValueError):
+        return False
+
+
+def apply_takedowns_remote(root, repository, env=None, now=None):
+    """Takedown-only deploy: filter the current public briefing; no collection and no snapshot gate.
+
+    Besides the takedowns, every AI item is rechecked against the restored approval list exactly as
+    the collection path does, so a withdrawn, expired, stale or changed AI item is never republished.
+    """
+    from datetime import datetime
+    from .auto_release import apply_takedowns, current_releases
+    from .briefing import SEOUL
     from .publish import write_export
+    from .store import load
     data, sha = _get(repository, "briefing.json", env)
     takedowns, _ = _get(repository, "ai-takedowns.json", env)
-    if not isinstance(data, dict) or not isinstance(takedowns, list):
+    if not _deployable(data) or not isinstance(takedowns, list):
         raise ValueError("Current briefing and a valid takedown list are required")
-    clean = apply_takedowns(data, [t for t in takedowns if isinstance(t, dict)])
+    takedowns = [t for t in takedowns if isinstance(t, dict)]
+    try:
+        approved, _ = _get(repository, "ai-approved.json", env)
+    except Exception:
+        approved = None  # Unreadable: every AI item is hidden.
+    approved = approved if isinstance(approved, dict) else {}
+    config = load(Path(root) / "sources.yaml", None)
+    sources = {s["id"]: s for s in config["sources"]}
+    current = current_releases(approved, takedowns, sources, (now or datetime.now(SEOUL)).astimezone(SEOUL))[1]
+    clean = apply_takedowns(data, takedowns, current=current)
     write_export(root, clean)
     if clean != data:
         run(root, repository, env=env, expected_sha=sha)

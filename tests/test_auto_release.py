@@ -118,6 +118,15 @@ class PublicItemTests(Base):
         self.assertNotIn('basis', json.dumps(data['items']))
         self.assertEqual(data['status'], 'partial')
 
+    def test_markdown_export_marks_ai_items_and_leaves_human_items_unmarked(self):
+        data = publish.payload(self.root, now=NOW)
+        publish.write_export(self.root, data)
+        text = (self.root / 'delivery/public/briefing.md').read_text()
+        self.assertEqual(text.count('AI 정리 · 공식 원문 2곳 대조 (사람 검증 전)'), 1)
+        human, auto = text.split('\n## ')[1:3]
+        self.assertNotIn('AI 정리', human)
+        self.assertIn('AI 정리', auto)
+
     def test_corrupt_takedowns_fail_closed_and_missing_files_are_empty(self):
         (self.root / 'cache/ai_publish/takedowns.json').write_text('{broken')
         self.assertEqual(auto_release.load(self.root), ({}, []))
@@ -293,6 +302,11 @@ class RecheckTests(Base):
                 (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
                 self.check(approved, error=HTTPError('https://official.example/ai/1', code, 'x', {}, None), now=NOW + timedelta(hours=9 + code % 7))
                 self.assertEqual(approved[CID]['withdrawn_reason'], 'source_gone')
+        from benefit_monitor.research_probe import RedirectBlocked
+        approved = {CID: record()}
+        (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
+        self.check(approved, error=RedirectBlocked(302, 'https://official.example/moved'), now=NOW + timedelta(hours=17))
+        self.assertEqual(approved[CID]['withdrawn_reason'], 'source_gone')
         for kwargs in (dict(error=TimeoutError()), dict(error=HTTPError('https://official.example/ai/1', 500, 'x', {}, None)),
                        dict(content_type='application/pdf')):
             with self.subTest(kwargs=str(kwargs)):
@@ -510,6 +524,52 @@ class MirrorTests(Base):
         with patch('benefit_monitor.mirror.subprocess.run', side_effect=self.gh(files, writes)):
             with self.assertRaises(ValueError):
                 mirror.apply_takedowns_remote(self.root, self.REPO)
+
+    def test_takedown_deploy_rechecks_ai_items_against_the_restored_approval_list(self):
+        from benefit_monitor import mirror
+        data = publish.payload(self.root, now=NOW)
+        auto = next(r for r in data['items'] if auto_release.is_auto(r))
+        data['topic_cards'] = {'topics': [{'id': 't', 'items': [{'source': auto['source'], 'url': auto['url']}]}]}
+        cases = (({CID: record()}, [self.human['url'], auto['url']]),
+                 ({CID: record(status='withdrawn', withdrawn_reason='body_changed')}, [self.human['url']]),
+                 ({CID: record(valid_until='2026-10-25')}, [self.human['url']]),
+                 ({CID: record(review=dict(checked_at=(NOW - timedelta(hours=31)).isoformat()))}, [self.human['url']]),
+                 ({CID: record(summary='승인 목록과 다른 요약')}, [self.human['url']]),
+                 ({}, [self.human['url']]))
+        for approved, expected in cases:
+            with self.subTest(approved=json.dumps(approved, ensure_ascii=False)[:90]):
+                files = {'briefing.json': (data, '5' * 40), 'ai-takedowns.json': ([], '6' * 40),
+                         'ai-approved.json': (approved, '7' * 40)}
+                writes = []
+                with patch('benefit_monitor.mirror.subprocess.run', side_effect=self.gh(files, writes)):
+                    clean = mirror.apply_takedowns_remote(self.root, self.REPO, now=NOW)
+                self.assertEqual(self.urls(clean), expected)
+                if len(expected) == 1:
+                    self.assertEqual(clean['topic_cards']['topics'], [])
+                    self.assertEqual([w[0] for w in writes], ['briefing.json'])
+                else:
+                    self.assertEqual(writes, [])
+
+    def test_workflow_saves_recorded_withdrawals_even_after_a_failed_collection(self):
+        raw = (Path(__file__).resolve().parents[1] / '.github/workflows/briefing-pages.yml').read_text()
+        step = raw.split('- name: Save rechecked AI approval list', 1)[1].split('- name:', 1)[0]
+        self.assertIn("if: steps.briefing.outcome != 'skipped'", step)
+        self.assertIn('continue-on-error: true', step)
+        self.assertIn('--save-ai', step)
+
+    def test_takedown_deploy_refuses_a_malformed_remote_briefing(self):
+        from benefit_monitor import mirror
+        good = publish.payload(self.root, now=NOW)
+        for bad in ({'items': []}, dict(good, items='x'), dict(good, generated_at='2026-10-26T08:00:00'),
+                    dict(good, status='unknown'), dict(good, items=[1]), dict(good, status='collection_failed'), []):
+            with self.subTest(bad=str(bad)[:60]):
+                files = {'briefing.json': (bad, '5' * 40), 'ai-takedowns.json': ([], '6' * 40)}
+                writes = []
+                with patch('benefit_monitor.mirror.subprocess.run', side_effect=self.gh(files, writes)):
+                    with self.assertRaises(ValueError):
+                        mirror.apply_takedowns_remote(self.root, self.REPO, now=NOW)
+                self.assertEqual(writes, [])
+                self.assertFalse((self.root / 'delivery/public/briefing.json').exists())
 
     def test_ai_run_uploads_status_through_the_runner_store_and_never_raises(self):
         from benefit_monitor.cloud_daily import upload_ai_status

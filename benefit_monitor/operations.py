@@ -102,6 +102,7 @@ def _check_auto(approved,takedowns,sources,now,reader):
     from urllib.error import HTTPError
     from urllib.parse import urlsplit
     from .auto_release import mark_checked,recheck_targets
+    from .research_probe import RedirectBlocked
     from . import cost_policy
     errors=[]
     for cid in recheck_targets(approved,takedowns,sources,now):
@@ -116,6 +117,12 @@ def _check_auto(approved,takedowns,sources,now,reader):
                 e.close()
                 # A robots.txt refusal says nothing about the page: leave the record (30h hides it).
                 if e.code in GONE_CODES and not str(e.url or e.filename or '').endswith('/robots.txt'):
+                    mark_checked(approved,cid,None,now);continue
+                raise
+            except RedirectBlocked:
+                # The page now redirects elsewhere, so the original cannot be confirmed: withdraw. A redirect
+                # of robots.txt says nothing about the page; robots is cached only after it was read.
+                if now.timestamp()<reader.state['hosts'].get(urlsplit(record['url']).netloc,{}).get('robots_until',0):
                     mark_checked(approved,cid,None,now);continue
                 raise
             except ValueError as e:

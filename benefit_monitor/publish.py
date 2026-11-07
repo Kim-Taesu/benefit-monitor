@@ -373,7 +373,9 @@ def write_export(root,data):
     for item in data["items"]:
         labels = item.get("labels") or {}
         tag = " · ".join(name + ": " + md_text(labels[key]) for key, name in (("category", "분야"), ("audience", "대상"), ("region", "지역"), ("action", "이용 방법")) if labels.get(key))
-        lines += ["", "## " + md_text(item["summary"])] + ([tag] if tag else []) + ["요금: " + FEES[item["fee_status"]],
+        review = item.get("review") or {}
+        auto = ["AI 정리 · 공식 원문 " + str(review.get("document_count")) + "곳 대조 (사람 검증 전)"] if review.get("kind") == "ai_auto" else []
+        lines += ["", "## " + md_text(item["summary"])] + auto + ([tag] if tag else []) + ["요금: " + FEES[item["fee_status"]],
                   md_text(item["conditions"]), "공식 확인: " + display_date(item["verified_at"]),
                   "시작" + (" 예정: " if item["valid_from"] and item["valid_from"] > now.date().isoformat() else ": ")
                   + display_date(item["valid_from"], "시작일 미확인"),

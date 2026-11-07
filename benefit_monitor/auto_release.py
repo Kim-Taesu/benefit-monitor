@@ -193,13 +193,35 @@ def is_auto(row):
     return isinstance(row, dict) and isinstance(row.get('review'), dict) and row['review'].get('kind') == 'ai_auto'
 
 
-def apply_takedowns(data, takedowns):
-    """Remove taken-down AI items (and their topic links) from an existing public payload; never adds."""
+def _still_current(row, current):
+    """The row as published now (earliest cutoff kept), or None when it is not the current public release."""
+    from .publish import PUBLIC_FIELDS
+    fact = current.get((row.get('source'), row.get('url')))
+    if fact is None or any(row.get(k) != fact[k] for k in PUBLIC_FIELDS if k in fact):
+        return None
+    try:
+        until = min(_aware(row.get('display_until') or fact['display_until']), _aware(fact['display_until']))
+    except (TypeError, ValueError):
+        return None
+    return dict(row, display_until=until.astimezone(KST).isoformat())
+
+
+def apply_takedowns(data, takedowns, current=None):
+    """Remove taken-down AI items (and their topic links) from an existing public payload; never adds.
+
+    current (the public set from current_releases) also removes every AI item that is not that exact
+    release now, so a restored payload never brings back a withdrawn, expired, stale or changed item.
+    """
     data = deepcopy(data)
     removed = set()
     kept = []
     for row in data.get('items', []):
-        if is_auto(row) and takedown_matches(row['review'], takedowns):
+        if is_auto(row) and current is not None and not takedown_matches(row['review'], takedowns):
+            fresh = _still_current(row, current)
+            if fresh is not None:
+                kept.append(fresh)
+                continue
+        if is_auto(row) and (current is not None or takedown_matches(row['review'], takedowns)):
             removed.add((row.get('source'), row.get('url')))
         else:
             kept.append(row)
