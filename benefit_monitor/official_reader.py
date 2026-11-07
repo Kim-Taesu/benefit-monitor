@@ -5,7 +5,8 @@ import json
 from pathlib import Path
 import time
 from urllib.error import HTTPError
-from urllib.parse import urlsplit
+from html.parser import HTMLParser
+from urllib.parse import urljoin, urlsplit,urldefrag
 from urllib.request import Request, build_opener
 
 from . import cost_policy
@@ -27,6 +28,27 @@ def project_path(root, relative):
 
 def network_open(request):
     return build_opener(NoRedirect()).open(request,timeout=15)
+
+
+class _Anchors(HTMLParser):
+    def __init__(self):
+        super().__init__();self.hrefs=[]
+    def handle_starttag(self,tag,attrs):
+        if tag=='a':
+            href=dict(attrs).get('href')
+            if href:self.hrefs.append(href)
+
+
+def extract_links(html,base,limit=50):
+    parser=_Anchors()
+    try:parser.feed(html)
+    except Exception:pass
+    out=[]
+    for href in parser.hrefs:
+        url=urldefrag(urljoin(base,href.strip()))[0]
+        if urlsplit(url).scheme in ('http','https') and url not in out:out.append(url)
+        if len(out)>=limit:break
+    return out
 
 
 class OfficialReader:
@@ -85,13 +107,14 @@ class OfficialReader:
             if not allowed(hs['robots'],url,AGENT):raise ValueError('robots denies URL')
             raw,content_type=self._fetch(url,source['domains'],hs)
             if 'text/html' not in content_type:raise ValueError('unsupported body content type')
-            text,mode=extract_body(raw.decode('utf-8','strict'),url)
+            html=raw.decode('utf-8','strict')
+            text,mode=extract_body(html,url)
             if len(text)<80:raise ValueError('insufficient official body')
             digest=hashlib.sha256(text.encode()).hexdigest()
             doc=dict(id='doc-'+digest[:24],requested_url=url,final_url=url,source_id=source['id'],
                      document_role='notice',publisher_type='unknown',retrieved_at=self.now.isoformat(),published_at=None,
                      body_hash=digest,hash_algorithm='sha256-utf8-exact',extraction_scope='collectors.body:'+mode,
-                     fetch_status='ok',body=text,links=[])
+                     fetch_status='ok',body=text,links=extract_links(html,url))
             relative='cache/ai_review/documents/'+key+'-'+digest+'.json'
             save(project_path(self.root,relative),doc)
             self.state['pages'][key]={'at':stamp,'file':relative}

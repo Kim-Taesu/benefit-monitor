@@ -6,8 +6,10 @@ import subprocess
 import sys
 
 from . import cost_policy
+from .cross_sources import allowed_domains, related_urls
 from .models import Benefit
 from .official_reader import OfficialReader, project_path
+from .validation import official
 from .store import load,save,lock
 
 
@@ -36,6 +38,22 @@ def invoke(root,kind,input_path):
     return {'status':'stopped_before_result','run_id':None}
 
 
+def _related_docs(reader,cid,candidate,doc,peers,failures):
+    domains=allowed_domains(reader.sources)
+    docs,seen=[],{doc['body_hash']}
+    for url in related_urls(doc,candidate,peers,domains):
+        source=next((sid for sid,s in reader.sources.items() if official(url,s['domains'])),None)
+        if source is None:continue
+        try:other=reader.read({'source':source,'url':url,'title':''})
+        except Exception as error:
+            failures.append({'candidate_id':cid,'code':'related_fetch_failed','url':url,'error_type':type(error).__name__})
+            if isinstance(error,RuntimeError):break
+            continue
+        if other['body_hash'] in seen:continue
+        seen.add(other['body_hash']);docs.append(other)
+    return docs
+
+
 def review_candidates(root,candidates,now,max_candidates=2,execute=False):
     root=Path(root).resolve()
     if type(max_candidates) is not int or not 1<=max_candidates<=20:raise ValueError('candidate limit 1..20')
@@ -54,7 +72,13 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             except Exception as error:
                 result['failures'].append({'candidate_id':cid,'code':'official_fetch_failed','error_type':type(error).__name__})
                 continue
-            signature=hashlib.sha256((cid+'\n'+doc['body_hash']+'\n'+prompt).encode()).hexdigest()
+            peers=[c for pid,c in unique.items() if pid!=cid]
+            domains=allowed_domains(reader.sources)
+            unverified=[u for u in doc.get('links') or [] if not official(u,domains)][:10]
+            docs=[doc]+_related_docs(reader,cid,candidate,doc,peers,result['failures'])
+            docs=[{**d,'links':[]} for d in docs]
+            hashes=','.join(sorted(d['body_hash'] for d in docs))
+            signature=hashlib.sha256((cid+'\n'+hashes+'\n'+prompt).encode()).hexdigest()
             previous=state['items'].get(cid,{})
             if previous.get('body_hash') and previous['body_hash']!=doc['body_hash']:result['changed_ids'].append(cid)
             if previous.get('signature')==signature and previous.get('model_status') in ('validated_draft','rejected_draft','stopped_before_result'):
@@ -63,14 +87,14 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
                 continue
             host=dict(schema_version='research-input-v1',mode='api_agent',synthetic=False,now=now.isoformat(),
                       output_schema_version='research-draft-v1',budget={'http_remaining':max(0,cost_policy.budget.limit-cost_policy.budget.used),'llm_api_remaining':1},
-                      candidates=[dict(candidate_id=cid,source_id=candidate['source'],title=candidate['title'],document_ids=[doc['id']],
-                                       research_reason='공식 원문 전체 조건·요약/상세 차이·비용·기간·선정·미확인을 v3로 추출. 사실/공개 승인은 사람 검토.')],documents=[doc])
+                      candidates=[dict(candidate_id=cid,source_id=candidate['source'],title=candidate['title'],document_ids=[d['id'] for d in docs],
+                                       research_reason='공식 원문 여러 곳을 대조해 전체 조건·요약/상세 차이·비용·기간·선정·미확인을 v3로 추출. 사실/공개 승인은 사람 검토.')],documents=docs,unverified_links=unverified)
             input_path=project_path(root,'.tools/ai-inputs/'+signature+'.json')
             if input_path.exists():
                 existing=load(input_path,None)
                 if (len(existing['candidates'])!=1 or existing['candidates'][0]['candidate_id']!=cid
-                        or len(existing['documents'])!=1 or existing['documents'][0]['body_hash']!=doc['body_hash']
-                        or existing['documents'][0]['body']!=doc['body']):
+                        or [(d['id'],d['body_hash'],d['body']) for d in existing['documents']]
+                        !=[(d['id'],d['body_hash'],d['body']) for d in docs]):
                     raise ValueError('staged AI input changed; manual review required')
                 host=existing
             else:
