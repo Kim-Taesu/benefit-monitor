@@ -105,6 +105,10 @@ def validate(root,data,now):
         from .topic_publication import from_bundle
         bundle=from_bundle(root,data['topic_cards'],clean,now)
         if bundle is not None:clean['topic_cards']=bundle
+    if data.get('festivals') and clean['status']!='collection_failed':
+        from .festivals import sanitize
+        festivals=sanitize(data['festivals'],now)
+        if festivals is not None:clean['festivals']=festivals
     return clean
 
 

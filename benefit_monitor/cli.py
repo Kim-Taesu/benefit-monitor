@@ -11,6 +11,7 @@ from .collectors.html import collect as collect_html
 from .collectors.districts import collect as collect_districts
 from .collectors.public import collect as collect_public
 from . import cost_policy
+from . import festivals
 from . import operations
 from .briefing import build as build_briefing, write as write_briefing
 
@@ -59,6 +60,14 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                         successful_sources.append(s["id"])
                         continue
                     failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
+                if online and s.get("collector") == "kfes_festivals":
+                    # Separate display channel: never review candidates, AI research or topic cards.
+                    try:
+                        save(root/"cache/festivals.json", festivals.collect(s, now))
+                        successful_sources.append(s["id"])
+                    except Exception as e:
+                        failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
+                    continue
                 if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
                     try:
                         incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))

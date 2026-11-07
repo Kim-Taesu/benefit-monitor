@@ -2,8 +2,8 @@
 
 The operational sources.yaml is generated from these files (scripts/generate_sources.py),
 so existing readers stay unchanged. Validation uses a small JSON Schema subset with the
-standard library only: type, const, enum, pattern, minLength, minItems, required,
-properties, additionalProperties=false, items and local $ref.
+standard library only: type, const, enum, pattern, minLength, minItems, minimum, maximum,
+required, properties, additionalProperties=false, items and local $ref.
 """
 import argparse
 import json
@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TYPES = {"object": dict, "array": list, "string": str, "boolean": bool, "null": type(None)}
+TYPES = {"object": dict, "array": list, "string": str, "boolean": bool, "null": type(None), "integer": int}
 
 
 def _check(value, schema, defs, path, errors):
@@ -27,6 +27,9 @@ def _check(value, schema, defs, path, errors):
         if not any(isinstance(value, TYPES[k]) and not (k != "boolean" and isinstance(value, bool)) for k in kinds):
             errors.append(f"{path}: expected {'/'.join(kinds)}")
             return
+    if isinstance(value, int) and not isinstance(value, bool):
+        if value < schema.get("minimum", value) or value > schema.get("maximum", value):
+            errors.append(f"{path}: {value} out of range")
     if isinstance(value, str):
         if len(value) < schema.get("minLength", 0):
             errors.append(f"{path}: empty text")
@@ -127,7 +130,11 @@ def probe(root, source_id, budget=10):
     if source is None:
         raise ValueError(f"unknown or inactive source: {source_id}")
     cost_policy.reset(budget)
-    if source.get("collector"):
+    if source.get("collector") == "kfes_festivals":
+        from .festivals import collect as collect_festivals
+        bundle = collect_festivals(source, datetime.now(ZoneInfo(config["timezone"])))
+        items = [dict(title=f"{i['name']} ({i['start']}~{i['end']}, {i['region']})", url=i["url"]) for i in bundle["items"]]
+    elif source.get("collector"):
         items = collect_public(source, datetime.now(ZoneInfo(config["timezone"])))
     elif source.get("feed_url"):
         items = collect_rss(source)

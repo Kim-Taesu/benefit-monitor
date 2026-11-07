@@ -124,7 +124,8 @@
           "enum": [
             "sh_notice",
             "eshare",
-            "heritage_events"
+            "heritage_events",
+            "kfes_festivals"
           ]
         },
         "boards": {
@@ -141,6 +142,18 @@
         },
         "include_next_month": {
           "type": "boolean"
+        },
+        "pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "kfes_festivals: 목록 JSON을 몇 페이지(12건씩) 받을지"
+        },
+        "window_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 90,
+          "description": "kfes_festivals: 오늘부터 며칠 안에 시작하는 축제까지 보일지"
         },
         "ai_review": {
           "type": "boolean",
