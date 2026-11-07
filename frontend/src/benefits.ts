@@ -58,8 +58,8 @@ function parseReview(value:unknown,now:number):Review {
  if(r.kind!=='ai_auto'||!Array.isArray(r.documents))throw new Error('Invalid review');
  const documents=r.documents.map(object).map(d=>({url:text(d.url),title:text(d.title)}));
  const checked=timestamp(r.checked_at);
- if(!documents.length||r.document_count!==documents.length||!documents.every(d=>httpsAllowed(d.url))||!Number.isFinite(checked)||checked>now)throw new Error('Invalid ai_auto review');
- return {kind:'ai_auto',documentCount:documents.length,documents,checkedAt:text(r.checked_at)};
+ if(!documents.length||typeof r.document_count!=='number'||!Number.isInteger(r.document_count)||r.document_count<1||r.document_count>documents.length||!documents.every(d=>httpsAllowed(d.url))||!Number.isFinite(checked)||checked>now)throw new Error('Invalid ai_auto review');
+ return {kind:'ai_auto',documentCount:r.document_count,documents,checkedAt:text(r.checked_at)};
 }
 function parseBenefitValue(value:unknown,source:string,target:string):BenefitValue|null {
  if(value===undefined)return null;

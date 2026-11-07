@@ -97,10 +97,16 @@ test('ai_auto with foreign document url is withheld', () => {
   const bad = [
     aiReview({ documents: [{ url: 'https://evil.example/x', title: 'x' }] }),
     aiReview({ documents: [{ url: 'http://mediahub.seoul.go.kr/a', title: 'x' }] }),
-    aiReview({ documents: [] }), aiReview({ document_count: 1 }),
+    aiReview({ documents: [] }), aiReview({ document_count: 0 }), aiReview({ document_count: 3 }), aiReview({ document_count: 1.5 }), aiReview({ document_count: '2' }),
     aiReview({ checked_at: '2026-11-05T00:00:00+09:00' }), aiReview({ checked_at: 'nope' }),
     { kind: 'robot' }, 'ai_auto',
   ].map((review, n) => item({ url: 'https://mediahub.seoul.go.kr/archives/' + (10 + n), review }));
   const result = adapt(snapshot(bad), NOW);
   assert.equal(result.items.length, 0); assert.equal(result.withheldCount, bad.length);
+});
+test('ai_auto document_count may be below documents length (distinct bodies) and is what the badge counts', () => {
+  const r = adapt(snapshot([item({ review: aiReview({ document_count: 1 }) })]), NOW);
+  assert.equal(r.withheldCount, 0);
+  const rv = r.items[0].review; assert.equal(rv.kind === 'ai_auto' && rv.documentCount, 1);
+  assert.equal(rv.kind === 'ai_auto' && rv.documents.length, 2);
 });

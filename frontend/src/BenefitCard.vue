@@ -41,7 +41,7 @@ const paymentRows=computed(()=>Object.entries(paymentNames).filter(([key])=>prop
         <section v-if="aiReview" class="ai-review" :aria-labelledby="titleId+'-ai'">
           <h3 :id="titleId+'-ai'">AI 정리 · 공식 원문 {{ aiReview.documentCount }}곳 대조</h3>
           <p>사람이 검수하지 않고 AI가 공식 원문을 서로 대조해 정리한 항목입니다. 대조한 원문은 아래에서 직접 확인하세요. (확인 {{ formatDate(aiReview.checkedAt) }})</p>
-          <ul><li v-for="doc in aiReview.documents" :key="doc.url"><a :href="doc.url" target="_blank" rel="noopener noreferrer">{{ doc.title || doc.url }}<span aria-hidden="true"> ↗</span><span class="sr-only"> (새 창)</span></a></li></ul>
+          <ul><li v-for="(doc,n) in aiReview.documents" :key="doc.url+n"><a :href="doc.url" target="_blank" rel="noopener noreferrer">{{ doc.title || doc.url }}<span aria-hidden="true"> ↗</span><span class="sr-only"> (새 창)</span></a></li></ul>
         </section>
         <dl class="detail-list">
           <dt>적용기간</dt><dd>{{ formatDate(item.valid_from) }} ~ {{ item.validity_kind==='ongoing'?'상시 안내':formatDate(item.valid_until) }}</dd>
