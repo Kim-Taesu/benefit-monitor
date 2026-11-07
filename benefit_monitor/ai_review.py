@@ -44,7 +44,7 @@ def _related_docs(reader,cid,candidate,doc,peers,failures):
     for url in related_urls(doc,candidate,peers,domains):
         source=next((sid for sid,s in reader.sources.items() if official(url,s['domains'])),None)
         if source is None:continue
-        try:other=reader.read({'source':source,'url':url,'title':''})
+        try:other=reader.read({'source':source,'url':url,'title':''},cooldown_on_failure=False)
         except Exception as error:
             failures.append({'candidate_id':cid,'code':'related_fetch_failed','url':url,'error_type':type(error).__name__})
             if isinstance(error,RuntimeError):break

@@ -30,13 +30,30 @@ def network_open(request):
     return build_opener(NoRedirect()).open(request,timeout=15)
 
 
+_VOID={'area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'}
+_CHROME={'header','nav','footer','aside'}
+
+
 class _Anchors(HTMLParser):
+    """Collect links from the content region only; site chrome is ignored."""
     def __init__(self):
-        super().__init__();self.hrefs=[]
+        super().__init__();self.stack=[];self.items=[]
     def handle_starttag(self,tag,attrs):
         if tag=='a':
             href=dict(attrs).get('href')
-            if href:self.hrefs.append(href)
+            if href:
+                names=[t for t in self.stack]
+                if not _CHROME&set(names):self.items.append((href,'main' in names,'article' in names))
+        if tag not in _VOID:self.stack.append(tag)
+    def handle_endtag(self,tag):
+        for i in range(len(self.stack)-1,-1,-1):
+            if self.stack[i]==tag:del self.stack[i:];break
+    @property
+    def hrefs(self):
+        for idx in (1,2):
+            scoped=[i[0] for i in self.items if i[idx]]
+            if scoped:return scoped
+        return [i[0] for i in self.items]
 
 
 def extract_links(html,base,limit=50):
@@ -46,7 +63,9 @@ def extract_links(html,base,limit=50):
     out=[]
     for href in parser.hrefs:
         url=urldefrag(urljoin(base,href.strip()))[0]
-        if urlsplit(url).scheme in ('http','https') and url not in out:out.append(url)
+        parts=urlsplit(url)
+        if parts.scheme not in ('http','https') or parts.path in ('','/'):continue
+        if url not in out:out.append(url)
         if len(out)>=limit:break
     return out
 
@@ -81,7 +100,7 @@ class OfficialReader:
         finally:
             save(self.path,self.state)
 
-    def read(self,candidate):
+    def read(self,candidate,cooldown_on_failure=True):
         source=self.sources[candidate['source']]
         url=candidate['url']
         if not official(url,source['domains']):raise ValueError('unapproved official URL')
@@ -122,6 +141,6 @@ class OfficialReader:
             save(self.path,self.state)
             return doc
         except Exception:
-            hs['failure_until']=stamp+900
+            if cooldown_on_failure:hs['failure_until']=stamp+900
             save(self.path,self.state)
             raise

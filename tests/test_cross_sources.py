@@ -38,6 +38,12 @@ class RelatedUrlTests(unittest.TestCase):
         out=related_urls({'links':links},self.cand(),[],DOMAINS)
         self.assertEqual(len(out),3);self.assertEqual(len(set(out)),3)
 
+    def test_non_fetchable_links_and_short_titles(self):
+        doc={'links':['https://news.seoul.go.kr/a.pdf','https://news.seoul.go.kr/fileDown?id=1','https://news.seoul.go.kr/ok']}
+        self.assertEqual(related_urls(doc,self.cand(),[],DOMAINS),['https://news.seoul.go.kr/ok'])
+        peers=[self.cand('공지','https://www.seoul.go.kr/news/9')]
+        self.assertEqual(related_urls({'links':[]},self.cand('공지'),peers,DOMAINS),[])
+
     def test_allowed_domains(self):
         self.assertEqual(allowed_domains({'a':{'domains':['x.kr']},'b':{'domains':['y.kr','x.kr']}}),{'x.kr','y.kr'})
 
@@ -90,6 +96,29 @@ class HostDocumentTests(unittest.TestCase):
         self.assertEqual(host['candidates'][0]['document_ids'],[d['id'] for d in host['documents']])
         self.assertEqual(host['unverified_links'],['https://blog.example/y'])
         self.run_review()  # staged multi-document input is accepted again
+
+    def test_nav_links_ignored_and_failed_related_does_not_block_host(self):
+        from benefit_monitor.official_reader import extract_links
+        html=('<nav><a href="https://news.seoul.go.kr/menu">m</a></nav><header><a href="/h/x">h</a></header>'
+              '<main><a href="/in/body">b</a><a href="/">home</a></main><footer><a href="/f/y">f</a></footer>')
+        self.assertEqual(extract_links(html,OWN),['https://www.seoul.go.kr/in/body'])
+        other='https://www.seoul.go.kr/news/2'
+        self.candidate_b={'source':'seoul','url':other,'title':'다른 프로그램','summary':'x','needs_recheck':True}
+        self.pages={OWN:self.body('A <a href="https://news.seoul.go.kr/bad">bad</a> <a href="https://news.seoul.go.kr/good">g</a>'),
+                    'https://news.seoul.go.kr/good':self.body('G other'),other:self.body('Second candidate')}
+        from benefit_monitor.ai_review import review_candidates
+        import urllib.error
+        def transport(request):
+            if request.full_url.endswith('/bad'):
+                raise urllib.error.HTTPError(request.full_url,404,'nf',{},None)
+            return self.transport(request)
+        with patch('benefit_monitor.official_reader.network_open',side_effect=transport):
+            result=review_candidates(self.root,[self.candidate,self.candidate_b],NOW,2,False)
+        self.assertEqual(result['queued'],2)
+        self.assertEqual([f['code'] for f in result['failures']],['related_fetch_failed'])
+        self.assertEqual(result['failures'][0]['url'],'https://news.seoul.go.kr/bad')
+        docs=[json.loads(f.read_text())['documents'] for f in (self.root/'.tools/ai-inputs').glob('*.json')]
+        self.assertIn(2,[len(d) for d in docs])  # next link (good) was still tried
 
     def test_http_budget_exhaustion_keeps_original_only(self):
         self.pages={OWN:self.body('A <a href="https://news.seoul.go.kr/b">b</a>'),
