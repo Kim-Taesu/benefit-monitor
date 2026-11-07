@@ -114,7 +114,8 @@ def _check_auto(approved,takedowns,sources,now,reader):
             try:doc=reader.read({'source':record['source'],'url':record['url']},cooldown_on_failure=False)
             except HTTPError as e:
                 e.close()
-                if e.code in GONE_CODES:
+                # A robots.txt refusal says nothing about the page: leave the record (30h hides it).
+                if e.code in GONE_CODES and not str(e.url or e.filename or '').endswith('/robots.txt'):
                     mark_checked(approved,cid,None,now);continue
                 raise
             except ValueError as e:

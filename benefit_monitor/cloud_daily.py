@@ -114,17 +114,25 @@ def restore_public(root,store,now):
     # Three-way merge: the common base is the remote copy the previous run restored (also packed);
     # without it the base is empty, so an empty or older pack can never delete remote approvals.
     path=safe_path(root,auto_release.APPROVED)
-    def packed_dict(relative,key=None):
-        try:value=load(safe_path(root,relative),{})
-        except (OSError,ValueError):return {}
+    def packed(relative,key=None):
+        """(dict, ok): {} only for a genuinely absent file; unreadable or wrong shape is not ok."""
+        target=safe_path(root,relative)
+        if not target.exists():return {},True
+        try:value=load(target,None)
+        except (OSError,ValueError):return None,False
         value=value.get(key) if key and isinstance(value,dict) else value
-        return value if isinstance(value,dict) else {}
-    packed=packed_dict(auto_release.APPROVED);base=packed_dict(AI_BASE,'approved')
+        return (value,True) if isinstance(value,dict) else (None,False)
+    local,local_ok=packed(auto_release.APPROVED);base,base_ok=packed(AI_BASE,'approved')
     if not restore_ai(root,REPOSITORY,env=runner_environment(store)):
         raise ValueError('AI approval list restore failed; stop before any paid call')
-    remote=load(path,{})
-    merged=auto_release.merge_approved(base,packed,remote)
-    if merged!=remote:auto_release.save_approved(root,merged)
+    if local_ok and base_ok:
+        remote=load(path,{})
+        merged=auto_release.merge_approved(base,local,remote)
+        if merged!=remote:auto_release.save_approved(root,merged)
+    else:
+        # An unreadable pack or base could wipe or resurrect records: keep the restored remote copy.
+        save(safe_path(root,'cache/ai_publish/restore-note.json'),
+             {'skipped_merge_at':now.isoformat(),'packed_ok':local_ok,'base_ok':base_ok})
     return sha
 
 

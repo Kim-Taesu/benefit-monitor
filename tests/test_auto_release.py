@@ -307,6 +307,24 @@ class RecheckTests(Base):
         _, calls = self.check({CID: record()})
         self.assertEqual(calls, [])
 
+    def test_robots_refusal_never_withdraws(self):
+        import io
+        from benefit_monitor.official_reader import OfficialReader
+        save(self.root / 'sources.yaml', dict(sources=list(self.SOURCES.values()), max_age_days=7))
+        for code in (401, 403, 410, 451):
+            with self.subTest(code=code):
+                (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
+                approved = {CID: record()}
+
+                def network(request):
+                    raise HTTPError(request.full_url, code, 'x', {}, io.BytesIO())
+                later = NOW + timedelta(hours=7)
+                with patch('benefit_monitor.official_reader.network_open', side_effect=network):
+                    errors = operations.check_bodies({}, [], self.SOURCES, later, 5, auto=approved, reader=OfficialReader(self.root, later))
+                self.assertNotIn('status', approved[CID])
+                self.assertEqual(approved[CID]['review']['checked_at'], record()['review']['checked_at'])
+                self.assertEqual(errors[0]['category'], f'http_{code}')
+
     def test_robots_is_fetched_once_per_host_and_all_twenty_records_fit_the_budget(self):
         many = {}
         for n in range(25):
@@ -583,6 +601,16 @@ class RuntimeRestoreTests(Base):
         with patch.object(m, 'restore_mirror', return_value='a' * 40), patch.object(m, 'restore_ai', side_effect=restored_ai):
             m.restore_public(self.root, Store(), NOW)
         self.assertEqual(sorted(auto_release.load(self.root)[0]), sorted(remote))
+        for corrupt in ('approved.json', 'remote.json'):
+            with self.subTest(corrupt=corrupt):
+                save(self.root / 'cache/ai_publish/remote.json', {'sha': '1' * 40, 'approved': remote})
+                auto_release.save_approved(self.root, {'h' * 24: record(candidate_id='h' * 24)})
+                (self.root / 'cache/ai_publish' / corrupt).write_text('{broken')
+                with patch.object(m, 'restore_mirror', return_value='a' * 40), patch.object(m, 'restore_ai', side_effect=restored_ai):
+                    m.restore_public(self.root, Store(), NOW)
+                self.assertEqual(auto_release.load(self.root)[0], remote, 'unreadable pack or base keeps the remote copy')
+                self.assertFalse(json.loads((self.root / 'cache/ai_publish/restore-note.json').read_text())
+                                 ['packed_ok' if corrupt == 'approved.json' else 'base_ok'])
         with patch.object(m, 'restore_mirror', return_value='a' * 40), patch.object(m, 'restore_ai', return_value=False):
             with self.assertRaisesRegex(ValueError, 'before any paid call'):
                 m.restore_public(self.root, Store(), NOW)
@@ -596,15 +624,25 @@ class StoreDecisionTests(unittest.TestCase):
             (root / 'cache/ai_publish').mkdir(parents=True)
             (root / 'cache/ai_publish/approved.json').write_text('{"half":')
             (root / 'cache/ai_publish/decisions.json').write_text('[not a dict]')
+            save(root / 'cache/ai_publish/remote.json', {'sha': '1' * 40, 'approved': {}})
             decision = {'publish': True, 'reasons': [], 'record': record()}
             _store_decision(root, CID, decision, {'run_id': 'r', 'signature': 's'}, NOW)
-            approved = json.loads((root / 'cache/ai_publish/approved.json').read_text())
-            self.assertEqual(list(approved), [CID])
-            self.assertEqual(approved[CID]['decided_at'], NOW.isoformat())
+            # No partial list that a later save_ai could upload as the whole list; the lease is gone.
+            self.assertFalse((root / 'cache/ai_publish/approved.json').exists())
+            self.assertFalse((root / 'cache/ai_publish/remote.json').exists())
+            self.assertEqual(json.loads((root / 'cache/ai_publish/decisions.json').read_text())[CID]['publish'], True)
             aside = sorted(p.name for p in (root / 'cache/ai_publish').glob('*.corrupt-*.json'))
             self.assertEqual(len(aside), 2)
             self.assertEqual((root / 'cache/ai_publish' / next(a for a in aside if a.startswith('approved'))).read_text(), '{"half":')
-
+            from benefit_monitor import mirror
+            with patch('benefit_monitor.mirror.subprocess.run', side_effect=AssertionError('must not write')):
+                with self.assertRaises(ValueError):
+                    mirror.save_ai(root, 'Kim-Taesu/benefit-monitor')
+            # Later decisions in the same run still cannot be uploaded (no lease until the next restore).
+            _store_decision(root, 'b' * 24, dict(decision, record=record(candidate_id='b' * 24)), {'run_id': 'r', 'signature': 's'}, NOW)
+            with patch('benefit_monitor.mirror.subprocess.run', side_effect=AssertionError('must not write')):
+                with self.assertRaises(ValueError):
+                    mirror.save_ai(root, 'Kim-Taesu/benefit-monitor')
 
 if __name__ == '__main__':
     unittest.main()

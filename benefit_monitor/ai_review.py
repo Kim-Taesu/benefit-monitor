@@ -65,26 +65,32 @@ def auto_decide(root,run_id,now):
 
 
 def _load_dict(path,now):
-    """A corrupt file must not crash after a paid call, nor be silently replaced by a smaller dict."""
+    """(dict, ok). A corrupt file must not crash after a paid call; it is moved aside for review."""
     try:
         value=load(path,{})
-        if isinstance(value,dict):return value
+        if isinstance(value,dict):return value,True
     except (OSError,ValueError):
         pass
     auto_release.move_aside(path,now)
-    return {}
+    return {},False
 
 
 def _store_decision(root,cid,decision,row,now):
     approved_path=project_path(root,'cache/ai_publish/approved.json')
     decisions_path=project_path(root,'cache/ai_publish/decisions.json')
-    approved=_load_dict(approved_path,now);decisions=_load_dict(decisions_path,now)
+    approved,approved_ok=_load_dict(approved_path,now);decisions,_=_load_dict(decisions_path,now)
+    decisions[cid]=dict(publish=decision['publish'],reasons=decision['reasons'],decided_at=now.isoformat(),
+                        run_id=row['run_id'],signature=row['signature'])
+    save(decisions_path,decisions)
+    if not approved_ok:
+        # Never write a list holding only this decision: drop the restore lease so save_ai refuses to
+        # upload until the next restore, and keep the decision row only (the item is not published).
+        project_path(root,'cache/ai_publish/remote.json').unlink(missing_ok=True)
+        return
     # decided_at orders concurrent writers: a newer decision replaces an older withdrawn version.
     if decision['publish']:approved[cid]={**decision['record'],'decided_at':now.isoformat()}
     else:approved.pop(cid,None)
-    decisions[cid]=dict(publish=decision['publish'],reasons=decision['reasons'],decided_at=now.isoformat(),
-                        run_id=row['run_id'],signature=row['signature'])
-    save(approved_path,approved);save(decisions_path,decisions)
+    save(approved_path,approved)
 
 
 def _related_docs(reader,cid,candidate,doc,peers,failures):
