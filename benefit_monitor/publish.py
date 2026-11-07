@@ -332,6 +332,10 @@ def run(root, now=None, failure=False):
         from .topic_publication import cards
         approved_cards = cards(root,now)
         if approved_cards is not None:data['topic_cards'] = approved_cards
+    if not failure and data['status'] != 'collection_failed':
+        from .festivals import sanitize
+        bundle = sanitize(load(root/'cache/festivals.json', None), now)
+        if bundle is not None:data['festivals'] = bundle
     return write_export(root,data)
 
 

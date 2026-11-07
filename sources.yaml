@@ -389,6 +389,23 @@
       ],
       "include_next_month": true,
       "collection_scope": "국가유산청 월별 행사 공개 목록(이번 달·다음 달, 서울) · 행사별 예약·잔여석 미확인"
+    },
+    {
+      "id": "kfes",
+      "name": "전국 축제(한국관광공사)",
+      "tier": "A",
+      "domains": [
+        "korean.visitkorea.or.kr"
+      ],
+      "routes": [
+        "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do"
+      ],
+      "feed_url": null,
+      "collector": "kfes_festivals",
+      "pages": 5,
+      "window_days": 90,
+      "ai_review": false,
+      "collection_scope": "대한민국 구석구석 전국축제 목록의 개최중·개최예정 전체(필터별 최대 5페이지) 중 90일 안 시작 · 별도 축제 섹션 · 사람 검증 전"
     }
   ],
   "seoul_district_coverage": true,

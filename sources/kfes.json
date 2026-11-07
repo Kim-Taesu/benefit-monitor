@@ -1,0 +1,62 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "kfes",
+  "name": "전국 축제(한국관광공사)",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "korean.visitkorea.or.kr"
+    ],
+    "routes": [
+      "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do"
+    ],
+    "feed_url": null,
+    "collector": "kfes_festivals",
+    "pages": 5,
+    "window_days": 90,
+    "ai_review": false,
+    "collection_scope": "대한민국 구석구석 전국축제 목록의 개최중·개최예정 전체(필터별 최대 5페이지) 중 90일 안 시작 · 별도 축제 섹션 · 사람 검증 전"
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-07",
+    "entry_urls": [
+      "https://korean.visitkorea.or.kr/kfes/list/wntyFstvlList.do"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "search_post",
+      "detail_access": "get",
+      "conditions_in": "text"
+    },
+    "extraction": [
+      "목록 화면이 쓰는 /kfes/list/selectWntyFstvlList.do에 폼 POST(application/x-www-form-urlencoded)를 보낸다. searchDate A=개최중, B=개최예정, startIdx 0,12,24…, searchType A=축제일순. 한 번에 12건.",
+      "cntntsNm(이름), fstvlBgngDe·fstvlEndDe(기간, YYYY.MM.DD), areaNm·dtadr(지역·장소), fstvlAspcsNm(주최), fstvlUtztFareInfo(요금 원문), fstvlDscntInfo(할인), fstvlOutlCn(개요), fstvlCrmnCn(프로그램), fstvlHmpgUrl(공식 홈페이지), fstvlClCd=MF(문화관광축제)를 읽는다.",
+      "상세 주소는 /kfes/detail/fstvlDetail.do?fstvlCntntsId=<id>."
+    ],
+    "pitfalls": [
+      "JSON 본문으로 보내면 서버가 값을 무시하고 기본 목록(끝난 축제 포함)을 준다. 반드시 폼 형식. 2026-11-07 실측: 개최중 24건 + 개최예정 11건, robots 포함 요청 4회.",
+      "요금은 자유 문장이다. '무료'/'유료'/금액 단어만 보고 나누고 나머지는 unknown으로 둔다.",
+      "검증 혜택 목록·검토 큐·AI 조사·주제 카드에 넣지 않는다. 휴대전화 번호·이메일은 지운다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe kfes"
+    ],
+    "on_failure": [
+      "응답에 resultList가 없거나 현재 축제가 0건이면 실패로 기록하고 축제 섹션을 비운다."
+    ],
+    "code": [
+      "benefit_monitor/festivals.py"
+    ],
+    "history": [
+      {
+        "date": "2026-11-07",
+        "note": "추가. 사용자 승인: 별도 축제 섹션으로 공식 게시 정보를 사람 검증 없이 표시. 첫 실측 35건, 요청 4회."
+      }
+    ]
+  }
+}

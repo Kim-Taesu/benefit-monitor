@@ -121,6 +121,12 @@
         "www.chf.or.kr",
         "www.kh.or.kr"
       ]
+    },
+    "kfes": {
+      "name": "전국 축제(한국관광공사)",
+      "domains": [
+        "korean.visitkorea.or.kr"
+      ]
     }
   },
   "districts": [
