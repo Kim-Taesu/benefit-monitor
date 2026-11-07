@@ -100,3 +100,4 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 - 어드민 페이지(`/admin.html`)로 자동 공개 항목을 내리고 복원할 수 있다. 토큰은 기본 `sessionStorage`, 사용자가 선택하면 `localStorage`에 둔다. 내림/복원은 contents API와 `briefing-pages.yml`의 `apply_takedowns: true` dispatch로 반영한다.
 - 이 기능의 게이트 코드가 바뀌어 `public/topic-publication.json`의 주제 카드 승인 해시(`policy_sha256`)를 다시 기록했다. 게이트 코드를 바꿀 때마다 다시 기록하며 가드 테스트가 강제한다.
 - 비용 외 금지 사항(유료 서비스·결제 정보·구매·신청 대행)은 그대로 적용된다.
+- 주제 카드 승인은 2027-11-07까지 유효하며 이후에는 사람이 갱신해야 한다(게이트 코드가 바뀌었다면 `policy_sha256`도 다시 기록). 이는 위 "11/19 만료 제거"와 별개인 주제 카드 공개 승인의 유한 만료다.

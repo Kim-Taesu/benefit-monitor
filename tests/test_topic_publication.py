@@ -107,9 +107,6 @@ class TopicPublicationTests(unittest.TestCase):
         self.assertEqual(len(list((self.root/'cache/ai_review/queue').glob('*.json'))),1)
 
 
-if __name__=='__main__':unittest.main()
-
-
 class RepositoryPolicyHashTests(unittest.TestCase):
     def test_committed_approval_matches_current_gate_code(self):
         """Changing gate code without re-recording the approval silently drops topic cards."""
@@ -119,3 +116,6 @@ class RepositoryPolicyHashTests(unittest.TestCase):
         approval=json.loads((root/'public/topic-publication.json').read_text())
         self.assertEqual(approval['policy_sha256'],policy_hash(root),
                          'gate code changed: re-record public/topic-publication.json policy_sha256 with the approval')
+
+
+if __name__=='__main__':unittest.main()

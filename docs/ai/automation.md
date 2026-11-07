@@ -177,3 +177,5 @@ python3 -c "from benefit_monitor.topic_publication import policy_hash; print(pol
 ```
 
 출력값을 `policy_sha256`에 넣는다. 맞지 않으면 가드 테스트(`tests/test_topic_publication.py`)가 실패한다.
+
+주제 카드 공개 승인(`public/topic-publication.json`)은 2027-11-07까지 유효하며 이후에는 사람이 갱신해야 한다. 게이트 코드가 바뀌었다면 `policy_sha256`도 다시 기록한다.
