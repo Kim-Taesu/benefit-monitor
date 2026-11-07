@@ -140,7 +140,7 @@ def validate(result, host, kind):
                     raise ValueError('inverted validity dates')
                 expired = bool(p['valid_until'] and date.fromisoformat(p['valid_until']) < now.astimezone(timezone(timedelta(hours=9))).date())
                 expired |= bool(p['deadline_at'] and _timestamp(p['deadline_at']) < now)
-                gaps = (any(q['importance'] == 'critical' for q in r['missing_questions']) or any(x['resolution'] is None for x in r['conflicts']) or any(docs[s]['fetch_status'] != 'ok' for s in candidate['document_ids']) or any(c['status'] == 'disputed' for c in claims.values()) or not any(c['status'] == 'supported' for c in claims.values()) or any(c['status'] == 'unknown' for c in claims.values()) or set(sources) != set(candidate['document_ids']) or not p['valid_until'])
+                gaps = (any(q['importance'] == 'critical' for q in r['missing_questions']) or any(x['resolution'] is None for x in r['conflicts']) or any(docs[s]['fetch_status'] != 'ok' for s in candidate['document_ids']) or any(c['status'] == 'disputed' for c in claims.values()) or not any(c['status'] == 'supported' for c in claims.values()) or any(c['status'] == 'unknown' for c in claims.values()) or not sources or not p['valid_until'])
                 readiness = 'expired' if expired else ('needs_review' if gaps or r['research_status'] != 'completed' else 'ready_for_human_review')
                 assessments.append({'candidate_id':r['candidate_id'], 'execution_status':r['research_status'], 'evidence_readiness':readiness, 'synthetic':result['mode'] == 'offline_fixture'})
         else:

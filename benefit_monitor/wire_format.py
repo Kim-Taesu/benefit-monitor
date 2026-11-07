@@ -20,6 +20,7 @@ generic slot shape repeated in an array; field-specific value rules are host che
 A paid grammar probe (claude_trial) verifies each new schema before real requests.
 """
 from copy import deepcopy
+from datetime import date
 import json
 from pathlib import Path
 import re
@@ -145,7 +146,7 @@ def research_wire_schema():
 
     Slots per field: text fields and fee_status use `text`; eligibility uses text=scope,
     items=required and not_confirmed; periods use start/end; capacity uses number;
-    districts use items. Unused slots are empty. research_from_wire enforces all of it.
+    districts use items; published_at uses start (YYYY-MM-DD). Unused slots are empty. research_from_wire enforces all of it.
     """
     text, texts = _string(), {'type': 'array', 'items': _string()}
     fact = _object({'field': {'enum': list(FIELDS)}, 'status': {'enum': FACT_STATUSES}, 'text': text,
@@ -180,6 +181,11 @@ def _fact_value(field, fact):
         if any(not re.fullmatch(pattern, fact[key]) for key in ('start', 'end')):
             raise ValueError('invalid period format')
         return {key: fact[key] or None for key in ('start', 'end')}
+    if field == 'published_at':
+        if not re.fullmatch(DATE_OR_EMPTY, fact['start']) or not fact['start'] or fact['end']:
+            raise ValueError('invalid period format')
+        date.fromisoformat(fact['start'])
+        return fact['start']
     if field == 'capacity':
         return fact['number']
     if field == 'districts':

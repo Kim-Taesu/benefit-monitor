@@ -34,6 +34,8 @@ def slots(field, given):
             out.update(text=value['scope'], items=value['required'], not_confirmed=value['not_confirmed'])
         elif field in ('event_period', 'application_period'):
             out.update(start=value['start'], end=value['end'])
+        elif field == 'published_at':
+            out['start'] = value
         elif field == 'capacity':
             out['number'] = value
         elif field == 'districts':
@@ -121,6 +123,57 @@ class ResearchWireTests(unittest.TestCase):
                                          'evidence': [{'segment_id': 'd1s1'}]})
         with self.assertRaisesRegex(ValueError, 'period format'):
             w.research_from_wire(timed, host())
+
+    def test_published_at_requires_date_and_segment(self):
+        ok = w.research_from_wire(wire(published_at={'status': 'supported', 'value': '2026-10-30',
+                                                     'evidence': [{'segment_id': 'd1s1'}]}), host())
+        facts = {f['field']: f for f in ok['records'][0]['facts']}
+        self.assertEqual(facts['published_at']['value'], '2026-10-30')
+        self.assertEqual(facts['published_at']['evidence'][0]['source_ref'], 'doc-a')
+        _, report = evaluate_draft(ok, host(), 'research')
+        self.assertTrue(report['structural_valid'], report)
+        for bad in ('10월 30일', ''):
+            with self.assertRaisesRegex(ValueError, 'invalid period format'):
+                w.research_from_wire(wire(published_at={'status': 'supported', 'value': bad,
+                                                        'evidence': [{'segment_id': 'd1s1'}]}), host())
+        with self.assertRaisesRegex(ValueError, 'evidence'):
+            w.research_from_wire(wire(published_at={'status': 'supported', 'value': '2026-10-30', 'evidence': []}), host())
+        unknown = w.research_from_wire(wire(), host())
+        self.assertNotIn('published_at', {f['field'] for f in unknown['records'][0]['facts']})
+
+    def test_multi_document_segments_map_to_their_document(self):
+        base = host()
+        second = dict(base['documents'][0], id='doc-b', body='게시일 2026-10-30. 참가비는 무료입니다.')
+        second['body_hash'] = hashlib.sha256(second['body'].encode()).hexdigest()
+        base['documents'].append(second)
+        base['candidates'][0]['document_ids'] = ['doc-a', 'doc-b']
+        draft = w.research_from_wire(wire(fee_status={'status': 'supported', 'value': 'free',
+                                                      'evidence': [{'segment_id': 'd1s4'}, {'segment_id': 'd2s2'}]}), base)
+        fee = {f['field']: f for f in draft['records'][0]['facts']}['fee_status']
+        self.assertEqual([(e['source_ref'], e['locator']) for e in fee['evidence']], [('doc-a', 'd1s4'), ('doc-b', 'd2s2')])
+        _, report = evaluate_draft(draft, base, 'research')
+        self.assertTrue(report['structural_valid'], report)
+
+    def test_citing_a_subset_of_documents_is_valid_but_foreign_sources_are_not(self):
+        body = '행사는 2026-12-01부터 2026-12-31까지 열립니다.\n신청은 현장에서 합니다.'
+        base = host(body)
+        second = dict(base['documents'][0], id='doc-b')
+        base['documents'].append(second)
+        base['candidates'][0]['document_ids'] = ['doc-a', 'doc-b']
+        ev = [{'segment_id': 'd1s1'}]
+        facts = {f: {'status': 'supported', 'value': 'x', 'evidence': ev} for f in w.TEXT_FIELDS}
+        facts.update(fee_status={'status': 'supported', 'value': 'paid', 'evidence': ev},
+                     eligibility={'status': 'supported', 'value': {'scope': 'unrestricted', 'required': [], 'not_confirmed': []}, 'evidence': ev},
+                     event_period={'status': 'supported', 'value': {'start': '2026-12-01', 'end': '2026-12-31'}, 'evidence': ev},
+                     application_period={'status': 'supported', 'value': {'start': '2026-11-01T09:00+09:00', 'end': ''}, 'evidence': ev},
+                     capacity={'status': 'supported', 'value': 10, 'evidence': ev})
+        facts['availability'] = {'unknown_reason': '실시간 확인 필요'}
+        draft = w.research_from_wire(wire(**facts), base)
+        report = evaluate_draft(draft, base, 'research')[1]
+        self.assertTrue(report['structural_valid'], report)
+        bad = json.loads(json.dumps(draft))
+        bad['records'][0]['facts'][0]['evidence'] = [{'source_ref': 'doc-z', 'quote': 'x', 'locator': None}]
+        self.assertFalse(evaluate_draft(bad, base, 'research')[1]['valid'])
 
     def test_unknown_fact_value_and_evidence_are_discarded(self):
         draft = w.research_from_wire(wire(capacity={'status': 'unknown', 'value': 99, 'evidence': [{'segment_id': 'd1s1'}],
