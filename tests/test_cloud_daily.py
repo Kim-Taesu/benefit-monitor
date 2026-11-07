@@ -337,4 +337,42 @@ class CloudDailyTests(unittest.TestCase):
         self.assertEqual(len(made),2);disable.assert_not_called()
         self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
 
+    def test_runtime_near_its_size_limit_stops_before_any_paid_call_or_day_use(self):
+        import contextlib,io
+        m=self.module()
+        with patch.object(m,'runtime_headroom',return_value='runtime_packed_near_limit'),\
+                patch.object(m,'todays_refresh',return_value='ready'),\
+                patch.object(m,'daily',side_effect=AssertionError('no paid work')),\
+                patch.object(m,'ClaudeClient',side_effect=AssertionError('no paid probe')):
+            full=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+            probe=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),probe_only=True)
+        self.assertEqual((full['status'],full['reason']),('runtime_too_large','runtime_packed_near_limit'))
+        self.assertEqual(probe['status'],'runtime_too_large')
+        with contextlib.redirect_stdout(io.StringIO()):self.assertEqual(m.exit_code(full),1)
+        self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
+
+    def test_run_status_is_uploaded_before_the_snapshot_is_published(self):
+        from benefit_monitor import auto_release
+        m=self.module()
+        for inner,state in (('credit_exhausted','credit_exhausted'),('completed','ok')):
+            events=[]
+            def publish(root,*a,**k):
+                events.append(('snapshot',auto_release.load_status(root)['state']));return {'status':'dispatched_not_yet_verified'}
+            control=json.loads(self.fixture.store().read('control')[0]);control['days'].pop('2026-11-06',None)
+            _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(control).encode(),sha)
+            with self.subTest(inner=inner),patch.object(m,'todays_refresh',return_value='ready'),\
+                    patch.object(m,'daily',return_value={'status':inner}),patch.object(m,'publish_snapshot',side_effect=publish),\
+                    patch.object(m,'upload_ai_status',side_effect=lambda root,store:events.append('upload')):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+                self.assertEqual(events,['upload',('snapshot',state)])
+
+    def test_runtime_headroom_reports_real_archive_limits(self):
+        from benefit_monitor import age_state
+        self.assertIsNone(age_state.runtime_headroom(self.root))
+        with patch.object(age_state,'PREFLIGHT_FILES',0):
+            save=self.root/'cache/ai_review/state.json';save.parent.mkdir(parents=True,exist_ok=True);save.write_text('{}')
+            self.assertEqual(age_state.runtime_headroom(self.root),'runtime_files_near_limit')
+        with patch.object(age_state,'MAX_FILES',0):
+            self.assertEqual(age_state.runtime_headroom(self.root),'runtime_over_limit')
+
 if __name__=='__main__':unittest.main()

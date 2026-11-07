@@ -22,6 +22,7 @@ BRANCH='briefing-data'
 # The ledger grows without a request/day limit now; sized for the 8 MiB ledger file cap.
 MAX_CIPHER=8*1024*1024
 MAX_RESPONSE=16*1024*1024
+OBJECT_MEDIA='application/vnd.github.object+json'
 FILES={'control':'ai-control.age','runtime':'ai-runtime.age'}
 CONTEXT='.tools/cloud-state/context.json'
 BUDGET='.tools/claude-trial/live/budget.json'
@@ -86,10 +87,10 @@ class GitHubStateStore:
         self.token,self.crypto=token,crypto
         self.opener=opener or (lambda request:build_opener(NoRedirect()).open(request,timeout=40))
 
-    def _api(self,path,body=None):
+    def _api(self,path,body=None,accept='application/vnd.github+json'):
         payload=json.dumps(body,separators=(',',':')).encode() if body is not None else None
         request=Request('https://api.github.com/repos/'+REPOSITORY+('/'+path if path else ''),data=payload,
-                        headers={'Authorization':'Bearer '+self.token,'Accept':'application/vnd.github+json',
+                        headers={'Authorization':'Bearer '+self.token,'Accept':accept,
                                  'Content-Type':'application/json','User-Agent':'BenefitMonitor-AI-State/1.0'},
                         method='PUT' if body is not None else 'GET')
         try:
@@ -100,13 +101,27 @@ class GitHubStateStore:
             code=error.code;error.close();raise ValueError('GitHub state request failed: http_'+str(code)) from None
         except (OSError,URLError,json.JSONDecodeError):raise ValueError('GitHub state request unavailable') from None
 
+    def lease(self,kind):
+        """Current blob sha of a state file without downloading it (works past the 1 MB contents limit)."""
+        if kind not in FILES:raise ValueError('unknown cloud state file')
+        meta=self._api('contents/'+FILES[kind]+'?ref='+BRANCH,accept=OBJECT_MEDIA)
+        try:
+            sha=meta['sha']
+            if meta.get('type','file')!='file' or not re.fullmatch('[0-9a-f]{40}',sha):raise ValueError
+        except (KeyError,TypeError,ValueError):raise ValueError('invalid encrypted GitHub state') from None
+        return sha,meta
+
     def _cipher(self,kind,ref=None):
         if kind not in FILES:raise ValueError('unknown cloud state file')
         if ref is not None:
             if kind!='runtime' or not re.fullmatch('[0-9a-f]{40}',ref):raise ValueError('immutable runtime blob required')
-            path='git/blobs/'+ref
-        else:path='contents/'+FILES[kind]+'?ref='+BRANCH
-        data=self._api(path)
+            data=self._api('git/blobs/'+ref)
+        else:
+            # The contents API inlines only files up to 1 MB (larger ones come back with
+            # encoding "none"); those are read by their blob sha, which handles up to 100 MB.
+            sha,data=self.lease(kind)
+            if data.get('encoding')!='base64' or not data.get('content'):
+                ref=sha;data=self._api('git/blobs/'+sha)
         try:
             if data['encoding']!='base64':raise ValueError
             raw=base64.b64decode(''.join(data['content'].split()),validate=True)
@@ -242,7 +257,7 @@ class CloudSession:
 
     def save_runtime(self):
         self._reload()
-        _,lease=self.store._cipher('runtime')
+        lease,_=self.store.lease('runtime')
         sha=self.store.write('runtime',pack_runtime(self.root),lease)
         data=deepcopy(self.control);data['runtime_sha']=sha;self._commit(data)
 

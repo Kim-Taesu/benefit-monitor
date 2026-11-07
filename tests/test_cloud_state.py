@@ -30,7 +30,8 @@ class FixtureCrypto:
 
 
 class FixtureGitHub:
-    def __init__(self):self.files={};self.blobs={};self.requests=[];self.fail_writes=False
+    # GitHub inlines contents only up to 1 MB; larger files come back with encoding "none".
+    def __init__(self):self.files={};self.blobs={};self.requests=[];self.fail_writes=False;self.inline_limit=1024*1024
     def __call__(self,request):
         self.requests.append(request)
         assert request.full_url.startswith('https://api.github.com/repos/Kim-Taesu/benefit-monitor/')
@@ -42,7 +43,9 @@ class FixtureGitHub:
         if request.get_method()=='GET':
             if name not in self.files:raise HTTPError(request.full_url,404,'missing',{},io.BytesIO())
             raw=self.files[name]
-            return io.BytesIO(json.dumps({'encoding':'base64','content':base64.b64encode(raw).decode(),'sha':blob_sha(raw)}).encode())
+            if len(raw)>self.inline_limit:
+                return io.BytesIO(json.dumps({'type':'file','encoding':'none','content':'','sha':blob_sha(raw),'size':len(raw)}).encode())
+            return io.BytesIO(json.dumps({'type':'file','encoding':'base64','content':base64.b64encode(raw).decode(),'sha':blob_sha(raw)}).encode())
         if self.fail_writes:raise HTTPError(request.full_url,503,'unavailable',{},io.BytesIO())
         data=json.loads(request.data);old=self.files.get(name)
         if data.get('sha')!=(blob_sha(old) if old is not None else None):
@@ -183,6 +186,20 @@ class CloudStateTests(unittest.TestCase):
         store.write('runtime',b'new but not yet referenced runtime',latest)
         self.assertNotEqual(store.read('runtime')[0],store.read('runtime',old)[0])
         self.module().CloudSession.restore(self.root,store)
+
+    def test_state_files_over_the_contents_inline_limit_are_read_by_blob_sha(self):
+        # The day the runtime or control cipher first passes 1 MB, saving must still work.
+        session=self.session();self.remote.inline_limit=16
+        raw,sha=self.store().read('control')
+        self.assertEqual(json.loads(raw)['trial_id'],self.control['trial_id'])
+        self.assertTrue(any(r.full_url.endswith('/git/blobs/'+sha) for r in self.remote.requests))
+        session.save_runtime()
+        session.mark_day('2026-11-06')
+        restored=self.module().CloudSession.restore(self.root,self.store())
+        self.assertEqual(restored.control['days']['2026-11-06']['status'],'attempted')
+        self.assertEqual(self.store().read('runtime')[1],restored.control['runtime_sha'])
+        # Lease lookups ask for the object media type, which reports the sha of large files.
+        self.assertTrue(any(r.get_header('Accept')=='application/vnd.github.object+json' for r in self.remote.requests))
 
     def test_bad_token_is_rejected_without_sending_headers(self):
         module=self.module()
