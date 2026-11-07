@@ -71,9 +71,14 @@ def network_open(request):
     return build_opener(NoRedirect()).open(request, timeout=TIMEOUT_SECONDS)
 
 
-def redacted_detail(error, key):
+def is_credit_exhausted(status, body):
+    """Anthropic reports an empty credit balance as HTTP 400 with 'credit balance' in the message."""
+    return status == 400 and isinstance(body, str) and 'credit balance' in body.lower()
+
+
+def redacted_detail(error, key, raw=None):
     try:
-        data = json.loads(error.read(8192))
+        data = json.loads(error.read(8192) if raw is None else raw)
         message = data.get('error', {}).get('message', '')
         if isinstance(message, str):
             detail = message.replace(key, '[redacted]')
@@ -182,8 +187,17 @@ class ClaudeClient:
             return result
         except HTTPError as error:
             code = 'http_' + str(error.code)
+            try:raw = error.read(8192)
+            except Exception:raw = b''
+            detail = redacted_detail(error, self.key, raw)
+            if is_credit_exhausted(error.code, raw.decode('utf-8', 'replace')):
+                # Empty credit is an account state, not a bad request: skip the day, never halt.
+                self.budget.fail(digest, 'credit_exhausted', detail, halt=False)
+                failure = TrialError('Claude request failed: credit_exhausted')
+                failure.credit_exhausted = True
+                raise failure from None
             # A rejected grammar probe is unbilled and stops only the stage, not the trial.
-            self.budget.fail(digest, code, redacted_detail(error, self.key), halt=not (probe and error.code == 400))
+            self.budget.fail(digest, code, detail, halt=not (probe and error.code == 400))
             raise TrialError('Claude request failed: ' + code) from None
         except Exception:
             # Provider errors and arbitrary exception reprs may contain credentials.
@@ -279,7 +293,7 @@ class ClaudeClient:
 
 def validate_host(host, kind, root):
     """Reject fixture/private/forged document inputs before a paid request."""
-    allowed_fields = ({'schema_version','mode','synthetic','now','output_schema_version','budget','candidates','documents'}
+    allowed_fields = ({'schema_version','mode','synthetic','now','output_schema_version','budget','candidates','documents','unverified_links'}
                       if kind == 'research' else
                       {'schema_version','mode','synthetic','now','evaluation_only','source_review_id','gate_owner','gate_description',
                        'snapshot_id','approved_items','approved_claims','excluded_items','allowed_topic_ids','allowed_topic_titles','previous_topics'})
@@ -307,9 +321,9 @@ def validate_host(host, kind, root):
             for did in candidate['document_ids']:
                 used.add(did)
                 doc = docs[did]
-                if doc['source_id'] != candidate['source_id'] or doc['publisher_type'] not in ('issuer','official_editorial','unknown'):
+                if doc['source_id'] not in sources or doc['publisher_type'] not in ('issuer','official_editorial','unknown'):
                     raise ValueError('unapproved document provenance')
-                if not all(official(doc[k],sources[candidate['source_id']]) for k in ('requested_url','final_url')):
+                if not all(official(doc[k],sources[doc['source_id']]) for k in ('requested_url','final_url')):
                     raise ValueError('unapproved document URL')
                 if doc['hash_algorithm'] != 'sha256-utf8-exact' or hashlib.sha256(doc['body'].encode()).hexdigest() != doc['body_hash']:
                     raise ValueError('input body hash mismatch')
@@ -553,6 +567,9 @@ def main():
 if __name__ == '__main__':
     try:
         raise SystemExit(main())
-    except (ValueError, OSError):
+    except (ValueError, OSError) as error:
+        if getattr(error, 'credit_exhausted', False):
+            print(json.dumps({'status':'credit_exhausted'}))
+            raise SystemExit(1)
         print('Claude trial stopped; inspect the redacted ledger. No automatic retry.')
         raise SystemExit(1)

@@ -22,6 +22,32 @@ class AIContractTests(unittest.TestCase):
         self.assertEqual([x['evidence_readiness'] for x in r['assessments']], ['needs_review','expired','needs_review','needs_review','needs_review'])
         self.assertEqual(r['assessments'][0]['execution_status'], 'completed')
 
+    def _ready_record(self):
+        rec = self.result['records'][0]
+        rec['missing_questions'] = []
+        rec['claims'] = [c for c in rec['claims'] if c['status'] == 'supported']
+        for x in rec['conflicts'] + rec['supplemental']:
+            x['claim_ids'] = [c['id'] for c in rec['claims']][:1]
+        return rec
+
+    def test_citing_a_subset_of_candidate_documents_is_not_a_readiness_gap(self):
+        self._ready_record()
+        first = self.check()
+        self.assertEqual(first['errors'], [])
+        self.assertEqual(first['assessments'][0]['evidence_readiness'], 'ready_for_human_review')
+        extra = next(d['id'] for d in self.host['documents'] if d['fetch_status'] == 'ok' and d['id'] != 'doc-normal')
+        self.host['candidates'][0]['document_ids'].append(extra)
+        second = self.check()
+        self.assertEqual(second['errors'], [])
+        self.assertEqual(second['assessments'][0]['evidence_readiness'], 'ready_for_human_review')
+
+    def test_source_outside_candidate_documents_is_rejected(self):
+        self._ready_record()
+        self.host['candidates'][0]['document_ids'] = ['doc-expired']
+        report = self.check()
+        self.assertFalse(report['valid'])
+        self.assertIn('document belongs to another candidate', report['errors'])
+
     def test_original_topics(self):
         self.assertTrue(validate(self.topics,self.thost,'topic')['valid'])
 

@@ -14,6 +14,7 @@ function backdrop(event:MouseEvent){const element=dialog.value;if(!element||even
 onMounted(()=>window.addEventListener('popstate',popDetails));
 onBeforeUnmount(()=>{window.removeEventListener('popstate',popDetails);if(dialog.value?.open){document.body.style.overflow=previousOverflow;dialog.value.close();if(history.state?.benefitDialog===titleId){const state={...history.state};delete state.benefitDialog;history.replaceState(state,'');}}});
 const status=computed(()=>timing(props.item,props.now));
+const aiReview=computed(()=>props.item.review.kind==='ai_auto'?props.item.review:null);
 const paymentNames:Record<string,string>={method:'결제 방식',funding_source:'결제 재원',excluded_methods:'제외 수단',minimum_spend:'최소 지출',limit:'혜택 한도'};
 // Approved payment terms always carry all five fields; otherwise none are known.
 const paymentRows=computed(()=>Object.entries(paymentNames).filter(([key])=>props.item.payment_terms[key]).map(([key,label])=>({key,label,value:props.item.payment_terms[key]})));
@@ -23,7 +24,7 @@ const paymentRows=computed(()=>Object.entries(paymentNames).filter(([key])=>prop
     <div class="card-meta"><span class="category">{{ item.category }}</span><span class="timing" :class="{urgent:status.urgent}">{{ status.label }}</span></div>
     <h3><button ref="opener" class="card-open" type="button" aria-haspopup="dialog" @click="openDetails">{{ item.summary }}</button></h3>
     <p class="card-source">{{ item.sourceName }}<span aria-hidden="true"> · </span>{{ item.regions.join(' · ') || '지역 조건 확인 필요' }}</p>
-    <div class="card-tags"><span v-if="item.labels.audience">{{ item.labels.audience }}</span><span v-if="item.labels.action">{{ item.labels.action }}</span><span>{{ fees[item.fee_status] }}</span></div>
+    <div class="card-tags"><span v-if="aiReview" class="ai-badge">AI 정리 · 공식 원문 {{ aiReview.documentCount }}곳 대조</span><span v-if="item.labels.audience">{{ item.labels.audience }}</span><span v-if="item.labels.action">{{ item.labels.action }}</span><span>{{ fees[item.fee_status] }}</span></div>
     <p class="verified">공식 확인 <time :datetime="item.verified_at">{{ formatDate(item.verified_at) }}</time></p>
     <button v-if="!hideFavorite" class="favorite-toggle" type="button" :aria-pressed="Boolean(saved)" :aria-label="item.summary+' 즐겨찾기'" @click="emit('toggleFavorite')"><span aria-hidden="true">{{ saved?'★':'☆' }}</span> {{ saved?'저장됨':'즐겨찾기 저장' }}</button>
     <dialog ref="dialog" class="benefit-modal" :aria-labelledby="titleId" @cancel.prevent="closeDetails" @click="backdrop">
@@ -36,6 +37,11 @@ const paymentRows=computed(()=>Object.entries(paymentNames).filter(([key])=>prop
           <h3 :id="titleId+'-payment'">결제 조건</h3>
           <dl><template v-for="row in paymentRows" :key="row.key"><dt>{{ row.label }}</dt><dd>{{ row.value }}</dd></template></dl>
           <a v-if="item.payment_terms.evidence_url" :href="item.payment_terms.evidence_url" target="_blank" rel="noopener noreferrer">결제 조건 원문 <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a>
+        </section>
+        <section v-if="aiReview" class="ai-review" :aria-labelledby="titleId+'-ai'">
+          <h3 :id="titleId+'-ai'">AI 정리 · 공식 원문 {{ aiReview.documentCount }}곳 대조</h3>
+          <p>사람이 검수하지 않고 AI가 공식 원문을 서로 대조해 정리한 항목입니다. 대조한 원문은 아래에서 직접 확인하세요. (확인 {{ formatDate(aiReview.checkedAt) }})</p>
+          <ul><li v-for="(doc,n) in aiReview.documents" :key="doc.url+n"><a :href="doc.url" target="_blank" rel="noopener noreferrer">{{ doc.title || doc.url }}<span aria-hidden="true"> ↗</span><span class="sr-only"> (새 창)</span></a></li></ul>
         </section>
         <dl class="detail-list">
           <dt>적용기간</dt><dd>{{ formatDate(item.valid_from) }} ~ {{ item.validity_kind==='ongoing'?'상시 안내':formatDate(item.valid_until) }}</dd>

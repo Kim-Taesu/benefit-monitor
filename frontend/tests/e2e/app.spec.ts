@@ -206,3 +206,17 @@ test('card dialog hides conditions until opened and supports close and browser b
  await card.locator('.card-open').click();await page.goBack();await expect(page.getByRole('dialog')).toHaveCount(0);
  expect(await page.evaluate(()=>document.body.style.overflow)).not.toBe('hidden');
 });
+
+test('AI 자동 공개 항목은 배지와 대조 원문 목록을 보이고 사람 항목에는 배지가 없다',async({page})=>{
+ const ai=item({url:'https://mediahub.seoul.go.kr/archives/20',summary:'[테스트] AI 정리 항목',review:{kind:'ai_auto',candidate_id:'c1',title_key:'k1',document_count:2,checked_at:'2026-11-04T05:00:00+09:00',documents:[{url:'https://mediahub.seoul.go.kr/archives/20',title:'서울 원문'},{url:'https://www.gangseo.seoul.kr/a',title:'강서구 원문'}]}});
+ await setup(page,snapshot([item(),ai]));await page.goto('./');
+ await expect(page.locator('article')).toHaveCount(2);
+ await expect(page.locator('.ai-badge')).toHaveCount(1);
+ const card=page.locator('article',{hasText:'[테스트] AI 정리 항목'});
+ await expect(card.locator('.ai-badge')).toHaveText('AI 정리 · 공식 원문 2곳 대조');
+ await expect(page.locator('article').filter({hasNot:page.locator('.ai-badge')})).toHaveCount(1);
+ await card.locator('.card-open').click();
+ const links=card.getByRole('dialog').locator('.ai-review a');
+ await expect(links).toHaveCount(2);
+ await expect(links.first()).toHaveAttribute('href','https://mediahub.seoul.go.kr/archives/20');
+});

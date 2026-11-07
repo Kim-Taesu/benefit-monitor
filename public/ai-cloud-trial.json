@@ -2,7 +2,7 @@
   "schema_version": 1,
   "approved": true,
   "trial_id": "claude-2026-11-05-actions",
-  "expires_at": "2026-11-19T13:09:12.753468+09:00",
+  "expires_at": null,
   "model": "claude-haiku-5-5",
   "recipient": "age1zvl04g7nxh6pzn22quhp20hk0z7swmdgj2jpevm9v24sd8wd94gq2lm028",
   "baseline_requests": 30,
@@ -11,12 +11,22 @@
   "baseline_days": {
     "2026-11-05": "completed"
   },
-  "limit_revision": 1,
+  "limit_revision": 2,
   "limit_revision_approval": {
-    "approved_at": "2026-11-05",
-    "user_text": "요청 200회, 실행 14일, $5 유지로 진행해",
-    "max_requests": 200,
-    "max_run_days": 14,
-    "cap_microdollars": 5000000
-  }
+    "approved_at": "2026-11-07",
+    "user_text": "금액은 난 월 $10~20 도 괜찮은거같음",
+    "monthly_cap_microdollars": 15000000,
+    "month": "Asia/Seoul calendar month of started_at",
+    "max_requests": null,
+    "max_run_days": null
+  },
+  "prior_limit_revision_approvals": [
+    {
+      "approved_at": "2026-11-05",
+      "user_text": "요청 200회, 실행 14일, $5 유지로 진행해",
+      "max_requests": 200,
+      "max_run_days": 14,
+      "cap_microdollars": 5000000
+    }
+  ]
 }

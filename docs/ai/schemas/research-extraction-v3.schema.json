@@ -476,7 +476,8 @@
                         "restrictions",
                         "availability",
                         "summary",
-                        "conditions"
+                        "conditions",
+                        "published_at"
                       ]
                     },
                     "value": {

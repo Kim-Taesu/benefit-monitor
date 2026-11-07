@@ -31,6 +31,14 @@ class FrontendDeliveryTests(unittest.TestCase):
         assemble(self.root)
         self.assertFalse((out / 'assets/obsolete.js').exists())
 
+    def test_admin_page_is_staged_but_other_html_is_not(self):
+        (self.root / 'frontend/dist/admin.html').write_text('<html lang="ko">admin</html>')
+        out = assemble(self.root)
+        self.assertEqual((out / 'admin.html').read_text(), '<html lang="ko">admin</html>')
+        (self.root / 'frontend/dist/other.html').write_text('x')
+        with self.assertRaises(ValueError):
+            assemble(self.root)
+
     def test_private_and_unexpected_build_files_are_rejected_before_replacement(self):
         out = assemble(self.root)
         (self.root / 'frontend/dist/report.json').write_text('private')

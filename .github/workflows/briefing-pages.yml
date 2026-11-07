@@ -19,6 +19,10 @@ on:
         description: '배포할 작업 브랜치의 고정 commit SHA'
         type: string
         default: ''
+      apply_takedowns:
+        description: '내림 목록만 현재 공개 브리핑에 적용해 재배포 (수집·snapshot 없음, 항목 제거만)'
+        type: boolean
+        default: false
   push:
     branches: [main]
 
@@ -39,13 +43,13 @@ jobs:
     permissions:
       contents: write
     outputs:
-      collection_outcome: ${{ steps.snapshot.outcome != 'skipped' && steps.snapshot.outcome || steps.briefing.outcome }}
+      collection_outcome: ${{ steps.takedown.outcome != 'skipped' && steps.takedown.outcome || steps.snapshot.outcome != 'skipped' && steps.snapshot.outcome || steps.briefing.outcome }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           persist-credentials: false
       - name: Verify the requested code revision before running project code
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy_approved_snapshot == true
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_approved_snapshot == true && inputs.apply_takedowns != true
         env:
           EXPECTED_CODE_SHA: ${{ inputs.expected_code_sha }}
         run: |
@@ -73,7 +77,7 @@ jobs:
         working-directory: frontend
         run: npm test && npm run build
       - name: Collect and export public briefing
-        if: github.event_name != 'push' && inputs.deploy_approved_snapshot != true
+        if: github.event_name != 'push' && inputs.deploy_approved_snapshot != true && inputs.apply_takedowns != true
         id: briefing
         continue-on-error: true
         shell: bash
@@ -87,8 +91,25 @@ jobs:
           python -m benefit_monitor.publish --prepare-import
           python -m benefit_monitor.cli --online --import-items inputs/public.json
           python -m benefit_monitor.publish
+      - name: Save rechecked AI approval list (check times and withdrawals only)
+        # Also after a failed collection: withdrawals already recorded must reach briefing-data.
+        # The restore above recorded the sha lease; a failed or skipped restore refuses to save.
+        if: steps.briefing.outcome != 'skipped'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRIEFING_REPOSITORY: ${{ github.repository }}
+        run: python -m benefit_monitor.mirror --save-ai --repository "$BRIEFING_REPOSITORY"
+      - name: Apply takedowns to the current public briefing only
+        # Removes taken-down AI items from the published briefing.json; no collection, no snapshot gate.
+        if: github.event_name == 'workflow_dispatch' && inputs.apply_takedowns == true
+        id: takedown
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRIEFING_REPOSITORY: ${{ github.repository }}
+        run: python -m benefit_monitor.mirror --apply-takedowns --repository "$BRIEFING_REPOSITORY"
       - name: Validate and export the approved immutable snapshot
-        if: github.event_name == 'workflow_dispatch' && inputs.deploy_approved_snapshot == true
+        if: github.event_name == 'workflow_dispatch' && inputs.deploy_approved_snapshot == true && inputs.apply_takedowns != true
         id: snapshot
         continue-on-error: true
         env:
@@ -122,7 +143,7 @@ jobs:
                   stream.write(f"Collection issue: {failure['source']} / {failure.get('district', '-')} / {failure.get('category', failure['reason'])}\n")
           PY
       - name: Mirror public JSON for the existing ChatGPT reader
-        if: github.event_name != 'push' && inputs.deploy_approved_snapshot != true
+        if: github.event_name != 'push' && inputs.deploy_approved_snapshot != true && inputs.apply_takedowns != true
         env:
           GH_TOKEN: ${{ github.token }}
           BRIEFING_REPOSITORY: ${{ github.repository }}

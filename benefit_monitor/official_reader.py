@@ -5,7 +5,8 @@ import json
 from pathlib import Path
 import time
 from urllib.error import HTTPError
-from urllib.parse import urlsplit
+from html.parser import HTMLParser
+from urllib.parse import urljoin, urlsplit,urldefrag
 from urllib.request import Request, build_opener
 
 from . import cost_policy
@@ -27,6 +28,46 @@ def project_path(root, relative):
 
 def network_open(request):
     return build_opener(NoRedirect()).open(request,timeout=15)
+
+
+_VOID={'area','base','br','col','embed','hr','img','input','link','meta','param','source','track','wbr'}
+_CHROME={'header','nav','footer','aside'}
+
+
+class _Anchors(HTMLParser):
+    """Collect links from the content region only; site chrome is ignored."""
+    def __init__(self):
+        super().__init__();self.stack=[];self.items=[]
+    def handle_starttag(self,tag,attrs):
+        if tag=='a':
+            href=dict(attrs).get('href')
+            if href:
+                names=[t for t in self.stack]
+                if not _CHROME&set(names):self.items.append((href,'main' in names,'article' in names))
+        if tag not in _VOID:self.stack.append(tag)
+    def handle_endtag(self,tag):
+        for i in range(len(self.stack)-1,-1,-1):
+            if self.stack[i]==tag:del self.stack[i:];break
+    @property
+    def hrefs(self):
+        for idx in (1,2):
+            scoped=[i[0] for i in self.items if i[idx]]
+            if scoped:return scoped
+        return [i[0] for i in self.items]
+
+
+def extract_links(html,base,limit=50):
+    parser=_Anchors()
+    try:parser.feed(html)
+    except Exception:pass
+    out=[]
+    for href in parser.hrefs:
+        url=urldefrag(urljoin(base,href.strip()))[0]
+        parts=urlsplit(url)
+        if parts.scheme not in ('http','https') or parts.path in ('','/'):continue
+        if url not in out:out.append(url)
+        if len(out)>=limit:break
+    return out
 
 
 class OfficialReader:
@@ -59,7 +100,7 @@ class OfficialReader:
         finally:
             save(self.path,self.state)
 
-    def read(self,candidate):
+    def read(self,candidate,cooldown_on_failure=True):
         source=self.sources[candidate['source']]
         url=candidate['url']
         if not official(url,source['domains']):raise ValueError('unapproved official URL')
@@ -85,13 +126,14 @@ class OfficialReader:
             if not allowed(hs['robots'],url,AGENT):raise ValueError('robots denies URL')
             raw,content_type=self._fetch(url,source['domains'],hs)
             if 'text/html' not in content_type:raise ValueError('unsupported body content type')
-            text,mode=extract_body(raw.decode('utf-8','strict'),url)
+            html=raw.decode('utf-8','strict')
+            text,mode=extract_body(html,url)
             if len(text)<80:raise ValueError('insufficient official body')
             digest=hashlib.sha256(text.encode()).hexdigest()
             doc=dict(id='doc-'+digest[:24],requested_url=url,final_url=url,source_id=source['id'],
                      document_role='notice',publisher_type='unknown',retrieved_at=self.now.isoformat(),published_at=None,
                      body_hash=digest,hash_algorithm='sha256-utf8-exact',extraction_scope='collectors.body:'+mode,
-                     fetch_status='ok',body=text,links=[])
+                     fetch_status='ok',body=text,links=extract_links(html,url))
             relative='cache/ai_review/documents/'+key+'-'+digest+'.json'
             save(project_path(self.root,relative),doc)
             self.state['pages'][key]={'at':stamp,'file':relative}
@@ -99,6 +141,6 @@ class OfficialReader:
             save(self.path,self.state)
             return doc
         except Exception:
-            hs['failure_until']=stamp+900
+            if cooldown_on_failure:hs['failure_until']=stamp+900
             save(self.path,self.state)
             raise

@@ -89,6 +89,8 @@ class PublicSnapshotTests(unittest.TestCase):
         requested=[]
         def process(args,**kwargs):
             requested.append(args)
+            if '/contents/briefing.json' not in args[-1]:  # No AI approval files on the data branch yet.
+                return subprocess.CompletedProcess(args,1,'','gh: Not Found (HTTP 404)')
             return subprocess.CompletedProcess(args,0,json.dumps(envelope),'')
         with patch('benefit_monitor.public_snapshot.subprocess.run',side_effect=process):
             result=import_remote(self.root,'Kim-Taesu/benefit-monitor','a'*40,now=NOW)

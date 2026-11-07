@@ -115,7 +115,7 @@ LaunchAgent 설치와 설정 활성화는 현재 하지 않았다. 사용자 요
 
 무과금 점검은 Actions의 Frontend P0 checks → Run workflow → 작업 브랜치 → check_ai_cloud=true로 실행한다. 이 경로는 등록된 Secret과 암복호화·원격 쓰기만 검증하며 당일 시도·Claude·배포를 수행하지 않는다. main 반영 후에는 AI daily trial의 check_only=true도 같은 검증을 수행한다.
 
-중단은 Actions의 AI daily trial에서 Disable workflow를 선택한다. 진행 중 작업까지 이미 지출한 비용을 되돌리지는 않는다. cloud 전환 후 Mac enabled를 임의로 다시 켜지 않는다. 최신 원격 원장과 미정산 예약을 복원·대조한 뒤 하나의 실행 주체만 재개해야 한다. 복구 명령은 `python3 scripts/ai_cloud_handoff.py restore`이며 미정산 예약도 보존해 검토할 수 있고 스케줄을 자동 재개하지 않는다.
+중단은 Actions의 AI daily trial에서 Disable workflow를 선택한다. 진행 중 작업까지 이미 지출한 비용을 되돌리지는 않는다. cloud 전환 후 Mac enabled를 임의로 다시 켜지 않는다. 최신 원격 원장과 미정산 예약을 복원·대조한 뒤 하나의 실행 주체만 재개해야 한다. 복구 명령은 `python3 scripts/ai_cloud_handoff.py restore`이며 미정산 예약도 보존해 검토할 수 있고 스케줄을 자동 재개하지 않는다. 원격 control 검증만 하려면 `check`를 쓴다. 전환용 `prepare`·`activate`는 은퇴했다(2026-11-07 원장 개정 뒤의 revision 2 control을 로컬 캡처로 바꾸면 안 된다). 실행하면 안내 문구와 함께 종료값 2로 멈춘다.
 
 ## 실험 한도 변경 — 2026-11-05
 
@@ -144,3 +144,44 @@ GitHub 예약 실행이 크게 늦거나 빠져서 트리거를 바꿨다. 모�
 - 원장이 중단되면 사람이 원인을 확인한 뒤 Actions → AI daily trial → Run workflow에서 `resume_reviewed_halt`를 켜서 해제한다. `check_only`를 함께 켜면 Claude 호출 없이 해제만 한다.
 - 그날 요청이 모두 무과금 4xx 거절이었다면 같은 수동 실행에서 `retry_rejected_day`(check_only 끔)를 켜서 그날을 한 번 다시 시도할 수 있다. 실행일 수는 늘지 않고 원래 결과는 `retry_of`에 남는다.
 - 수동 실행에서 `grammar_probe_only`를 켜면 조사 스키마의 문법 컴파일만 유료 1건(출력 16토큰, $0.001 미만)으로 시험한다. 날짜 기록을 쓰지 않고, 거절되면 실험을 멈추지 않은 채 Actions 결과만 실패로 표시한다.
+
+## 운영: 교차 조사·자동 공개 — 2026-11-07
+
+한도는 월 $15(프로그램 원장)뿐이다. 하루 조사는 최대 20건이다. 이전의 누적 $5·200요청·14 실행일·11/19 만료는 없다.
+
+### 크레딧 소진
+- Anthropic 크레딧이 떨어지면 해당 실행이 `credit_exhausted`로 끝나고 GitHub Actions 실패 메일이 온다. 이 메일이 알림이다.
+- 사용자가 Anthropic 콘솔에서 수동 충전한다. 다음 날 실행부터 자동으로 재개된다. 코드나 workflow를 고칠 필요가 없다.
+- 상태는 `ai-status.json`(briefing-data)과 `ai-status` 출력에서 본다. 소진 중에는 새 자동 공개가 없고 기존 공개 항목은 그대로 유지된다.
+
+### 어드민 토큰 만들기
+1. GitHub Settings > Developer settings > Fine-grained personal access tokens > Generate new token.
+2. Repository access는 `Kim-Taesu/benefit-monitor` 하나만 선택한다.
+3. Permissions: Contents Read and write, Actions Read and write. 그 외는 주지 않는다.
+4. 만료는 짧게(예: 7~30일) 정한다.
+5. `/admin.html`에 붙여 넣는다. 기본은 이 탭의 `sessionStorage`이고, "기억" 옵션을 켜야 `localStorage`에 저장된다. 공용 기기에서는 켜지 않는다.
+
+### 보류 이유 확인
+- 자동 공개 판단은 항목별 `reasons` 목록으로 남는다. 비공개 `cache/ai_publish/decisions.json`과 검토 대기 행의 `auto_publish.reasons`에서 본다. `contract`(출력 계약 불일치), `taken_down`, `stale_check`(본문 재확인 실패) 등이 있다.
+- 이유가 있으면 공개하지 않는 것이 정상 동작이다.
+
+### 내리기와 복원
+- 어드민 페이지에서 항목을 내리면 `ai-takedowns.json`에 기록하고 `briefing-pages.yml`을 `apply_takedowns: true`로 실행해 현재 공개 브리핑에서 뺀다. 복원은 기록을 지우고 같은 방식으로 반영한다.
+- 반영까지 workflow 실행 시간만큼 걸린다. 조회 실패 때에는 모든 자동 공개 항목을 숨기는 쪽으로 동작한다.
+- 내리기 배포는 현재 `briefing.json`을 다시 쓰기 전에 자동 공개 항목을 `ai-approved.json`과 내림 목록으로 수집 경로와 똑같이 재검사한다. 철회·만료·30시간 경과·승인본과 다른 항목은 같이 빠진다. `briefing.json` 형태가 이상하면 배포하지 않고 단계를 실패시킨다.
+
+### 암호화 runtime 크기와 보관
+- briefing-data의 `ai-runtime.age`·`ai-control.age`는 1 MB를 넘으면 contents API가 본문을 주지 않는다. 그래서 sha만 contents API(object 형식)로 묻고 본문은 git blob API로 읽는다. 암호문 상한은 8 MiB다.
+- 매 AI 실행은 유료 호출과 날짜 사용 전에 오래된 비공개 자료를 정리한다. 대상은 `.tools/claude-trial/live/runs/`, `.tools/ai-inputs/`, `cache/ai_review/documents/`의 14일 넘은 항목 중 현재 검토 상태(`cache/ai_review/state.json`)·자동 공개 기록의 결정·본문 캐시 색인이 가리키지 않는 것뿐이다. 원장(`budget.json`)·응답 캐시(`responses/`)·검토 대기열은 지우지 않는다. 기준 파일이나 시각을 읽을 수 없으면 아무것도 지우지 않는다.
+- 정리 뒤에도 파일 수 3072개, 원본 24 MiB, 압축 6 MiB 중 하나를 넘으면 `runtime_too_large`로 멈추고 Actions가 실패한다. 이때는 유료 호출도, 그날 실행 기록도 남기지 않는다. 응답 캐시는 원장이 가리키므로 장기적으로 이 한도에 닿을 수 있다. 그때는 사람이 검토해 정리 방법을 정한다.
+
+### 게이트 코드와 주제 카드 승인 해시
+자동 공개 게이트 등 공개 경로 코드를 바꾸면 `public/topic-publication.json`의 `policy_sha256`을 다시 기록해야 한다.
+
+```sh
+python3 -c "from benefit_monitor.topic_publication import policy_hash; print(policy_hash('.'))"
+```
+
+출력값을 `policy_sha256`에 넣는다. 맞지 않으면 가드 테스트(`tests/test_topic_publication.py`)가 실패한다.
+
+주제 카드 공개 승인(`public/topic-publication.json`)은 2027-11-07까지 유효하며 이후에는 사람이 갱신해야 한다. 게이트 코드가 바뀌었다면 `policy_sha256`도 다시 기록한다.

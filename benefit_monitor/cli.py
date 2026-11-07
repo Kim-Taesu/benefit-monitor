@@ -16,7 +16,7 @@ from . import operations
 from .briefing import build as build_briefing, write as write_briefing
 
 def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2):
-    if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=10):raise ValueError("AI candidate limit 1..10")
+    if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=20):raise ValueError("AI candidate limit 1..20")
     if ai_execute and not ai_review:raise ValueError("AI spend requires explicit review stage")
     if ai_review and not online:raise ValueError("AI body review requires explicit online collection")
     root = Path(root)
@@ -38,9 +38,6 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         handoffs, failures = [], []
         district_coverage = []
         successful_sources = []
-        full_http_limit=cost_policy.budget.limit
-        if ai_review:
-            cost_policy.budget.limit=max(1,full_http_limit-2*ai_max_candidates)
         try:
             if config.get("seoul_district_coverage"):
                 if online:
@@ -77,7 +74,7 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                         failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
                 handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
         finally:
-            cost_policy.budget.limit=full_http_limit
+            pass
         # Explicit validated inputs take precedence over discovered candidates.
         explicit_items = [validate(d, sources, now) for d in explicit]
         operational_state = operations.sanitize(load(root/"cache/operational_state.json", {}), set(sources), now)
@@ -85,6 +82,8 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         ai_result = None
         if ai_review:
             from .ai_review import review_candidates
+            # Collection ran under the configured limit; research gets the rest up to the project max of 100.
+            cost_policy.budget.limit=100
             # Sources whose details hold conditions only in images are not sent to paid research.
             ai_candidates = [c for c in incoming + [i.data() for i in explicit_items]
                              if sources.get(c['source'], {}).get('ai_review', True)]
@@ -93,7 +92,17 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
             for cid in ai_result['changed_ids']:
                 operational_state.setdefault('items',{}).setdefault(cid,{}).update(
                     hold_at=now.isoformat(),hold_reason='body_changed')
-        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0)) if online else []
+        # AI auto-published records are rechecked here every day, even when the AI run fails.
+        from . import auto_release
+        auto_approved, auto_takedowns = auto_release.load(root) if online else ({}, [])
+        auto_reader = None
+        if auto_approved:
+            from .official_reader import OfficialReader
+            auto_reader = OfficialReader(root, now)
+        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0),
+                                                auto=auto_approved, takedowns=auto_takedowns, reader=auto_reader) if online else []
+        if auto_approved:
+            auto_release.save_approved(root, auto_approved)
         explicit_items = operations.observe(operational_state, [], explicit_items, now)
         if len({i.id for i in explicit_items}) != len(explicit_items):
             raise ValueError("Duplicate imported URL")

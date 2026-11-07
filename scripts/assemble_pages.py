@@ -15,7 +15,7 @@ def assemble(root):
     files = list(build.rglob('*'))
     for path in files:
         relative = path.relative_to(build)
-        if path.is_symlink() or not (path.is_dir() and relative == Path('assets') or path.is_file() and (relative == Path('index.html') or len(relative.parts) == 2 and relative.parts[0] == 'assets' and path.suffix in ('.js', '.css'))):
+        if path.is_symlink() or not (path.is_dir() and relative == Path('assets') or path.is_file() and (relative in (Path('index.html'), Path('admin.html')) or len(relative.parts) == 2 and relative.parts[0] == 'assets' and path.suffix in ('.js', '.css'))):
             raise ValueError('Unexpected frontend build file')
     if any(not (public / name).is_file() or (public / name).is_symlink() for name in ('briefing.json', 'briefing.md')):
         raise ValueError('Generate public briefing before staging')

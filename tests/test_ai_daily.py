@@ -75,18 +75,19 @@ class AIDailyTests(unittest.TestCase):
         self.assertEqual(seen,['public','remote'])
         self.assertEqual(result['remote_delivery']['status'],'dispatched_not_yet_verified')
 
-    def test_trial_window_expiry_stops_before_collection_or_credentials(self):
+    def test_past_trial_expiry_no_longer_stops_collection(self):
         self.policy.update(recurring_spend_approved=True,trial_expires_at=(NOW-timedelta(minutes=1)).isoformat());self.save()
-        with patch('benefit_monitor.ai_daily.collect',side_effect=AssertionError('trial expired')):
+        with patch('benefit_monitor.ai_daily.collect',return_value={}) as collect,patch('benefit_monitor.ai_daily.refresh',return_value={'topics':[]}):
             result=self.run_daily(online=True,allow_spend=True)
-        self.assertEqual(result['status'],'trial_expired')
+        self.assertEqual(result['status'],'completed');collect.assert_called_once()
 
-    def test_fourteen_daily_attempts_stop_before_fifteenth_collection(self):
+    def test_many_daily_attempts_do_not_stop_collection(self):
         from benefit_monitor.store import save
         save(self.root/'cache/ai_daily/days.json',{'days':{
-            f'2026-10-{day:02d}':{'status':'completed'} for day in range(1,15)}})
-        with patch('benefit_monitor.ai_daily.collect',side_effect=AssertionError('fourteen attempts already used')):
-            self.assertEqual(self.run_daily(online=True)['status'],'trial_run_limit')
+            f'2026-10-{day:02d}':{'status':'completed'} for day in range(1,31)}})
+        with patch('benefit_monitor.ai_daily.collect',return_value={}) as collect,patch('benefit_monitor.ai_daily.refresh',return_value={'topics':[]}):
+            self.assertEqual(self.run_daily(online=True)['status'],'completed')
+        collect.assert_called_once()
 
     def test_scheduled_public_delivery_waits_before_spending_for_existing_main_refresh(self):
         self.policy.update(recurring_spend_approved=True,public_application_approved=True,remote_delivery_approved=True);self.save()

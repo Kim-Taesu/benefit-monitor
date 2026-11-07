@@ -55,26 +55,27 @@ class CloudDailyTests(unittest.TestCase):
         from benefit_monitor.store import save
         m=self.module()
         legacy=json.loads(self.fixture.store().read('control')[0])
-        legacy['budget']['max_requests']=40;legacy.pop('limit_revision',None)
+        legacy['budget'].update(cap_microdollars=5_000_000,max_requests=200);legacy['budget'].pop('cap_kind',None)
+        legacy.update(limit_revision=1)
         _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(legacy).encode(),sha)
         # Without the approved policy revision nothing changes.
         with patch.object(m,'daily',side_effect=AssertionError('must not collect')):
             self.assertFalse(m.cloud_run(self.root,now=NOW,store=self.fixture.store())['limit_revision_applied'])
-        self.assertEqual(json.loads(self.fixture.store().read('control')[0])['budget']['max_requests'],40)
-        extended='2026-11-19T13:09:12.753468+09:00'
-        save(self.root/'public/ai-cloud-trial.json',dict(self.fixture.policy,expires_at=extended,limit_revision=1))
+        self.assertEqual(json.loads(self.fixture.store().read('control')[0])['budget']['max_requests'],200)
+        save(self.root/'public/ai-cloud-trial.json',dict(self.fixture.policy,expires_at=None,limit_revision=2))
         with patch.object(m,'daily',side_effect=AssertionError('must not collect')):
             first=m.cloud_run(self.root,now=NOW,store=self.fixture.store())
             second=m.cloud_run(self.root,now=NOW,store=self.fixture.store())
-        self.assertEqual((first['limit_revision_applied'],first['max_requests'],first['expires_at']),(True,200,extended))
+        self.assertEqual((first['limit_revision_applied'],first['cap_kind'],first['expires_at']),(True,'monthly',None))
         self.assertFalse(second['limit_revision_applied'])
         control=json.loads(self.fixture.store().read('control')[0])
         self.assertEqual(control['budget']['requests'],legacy['budget']['requests'])
         self.assertEqual((control['days'],control['budget']['halted']),(legacy['days'],legacy['budget']['halted']))
-        bad=dict(control);bad['budget']=dict(control['budget'],max_requests=40)
         from benefit_monitor.cloud_state import validate_control
+        bad=dict(control);bad['budget']=dict(control['budget'],max_requests=200)
         with self.assertRaises(ValueError):validate_control(self.root,bad)
-        with self.assertRaises(ValueError):validate_control(self.root,dict(control,expires_at='2026-11-20T00:00:00+09:00'))
+        legacy_shape=json.loads(json.dumps(control));legacy_shape['budget'].pop('cap_kind')
+        with self.assertRaises(ValueError):validate_control(self.root,legacy_shape)
 
     def test_bad_fingerprint_unsettled_and_halted_block(self):
         m=self.module()
@@ -93,7 +94,6 @@ class CloudDailyTests(unittest.TestCase):
         m=self.module()
         with patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'disable_workflow') as disable:
             self.assertEqual(m.cloud_run(self.root,now=NOW.replace(hour=5),check_only=False,store=self.fixture.store())['status'],'not_due')
-            self.assertEqual(m.cloud_run(self.root,now=NOW.replace(day=10),check_only=False,store=self.fixture.store())['status'],'trial_expired');disable.assert_called_once()
             with patch.object(m,'todays_refresh',return_value='running'):
                 self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'waiting_for_existing_refresh')
             data=json.loads(self.fixture.store().read('control')[0]);data['active']=False
@@ -123,17 +123,18 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(m,'restore_public',side_effect=restored),patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
             m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
 
-    def test_expired_unresolved_budget_still_disables_workflow_without_collecting(self):
+    def test_unresolved_budget_blocks_without_collecting_or_disabling(self):
         m=self.module()
         base=json.loads(self.fixture.store().read('control')[0])
         for kind in ('reserved','halted'):
             data=json.loads(json.dumps(base))
             if kind=='halted':data['budget']['halted']=True
-            else:data['budget']['requests'].append({'id':'e'*64,'status':'reserved','reserved_microdollars':100,'charged_microdollars':0})
+            else:data['budget']['requests'].append({'id':'e'*64,'status':'reserved','reserved_microdollars':100,'charged_microdollars':0,'started_at':NOW.isoformat()})
             _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
             with self.subTest(kind=kind),patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'disable_workflow') as disable:
-                self.assertEqual(m.cloud_run(self.root,now=NOW.replace(day=10),check_only=False,store=self.fixture.store())['status'],'trial_expired')
-                disable.assert_called_once()
+                with self.assertRaisesRegex(ValueError,'manual review'):
+                    m.cloud_run(self.root,now=NOW.replace(day=10),check_only=False,store=self.fixture.store())
+                disable.assert_not_called()
 
     def test_new_public_hold_cannot_be_overwritten_or_dispatched(self):
         import inspect,subprocess
@@ -156,19 +157,29 @@ class CloudDailyTests(unittest.TestCase):
             dispatch.assert_not_called()
         self.assertEqual(remote['data'],newer)
 
-    def test_global_daily_and_request_caps_stop_without_collection(self):
+    def test_only_the_monthly_cap_stops_paid_work_and_it_never_disables_the_workflow(self):
         m=self.module()
-        base=json.loads(self.fixture.store().read('control')[0])
-        for kind in ('days','requests'):
-            data=json.loads(json.dumps(base))
-            if kind=='days':
-                for n in range(13):data['days'][f'2026-10-{n+10:02d}']={'status':'failed'}
-            else:
-                data['budget']['requests'] += [{'id':f'{i:064x}','status':'failed','reserved_microdollars':100,'charged_microdollars':0} for i in range(100,270)]
-            _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
-            with patch.object(m,'disable_workflow') as disable,patch.object(m,'daily',side_effect=AssertionError('cap must stop paid work')):
-                self.assertIn(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],('trial_run_limit','trial_budget_limit'))
-                disable.assert_called_once()
+        data=json.loads(self.fixture.store().read('control')[0])
+        for n in range(40):data['days'][f'2026-09-{n%28+1:02d}' if n<28 else f'2026-08-{n-27:02d}']={'status':'failed'}
+        data['budget']['requests'] += [{'id':f'{i:064x}','status':'failed','reserved_microdollars':0,'charged_microdollars':0,
+                                       'started_at':'2026-11-06T01:00:00+00:00'} for i in range(100,400)]
+        _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
+        # 300 extra rows and 40 earlier run days are no limit: the run proceeds to the inner daily.
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=RuntimeError('reached daily')):
+            with self.assertRaisesRegex(RuntimeError,'reached daily'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        data=json.loads(self.fixture.store().read('control')[0])
+        data['days'].pop('2026-11-06',None)
+        data['budget']['requests'].append({'id':'9'*64,'status':'completed','reserved_microdollars':14_997_720,
+                                           'charged_microdollars':14_997_720,'started_at':'2026-11-06T02:00:00+00:00'})
+        _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
+        with patch.object(m,'disable_workflow') as disable,patch.object(m,'daily',side_effect=AssertionError('cap must stop paid work')):
+            self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'trial_budget_limit')
+            disable.assert_not_called()
+        # The next Seoul calendar month starts with a fresh allowance.
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=RuntimeError('reached daily')):
+            with self.assertRaisesRegex(RuntimeError,'reached daily'):
+                m.cloud_run(self.root,now=NOW.replace(month=12,day=1),check_only=False,store=self.fixture.store())
 
     def test_success_preserves_latest_child_budget_and_dispatch_is_not_deployment(self):
         m=self.module()
@@ -321,10 +332,47 @@ class CloudDailyTests(unittest.TestCase):
             passed=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),probe_only=True)
             outcome[0]='rejected'
             rejected=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),probe_only=True)
-            expired=m.cloud_run(self.root,now=NOW.replace(day=20),store=self.fixture.store(),probe_only=True)
-        self.assertEqual((passed['status'],rejected['status'],expired['status']),('probe_passed','probe_rejected','trial_expired'))
+        self.assertEqual((passed['status'],rejected['status']),('probe_passed','probe_rejected'))
         self.assertEqual((m.exit_code(passed),m.exit_code(rejected)),(0,1))
-        self.assertEqual(len(made),2);disable.assert_called_once()
+        self.assertEqual(len(made),2);disable.assert_not_called()
         self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
+
+    def test_runtime_near_its_size_limit_stops_before_any_paid_call_or_day_use(self):
+        import contextlib,io
+        m=self.module()
+        with patch.object(m,'runtime_headroom',return_value='runtime_packed_near_limit'),\
+                patch.object(m,'todays_refresh',return_value='ready'),\
+                patch.object(m,'daily',side_effect=AssertionError('no paid work')),\
+                patch.object(m,'ClaudeClient',side_effect=AssertionError('no paid probe')):
+            full=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+            probe=m.cloud_run(self.root,now=NOW,store=self.fixture.store(),probe_only=True)
+        self.assertEqual((full['status'],full['reason']),('runtime_too_large','runtime_packed_near_limit'))
+        self.assertEqual(probe['status'],'runtime_too_large')
+        with contextlib.redirect_stdout(io.StringIO()):self.assertEqual(m.exit_code(full),1)
+        self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
+
+    def test_run_status_is_uploaded_before_the_snapshot_is_published(self):
+        from benefit_monitor import auto_release
+        m=self.module()
+        for inner,state in (('credit_exhausted','credit_exhausted'),('completed','ok')):
+            events=[]
+            def publish(root,*a,**k):
+                events.append(('snapshot',auto_release.load_status(root)['state']));return {'status':'dispatched_not_yet_verified'}
+            control=json.loads(self.fixture.store().read('control')[0]);control['days'].pop('2026-11-06',None)
+            _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(control).encode(),sha)
+            with self.subTest(inner=inner),patch.object(m,'todays_refresh',return_value='ready'),\
+                    patch.object(m,'daily',return_value={'status':inner}),patch.object(m,'publish_snapshot',side_effect=publish),\
+                    patch.object(m,'upload_ai_status',side_effect=lambda root,store:events.append('upload')):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+                self.assertEqual(events,['upload',('snapshot',state)])
+
+    def test_runtime_headroom_reports_real_archive_limits(self):
+        from benefit_monitor import age_state
+        self.assertIsNone(age_state.runtime_headroom(self.root))
+        with patch.object(age_state,'PREFLIGHT_FILES',0):
+            save=self.root/'cache/ai_review/state.json';save.parent.mkdir(parents=True,exist_ok=True);save.write_text('{}')
+            self.assertEqual(age_state.runtime_headroom(self.root),'runtime_files_near_limit')
+        with patch.object(age_state,'MAX_FILES',0):
+            self.assertEqual(age_state.runtime_headroom(self.root),'runtime_over_limit')
 
 if __name__=='__main__':unittest.main()

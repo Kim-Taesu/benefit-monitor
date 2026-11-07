@@ -16,7 +16,7 @@ MAX_RUNTIME_BYTES=32*1024*1024
 MAX_FILES=4096
 CONTROL_FILES={'.tools/claude-trial/live/budget.json','cache/ai_daily/days.json'}
 FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs/',
-         'cache/ai_review/','cache/ai_topics/','cache/ai_daily/')
+         'cache/ai_review/','cache/ai_topics/','cache/ai_daily/','cache/ai_publish/')
 FILES={'report.json','cache/operational_state.json','cache/verified_items.json',
        'cache/district_candidates.json','cache/collection_log.json'}
 
@@ -29,7 +29,7 @@ def _allowed(name):
     return name in FILES or any(name.startswith(folder) for folder in FOLDERS)
 
 
-def pack_runtime(root):
+def _entries(root):
     root=Path(root).resolve();paths=set()
     for relative in FOLDERS:
         folder=safe_path(root,relative)
@@ -45,10 +45,33 @@ def pack_runtime(root):
         total+=path.stat().st_size
         if total>MAX_RUNTIME_BYTES or len(entries)>=MAX_FILES:raise ValueError('runtime archive too large')
         entries.append((name,path))
+    return entries,total
+
+
+def pack_runtime(root):
+    entries,_=_entries(root)
     output=io.BytesIO()
     with tarfile.open(fileobj=output,mode='w') as archive:
         for name,path in entries:archive.add(path,arcname=name,recursive=False)
     return gzip.compress(output.getvalue(),mtime=0)
+
+
+# Paid work starts only with room for a full day of new runtime files under every limit.
+PREFLIGHT_FILES=MAX_FILES*3//4
+PREFLIGHT_BYTES=MAX_RUNTIME_BYTES*3//4
+PREFLIGHT_PACKED=6*1024*1024  # The encrypted file limit is 8 MiB.
+
+
+def runtime_headroom(root):
+    """None when the packed runtime leaves margin for today's run, else a short reason code."""
+    try:
+        entries,total=_entries(root)
+        if len(entries)>PREFLIGHT_FILES:return 'runtime_files_near_limit'
+        if total>PREFLIGHT_BYTES:return 'runtime_bytes_near_limit'
+        if len(pack_runtime(root))>PREFLIGHT_PACKED:return 'runtime_packed_near_limit'
+    except ValueError:
+        return 'runtime_over_limit'
+    return None
 
 
 def restore_runtime(root,raw):

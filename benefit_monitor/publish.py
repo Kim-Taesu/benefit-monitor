@@ -16,7 +16,14 @@ from .models import Benefit
 
 PUBLIC_FIELDS = ("source", "url", "title", "summary", "conditions", "districts",
                  "verified_at", "valid_from", "valid_until", "deadline_at",
-                 "validity_kind", "fee_status", "needs_recheck", "payment_terms", "labels", "benefit_value")
+                 "validity_kind", "fee_status", "needs_recheck", "payment_terms", "labels", "benefit_value", "review")
+HUMAN_REVIEW = {"kind": "human"}
+PRIVATE_TEXT = re.compile(r"생년월일|거주지|집주소|개인조건|비밀키|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<!\d)01[016789][- ]?\d{3,4}[- ]?\d{4}(?!\d)")
+
+
+def fact_fields(data):
+    """Public fields of a human-approved fact (benefit_value only when present); review is added on export."""
+    return {k: data[k] for k in PUBLIC_FIELDS if k != "review" and (k != "benefit_value" or data[k])}
 
 
 def releases(root, config, now):
@@ -30,10 +37,9 @@ def releases(root, config, now):
             raise ValueError("Explicit public_release=true required")
         item = validate({k: v for k, v in entry.items() if k != "public_release"}, sources, now)
         data = item.data()
-        public = {k: data[k] for k in PUBLIC_FIELDS if k != "benefit_value" or data[k]}
-        text = json.dumps(public, ensure_ascii=False)
+        text = json.dumps(fact_fields(data), ensure_ascii=False)
         # Defense in depth; explicit review is still required for freeform text.
-        if re.search(r"생년월일|거주지|집주소|개인조건|비밀키|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|(?<!\d)01[016789][- ]?\d{3,4}[- ]?\d{4}(?!\d)", text):
+        if PRIVATE_TEXT.search(text):
             raise ValueError("Possible private information in public release")
         urls = [item.url] + [v["evidence_url"] for v in (item.payment_terms, item.benefit_value) if v]
         if any(re.search(r"token|secret|password|auth|session|api.?key", key, re.I)
@@ -265,7 +271,9 @@ refresh();setInterval(refresh, 60000);
 </script></body></html>'''
 
 
-def payload(root, now=None, failure=False, report=None, state=None):
+def payload(root, now=None, failure=False, report=None, state=None, auto=None):
+    """auto=(approved, takedowns) overrides the local AI approval files (snapshot path)."""
+    from . import auto_release
     root = Path(root)
     now = now or datetime.now(SEOUL)
     if now.tzinfo is None:
@@ -298,7 +306,11 @@ def payload(root, now=None, failure=False, report=None, state=None):
                     if hold and aware_time(item['verified_at']) <= aware_time(hold):
                         continue
                     if release and all(item[k] == v for k, v in release.items()):
-                        items[identity(item)] = {k: item[k] for k in PUBLIC_FIELDS if k != "benefit_value" or item[k]}
+                        items[identity(item)] = dict(fact_fields(item), review=dict(HUMAN_REVIEW))
+            # Second approval list; a human release for the same page always wins.
+            approved_auto, takedowns = auto if auto is not None else auto_release.load(root)
+            for row in auto_release.public_items(approved_auto, takedowns, {s["id"]: s for s in config["sources"]}, now):
+                items.setdefault(identity(row), row)
             data.update(source_report_at=report_time.isoformat(), items=list(items.values()),
                         coverage_incomplete=briefing["coverage_incomplete"],
                         withheld=briefing["withheld"],
@@ -308,12 +320,17 @@ def payload(root, now=None, failure=False, report=None, state=None):
             data["coverage"] = coverage(root, config, report, data["items"])
             data["valid_through"] = datetime.combine(now.date()+timedelta(days=1), time.min, SEOUL).isoformat()
             for item in data["items"]:
+                if auto_release.is_auto(item):
+                    continue  # display_until already includes the 30-hour freshness cutoff.
                 expires=[aware_time(item["verified_at"])+timedelta(days=config.get("max_age_days",7))]
                 if item["deadline_at"]:
                     expires.append(aware_time(item["deadline_at"]))
                 if item["valid_until"]:
                     expires.append(datetime.combine(date.fromisoformat(item["valid_until"])+timedelta(days=1),time.min,SEOUL))
                 item["display_until"]=min(expires).isoformat()
+    status = auto_release.load_status(root)
+    if status:
+        data["ai_status"] = status
     data["operational_state"] = state
     data["source_health"] = state["sources"]
     data["run_context"] = run_context(now, aware_time(data["source_report_at"]) if data["source_report_at"] else None, os.environ.get("GITHUB_EVENT_NAME", ""))
@@ -356,7 +373,9 @@ def write_export(root,data):
     for item in data["items"]:
         labels = item.get("labels") or {}
         tag = " · ".join(name + ": " + md_text(labels[key]) for key, name in (("category", "분야"), ("audience", "대상"), ("region", "지역"), ("action", "이용 방법")) if labels.get(key))
-        lines += ["", "## " + md_text(item["summary"])] + ([tag] if tag else []) + ["요금: " + FEES[item["fee_status"]],
+        review = item.get("review") or {}
+        auto = ["AI 정리 · 공식 원문 " + str(review.get("document_count")) + "곳 대조 (사람 검증 전)"] if review.get("kind") == "ai_auto" else []
+        lines += ["", "## " + md_text(item["summary"])] + auto + ([tag] if tag else []) + ["요금: " + FEES[item["fee_status"]],
                   md_text(item["conditions"]), "공식 확인: " + display_date(item["verified_at"]),
                   "시작" + (" 예정: " if item["valid_from"] and item["valid_from"] > now.date().isoformat() else ": ")
                   + display_date(item["valid_from"], "시작일 미확인"),

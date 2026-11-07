@@ -17,6 +17,7 @@
 - 근거는 `segment_id`로만 가리킨다. 인용문을 직접 쓰지 않는다. 호스트가 조각 원문을 그대로 인용으로 붙인다.
 - 그 사실을 직접 담은 조각만 고른다. 제목이나 배경 설명 조각으로 조건을 뒷받침하지 않는다.
 - 후보에 속하지 않은 문서의 조각을 쓰지 않는다.
+- 후보에는 문서가 여러 개일 수 있다(d1, d2, ...). 어느 문서의 조각이든 근거로 쓸 수 있고, 기간과 비용은 가능하면 둘 이상의 문서에서 일치하는 조각을 함께 고른다.
 
 ## 필드
 
@@ -36,6 +37,7 @@
 | cancellation | 취소, 노쇼, 지각 조건 |
 | restrictions | 그 밖의 필수 제한 |
 | availability | 항상 unknown. 남은 자리는 실시간 확인이 필요하다 |
+| published_at | 원문에 적힌 게시일 또는 수정일, `YYYY-MM-DD`를 `start`에 쓴다. 근거 조각이 필요하다. 원문에 게시일·수정일이 없거나 연도가 없으면(예: "10월 30일") unknown이고 unknown_reason에 원문 날짜를 적는다. 연도 없는 값을 쓰면 호스트가 응답 전체를 거부한다 |
 | summary | 혜택 한 문장 요약 |
 | conditions | 이용자가 알아야 할 핵심 조건 묶음 |
 | districts | 혜택이 적용되는 서울 자치구. 주최 기관 주소만으로 정하지 않는다 |
@@ -49,7 +51,7 @@
 | `text` | 글로 된 필드 전부, fee_status 값, eligibility의 scope |
 | `items` | eligibility의 required, districts 이름 목록 |
 | `not_confirmed` | eligibility의 not_confirmed |
-| `start`, `end` | event_period, application_period |
+| `start`, `end` | event_period, application_period. published_at은 `start`만 쓰고 `end`는 비운다 |
 | `number` | capacity |
 | `segment_ids` | 근거 조각 ID |
 | `unknown_reason` | unknown일 때 이유 |
@@ -68,6 +70,9 @@
 - `unknown`에는 무엇이 원문에 없었는지 구체적인 `unknown_reason`을 쓴다.
 
 - 접수 기간에 날짜만 있고 시각이 없으면 application_period를 unknown으로 두고, unknown_reason에 원문의 날짜와 "시각 미기재"를 적는다. 시각을 지어내지 않는다.
+- 연도가 적히지 않은 날짜(예: "10월 30일")는 연도를 추정하지 않는다. event_period와 application_period를 unknown으로 두고, unknown_reason에 원문의 날짜를 그대로 적는다.
+- 같은 사실이 문서끼리 값이 다르면(기간, 비용, 대상 등) `disputed`로 두고 양쪽 문서의 조각을 근거로 모두 단다.
+- "종료", "마감", "결과 발표", "지난 차수" 같은 문구가 있으면 그 조각을 restrictions의 근거로 남기고 restrictions 값에 그 상태를 적는다.
 - 요약의 대상란이 "제한없음"이어도 본문에 유아 동반, 가족 대상, 성인 전용, 회원 한정, 나이 범위 같은 문구가 있으면 그 제한을 eligibility.required나 restrictions에 그대로 남기고 그 문장을 근거로 고른다. 관계가 불분명하면 disputed나 not_confirmed로 남긴다.
 - scope가 restricted면 required에 구체적인 조건을 적는다. unrestricted면 required를 비운다.
 - 취소 기준에 "주말·공휴일 제외"나 "평일 기준" 같은 계산 조건이 있으면 cancellation 값에 그 문구를 그대로 포함한다.

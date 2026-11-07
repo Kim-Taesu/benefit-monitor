@@ -186,19 +186,20 @@ class AIReviewTests(unittest.TestCase):
             with self.assertRaises(HTTPError):OfficialReader(self.root,NOW).read(self.candidate)
         self.assertTrue(stream.closed)
 
-    def test_collection_reserves_shared_http_budget_for_ai_body_review(self):
+    def test_collection_uses_configured_limit_and_research_gets_project_max(self):
         from benefit_monitor.cli import run
-        config=dict(self.config,max_http_requests=6)
+        config=dict(self.config,max_http_requests=75)
         config['sources']=[dict(config['sources'][0],feed_url='https://www.seoul.go.kr/feed')]
         (self.root/'sources.yaml').write_text(json.dumps(config))
-        def greedy(source):
-            while cost_policy.budget.used<cost_policy.budget.limit:cost_policy.budget.consume()
-            return [self.candidate]
-        with patch('benefit_monitor.cli.collect',side_effect=greedy),patch('benefit_monitor.official_reader.network_open',side_effect=self.transport):
-            report=run(self.root,online=True,now=NOW,ai_review=True,ai_execute=False,ai_max_candidates=1)
-        self.assertEqual(report['ai_review']['awaiting_api'],1)
-        self.assertEqual(report['cost_policy']['public_http_requests'],6)
-        self.assertEqual(report['cost_policy']['request_limit'],6)
+        seen={}
+        def collect(source):
+            seen['collection']=cost_policy.budget.limit;return [self.candidate]
+        def review(root,candidates,now,max_candidates,execute):
+            seen['research']=cost_policy.budget.limit;seen['max']=max_candidates
+            return dict(queued=0,rejected=0,awaiting_api=0,skipped_unchanged=0,changed_ids=[],failures=[],rows=[])
+        with patch('benefit_monitor.cli.collect',side_effect=collect),patch('benefit_monitor.ai_review.review_candidates',side_effect=review):
+            run(self.root,online=True,now=NOW,ai_review=True,ai_execute=False,ai_max_candidates=20)
+        self.assertEqual(seen,{'collection':75,'research':100,'max':20})
 
 
 if __name__=='__main__':unittest.main()

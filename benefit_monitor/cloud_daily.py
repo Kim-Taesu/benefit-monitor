@@ -1,5 +1,6 @@
 """Trusted Actions orchestration with durable admission before paid work."""
 import argparse
+import base64
 from datetime import datetime
 import hashlib
 import json
@@ -9,16 +10,17 @@ import re
 from urllib.request import Request
 from urllib.error import HTTPError,URLError
 
-from .age_state import AgeState
+from .age_state import AgeState,runtime_headroom
 from .ai_daily import daily
 from .briefing import SEOUL
 from .claude_trial import ClaudeClient,configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
-from .mirror import run as mirror,restore as restore_mirror
+from . import auto_release,runtime_retention
+from .mirror import AI_BASE,run as mirror,restore as restore_mirror,restore_ai,save_ai,lease as public_file_lease
 from .public_snapshot import validate
 from .wire_format import research_wire_schema
 from .store import load,save
-from .trial_budget import TrialBudget,CAP,MAX_REQUESTS,MAX_RUN_DAYS
+from .trial_budget import TrialBudget
 from scripts.install_age import safe_path
 
 
@@ -52,7 +54,34 @@ def disable_workflow(store):
 
 # GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
 FALLBACK_REFRESH_HOUR=10
-ATTENTION={'completed_with_provider_failure','probe_rejected'}
+ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
+# Per-day paid request limits: research 20, topic 1, grammar probe 2.
+MAX_DAILY_RESEARCH=20
+STATUS_FILE='cache/ai_daily/status.json'
+
+
+def write_ai_status(root,state,day,now):
+    """Public run status; last_success_day carries over until the next ok run."""
+    path=safe_path(root,STATUS_FILE)
+    previous=load(path,{})
+    last=day if state=='ok' else previous.get('last_success_day')
+    save(path,{'state':state,'last_success_day':last,'updated_at':now.isoformat()})
+
+
+def upload_ai_status(root,store):
+    """Best effort copy to briefing-data ai-status.json (admin page); never masks the run result."""
+    try:
+        status=auto_release.load_status(root)
+        if status is None:return False
+        try:sha=store._api('contents/ai-status.json?ref=briefing-data').get('sha')
+        except ValueError:sha=None  # Not created yet.
+        body={'message':'Update AI run status','branch':'briefing-data',
+              'content':base64.b64encode((json.dumps(status,ensure_ascii=False)+'\n').encode()).decode()}
+        if sha:body['sha']=sha
+        store._api('contents/ai-status.json',body)
+        return True
+    except Exception:
+        return False
 
 
 def todays_refresh(store,now):
@@ -81,7 +110,39 @@ def restore_public(root,store,now):
     # The preceding free run may have observed newer holds than the AI archive.
     sha=restore_mirror(root,REPOSITORY,now=now,env=runner_environment(store))
     if not isinstance(sha,str) or not re.fullmatch('[0-9a-f]{40}',sha):raise ValueError('initial public file lease required')
+    # Approvals packed in the encrypted runtime may not have reached briefing-data (a failed save).
+    # Three-way merge: the common base is the remote copy the previous run restored (also packed);
+    # without it the base is empty, so an empty or older pack can never delete remote approvals.
+    path=safe_path(root,auto_release.APPROVED)
+    def packed(relative,key=None):
+        """(dict, ok): {} only for a genuinely absent file; unreadable or wrong shape is not ok."""
+        target=safe_path(root,relative)
+        if not target.exists():return {},True
+        try:value=load(target,None)
+        except (OSError,ValueError):return None,False
+        value=value.get(key) if key and isinstance(value,dict) else value
+        return (value,True) if isinstance(value,dict) else (None,False)
+    local,local_ok=packed(auto_release.APPROVED);base,base_ok=packed(AI_BASE,'approved')
+    if not restore_ai(root,REPOSITORY,env=runner_environment(store)):
+        raise ValueError('AI approval list restore failed; stop before any paid call')
+    if local_ok and base_ok:
+        remote=load(path,{})
+        merged=auto_release.merge_approved(base,local,remote)
+        if merged!=remote:auto_release.save_approved(root,merged)
+    else:
+        # An unreadable pack or base could wipe or resurrect records: keep the restored remote copy.
+        save(safe_path(root,'cache/ai_publish/restore-note.json'),
+             {'skipped_merge_at':now.isoformat(),'packed_ok':local_ok,'base_ok':base_ok})
     return sha
+
+
+def runtime_room(root,now):
+    """Prune old private artifacts, then None if today's run still fits the encrypted state limits.
+
+    Checked before any paid call so a state that could not be saved afterwards never spends money."""
+    retention=runtime_retention.prune(root,now)
+    reason=runtime_headroom(root)
+    return None if reason is None else {'status':'runtime_too_large','reason':reason,'retention':retention}
 
 
 def publish_snapshot(root,store,now,key,*,expected_sha):
@@ -92,8 +153,17 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     meta=store._api('')
     if meta.get('private') is not False or meta.get('full_name')!=REPOSITORY:raise ValueError('personal public repository required')
     data=load(safe_path(root,'delivery/public/briefing.json'),{})
+    status=auto_release.load_status(root)  # Written for this run just before; the export holds the older one.
+    if status and isinstance(data,dict):data['ai_status']=status
     content=(json.dumps(validate(root,data,now),ensure_ascii=False,indent=2)+'\n').encode()
     if key.encode() in content or b'AGE-SECRET-KEY-' in content:raise ValueError('credential in public payload')
+    env=runner_environment(store)
+    if public_file_lease(REPOSITORY,env)!=expected_sha:raise ValueError('public snapshot changed during AI run; preserve the newer export')
+    # The approval list goes first so the snapshot commit carries the records its items were checked against.
+    local={cid:auto_release.public_record(r) for cid,r in auto_release.load(root)[0].items() if isinstance(r,dict)}
+    if save_ai(root,REPOSITORY,env=env)!=local:
+        # Merged with a concurrent writer: this snapshot no longer matches; the next collection publishes it.
+        return {'status':'ai_approval_merged_deferred'}
     commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content,expected_sha=expected_sha)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{
@@ -119,11 +189,9 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     if not check_only or probe_only:
         if not preflight.control['active']:return {'status':'handoff_required'}
         control=preflight.control;budget=control['budget']
-        stop=('trial_expired' if now>=datetime.fromisoformat(control['expires_at']) else
-              'trial_run_limit' if len(control['days'])>=MAX_RUN_DAYS else
-              'trial_budget_limit' if len(budget['requests'])>=MAX_REQUESTS or TrialBudget._exposure(budget)>=CAP else None)
-        if stop:
-            disable_workflow(store);return {'status':stop}
+        # Monthly cap reached: stop for this run only. The workflow stays enabled so the next
+        # Seoul calendar month resumes by itself; only the ledger decides.
+        if TrialBudget.exhausted(budget,now):return {'status':'trial_budget_limit'}
     session=CloudSession.restore(root,store)
     key=configured_key(root)
     if hashlib.sha256(key.encode()).hexdigest()!=session.control['api_key_sha256']:
@@ -135,6 +203,8 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
              'halt_resumed':resumed}
     if probe_only:
         # Paid but tiny; never marks a day. Persists the probe cache and the ledger row.
+        full=runtime_room(root,now)
+        if full:return dict(summary,**full)
         client=ClaudeClient(safe_path(root,'.tools/claude-trial/live'),
                             TrialBudget(safe_path(root,BUDGET),checkpoint=session.checkpoint_budget),key)
         probe=client.grammar_probe(research_wire_schema())
@@ -146,17 +216,21 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
                        'code_sha':os.environ.get('GITHUB_SHA',''),'run_id':os.environ.get('GITHUB_RUN_ID','')}
         session._commit(data)  # Confirms contents:write without day or provider admission.
         return dict(summary,status='check_passed',limit_revision_applied=revised,expires_at=data['expires_at'],
-                    max_requests=data['budget']['max_requests'])
+                    cap_kind=data['budget'].get('cap_kind'),
+                    month_exposure_microdollars=TrialBudget.month_exposure(data['budget'],now))
     if not session.control['active']:return {'status':'handoff_required'}
     if now.hour<6:return {'status':'not_due'}
+    if not retry and day in session.control['days']:
+        return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
+    # Before the day (or its one retry) is used: a state too large to save afterwards never spends.
+    full=runtime_room(root,now)
+    if full:return full
     retried=False
     if retry:
         if todays_refresh(store,now)!='ready':return {'status':'waiting_for_existing_refresh'}
         retried=session.retry_rejected_day(day,now)
         # The remote row keeps the original outcome; the inner local mirror must not see today.
         save(safe_path(root,'cache/ai_daily/days.json'),{'days':{k:v for k,v in session.control['days'].items() if k!=day}})
-    elif day in session.control['days']:
-        return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
     refresh=todays_refresh(store,now)
     if refresh=='missing' and now.hour>=FALLBACK_REFRESH_HOUR:
         dispatch_refresh(store);return {'status':'refresh_dispatched'}  # Its completion triggers this workflow.
@@ -164,22 +238,31 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     public_lease=restore_public(root,store,now)
     if not retried:session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
-         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':2,
-         'trial_expires_at':session.control['expires_at']})
+         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH})
     try:
         result=daily(root,now=now,online=True,allow_spend=True,publish=True)
-        if result['status']!='completed':raise ValueError('inner daily did not complete')
+        if result['status'] not in ('completed','credit_exhausted'):raise ValueError('inner daily did not complete')
         session.save_runtime()
-        delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
-        session.finish(day,'completed')
+        if result['status']=='credit_exhausted':
+            # Results already received stay; the day is failed, the trial is not halted, tomorrow runs normally.
+            # The status goes up first so the admin page and this snapshot show it the same day.
+            write_ai_status(root,'credit_exhausted',day,now);upload_ai_status(root,store)
+            delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
+            session.finish(day,'failed')
+            return {'status':'credit_exhausted','day':day,'delivery':delivery}
         after=TrialBudget(safe_path(root,BUDGET)).summary();new=after['requests'][summary['requests']:]
         failures=[row.get('error_code','unknown') for row in new if row['status']!='completed']
         status='completed_with_provider_failure' if failures or after['halted'] else 'completed'
+        write_ai_status(root,'ok' if status=='completed' else 'failed',day,now);upload_ai_status(root,store)
+        delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
+        session.finish(day,'completed')
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
                 'halted':after['halted'],'retried_day':retried}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')
+        except Exception:pass
+        try:write_ai_status(root,'failed',day,now);upload_ai_status(root,store)
         except Exception:pass
         raise
 
@@ -197,7 +280,9 @@ def main():
 def exit_code(result):
     """A finished day with provider rejections must not look green in Actions."""
     if result.get('status') in ATTENTION:
-        if result['status']=='probe_rejected':print('::error::grammar probe rejected the research schema; trial not halted')
+        if result['status']=='credit_exhausted':print('::error::Anthropic credit balance exhausted; today skipped, trial not halted, next day runs normally')
+        elif result['status']=='runtime_too_large':print('::error::encrypted AI runtime is near its size limit ('+str(result.get('reason'))+'); no paid call was made')
+        elif result['status']=='probe_rejected':print('::error::grammar probe rejected the research schema; trial not halted')
         else:print('::error::AI provider rejected '+str(len(result.get('provider_failures',[])))+' request(s); trial halted='+str(result.get('halted')))
         return 1
     return 0

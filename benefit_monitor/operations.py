@@ -81,8 +81,61 @@ def queue(report,state,now,max_age=7):
     return rows
 
 
-def check_bodies(state,items,sources,now,limit):
-    """Detect text changes only; a successful fetch never renews verification."""
+def check_bodies(state,items,sources,now,limit,auto=None,takedowns=(),reader=None):
+    """Detect text changes only; a successful fetch never renews human verification.
+
+    auto (the AI approval dict) is checked after the human items with reader (an OfficialReader:
+    per-host robots cache, no redirects, text/html only, same HTTP budget). Up to 20 displayable
+    records; only checked_at and the withdrawn fields change there.
+    """
+    errors=[]
+    _check_human(state,items,sources,now,limit,errors)
+    if auto and reader is not None:errors+=_check_auto(auto,takedowns,sources,now,reader)
+    return errors
+
+
+GONE_CODES=(401,403,404,410,451)
+
+
+def _check_auto(approved,takedowns,sources,now,reader):
+    """Exact body hash of each record's original official page (the hash the AI decision used)."""
+    from urllib.error import HTTPError
+    from urllib.parse import urlsplit
+    from .auto_release import mark_checked,recheck_targets
+    from .research_probe import RedirectBlocked
+    from . import cost_policy
+    errors=[]
+    for cid in recheck_targets(approved,takedowns,sources,now):
+        record=approved[cid]
+        # One page request each; robots.txt is fetched once per host and cached by the reader.
+        host=reader.state['hosts'].get(urlsplit(record['url']).netloc,{})
+        need=1+(now.timestamp()>=host.get('robots_until',0))
+        if cost_policy.budget.limit-cost_policy.budget.used<need:break
+        try:
+            try:doc=reader.read({'source':record['source'],'url':record['url']},cooldown_on_failure=False)
+            except HTTPError as e:
+                e.close()
+                # A robots.txt refusal says nothing about the page: leave the record (30h hides it).
+                if e.code in GONE_CODES and not str(e.url or e.filename or '').endswith('/robots.txt'):
+                    mark_checked(approved,cid,None,now);continue
+                raise
+            except RedirectBlocked:
+                # The page now redirects elsewhere, so the original cannot be confirmed: withdraw. A redirect
+                # of robots.txt says nothing about the page; robots is cached only after it was read.
+                if now.timestamp()<reader.state['hosts'].get(urlsplit(record['url']).netloc,{}).get('robots_until',0):
+                    mark_checked(approved,cid,None,now);continue
+                raise
+            except ValueError as e:
+                # A page that lost its body is treated as changed (hidden until the AI re-decides).
+                if str(e)!='insufficient official body':raise
+                mark_checked(approved,cid,'',now);continue
+            mark_checked(approved,cid,doc['body_hash'],now)
+        except Exception as error:
+            errors.append(dict(source=record.get('source'),item_id=cid,**error_info(error)))
+    return errors
+
+
+def _check_human(state,items,sources,now,limit,errors):
     from html.parser import HTMLParser
     from urllib.parse import urlsplit
     from urllib.error import HTTPError
@@ -99,7 +152,6 @@ def check_bodies(state,items,sources,now,limit):
             if tag in ('script','style','nav','footer','header'): self.skip=max(0,self.skip-1)
         def handle_data(self,text):
             if not self.skip:self.parts.append(text)
-    errors=[]
     if not limit:return errors
     records=state.setdefault('items',{})
     active=[i for i in items if not i.excluded_reason and not i.needs_recheck
