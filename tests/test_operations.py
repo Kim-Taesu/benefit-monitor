@@ -133,3 +133,29 @@ class OperationsTests(unittest.TestCase):
             result=cli.run(self.root,self.root/'inputs/items.json',True,NOW+timedelta(days=1))
         self.assertEqual(len(result['review_queue']),1)
         self.assertEqual(result['review_queue'][0]['id'],self.item.id)
+
+    def queued_then_missing(self,days,collect=None,item=None):
+        save(self.root/'inputs/items.json',[])
+        candidate=dict(source='test',url=self.item.url,title='Unreviewed announcement',summary='candidate',needs_recheck=True)|(item or {})
+        with patch('benefit_monitor.cli.collect',return_value=[candidate]):
+            cli.run(self.root,self.root/'inputs/items.json',True,NOW)
+        (self.root/'cache/verified_items.json').unlink()
+        with patch('benefit_monitor.cli.collect',**(collect or dict(return_value=[]))):
+            return cli.run(self.root,self.root/'inputs/items.json',True,NOW+timedelta(days=days))
+
+    def test_candidate_absent_from_successful_listing_leaves_queue_after_grace(self):
+        result=self.queued_then_missing(3)
+        self.assertEqual(result['review_queue'],[])
+        state=load(self.root/'cache/operational_state.json',{})
+        self.assertNotIn('pending_reason',state['items'][self.item.id])
+
+    def test_candidate_absent_within_grace_stays_queued(self):
+        self.assertEqual(len(self.queued_then_missing(2)['review_queue']),1)
+
+    def test_candidate_stays_queued_while_its_source_fails(self):
+        result=self.queued_then_missing(5,dict(side_effect=TimeoutError('slow')))
+        self.assertEqual([r['id'] for r in result['review_queue']],[self.item.id])
+
+    def test_candidate_with_future_deadline_keeps_its_own_expiry(self):
+        result=self.queued_then_missing(5,item=dict(valid_until='2026-12-31'))
+        self.assertEqual([r['id'] for r in result['review_queue']],[self.item.id])

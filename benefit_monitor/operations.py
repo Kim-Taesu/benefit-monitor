@@ -49,8 +49,16 @@ def observe(state, incoming, approved, now):
     return result
 
 
-def queue(report,state,now,max_age=7):
+ABSENT_DAYS=3
+
+
+def queue(report,state,now,max_age=7,successful=None):
+    """Review backlog. An unreviewed candidate without its own deadline leaves the queue once its
+    source was collected successfully but the candidate has not been listed for ABSENT_DAYS;
+    while its source fails it stays, so a transient outage never drops it."""
     rows=[]
+    if successful is None:successful=report.get('collection',{}).get('successful_sources',[])
+    successful=set(successful)
     records=state.setdefault('items',{})
     for group in ('new','changed','still_valid','upcoming','expired','excluded'):
         for data in report.get(group,[]):
@@ -72,7 +80,10 @@ def queue(report,state,now,max_age=7):
         if key in present or not row.get('pending_reason'):continue
         deadline=row.get('pending_deadline')
         expired=deadline and (datetime.fromisoformat(deadline)<=now if 'T' in deadline else deadline<now.date().isoformat())
-        if expired:
+        seen=row.get('last_seen_at') or row.get('first_seen_at')
+        delisted=(not deadline and row['source'] in successful and seen
+                  and now-datetime.fromisoformat(seen)>=timedelta(days=ABSENT_DAYS))
+        if expired or delisted:
             row.pop('pending_reason',None);row.pop('pending_deadline',None)
             continue
         rows.append(dict(id=key,source=row['source'],reason=row['pending_reason'],
