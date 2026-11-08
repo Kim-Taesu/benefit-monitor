@@ -135,7 +135,7 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         operations.classify_history(report, operational_state)
         if ai_result is not None:report["ai_review"] = ai_result
         report["body_check_failures"] = body_failures
-        report["review_queue"] = operations.queue(report, operational_state, now, config.get("max_age_days", 7))
+        report["review_queue"] = operations.queue(report, operational_state, now, config.get("max_age_days", 7), successful_sources)
         save(root/"cache/operational_state.json", operational_state)
         report["district_coverage"] = district_coverage
         report["collection"] = dict(online=online, successful_sources=successful_sources,
