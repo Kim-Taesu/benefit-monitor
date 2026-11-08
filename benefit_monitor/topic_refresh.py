@@ -6,7 +6,7 @@ from zoneinfo import ZoneInfo
 
 from .ai_review import invoke
 from .claude_trial import evaluate_draft
-from .daily_topics import fallback
+from .daily_topics import fallback, basis_cards
 from .official_reader import project_path
 from .public_topics import approved_snapshot
 from .store import load,save,save_text,lock
@@ -46,6 +46,8 @@ def refresh(root,now=None,execute=False):
             save(project_path(root,'cache/ai_topics/days.json'),state)
         elif execute and day in state['days']:
             result={'status':'already_attempted_today','run_id':state['days'][day].get('run_id')}
+        if used_fallback and not cards:
+            cards=basis_cards(host)
         draft=dict(schema_version='topic-refresh-v1',generated_at=now.isoformat(),source_review_id=host['source_review_id'],
                    snapshot_id=host['snapshot_id'],model=result,validation=validation,topics=cards,
                    used_fallback=used_fallback,publication_approved=False)

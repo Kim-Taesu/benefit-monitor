@@ -62,3 +62,27 @@ def fallback(previous, host):
             if card['item_links']:
                 cards.append(card)
     return cards
+
+
+def basis_cards(host):
+    """Deterministic cards from each item's first reviewed topic basis, used only when no model
+    or previous cards survive, so the public page never loses topics because a draft was rejected."""
+    from .topic_semantics import review
+
+    cards = []
+    for topic in TITLES:
+        links = []
+        for item in host['approved_items']:
+            basis = item.get('topic_basis') or {}
+            if item.get('display_eligible') is not True or (basis.get('topic_ids') or [None])[0] != topic:
+                continue
+            link = {'item_id': item['item_id'], 'evidence_claim_ids': list(basis.get('evidence_claim_ids', [])),
+                    'reason': '검토된 주제 근거에 따른 기본 분류', 'match_type': 'explicit'}
+            card = {'schema_version': 'topic-draft-v1', 'topic_id': topic, 'title': TITLES[topic], 'item_links': [link],
+                    'profile_conditions': [], 'excluded_items': [], 'snapshot_id': host['snapshot_id'], 'audit': None}
+            if review({'topics': [card]}, host)['valid']:
+                links.append(link)
+        if links:
+            cards.append({'schema_version': 'topic-draft-v1', 'topic_id': topic, 'title': TITLES[topic], 'item_links': links,
+                          'profile_conditions': [], 'excluded_items': [], 'snapshot_id': host['snapshot_id'], 'audit': None})
+    return cards

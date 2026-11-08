@@ -326,9 +326,14 @@ class TopicWireTests(unittest.TestCase):
                               dict(topic_id='culture', item_links=[link], excluded_items=[])])
         _, report = evaluate_draft(w.topic_from_wire(answer, topic_host()), topic_host(), 'topic')
         self.assertFalse(report['valid'])
+        # Included in a card wins over an exclusion of the same item (card-level or top-level).
         answer['topics'] = [dict(topic_id='culture', item_links=[link], excluded_items=[{'item_id': 'a', 'reason': '무관'}])]
-        _, report = evaluate_draft(w.topic_from_wire(answer, topic_host()), topic_host(), 'topic')
-        self.assertFalse(report['valid'])
+        answer['excluded_items'] = [{'item_id': 'a', 'reason': '다른 주제'}, {'item_id': 'd', 'reason': '무관'}]
+        draft = w.topic_from_wire(answer, topic_host())
+        self.assertEqual(draft['topics'][0]['excluded_items'], [])
+        self.assertEqual([x['item_id'] for x in draft['excluded_items']], ['d'])
+        _, report = evaluate_draft(draft, topic_host(), 'topic')
+        self.assertTrue(report['valid'], report)
 
 
 class RequestShapeTests(unittest.TestCase):

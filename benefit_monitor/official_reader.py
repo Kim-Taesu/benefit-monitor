@@ -4,9 +4,9 @@ import hashlib
 import json
 from pathlib import Path
 import time
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from html.parser import HTMLParser
-from urllib.parse import urljoin, urlsplit,urldefrag
+from urllib.parse import quote, urljoin, urlsplit, urldefrag
 from urllib.request import Request, build_opener
 
 from . import cost_policy
@@ -16,6 +16,20 @@ from .research_probe import NoRedirect
 from .robots import allowed, crawl_delay
 from .store import load, save
 from .validation import official
+
+
+HOST_FAILURES_BEFORE_COOLDOWN=3
+
+
+def transient(error):
+    """Network-level or server-side failures that say nothing about the page itself."""
+    if isinstance(error,HTTPError):return error.code==429 or error.code>=500
+    return isinstance(error,(URLError,TimeoutError,ConnectionError))
+
+
+def request_url(url):
+    """Percent-encode non-ASCII characters (e.g. Korean query values) without touching escapes."""
+    return quote(url,safe=":/?#[]@!$&'()*+,;=%~")
 
 
 def project_path(root, relative):
@@ -81,6 +95,14 @@ class OfficialReader:
         self.state=load(self.path,{'hosts':{},'pages':{}})
 
     def _fetch(self,url,domains,host_state):
+        """One retry for transient network errors; page-level errors are not retried."""
+        for attempt in (0,1):
+            try:
+                return self._fetch_once(url,domains,host_state)
+            except Exception as error:
+                if attempt or not transient(error):raise
+
+    def _fetch_once(self,url,domains,host_state):
         if not official(url,domains):raise ValueError('unapproved official URL')
         delay=crawl_delay(host_state.get('robots',''),AGENT)
         remaining=delay-(time.time()-host_state.get('last_request_epoch',0))
@@ -89,7 +111,7 @@ class OfficialReader:
         cost_policy.budget.consume()
         host_state['last_request_epoch']=time.time()
         try:
-            with network_open(Request(url,headers={'User-Agent':AGENT})) as response:
+            with network_open(Request(request_url(url),headers={'User-Agent':AGENT})) as response:
                 body=response.read(LIMIT+1)
                 content_type=response.headers.get('Content-Type','').lower()
             if len(body)>LIMIT:raise ValueError('response exceeds 2 MiB')
@@ -137,10 +159,14 @@ class OfficialReader:
             relative='cache/ai_review/documents/'+key+'-'+digest+'.json'
             save(project_path(self.root,relative),doc)
             self.state['pages'][key]={'at':stamp,'file':relative}
-            hs.pop('failure_until',None)
+            hs.pop('failure_until',None);hs.pop('transient_failures',None)
             save(self.path,self.state)
             return doc
-        except Exception:
-            if cooldown_on_failure:hs['failure_until']=stamp+900
+        except Exception as error:
+            # Only repeated host-level failures cool the whole host down; a single timeout or a
+            # page-specific problem (404, short body, PDF) must not block other candidates.
+            if cooldown_on_failure and transient(error):
+                hs['transient_failures']=hs.get('transient_failures',0)+1
+                if hs['transient_failures']>=HOST_FAILURES_BEFORE_COOLDOWN:hs['failure_until']=stamp+900
             save(self.path,self.state)
             raise
