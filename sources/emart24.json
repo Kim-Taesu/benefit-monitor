@@ -42,7 +42,8 @@
       "제휴 서비스 안내 페이지의 /service/alliance 링크 중 \"제휴\"가 든 제목을 받는다."
     ],
     "pitfalls": [
-      "진행 중 행사는 emart24_events 출처가 따로 맡는다."
+      "진행 중 행사는 emart24_events 출처가 따로 맡는다.",
+      "원본 HTML에 2026-05-21 주석 처리된 옛 제휴 표가 남아 있다(KT GOLD 100원). 화면에 보이는 표는 GOLD 50원이다. 조건은 HTML 주석을 뺀 본문으로 대조한다(2026-11-09 확인)."
     ],
     "manual_check": [
       "python3 -m benefit_monitor.source_registry probe emart24"
