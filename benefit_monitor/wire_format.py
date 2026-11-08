@@ -301,11 +301,16 @@ def topic_from_wire(wire, host):
                           'reason': link['reason'], 'match_type': link['match_type']})
         topics.append({'schema_version': 'topic-draft-v1', 'topic_id': card['topic_id'],
                        'title': titles[card['topic_id']], 'item_links': links, 'profile_conditions': [],
-                       'excluded_items': deepcopy(card['excluded_items']), 'snapshot_id': host['snapshot_id'],
+                       'excluded_items': [deepcopy(x) for x in card['excluded_items']
+                                          if x['item_id'] not in {l['item_id'] for l in links}],
+                       'snapshot_id': host['snapshot_id'],
                        'audit': None})
     errors = [dict(e, candidate_id=e['candidate_id'] or None) for e in wire['errors']]
     return {'schema_version': 'trial-result-v1', 'mode': host['mode'], 'status': wire['status'],
-            'errors': errors, 'topics': topics, 'excluded_items': deepcopy(wire['excluded_items'])}
+            'errors': errors, 'topics': topics,
+            # An item may fit several candidate topics; one the model placed in any card is not excluded.
+            'excluded_items': [deepcopy(x) for x in wire['excluded_items']
+                               if x['item_id'] not in {l['item_id'] for t in topics for l in t['item_links']}]}
 
 
 def schema_for(kind, host):

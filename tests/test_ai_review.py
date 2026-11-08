@@ -76,8 +76,10 @@ class AIReviewTests(unittest.TestCase):
         self.assertEqual(len(later['changed_ids']),1)
         self.assertEqual(len(list((self.root/'cache/ai_review/queue').glob('*.json'))),2)
         cost_policy.reset(60)
+        # Three consecutive host-level failures (each retried once) start the cooldown.
         with patch('benefit_monitor.official_reader.network_open',side_effect=TimeoutError):
-            with self.assertRaises(TimeoutError):OfficialReader(self.root,NOW+timedelta(hours=14)).read(self.candidate)
+            for _ in range(3):
+                with self.assertRaises(TimeoutError):OfficialReader(self.root,NOW+timedelta(hours=14)).read(self.candidate)
         used=cost_policy.budget.used
         with patch('benefit_monitor.official_reader.network_open',side_effect=AssertionError('cooldown')):
             with self.assertRaisesRegex(ValueError,'cooldown'):OfficialReader(self.root,NOW+timedelta(hours=14,minutes=1)).read(self.candidate)
