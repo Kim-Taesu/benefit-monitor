@@ -16,6 +16,7 @@ from .briefing import SEOUL
 from .claude_trial import ClaudeClient,configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
 from . import auto_release,runtime_retention
+from . import collection_snapshot
 from .mirror import AI_BASE,run as mirror,restore as restore_mirror,restore_ai,save_ai,lease as public_file_lease
 from .public_snapshot import validate
 from .wire_format import research_wire_schema
@@ -55,8 +56,9 @@ def disable_workflow(store):
 # GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
 FALLBACK_REFRESH_HOUR=10
 ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
-# Per-day paid request limits: research 20, topic 1, grammar probe 2.
+# Per-day paid request limits: verification 40, research 20, topic 1, grammar probes (one per new schema).
 MAX_DAILY_RESEARCH=20
+MAX_DAILY_VERIFY=40
 STATUS_FILE='cache/ai_daily/status.json'
 
 
@@ -219,7 +221,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
                     cap_kind=data['budget'].get('cap_kind'),
                     month_exposure_microdollars=TrialBudget.month_exposure(data['budget'],now))
     if not session.control['active']:return {'status':'handoff_required'}
-    if now.hour<6:return {'status':'not_due'}
+    # No clock gate: today's completed free collection (todays_refresh) decides when the day runs.
     if not retry and day in session.control['days']:
         return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
     # Before the day (or its one retry) is used: a state too large to save afterwards never spends.
@@ -238,9 +240,12 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     public_lease=restore_public(root,store,now)
     if not retried:session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
-         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH})
+         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH,
+         'max_ai_verifications_per_day':MAX_DAILY_VERIFY})
     try:
-        result=daily(root,now=now,online=True,allow_spend=True,publish=True)
+        # Today's free collection, when uploaded, replaces a second listing collection.
+        snapshot=collection_snapshot.restore(store,now)
+        result=daily(root,now=now,online=True,allow_spend=True,publish=True,snapshot=snapshot)
         if result['status'] not in ('completed','credit_exhausted'):raise ValueError('inner daily did not complete')
         session.save_runtime()
         if result['status']=='credit_exhausted':

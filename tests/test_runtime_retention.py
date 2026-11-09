@@ -58,6 +58,19 @@ class RetentionTests(unittest.TestCase):
                      cached_doc, recent_doc):
             self.assertTrue(kept.exists(), kept)
 
+    def test_verification_runs_are_kept_only_three_days(self):
+        old_verify = self.run_dir(h('5'), (NOW - timedelta(days=4)).isoformat())
+        save(old_verify / 'metadata.json', {'kind': 'verify'})
+        new_verify = self.run_dir(h('6'), (NOW - timedelta(days=2)).isoformat())
+        save(new_verify / 'metadata.json', {'kind': 'verify'})
+        research = self.run_dir(h('7'), (NOW - timedelta(days=4)).isoformat())
+        save(research / 'metadata.json', {'kind': 'research'})
+        for name in ('cache/ai_review/state.json', 'cache/ai_publish/approved.json',
+                     'cache/ai_publish/decisions.json', 'cache/ai_review/http.json'):
+            save(self.root / name, {})
+        retention.prune(self.root, NOW)
+        self.assertEqual((old_verify.exists(), new_verify.exists(), research.exists()), (False, True, True))
+
     def test_unreadable_reference_file_prunes_nothing(self):
         stale = self.run_dir(h('1'), OLD)
         (self.root / 'cache/ai_publish').mkdir(parents=True)

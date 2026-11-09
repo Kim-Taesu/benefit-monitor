@@ -91,6 +91,16 @@ jobs:
           python -m benefit_monitor.publish --prepare-import
           python -m benefit_monitor.cli --online --import-items inputs/public.json
           python -m benefit_monitor.publish
+      - name: Upload encrypted collection snapshot for the AI run
+        # The AI run reuses today's listing collection instead of repeating it, so its HTTP budget
+        # goes to official bodies. Encrypted to the public AI recipient; the plain file stays here.
+        if: steps.briefing.outcome == 'success'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/install_age.py
+          python -m benefit_monitor.collection_snapshot --upload
       - name: Save rechecked AI approval list (check times and withdrawals only)
         # Also after a failed collection: withdrawals already recorded must reach briefing-data.
         # The restore above recorded the sha lease; a failed or skipped restore refuses to save.

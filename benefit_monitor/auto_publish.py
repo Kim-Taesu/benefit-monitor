@@ -132,6 +132,31 @@ def _end_point(value):
     return date.fromisoformat(value), None
 
 
+def _year_from_same_document(phrase, phrases):
+    """Date of a year-less ending phrase, borrowed from the same document; None when unreadable.
+
+    "11월 30일까지" reads as 2026-11-30 only when another phrase of that same document ends on
+    11-30 with its year written ("2026년 10월 1일~11월 30일"). Several different years, a day without
+    a month ("30일까지") or no such phrase leave it unreadable, which holds as before.
+    """
+    tokens = [t for t in DATE_TOKEN.finditer(phrase) if t['m']]
+    if not tokens or tokens[-1]['d'] in (None, '말'):
+        return None
+    wanted = (int(tokens[-1]['m']), int(tokens[-1]['d']))
+    years = set()
+    for other in phrases:
+        if FOUR_DIGIT_YEAR.search(other):
+            end = phrase_end(other)
+            if end is not None and (end.month, end.day) == wanted:
+                years.add(end.year)
+    if len(years) != 1:
+        return None
+    try:
+        return date(years.pop(), *wanted)
+    except ValueError:
+        return None
+
+
 def _hold(reasons):
     return {'publish': False, 'reasons': reasons, 'record': None}
 
@@ -205,21 +230,31 @@ def decide(draft, host, now, takedowns):
     body_ends = []
     if ends:
         kind = 'fixed'
-        # An unreported application deadline could already have passed. Year-less phrases hold.
-        # Year-dated ones are read: a past or unreadable one holds (no_current_evidence); a current
+        # An unreported application deadline could already have passed. A year-less phrase holds
+        # unless the same document writes that month and day with a year (see
+        # _year_from_same_document). Year-dated ones are read: a past or unreadable one holds (no_current_evidence); a current
         # one is kept so the item is hidden after the earliest of them (and after its time, if any).
         if supported('application_period') is None:
-            for m in (m for d in host['documents'] for m in ENDING_DATE.finditer(d['body'])):
-                stated_end, moment = phrase_deadline(m.group()) if FOUR_DIGIT_YEAR.search(m.group()) else (None, None)
-                if stated_end is None or stated_end < today or (moment is not None and moment <= now):
-                    period_ok = False
-                else:
-                    body_ends.append((stated_end, moment))
+            for d in host['documents']:
+                matches = [m.group() for m in ENDING_DATE.finditer(d['body'])]
+                for phrase in matches:
+                    if FOUR_DIGIT_YEAR.search(phrase):
+                        stated_end, moment = phrase_deadline(phrase)
+                    else:
+                        stated_end, moment = _year_from_same_document(phrase, matches), None
+                    if stated_end is None or stated_end < today or (moment is not None and moment <= now):
+                        period_ok = False
+                    else:
+                        body_ends.append((stated_end, moment))
     else:
         kind = 'ongoing'
         two_docs = len(hashes(operating)) >= 2
         hidden_end = any(ENDING_DATE.search(d['body']) for d in host['documents'])
-        recent = published_stated and today - timedelta(days=ONGOING_DAYS) <= published_day <= today
+        window = lambda day: today - timedelta(days=ONGOING_DAYS) <= day <= today
+        # The official page header date (read by code, never by the model) of a cited document counts too.
+        page_days = [date.fromisoformat(str(docs[e['source_ref']]['published_at'])[:10])
+                     for e in operating if docs[e['source_ref']].get('published_at')]
+        recent = (published_stated and window(published_day)) or any(window(day) for day in page_days)
         period_ok = recent and two_docs and not hidden_end
         single_ok = two_docs
     if not period_ok:

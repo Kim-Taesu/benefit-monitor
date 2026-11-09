@@ -66,6 +66,10 @@ def queue(report,state,now,max_age=7,successful=None):
             row.pop('pending_reason',None);row.pop('pending_deadline',None)
     for item in report['needs_recheck']:
         key=Benefit(**item).id
+        if records.get(key,{}).get('ai_dismissed') and not records[key].get('hold_at'):
+            # AI triage confirmed ended or not a benefit (code-checked quote); out of the review queue.
+            records[key].pop('pending_reason',None);records[key].pop('pending_deadline',None)
+            continue
         observation=state.get('items',{}).get(key,{})
         reason=observation.get('hold_reason') or ('verification_expired' if item.get('verified_at') and now-datetime.fromisoformat(item['verified_at'])>=timedelta(days=max_age) else 'manual_review')
         deadline=item.get('deadline_at') or item.get('valid_until')
@@ -77,7 +81,7 @@ def queue(report,state,now,max_age=7,successful=None):
                          last_seen_at=observation.get('last_seen_at'),deadline=deadline))
     present={row['id'] for row in rows}
     for key,row in records.items():
-        if key in present or not row.get('pending_reason'):continue
+        if key in present or not row.get('pending_reason') or row.get('ai_dismissed'):continue
         deadline=row.get('pending_deadline')
         expired=deadline and (datetime.fromisoformat(deadline)<=now if 'T' in deadline else deadline<now.date().isoformat())
         seen=row.get('last_seen_at') or row.get('first_seen_at')
@@ -88,7 +92,8 @@ def queue(report,state,now,max_age=7,successful=None):
             continue
         rows.append(dict(id=key,source=row['source'],reason=row['pending_reason'],
                          first_seen_at=row.get('first_seen_at'),last_seen_at=row.get('last_seen_at'),deadline=deadline))
-    rows.sort(key=lambda x:(x['deadline'] or '9999',x['first_seen_at'] or '',x['id']))
+    # AI triage marks current or upcoming candidates; they come first for the human reviewer.
+    rows.sort(key=lambda x:(records.get(x['id'],{}).get('ai_triage') is None,x['deadline'] or '9999',x['first_seen_at'] or '',x['id']))
     return rows
 
 
@@ -252,12 +257,20 @@ def sanitize(state,source_ids,now):
                 date=datetime.fromisoformat(row[field])
                 if date.tzinfo is None or date>now:raise ValueError('Invalid observation time')
                 out[field]=date.isoformat()
-        if row.get('hold_reason') in ('title_changed','body_changed'):out['hold_reason']=row['hold_reason']
+        if row.get('hold_reason') in ('title_changed','body_changed','ai_contradicted'):out['hold_reason']=row['hold_reason']
+        if row.get('ai_triage') in ('ongoing','upcoming'):out['ai_triage']=row['ai_triage']
+        dismissed=row.get('ai_dismissed')
+        if (isinstance(dismissed,dict) and dismissed.get('reason') in ('ended','not_benefit')
+                and isinstance(dismissed.get('body_hash'),str) and re.fullmatch('[0-9a-f]{64}',dismissed['body_hash'])
+                and isinstance(dismissed.get('at'),str)):
+            when=datetime.fromisoformat(dismissed['at'])
+            if when.tzinfo is None or when>now:raise ValueError('Invalid observation time')
+            out['ai_dismissed']=dict(reason=dismissed['reason'],body_hash=dismissed['body_hash'],at=when.isoformat())
         if row.get('body_status') in ('checked','failed'):out['body_status']=row['body_status']
         if row.get('body_parse_mode') in ('seoul_news','main','article','document'):out['body_parse_mode']=row['body_parse_mode']
         if row.get('body_comparison') in ('baseline','same','changed'):out['body_comparison']=row['body_comparison']
         if type(row.get('body_hash_version')) is int and 1<=row['body_hash_version']<=99:out['body_hash_version']=row['body_hash_version']
-        if row.get('pending_reason') in ('title_changed','body_changed','verification_expired','manual_review'):
+        if row.get('pending_reason') in ('title_changed','body_changed','verification_expired','manual_review','ai_contradicted'):
             out['pending_reason']=row['pending_reason']
             if row.get('pending_deadline'):
                 value=row['pending_deadline']

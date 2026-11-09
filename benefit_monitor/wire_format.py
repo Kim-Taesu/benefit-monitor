@@ -314,8 +314,14 @@ def topic_from_wire(wire, host):
 
 
 def schema_for(kind, host):
+    if kind == 'verify':
+        from .verify_contract import wire_schema
+        return wire_schema()
     return research_wire_schema() if kind == 'research' else topic_wire_schema(host)
 
 
 def from_wire(kind, wire, host):
+    if kind == 'verify':
+        from .verify_contract import from_wire as verify_from_wire
+        return verify_from_wire(wire, host)
     return research_from_wire(wire, host) if kind == 'research' else topic_from_wire(wire, host)

@@ -293,6 +293,10 @@ class ClaudeClient:
 
 def validate_host(host, kind, root):
     """Reject fixture/private/forged document inputs before a paid request."""
+    if kind == 'verify':
+        from .verify_contract import validate_host as validate_verify
+        validate_verify(host, root)
+        return
     allowed_fields = ({'schema_version','mode','synthetic','now','output_schema_version','budget','candidates','documents','unverified_links'}
                       if kind == 'research' else
                       {'schema_version','mode','synthetic','now','evaluation_only','source_review_id','gate_owner','gate_description',
@@ -397,6 +401,9 @@ def repair_context(host, kind, previous, model_input=None):
 
 def evaluate_draft(draft, host, kind, required_version=None):
     """Run all local gates; model output never grants publication."""
+    if kind == 'verify':
+        # from_wire already rejected unknown segments and claim mismatches; decide() applies the rules.
+        return draft, {'valid': True, 'errors': []}
     if kind == 'research':
         if required_version is not None and draft.get('schema_version') != required_version:
             raise ValueError('model output contract version mismatch')
@@ -414,7 +421,7 @@ def evaluate_draft(draft, host, kind, required_version=None):
     return draft, report
 
 
-SYSTEM_PROMPTS = {'research':'research-system.md', 'topic':'topic-system.md'}
+SYSTEM_PROMPTS = {'research':'research-system.md', 'topic':'topic-system.md', 'verify':'verify-system.md'}
 
 
 def system_prompt(root, kind):
@@ -441,7 +448,7 @@ def main():
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
     parser.add_argument('--repair-from')
-    parser.add_argument('--kind', choices=('research','topic'))
+    parser.add_argument('--kind', choices=('research','topic','verify'))
     parser.add_argument('--input', type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
@@ -491,7 +498,11 @@ def main():
     # Raises before any reservation when no topic has eligible items.
     schema = wire_format.schema_for(args.kind, host)
     system = system_prompt(root, args.kind)
-    model_input = wire_format.research_model_input(host) if args.kind == 'research' else topic_model_input(host)
+    if args.kind == 'verify':
+        from .verify_contract import model_input as verify_model_input
+        model_input = verify_model_input(host)
+    else:
+        model_input = wire_format.research_model_input(host) if args.kind == 'research' else topic_model_input(host)
     user_input = model_input
     if args.repair_from:
         if not re.fullmatch('[0-9a-f]{64}',args.repair_from):
@@ -530,7 +541,7 @@ def main():
                 'cached':client.last_cached,'wire_decoder':'structured-output-v1','usage':result['usage'],
                 'preflight':client.last_preflight,
                 'schema_sha256':hashlib.sha256(json.dumps(schema,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
-                'model_output_contract':wire_format.RESEARCH_WIRE if args.kind == 'research' else wire_format.TOPIC_WIRE}
+                'model_output_contract':{'research':wire_format.RESEARCH_WIRE,'topic':wire_format.TOPIC_WIRE,'verify':'verify-wire-v1'}[args.kind]}
     (destination/'metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n')
     (destination/'input.json').write_text(json.dumps(host,ensure_ascii=False,indent=2)+'\n')
     (destination/'prompt.txt').write_text(system)

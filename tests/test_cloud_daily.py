@@ -93,7 +93,10 @@ class CloudDailyTests(unittest.TestCase):
     def test_inactive_expired_not_due_and_wait_do_not_mark_day(self):
         m=self.module()
         with patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'disable_workflow') as disable:
-            self.assertEqual(m.cloud_run(self.root,now=NOW.replace(hour=5),check_only=False,store=self.fixture.store())['status'],'not_due')
+            # No clock gate: before 06:00 the run still waits only for today's free collection.
+            with patch.object(m,'todays_refresh',return_value='missing'),patch.object(m,'dispatch_refresh') as dispatch:
+                self.assertEqual(m.cloud_run(self.root,now=NOW.replace(hour=5),check_only=False,store=self.fixture.store())['status'],'waiting_for_existing_refresh')
+                dispatch.assert_not_called()
             with patch.object(m,'todays_refresh',return_value='running'):
                 self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'waiting_for_existing_refresh')
             data=json.loads(self.fixture.store().read('control')[0]);data['active']=False
@@ -195,6 +198,19 @@ class CloudDailyTests(unittest.TestCase):
         remote=json.loads(self.fixture.store().read('control')[0])
         self.assertEqual(len(remote['budget']['requests']),31);self.assertEqual(remote['days']['2026-11-06']['status'],'completed')
         self.assertEqual(result['delivery']['status'],'dispatched_not_yet_verified')
+
+    def test_todays_free_collection_snapshot_is_handed_to_the_inner_run(self):
+        m=self.module();seen={}
+        def inner(*args,**kwargs):
+            seen.update(kwargs);return {'status':'completed'}
+        snapshot={'schema_version':1,'collected_at':NOW.isoformat()}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),\
+             patch.object(m.collection_snapshot,'restore',return_value=snapshot),\
+             patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        self.assertIs(seen['snapshot'],snapshot)
+        policy=load(self.root/'ai-automation.json',{})
+        self.assertEqual((policy['max_ai_verifications_per_day'],policy['max_ai_candidates_per_day']),(40,20))
 
     def test_todays_refresh_counts_collecting_runs_and_ignores_other_days(self):
         m=self.module()

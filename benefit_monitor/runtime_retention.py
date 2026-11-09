@@ -3,7 +3,7 @@
 Only three growing folders are touched: run artifacts, staged AI inputs and cached official
 bodies. An entry is removed only when nothing current references it (the per-candidate review
 state, the decisions behind auto-published records, the official-body cache index) and its own
-recorded timestamp is older than 14 days. A missing or unreadable timestamp or reference file keeps
+recorded timestamp is older than 14 days (3 days for verification runs). A missing or unreadable timestamp or reference file keeps
 everything. The ledger (budget.json), its response cache and the review queue are never touched.
 """
 from datetime import datetime, timedelta
@@ -13,6 +13,8 @@ import re
 import shutil
 
 KEEP_DAYS = 14
+# Daily verification runs (up to 40) only feed that day's decision; their state lives in cache/ai_verify.
+KEEP_VERIFY_DAYS = 3
 RUNS = '.tools/claude-trial/live/runs'
 INPUTS = '.tools/ai-inputs'
 DOCUMENTS = 'cache/ai_review/documents'
@@ -87,10 +89,15 @@ def prune(root, now):
         moment = _moment(path, key)
         return moment is not None and moment < cutoff
 
+    verify_cutoff = now - timedelta(days=KEEP_VERIFY_DAYS)
     folder = root / RUNS
     for path in sorted(folder.iterdir()) if folder.is_dir() else ():
-        if (path.is_symlink() or not path.is_dir() or not HEX.fullmatch(path.name) or path.name in runs
-                or not old(path / 'input.json', 'now')):
+        if path.is_symlink() or not path.is_dir() or not HEX.fullmatch(path.name) or path.name in runs:
+            continue
+        kind, _ = _json(path / 'metadata.json')
+        moment = _moment(path / 'input.json', 'now')
+        limit = verify_cutoff if isinstance(kind, dict) and kind.get('kind') == 'verify' else cutoff
+        if moment is None or moment >= limit:
             continue
         shutil.rmtree(path)
         removed['runs'] += 1

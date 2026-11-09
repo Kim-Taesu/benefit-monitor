@@ -13,9 +13,11 @@ from .collectors.public import collect as collect_public
 from . import cost_policy
 from . import festivals
 from . import operations
+from . import collection_snapshot
+from .models import Benefit
 from .briefing import build as build_briefing, write as write_briefing
 
-def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2):
+def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2, snapshot=None, ai_max_verify=0):
     if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=20):raise ValueError("AI candidate limit 1..20")
     if ai_execute and not ai_review:raise ValueError("AI spend requires explicit review stage")
     if ai_review and not online:raise ValueError("AI body review requires explicit online collection")
@@ -38,46 +40,63 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         handoffs, failures = [], []
         district_coverage = []
         successful_sources = []
-        try:
-            if config.get("seoul_district_coverage"):
-                if online:
-                    district_items, district_coverage = collect_districts(root, sources["seoul"], now)
-                    incoming.extend(district_items)
-                else:
-                    cached = load(root/"cache/district_candidates.json", {})
-                    district_coverage = [{k:v for k,v in c.items() if k != "items"} | {"mode":"cached"} for c in cached.values()]
-                for d in district_coverage:
-                    if d["status"] != "checked":
-                        failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), category=d.get("category", "other")))
+        if snapshot is not None:
+            # Today's free collection (collection_snapshot): no listing request is repeated.
+            incoming, district_coverage, successful_sources, failures, handoffs = collection_snapshot.unpack(root, snapshot)
+        else:
+            try:
+                if config.get("seoul_district_coverage"):
+                    if online:
+                        district_items, district_coverage = collect_districts(root, sources["seoul"], now)
+                        incoming.extend(district_items)
+                    else:
+                        cached = load(root/"cache/district_candidates.json", {})
+                        district_coverage = [{k:v for k,v in c.items() if k != "items"} | {"mode":"cached"} for c in cached.values()]
+                    for d in district_coverage:
+                        if d["status"] != "checked":
+                            failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), category=d.get("category", "other")))
 
-            for s in sources.values():
-                if online and s.get("district_feed"):
-                    record = next((d for d in district_coverage if d["district"] == s["district_feed"]), {})
-                    if record.get("status") == "checked":
-                        successful_sources.append(s["id"])
+                for s in sources.values():
+                    if online and s.get("district_feed"):
+                        record = next((d for d in district_coverage if d["district"] == s["district_feed"]), {})
+                        if record.get("status") == "checked":
+                            successful_sources.append(s["id"])
+                            continue
+                        failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
+                    if online and s.get("collector") == "kfes_festivals":
+                        # Separate display channel: never review candidates, AI research or topic cards.
+                        try:
+                            save(root/"cache/festivals.json", festivals.collect(s, now))
+                            successful_sources.append(s["id"])
+                        except Exception as e:
+                            failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
                         continue
-                    failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
-                if online and s.get("collector") == "kfes_festivals":
-                    # Separate display channel: never review candidates, AI research or topic cards.
-                    try:
-                        save(root/"cache/festivals.json", festivals.collect(s, now))
-                        successful_sources.append(s["id"])
-                    except Exception as e:
-                        failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
-                    continue
-                if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
-                    try:
-                        incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))
-                        successful_sources.append(s["id"])
-                        continue
-                    except Exception as e:
-                        failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
-                handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
-        finally:
-            pass
+                    if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
+                        try:
+                            incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))
+                            successful_sources.append(s["id"])
+                            continue
+                        except Exception as e:
+                            failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
+                    handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
+            finally:
+                pass
+            if online:
+                collection_snapshot.capture(root, now, incoming, district_coverage, successful_sources, failures, handoffs)
         # Explicit validated inputs take precedence over discovered candidates.
         explicit_items = [validate(d, sources, now) for d in explicit]
         operational_state = operations.sanitize(load(root/"cache/operational_state.json", {}), set(sources), now)
+        verify_result = None
+        if ai_review:
+            # Quality check of collected data first (public items, then review candidates), so a
+            # code-confirmed contradiction already withholds the item in this run's observe().
+            from .ai_verify import run as verify
+            cost_policy.budget.limit=100
+            verify_result = verify(root, [i for i in explicit_items if i.verified_at], incoming, operational_state, sources, now,
+                                   max_items=ai_max_verify, execute=ai_execute)
+            for cid in verify_result['changed_ids']:
+                operational_state.setdefault('items',{}).setdefault(cid,{}).update(
+                    hold_at=now.isoformat(),hold_reason='body_changed')
         explicit_items = operations.observe(operational_state, incoming, explicit_items, now)
         ai_result = None
         if ai_review:
@@ -85,8 +104,15 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
             # Collection ran under the configured limit; research gets the rest up to the project max of 100.
             cost_policy.budget.limit=100
             # Sources whose details hold conditions only in images are not sent to paid research.
-            ai_candidates = [c for c in incoming + [i.data() for i in explicit_items]
-                             if sources.get(c['source'], {}).get('ai_review', True)]
+            # Human-approved items are audited by verification instead, and candidates that
+            # verification confirmed ended or not a benefit are not researched.
+            approved_ids = {i.id for i in explicit_items if i.verified_at}
+            records = operational_state.get('items', {})
+            def researchable(c):
+                cid = Benefit(**{k: v for k, v in c.items() if k in Benefit.__dataclass_fields__}).id
+                return (sources.get(c['source'], {}).get('ai_review', True) and cid not in approved_ids
+                        and not records.get(cid, {}).get('ai_dismissed'))
+            ai_candidates = [c for c in incoming + [i.data() for i in explicit_items if not i.verified_at] if researchable(c)]
             ai_result = review_candidates(root, ai_candidates, now,
                                           max_candidates=ai_max_candidates, execute=ai_execute)
             for cid in ai_result['changed_ids']:
@@ -134,6 +160,7 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         operations.health(operational_state, successful_sources, failures, now)
         operations.classify_history(report, operational_state)
         if ai_result is not None:report["ai_review"] = ai_result
+        if verify_result is not None:report["ai_verify"] = verify_result
         report["body_check_failures"] = body_failures
         report["review_queue"] = operations.queue(report, operational_state, now, config.get("max_age_days", 7), successful_sources)
         save(root/"cache/operational_state.json", operational_state)

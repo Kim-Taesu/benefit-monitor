@@ -110,3 +110,15 @@ test('ai_auto document_count may be below documents length (distinct bodies) and
   const rv = r.items[0].review; assert.equal(rv.kind === 'ai_auto' && rv.documentCount, 1);
   assert.equal(rv.kind === 'ai_auto' && rv.documents.length, 2);
 });
+
+test('AI quality summary keeps counts and only official-link findings', () => {
+  const ai_quality = { last_run_checked: 12, held: 1, dismissed: 5, prioritized: 3, findings: [
+    { item_id: 'a', source: 'seoul', url: 'https://mediahub.seoul.go.kr/archives/9', title: '[테스트] 제휴 할인',
+      claims: [{ claim: 'GOLD 100원', official_quotes: ['GOLD 50원'] }] },
+    { item_id: 'b', source: 'seoul', url: 'https://evil.example/x', title: '[테스트] 외부', claims: [] }] };
+  const q = adapt(snapshot([item()], { ai_quality }), NOW).aiQuality;
+  assert.deepEqual([q.checked, q.held, q.dismissed, q.prioritized], [12, 1, 5, 3]);
+  assert.deepEqual(q.findings.map(f => f.url), ['https://mediahub.seoul.go.kr/archives/9', '']);
+  assert.deepEqual(q.findings[0].claims, [{ claim: 'GOLD 100원', quotes: ['GOLD 50원'] }]);
+  assert.deepEqual(adapt(snapshot([item()]), NOW).aiQuality, { checked: null, held: 0, dismissed: 0, prioritized: 0, findings: [] });
+});

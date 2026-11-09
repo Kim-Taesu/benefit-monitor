@@ -102,3 +102,19 @@ class BasisCardTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class PagePublishedDateTests(unittest.TestCase):
+    def test_seoul_mediahub_header_date(self):
+        from benefit_monitor.official_reader import page_published
+        html = ('<div class="info"><p class="date">발행일 <span class="num">2026.10.12. 11:48</span></p>'
+                '<p class="date bar">수정일 <span class="num">2026.10.13. 15:47</span></p></div>')
+        self.assertEqual(page_published(html, 'https://mediahub.seoul.go.kr/archives/2019606'), '2026-10-12')
+
+    def test_unknown_host_or_bad_date_is_none(self):
+        from benefit_monitor.official_reader import page_published
+        html = '<p class="date">발행일 <span class="num">2026.10.12.</span></p>'
+        self.assertIsNone(page_published(html, 'https://www.seoul.go.kr/news/1'))
+        self.assertIsNone(page_published('<p class="date">발행일 <span class="num">2026.13.40.</span></p>',
+                                         'https://mediahub.seoul.go.kr/archives/1'))
+        self.assertIsNone(page_published('<p>본문</p>', 'https://mediahub.seoul.go.kr/archives/1'))

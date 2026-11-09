@@ -23,7 +23,7 @@ BRANCH='briefing-data'
 MAX_CIPHER=8*1024*1024
 MAX_RESPONSE=16*1024*1024
 OBJECT_MEDIA='application/vnd.github.object+json'
-FILES={'control':'ai-control.age','runtime':'ai-runtime.age'}
+FILES={'control':'ai-control.age','runtime':'ai-runtime.age','collection':'ai-collection.age'}
 CONTEXT='.tools/cloud-state/context.json'
 BUDGET='.tools/claude-trial/live/budget.json'
 # Upper bound for pre-revision (limit_revision < 2) controls only; revision 2 has no expiry.

@@ -92,19 +92,20 @@ class TopicPublicationTests(unittest.TestCase):
         calls=[]
         def model(root,kind,input_path):
             calls.append(kind)
-            if kind=='research' or len(calls)>2:return {'status':'rejected_draft','run_id':'b'*64}
+            if kind=='research' or len(calls)>1:return {'status':'rejected_draft','run_id':'b'*64}  # day 2 model fails
             return self.fake_topic_model(root,kind,input_path)
         with patch('benefit_monitor.collectors.rss.fetch',side_effect=public_fetch),patch('benefit_monitor.official_reader.network_open',side_effect=read_body),patch('benefit_monitor.ai_review.invoke',side_effect=model),patch('benefit_monitor.topic_refresh.invoke',side_effect=model):
             first=daily(self.root,NOW,online=True,allow_spend=True,publish=True)
             second=daily(self.root,NOW+timedelta(days=1),online=True,allow_spend=True,publish=True)
-        self.assertEqual(calls,['research','topic','topic'])
+        # The listed item is the human-approved one: it is audited by verification, never researched again.
+        self.assertEqual(calls,['topic','topic'])
         self.assertFalse(first['topics']['used_fallback'])
         self.assertTrue(second['topics']['used_fallback'])
         public=json.loads((self.root/'delivery/public/briefing.json').read_text())
         self.assertEqual(public['topic_cards']['topics'][0]['id'],'culture')
         self.assertEqual(public['items'][0]['verified_at'],self.item['verified_at'])
         self.assertNotIn('cache/ai_review',json.dumps(public))
-        self.assertEqual(len(list((self.root/'cache/ai_review/queue').glob('*.json'))),1)
+        self.assertEqual(len(list((self.root/'cache/ai_review/queue').glob('*.json'))),0)
 
 
 class RepositoryPolicyHashTests(unittest.TestCase):

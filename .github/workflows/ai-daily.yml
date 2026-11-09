@@ -7,7 +7,8 @@ on:
     types: [completed]
     branches: [main]
   schedule:
-    # Backup only; KST 06:00..23:45. After 10:00 it dispatches a missing briefing.
+    # Backup only; KST 06:00..23:45. The run itself has no clock gate: it waits for today's
+    # completed free collection, and after 10:00 it dispatches a missing briefing.
     - cron: '*/15 0-14,21-23 * * *'
   workflow_dispatch:
     inputs:
