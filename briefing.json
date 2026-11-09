@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-09T08:46:11.123314+09:00",
-  "source_report_at": "2026-11-09T08:46:11.123314+09:00",
+  "generated_at": "2026-11-09T13:28:35.166295+09:00",
+  "source_report_at": "2026-11-09T13:24:38.645151+09:00",
   "valid_through": "2026-11-10T00:00:00+09:00",
   "status": "partial",
   "items": [
@@ -868,9 +868,9 @@
   "coverage_incomplete": true,
   "message": "공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다.",
   "withheld": {
-    "pending": 97,
-    "expired": 0,
-    "excluded": 0,
+    "pending": 90,
+    "expired": 37,
+    "excluded": 15,
     "invalid_or_conflicting": 0
   },
   "coverage": {
@@ -1000,186 +1000,198 @@
         "status": "checked",
         "scope": "대한민국 구석구석 전국축제 목록의 개최중·개최예정 전체(필터별 최대 5페이지) 중 90일 안 시작 · 별도 축제 섹션 · 사람 검증 전",
         "verified_count": 0
+      },
+      {
+        "source": "groceries",
+        "name": "장보기 시세(KAMIS·축산물품질평가원)",
+        "status": "checked",
+        "scope": "KAMIS 부류별 일간 소매가(채소·과일·곡물·수산·일부 가공식품, 평년·1년전 포함) + 축평원 지역별 평균 소비자가 14개 부위 · 별도 장보기 시세 섹션 · 사람 검증 전",
+        "verified_count": 0
       }
     ],
     "districts": [
       {
         "name": "종로구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
-        "candidates_count": 2,
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
+        "candidates_count": 1,
         "verified_count": 3
       },
       {
         "name": "중구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 4,
         "verified_count": 1
       },
       {
         "name": "용산구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "성동구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "광진구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "동대문구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "중랑구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "성북구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 3,
         "verified_count": 6
       },
       {
         "name": "강북구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 1,
         "verified_count": 0
       },
       {
         "name": "도봉구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 4,
         "verified_count": 2
       },
       {
         "name": "노원구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "은평구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 2,
         "verified_count": 2
       },
       {
         "name": "서대문구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "마포구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "양천구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "강서구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 3,
         "verified_count": 2
       },
       {
         "name": "구로구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "금천구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 2,
         "verified_count": 0
       },
       {
         "name": "영등포구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 3,
         "verified_count": 1
       },
       {
         "name": "동작구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 2,
         "verified_count": 1
       },
       {
         "name": "관악구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 5,
         "verified_count": 2
       },
       {
         "name": "서초구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강남구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 1,
         "verified_count": 1
       },
       {
         "name": "송파구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 0,
         "verified_count": 0
       },
       {
         "name": "강동구",
         "status": "checked",
-        "checked_at": "2026-11-09T08:46:11.123314+09:00",
+        "checked_at": "2026-11-09T13:24:38.645151+09:00",
         "candidates_count": 0,
         "verified_count": 0
       }
     ],
     "scope": "서울시 우리동네 뉴스 첫 페이지. 구청 전체 공지 수집과는 다릅니다."
+  },
+  "ai_status": {
+    "state": "ok",
+    "last_success_day": "2026-11-09",
+    "updated_at": "2026-11-09T08:46:11.123314+09:00"
   },
   "operational_state": {
     "schema_version": 1,
@@ -1188,7 +1200,7 @@
         "source": "seoul",
         "title_hash": "4944130257ca2b1fe56dca3c48da3e04bc9c697849e8b0b95eebe0d088b8a877",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "13729da628936932c2b8fad6": {
@@ -1202,28 +1214,28 @@
         "source": "seoul",
         "title_hash": "1ff0ee9c7816c1f65509cc0b73922291d2545cb1443c6926ba72adb7f40c13e4",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "b6926fd9f62f8f0ad914ec80": {
         "source": "seoul",
         "title_hash": "c3c17e92b9e3921a6bec8a1cba8355b20608bf2c1417d8b61242f51a2de0679b",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "4824b480f9e206c7958fa698": {
         "source": "seoul",
         "title_hash": "7830eb071a8f8a999846e2df3e65754afe02e7fa7610fa8384bec124e8145eaa",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "e1154eebcf0a5aeab3b76710": {
         "source": "seoul",
         "title_hash": "b1b58a93a4168ae991cc8c606c944d4216eecff4985e80df81b7e6f34882515c",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "553a6c9f04a25c7f30e5944d": {
@@ -1248,7 +1260,7 @@
         "approved_hash": "6cd3a5ce55b0dc495428d016da7ace0414eaea82ecbd2de0b253355ceb6030e7",
         "body_target_hash": "f026de2c1ea602a0e61d1cb3f52f350539825c368da39bbc55f6e3a27e2ced4c",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-07T06:00:17.718589+09:00",
         "body_checked_at": "2026-11-07T06:00:17.718589+09:00",
         "body_status": "checked",
@@ -1260,7 +1272,7 @@
         "source": "seoul",
         "title_hash": "2aeba427a19dabd9ea1bdd8506016e29502623d8c6033f6b1e70e75e0fe6b6f9",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "416e1b422a93549688cd08e4": {
         "source": "seoul",
@@ -1269,7 +1281,7 @@
         "approved_hash": "5e5e67de07d882146e1566393651cd39f54afac1c5930cea9198d0157a3eebe9",
         "body_target_hash": "9159601e1908bf9dce441a812bf0ef708289c2fe349f51ebb140992cdb3e030f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1281,13 +1293,13 @@
         "source": "seoul",
         "title_hash": "3251b3b06ca95eeeb909353b3bbf3aa08b06ea7b27325b762dc249a5e305406e",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "a5fde59bbd3da33c8f139e94": {
         "source": "seoul",
         "title_hash": "384e41100b02d6b51d2445442ebce95c938bd4c9fe2d3a75572a40fecbee5c31",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "0946939ee45fee9df0f4a786": {
         "source": "seoul",
@@ -1295,7 +1307,7 @@
         "approved_hash": "3eb2a3aa44f78d8542d090d40c5af9e8a1a7f802637d2a7b4c80bb917c340349",
         "body_target_hash": "36a07039ed7c5cfe733fc893b091920ff435a244cf2dd394090893209e27d4cf",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T10:06:29.527439+09:00",
         "body_status": "failed"
       },
@@ -1303,19 +1315,19 @@
         "source": "seoul",
         "title_hash": "855aefd19fcf44059e2d89c9a6719acf478cbce3d67a53d75c5d53e2dc6f24fa",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "5f3758ba6d292afa004d701e": {
         "source": "seoul",
         "title_hash": "139c4e3ba3465883eadff912708418ea02642aa12a828e4df9b6ec0b3aa30322",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "40b46f3a59ef2e5d593a28ca": {
         "source": "seoul",
         "title_hash": "e641b7d2ac4a2b442fee58f5ff6b2eef589bd1098039bf805ea0fadd4e4325b5",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "b6cbbaff8b1f6407aa44154e": {
         "source": "seoul",
@@ -1324,7 +1336,7 @@
         "approved_hash": "e57ba5af7f70a4d41389fbe82a89dd731e118aa0be42a8b8e904202ed882a191",
         "body_target_hash": "31f6274b4bbf1a4821354e01b7e5eb276a05c74b5c2e28ab24b0cbb9a4b2d48f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-07T06:03:41.298812+09:00",
         "body_checked_at": "2026-11-07T06:03:41.298812+09:00",
         "body_status": "checked",
@@ -1339,7 +1351,7 @@
         "approved_hash": "2c80fcbc23e08bdcf8b69bd48e1029a605666754e61ca75a9e4c61f0ea808e54",
         "body_target_hash": "d9d2ae18de79903a79b3bb54edfc1d96af2e6c0f9ee1f534482dfc6ea9038172",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1351,7 +1363,7 @@
         "source": "seoul",
         "title_hash": "578fcf5bfce58a8c144224f97b5f3abe60b99de0739b7b15cde7b709e5700f12",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "e1183dc6e446326a3a8fade3": {
@@ -1361,7 +1373,7 @@
         "approved_hash": "b8e36a833c4f81d3f3b4ab958ab3c7bda179165217a2dae9108a85064f8c7447",
         "body_target_hash": "5ec67180b6c97ed1b145b09121a0d0d7d2b841f13a053c012865e3f08e4a6842",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T10:06:29.527439+09:00",
         "body_checked_at": "2026-11-06T10:06:29.527439+09:00",
         "body_status": "checked",
@@ -1373,7 +1385,7 @@
         "source": "seoul",
         "title_hash": "2ec4ffd4a4dd661a5a03dcccbdbc84ee01940641479a6af15d11a7bb7e5bf619",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "f6038f76c1f3c41fb51d5892": {
         "source": "seoul",
@@ -1382,7 +1394,7 @@
         "approved_hash": "ea9fa0d1bed30d9b40037c094946f2298b3f654a53f569ea4697832e4bb11e1a",
         "body_target_hash": "01413367932b7b9126f6a826c321caee008e034302bc796606e2bf67c1906c01",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-08T07:56:58.489064+09:00",
         "body_checked_at": "2026-11-06T07:59:28.785463+09:00",
         "body_status": "failed",
@@ -1396,7 +1408,7 @@
         "approved_hash": "7106c97e4d9f63611f77a7003afbbd4ca67b53eeb8af4f5fa3cffe1071e355f7",
         "body_target_hash": "e62f85505dd9adae172c4392866d7b89cd8df8aa90794dea2e24952f32953f9f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1411,7 +1423,7 @@
         "approved_hash": "42e3e269ca64cc616cb2ef8af7de5421427baf5819a809b71d121d90c467af10",
         "body_target_hash": "972423851bf0f4eac0d540b84ae611e18e16dab882946fe8d84c089b1318cffe",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-07T21:24:12.931817+09:00",
         "body_checked_at": "2026-11-07T21:24:12.931817+09:00",
         "body_status": "checked",
@@ -1426,7 +1438,7 @@
         "approved_hash": "cdd3577bb0e4be4da649b3914b7faea0e7a8d7db967af4cb6a0ebc82b5119efd",
         "body_target_hash": "1937e8ea796711089f5161ec37baf6834f8451aa7b674667a0c0768358f376b2",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-07T06:00:17.718589+09:00",
         "body_checked_at": "2026-11-07T06:00:17.718589+09:00",
         "body_status": "checked",
@@ -1438,7 +1450,7 @@
         "source": "seoul",
         "title_hash": "3060e349efb5b599926e5b669f3652053eb5ed3b41e9f8e5ad20d23f8d7220e6",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "ff00b558fb87c751f9dc9fc8": {
         "source": "seoul",
@@ -1447,7 +1459,7 @@
         "approved_hash": "b98f626f7d77a23ad48d3535d4f0fa0583c28a42e6620c2ba7e289b8cc484d77",
         "body_target_hash": "e21daff08c5c32c2b4d78d7ffda3d69470f7d1a1214e336f25aad82edfeb89c4",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-07T21:24:12.931817+09:00",
         "body_checked_at": "2026-11-07T21:24:12.931817+09:00",
         "body_status": "checked",
@@ -1459,7 +1471,7 @@
         "source": "seoul",
         "title_hash": "c768e03736b24a3e089038d2bdf611d2389beb07976ab36b31ed7cf12bf8a64a",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "69277c9a1f849c711c83c6fa": {
@@ -1469,7 +1481,7 @@
         "approved_hash": "20837fb77e4ff33a1a9e81892454ae8f7d3a542eab5009f18eda539692113d33",
         "body_target_hash": "2f8467d04281b7d27cc3e8e803fab79dd8e7a10bc76f47007a83732526ec314e",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T10:06:29.527439+09:00",
         "body_checked_at": "2026-11-06T10:06:29.527439+09:00",
         "body_status": "checked",
@@ -1484,7 +1496,7 @@
         "approved_hash": "bd0f7feab1f7cb398a34306e80acf5d0dd5a05fc9bfd995853af405c6771f5e4",
         "body_target_hash": "364e8ebfaec059ae0784fd305055884477d0e61bf51a81df77b9df1349472797",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-07T06:03:41.298812+09:00",
         "body_checked_at": "2026-11-07T06:03:41.298812+09:00",
         "body_status": "checked",
@@ -1496,13 +1508,13 @@
         "source": "seoul",
         "title_hash": "8493d573f5cf5eee0ed471a9f1386771ec31a87e854c7d3d67adace4eba575d4",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "80babf161cd8239fb6b72205": {
         "source": "seoul",
         "title_hash": "37694028d053c7182c2032e13405550e23d7bab292b7e111e1e2ad3c21126e35",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "0dad716476f8004ebe5301ac": {
         "source": "seoul",
@@ -1511,7 +1523,7 @@
         "approved_hash": "766ab0b6a8448706f92cae22f8498a19c2e5e23032e5b3cc1cdf68b75e6b71d9",
         "body_target_hash": "09b443639897ca49b4a36657f7b4221964c99e035292878d7ed3612c1de09e38",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-09T04:53:56.163341+09:00",
         "body_checked_at": "2026-11-09T04:53:56.163341+09:00",
         "body_status": "checked",
@@ -1523,13 +1535,13 @@
         "source": "seoul",
         "title_hash": "140545213e3a3ac7946b691c8d799e267d1e345e02580c51fe80a9fb92bddeae",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "864360fabf2c6c60ce0c9909": {
         "source": "seoul",
         "title_hash": "1a830be47579bba63b1655ac11e1a56d7560bdb9edde2cdba148a55b9400214b",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "c5b86e7e112d6e5edccbcc52": {
         "source": "seoul",
@@ -1541,7 +1553,7 @@
         "source": "seoul",
         "title_hash": "f39d4d60f78a2da50794b4c17fe02993b56c90cd302f04795f8d26897fe8148e",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "141cdea7ef4424b37216b336": {
@@ -1551,7 +1563,7 @@
         "approved_hash": "1b16d429878d6c490666099eded85d0830fc9b0e6093b0611c22c5eeec8653b7",
         "body_target_hash": "b3d7e35ab4db48d219a75160006f252799877751e3e3afad2c751c8b964f0e45",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-08T07:56:58.489064+09:00",
         "body_checked_at": "2026-11-08T07:56:58.489064+09:00",
         "body_status": "checked",
@@ -1569,8 +1581,7 @@
         "source": "seoul",
         "title_hash": "7a7b7ad13b90bb0896ef08df1139bd02fe7f69f6741a8eaa53da40bd8ce3735a",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-06T08:49:02.286235+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T08:49:02.286235+09:00"
       },
       "83d46f4c8cf59839c8e8b4c5": {
         "source": "seoul",
@@ -1588,8 +1599,7 @@
         "source": "seoul",
         "title_hash": "dfddde7f765da63548147a27989c34deccad0d2394acdd0ec4ef05c9ba018e98",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T11:59:17.606935+09:00"
       },
       "807d86d23fdcc9159c6c006d": {
         "source": "government",
@@ -1601,7 +1611,7 @@
         "source": "government",
         "title_hash": "6c32226dee3e6056d6d57e5042f27925fe7700e204dc6fac3bd9c800797a135c",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "hold_at": "2026-11-09T08:46:11.123314+09:00",
         "hold_reason": "title_changed",
         "pending_reason": "title_changed"
@@ -1618,28 +1628,28 @@
         "source": "culture",
         "title_hash": "010e0a80531ac155f2ffd09992d135e58a5e9a7a9c9f39521f77e904306ccb1f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "ca5a7e0a510e3cc0420b5350": {
         "source": "culture",
         "title_hash": "88c3e9fdc8170992c503a3aa71b22c06cb35094786a24236a623dbc4e8b578eb",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "a0640c2ea3480598826b37e2": {
         "source": "culture",
         "title_hash": "6195e133a66a8bff4e6721495d67e4c6a024b4662887d498d8a3085b134b0d97",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "620a0273a70125896c5b798f": {
         "source": "culture",
         "title_hash": "27fda2cb69816836c20c788e31d0bcb55a61a4b4ba025b8637b554d2420c0687",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "69d9aee2485f2bdb52f9975c": {
@@ -1659,41 +1669,41 @@
         "source": "retail",
         "title_hash": "c162d7b0da12c879f6d2f777b56dcd893fd64a185881d4762eb32dc7df765e3b",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "07194538916337fdca10f79e": {
         "source": "retail",
         "title_hash": "8e305809ef89fea4e180cb5869f6891fb7dfa0c80548e8dfa41f87dc19be7cad",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "6b5a3296b162765d68c0e614": {
         "source": "retail",
         "title_hash": "f09dd7c7cad6af1b9f4899340e3f269fc6e668ad922f0b51016ba41acdd3c420",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "d0d0a2551be89baed59821cf": {
         "source": "retail",
         "title_hash": "4f8f2f37e89d20c4b12423e797bfa893857ea47d69516c360b4fac7769f78d95",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "da190ac8f7be17e706b7250e": {
         "source": "retail",
         "title_hash": "b4f3f1158adc5a13ecddf32c18cb2c9991841356a46e01cdc98fac76cc64ecab",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "595dbc6410ed35afda361c03": {
         "source": "retail",
         "title_hash": "84289c44b42f0f220edcebd8939c0ac56f019a2b264afa61b401a2efd13669ba",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "ead80c79c226bf4af00310a8": {
         "source": "retail",
@@ -1708,7 +1718,7 @@
         "approved_hash": "0d793a94377c9c51a940520b13e05d8327b3d090e0213b1400cb187b1f39f67e",
         "body_target_hash": "3768a51feed7ee48a244f88e4ff63eca6633955f1d6e2b63b162704b49273f29",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-07T06:00:17.718589+09:00",
         "body_checked_at": "2026-11-07T06:00:17.718589+09:00",
         "body_status": "checked",
@@ -1723,7 +1733,7 @@
         "approved_hash": "173f89605d9d3dcd1ba5cb79127802090b7b116c1393e095180195fad796bae5",
         "body_target_hash": "8184aa7d4cc222d6b376ee785abfc4301cda2e0a58298251ad396080c9f1b30a",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-08T04:33:56.335786+09:00",
         "body_checked_at": "2026-11-08T04:33:56.335786+09:00",
         "body_status": "checked",
@@ -1735,7 +1745,7 @@
         "source": "seoul_lifelong",
         "title_hash": "2c2de998b77dfaf6b66ef4580e3995cc34ec98b26188e29267d874f1965864f1",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "0b755abfa701e2ae4717d9a7": {
@@ -1765,7 +1775,7 @@
         "approved_hash": "1f438a566b995f02678e1339284448b22992edba5c413d05b7f0667afd4cb483",
         "body_target_hash": "a0b5e65f3c38cc7ab41ce3f9297f695cfb3b40fc4259c6b7fe67d6dc19988b02",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1780,7 +1790,7 @@
         "approved_hash": "b0942430ade02dbd2496ce66b59e9962ec8fc91fb40f74d71cc8e184303045d0",
         "body_target_hash": "2041fa679036296d2d5151f626dae692710027b34eef151d71a1af66a5d7c1be",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-08T04:33:56.335786+09:00",
         "body_checked_at": "2026-11-08T04:33:56.335786+09:00",
         "hold_at": "2026-11-08T04:33:56.335786+09:00",
@@ -1826,7 +1836,7 @@
         "approved_hash": "0c0068d1a61d2319e6ffa40d549537fbce74b024b2d9b947b13f22b8af9943b0",
         "body_target_hash": "509a343fd9eddc693c4c0b412b4fa0b995aba5f3a1651d1f655e7ef6a548b6e1",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-05T13:12:05.196511+09:00",
         "body_checked_at": "2026-11-05T13:12:05.196511+09:00",
         "body_status": "checked",
@@ -1841,7 +1851,7 @@
         "approved_hash": "8351b23acb997c902819d351dfab923e5a9b71cfc6ba18753b9c8570cc0152eb",
         "body_target_hash": "eeca7a2ed165bf0f392aac9134c190cc1002019989c606ec8e2c1bc798cf5098",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1853,76 +1863,76 @@
         "source": "eshare",
         "title_hash": "0df4bf26cac00da1a8f51fe4775bc7417cf8e23f90f42703efe52b9b1fe9251f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "8e17a6864acb8bbcad0bda78": {
         "source": "eshare",
         "title_hash": "222ad1b7dad3e14e756fb2f196f68cf3fb5993cff3e8844e8984816681f72a24",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "45edda409d6a33a511b8dd14": {
         "source": "eshare",
         "title_hash": "55463d928b9ca40dacdde339ab5b6961e47acccaac35111b503b9c5600e13564",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "21442659cdf3271b09bd7220": {
         "source": "eshare",
         "title_hash": "ba40efb5cf1141c3488db391e5bc0e6ab0a083359a81a5af35ca6ae622b7c6cf",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "48cedf08de62fe66a445af59": {
         "source": "eshare",
         "title_hash": "58f37aada2d781e87778af4152ec6ec73bf9fcb761e46c76a7bc5e88311e1a85",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "3fc55948006078ab5b774342": {
         "source": "eshare",
         "title_hash": "61c0e2e39894b7d1cb9ff16eb2b554d42e7c2e8fd734ed0b389d53490f549f41",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "52215a13353ed474ee7c0056": {
         "source": "eshare",
         "title_hash": "5ac7998a014e344d4523aed27caf2fbec00a597b18c074c9ac3bef6ed5f7cd01",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "3fbab94ad78407ff32e66fe3": {
         "source": "eshare",
         "title_hash": "ad6cd3da38e6b6f22d239a8dafc813b19941ceadb316b3de78c13b2eaad80c8f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "bfe925e54359a368c8f7fb61": {
         "source": "eshare",
         "title_hash": "478686d30accd290f21284b860a62c02332e6886ddf4bba88d9ff23e7a24ab99",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "9bc4a3f9868cc5534393f751": {
         "source": "eshare",
         "title_hash": "0dc89ea8fe19daeca94ff825bb9c2992eff235b38608d996db80819a55002640",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "45a5c9fcd2650b69652dcdf8": {
         "source": "eshare",
         "title_hash": "fafd1c28e4365565e80f277ffef6655d1bbdfa1094708fbdabe9d78bbb3df1bd",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "c6da1e2a0e2008b2cce055ab": {
@@ -2325,50 +2335,44 @@
         "source": "seoul",
         "title_hash": "df25be9e6e9c2c6224b9e3dde52305297627b98d8ae661e13ec0f79717b0886b",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "b549622eee925e6ed20af55a": {
         "source": "government",
         "title_hash": "50f1de6a5ac214144d26909fcbc4c258d85d3bab679bbbabba691747601b5a18",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T11:59:17.606935+09:00"
       },
       "0316809cca0aff256456cae8": {
         "source": "government",
         "title_hash": "ace4173699b64a0bcefd12b285eba56dea944b8836202dbae5b5f5ca90a909fc",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T11:59:17.606935+09:00"
       },
       "5896c0acf3cc627c4a7564de": {
         "source": "culture",
         "title_hash": "d65b1032328d6a5b3e91a6ca69994744637c53888c0b1b84d93ae3fb41b61e56",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T11:59:17.606935+09:00"
       },
       "3cbd09defd6a63709b4da778": {
         "source": "culture",
         "title_hash": "6d017fdea611f2ff110423d8304a5cd637470485852fe494414344ba016716c7",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T11:59:17.606935+09:00"
       },
       "7c626441547aca531234d7e9": {
         "source": "culture",
         "title_hash": "289c19df50faa6b2042e8187a1e323c7d2d6c9be37114e0f862d0cf967e66461",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T11:59:17.606935+09:00"
       },
       "53425f796df4fb82496c0cab": {
         "source": "culture",
         "title_hash": "dd2a6d75f9cee10326704f5bbf63036224f3ad36cd10922e8226cbbc26a55ca2",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-06T08:49:02.286235+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T08:49:02.286235+09:00"
       },
       "16fa9d82ac353acf8c109830": {
         "source": "culture",
@@ -2380,8 +2384,7 @@
         "source": "culture",
         "title_hash": "f3a1dd99ebc94b451a2e702edd8dc1b437dff334625d3bdd44508c943065433e",
         "first_seen_at": "2026-11-06T07:59:28.785463+09:00",
-        "last_seen_at": "2026-11-06T10:06:29.527439+09:00",
-        "pending_reason": "manual_review"
+        "last_seen_at": "2026-11-06T10:06:29.527439+09:00"
       },
       "3e289959bb69bddec053a746": {
         "source": "government",
@@ -2389,21 +2392,20 @@
         "first_seen_at": "2026-11-06T08:49:02.286235+09:00",
         "last_seen_at": "2026-11-06T10:06:29.527439+09:00",
         "hold_at": "2026-11-06T10:06:29.527439+09:00",
-        "hold_reason": "title_changed",
-        "pending_reason": "title_changed"
+        "hold_reason": "title_changed"
       },
       "1e4cd540325143be13e90ff4": {
         "source": "seoul",
         "title_hash": "a2951705806639ea42c4e34205f9ee97764b306479601ac9fa7ff7e268018c1e",
         "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "01e03dabef2859c671642bca": {
         "source": "retail",
         "title_hash": "00377a0b0df3d92bb777990d7367ad3c47efff4f8e64588709e59d7d1881586c",
         "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "e4b77de798009e48f6fffb05": {
@@ -2424,84 +2426,84 @@
         "source": "emart24_events",
         "title_hash": "1be788ab0a2030e33f15c732bf951d85f4d60185ab915808e7b07985f53555ea",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "4782b82b805e33114dbe8df1": {
         "source": "emart24_events",
         "title_hash": "a353ef4a5526c0a8b7c7a2ea244faa30b145aec7f93f26775b72c381f7c772a7",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "c04690ea6a3bafa494605ffa": {
         "source": "emart24_events",
         "title_hash": "780077ca728dd043498c943c76c4932751f86cb1810969abf5923007ac0130d2",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "a3e35634d2e5cd9af9f200f6": {
         "source": "emart24_events",
         "title_hash": "442470be5ccea8ce634bd46901099c6bbef84e2c4c113517e2e3f87445ca51b1",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "29afeec76bcda173a6ee7caa": {
         "source": "emart24_events",
         "title_hash": "7fe23c43940a69306098292e8880cc9607349c2d3fa81c79a0257acfab80daa4",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "1ccf6907bd6e39f06e699fc5": {
         "source": "emart24_events",
         "title_hash": "cece14334689bbcc5b070a8f9bb9f2782ab21ba0d0b1d5ef66288295ab691c1d",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "c9d573f37c1a62d19363487c": {
         "source": "emart24_events",
         "title_hash": "646300957e2031a128ea47d04a1de3b1186f4beb29a4b41456c09b7617c1e2e8",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "89f08409903fb165b4970cba": {
         "source": "emart24_events",
         "title_hash": "5e4933d8400a31519bace2e07a3ffc95bd2dc7a254f9ad14f00298c598f54632",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "498d59ae5c6c9b2d553c000c": {
         "source": "emart24_events",
         "title_hash": "fec09843606e17da7917cf8831c32c1a3715dac48a68cb1e5122a908ad18d0c2",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "ba3ade919cd6c7dba58daa79": {
         "source": "emart24_events",
         "title_hash": "3e7c34eee762c5767db96489a56aa6f83778723f9664d0c4236f6b4cc86e3e06",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "8b5bf5c9c8311cbcd2bca292": {
         "source": "emart24_events",
         "title_hash": "abec9eb6da5f3b848ffaaac2a25b09b9fb94e0da0cdbc0f6ef87e633d82ed91e",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "01f408bbdedbf65c7b9dec57": {
         "source": "emart24_events",
         "title_hash": "269ddc4d418ebab019b7cbb599904b5557581a01a690b13635ec7c82b4e48066",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "8d55def96a2f5ad64f746b95": {
@@ -2515,14 +2517,14 @@
         "source": "emart24_events",
         "title_hash": "2adf0ea3a7e64e2d3a654dd2e591d04f2e449f1b3127a07e203f77d279c8754a",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "46bfa7e2db0c0075a153ad90": {
         "source": "emart24_events",
         "title_hash": "6a12a0590a571696df71dc56058ce744477fddb54eb965aee42ac2a145b22021",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "fb4c60abf568e6c9fe1b09f5": {
@@ -2536,28 +2538,28 @@
         "source": "emart24_events",
         "title_hash": "fa5dda746b0696ab9763ff98935ca508868e0dcbcc22a69c0c2bca8ba3cdc981",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "f9b5bfa9d44a758f160eef02": {
         "source": "emart24_events",
         "title_hash": "e6d0aa43a17cb8e036ed6aba663f1aec37e2cda015796cabcb20493499a6eea8",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "11a4ce6f2b5ba4997534e0ad": {
         "source": "emart24_events",
         "title_hash": "d67f75af07e9b8a2b1cb3bb93a654c602b948875e65b49c3f1a35f9dc7e66017",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "99e2d188d7ba84c31fefedc9": {
         "source": "emart24_events",
         "title_hash": "cd7749560a08542e2278612b21c35ce861d3d87cddd1b8681a8c559ec3b8ba87",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "2d9bbb48599864f796eb1ab3": {
@@ -2571,98 +2573,98 @@
         "source": "emart24_events",
         "title_hash": "4a533d4e0942fd1d0a3453fa81cd372567d104a91b157cea136b6845dd4fbda5",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "ee76eca4d42ffe5dd3337786": {
         "source": "emart24_events",
         "title_hash": "1f0acb9429fb4e40304bfbf58e4eb387fede7e1e03f605acf0be8ce3ab93fcfc",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "b3292ae6a8cfc8afb4e0f139": {
         "source": "emart24_events",
         "title_hash": "83d9325e4bbfb759b218543dcaafd987d61445fd75be52763167cc384694276b",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "d4b81a2a135300ac2af2af07": {
         "source": "emart24_events",
         "title_hash": "3905a848f07b9a4e0163288e60c4b0af509dd0cd3fc636388cf4dcdc8b08bb77",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "aea03117aeaec89caca84012": {
         "source": "emart24_events",
         "title_hash": "2c71905f274179a92c8cdfa7fa44a0c7cb6e73a413db92a83600254dc1f40312",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "5d486fd06726d6736ed81642": {
         "source": "emart24_events",
         "title_hash": "986790d02ca6e2d6bfde96d4ba22a16daf6fc17e029edf1daef88247790ef8f9",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "cca6df4a97dcff3281347afc": {
         "source": "emart24_events",
         "title_hash": "87c8ebbbe6780e1f3999f2f78efe0055479665378d3e2e63362c65d442bd5061",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "6b1d9db79a0dd14577615fa8": {
         "source": "emart24_events",
         "title_hash": "886b7a0faec7992eb4a6ed651ee1686532dc4059b4ebfefad45638c1a54addd4",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "97218bf7d1e81444c7b86eb6": {
         "source": "emart24_events",
         "title_hash": "4db0b866fe63597c45c12f701ed678d2820bd5599630c3d895f099882846ac55",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "cf6f52552c7f9a49dc65c9f0": {
         "source": "emart24_events",
         "title_hash": "98ff7ab877e4c780b138846cb67a9f72473fbf54d610b5478c05594512822750",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "df4d2d71aca0f1d614f7cc7a": {
         "source": "emart24_events",
         "title_hash": "77a7187d698e0bb5d1c0db5d59755764a787399f552f9ee6f806aec71ff37191",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "a7045e3c23f629ff350cb4eb": {
         "source": "emart24_events",
         "title_hash": "88d828afc278397194d5bc5ce5682455fc1e4ca09c757c7956ee784159b5146b",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "796115a08d31e68bd283a3e1": {
         "source": "seoul",
         "title_hash": "4b248f2186d9e6e0c80ad8fbe594a22157eced2258462a761f73d729c6d736bf",
         "first_seen_at": "2026-11-07T06:00:17.718589+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "83c4bf2765f503aaa23dcc33": {
         "source": "government",
         "title_hash": "01ac858051df0677435fb95b1370f4bd65ff557240cfa7b10c2210eecb191686",
         "first_seen_at": "2026-11-07T06:00:17.718589+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       },
       "25594b0a80db93c38a2edc3e": {
@@ -2697,193 +2699,225 @@
         "source": "culture",
         "title_hash": "f4b48c98686008a6b9717c21e3a1a3a3c2479315c055c471258b01b4e1ee4822",
         "first_seen_at": "2026-11-08T07:56:58.489064+09:00",
-        "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
+        "pending_reason": "manual_review"
+      },
+      "73f304bb2b7ce77bcf0c3130": {
+        "source": "culture",
+        "title_hash": "9b38591295fd525b056385af8fadfd56e37b5361a246f6271144c496f3a45d46",
+        "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
+        "pending_reason": "manual_review"
+      },
+      "8bbc8445ecb584036e0bf6db": {
+        "source": "culture",
+        "title_hash": "0a61c74f41307058604476769d62e53fcd5f1b29ae6addd5688831535f4f2971",
+        "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
+        "pending_reason": "manual_review"
+      },
+      "12c9345169a7a6ec0831ee03": {
+        "source": "emart24_events",
+        "title_hash": "28598bd51ab220b53ed5adf9cc666bee3d33f479e3be78f3ad3181e28f8cc83a",
+        "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
         "pending_reason": "manual_review"
       }
     },
     "sources": {
       "seoul": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "gangseo": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "eunpyeong": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "government": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "culture": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "retail": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "convenience": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "seoul_lifelong": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "seven": {
-        "consecutive_failures": 12,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
+        "consecutive_failures": 13,
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
         "last_success_at": "2026-11-05T13:12:05.196511+09:00",
         "error_category": "timeout"
       },
       "emart24": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "sh": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "eshare": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "seongnam": {
-        "consecutive_failures": 13,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
+        "consecutive_failures": 14,
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
         "error_category": "tls"
       },
       "heritage": {
-        "consecutive_failures": 13,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "error_category": "connection"
+        "consecutive_failures": 14,
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "error_category": "parse_or_empty"
       },
       "emart24_events": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       },
       "seven_events": {
-        "consecutive_failures": 8,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
+        "consecutive_failures": 9,
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
         "error_category": "timeout"
       },
       "kfes": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-        "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
+      },
+      "groceries": {
+        "consecutive_failures": 0,
+        "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+        "last_success_at": "2026-11-09T13:24:38.645151+09:00"
       }
     }
   },
   "source_health": {
     "seoul": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "gangseo": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "eunpyeong": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "government": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "culture": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "retail": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "convenience": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "seoul_lifelong": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "seven": {
-      "consecutive_failures": 12,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
+      "consecutive_failures": 13,
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
       "last_success_at": "2026-11-05T13:12:05.196511+09:00",
       "error_category": "timeout"
     },
     "emart24": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "sh": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "eshare": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "seongnam": {
-      "consecutive_failures": 13,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
+      "consecutive_failures": 14,
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
       "error_category": "tls"
     },
     "heritage": {
-      "consecutive_failures": 13,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "error_category": "connection"
+      "consecutive_failures": 14,
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "error_category": "parse_or_empty"
     },
     "emart24_events": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     },
     "seven_events": {
-      "consecutive_failures": 8,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
+      "consecutive_failures": 9,
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
       "error_category": "timeout"
     },
     "kfes": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-09T08:46:11.123314+09:00",
-      "last_success_at": "2026-11-09T08:46:11.123314+09:00"
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
+    },
+    "groceries": {
+      "consecutive_failures": 0,
+      "last_attempt_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_success_at": "2026-11-09T13:24:38.645151+09:00"
     }
   },
   "run_context": {
     "trigger": "workflow_dispatch",
-    "status": "approved_snapshot",
+    "status": "manual_refresh",
+    "expected_collection_at": "2026-11-09T00:37:00+09:00",
     "scheduled_run_confirmed": false
   },
-  "run_id": "approved-snapshot-afecccc6f0855b51",
+  "run_id": "42561621348",
   "review_queue": [
     {
       "id": "8adfb1468126afc509d73464",
@@ -2914,7 +2948,7 @@
       "source": "sh",
       "reason": "body_changed",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": "2026-11-13T17:30:00+09:00"
     },
     {
@@ -2986,7 +3020,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3002,7 +3036,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3010,7 +3044,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3018,7 +3052,7 @@
       "source": "seoul_lifelong",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3026,7 +3060,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3034,7 +3068,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3042,7 +3076,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3050,7 +3084,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3058,7 +3092,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3066,7 +3100,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3074,7 +3108,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3082,7 +3116,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3098,15 +3132,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
-      "deadline": null
-    },
-    {
-      "id": "838030e35c8c303a0dac0297",
-      "source": "seoul",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3114,7 +3140,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3122,7 +3148,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3130,7 +3156,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3138,7 +3164,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3146,7 +3172,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3154,7 +3180,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3162,7 +3188,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3170,7 +3196,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3178,7 +3204,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3186,7 +3212,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3194,7 +3220,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3202,7 +3228,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3210,7 +3236,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3218,7 +3244,7 @@
       "source": "government",
       "reason": "title_changed",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3226,55 +3252,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
-      "deadline": null
-    },
-    {
-      "id": "fa61a87d095f9ed59af84df4",
-      "source": "seoul",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-06T08:49:02.286235+09:00",
-      "deadline": null
-    },
-    {
-      "id": "0316809cca0aff256456cae8",
-      "source": "government",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "deadline": null
-    },
-    {
-      "id": "3cbd09defd6a63709b4da778",
-      "source": "culture",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "deadline": null
-    },
-    {
-      "id": "53425f796df4fb82496c0cab",
-      "source": "culture",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-06T08:49:02.286235+09:00",
-      "deadline": null
-    },
-    {
-      "id": "5896c0acf3cc627c4a7564de",
-      "source": "culture",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "deadline": null
-    },
-    {
-      "id": "7c626441547aca531234d7e9",
-      "source": "culture",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3282,31 +3260,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
-      "deadline": null
-    },
-    {
-      "id": "b549622eee925e6ed20af55a",
-      "source": "government",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "deadline": null
-    },
-    {
-      "id": "6953266a7a15cc5b663b9b53",
-      "source": "culture",
-      "reason": "manual_review",
-      "first_seen_at": "2026-11-06T07:59:28.785463+09:00",
-      "last_seen_at": "2026-11-06T10:06:29.527439+09:00",
-      "deadline": null
-    },
-    {
-      "id": "3e289959bb69bddec053a746",
-      "source": "government",
-      "reason": "title_changed",
-      "first_seen_at": "2026-11-06T08:49:02.286235+09:00",
-      "last_seen_at": "2026-11-06T10:06:29.527439+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3314,7 +3268,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3322,7 +3276,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3330,7 +3284,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3338,7 +3292,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3346,7 +3300,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3354,7 +3308,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3362,7 +3316,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3370,7 +3324,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3378,7 +3332,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3394,7 +3348,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3402,7 +3356,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3410,7 +3364,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3418,7 +3372,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3426,7 +3380,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3442,7 +3396,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3450,7 +3404,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3458,7 +3412,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3474,7 +3428,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3482,7 +3436,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3490,7 +3444,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3498,7 +3452,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3506,7 +3460,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3514,7 +3468,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3522,7 +3476,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3530,7 +3484,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3538,7 +3492,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3546,7 +3500,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3554,7 +3508,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3562,7 +3516,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3570,7 +3524,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3586,7 +3540,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3594,7 +3548,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3626,7 +3580,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-07T06:00:17.718589+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3634,7 +3588,7 @@
       "source": "government",
       "reason": "manual_review",
       "first_seen_at": "2026-11-07T06:00:17.718589+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     },
     {
@@ -3658,554 +3612,45 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-08T07:56:58.489064+09:00",
-      "last_seen_at": "2026-11-09T08:46:11.123314+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
+      "deadline": null
+    },
+    {
+      "id": "12c9345169a7a6ec0831ee03",
+      "source": "emart24_events",
+      "reason": "manual_review",
+      "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
+      "deadline": null
+    },
+    {
+      "id": "73f304bb2b7ce77bcf0c3130",
+      "source": "culture",
+      "reason": "manual_review",
+      "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
+      "deadline": null
+    },
+    {
+      "id": "8bbc8445ecb584036e0bf6db",
+      "source": "culture",
+      "reason": "manual_review",
+      "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
+      "last_seen_at": "2026-11-09T13:24:38.645151+09:00",
       "deadline": null
     }
   ],
-  "ai_status": {
-    "state": "ok",
-    "last_success_day": "2026-11-09",
-    "updated_at": "2026-11-09T08:46:11.123314+09:00"
-  },
-  "topic_cards": {
-    "schema_version": 1,
-    "generated_at": "2026-11-09T08:46:11.123314+09:00",
-    "valid_until": "2027-11-07T00:00:00+09:00",
-    "used_fallback": false,
-    "topics": [
-      {
-        "id": "vouchers",
-        "title": "상품권 혜택",
-        "items": [
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019868",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019868",
-              "title": "최대 15% 할인! 서울사랑상품권 '코.그.페' 행사",
-              "summary": "서울사랑상품권 결제 추가 5% 페이백",
-              "conditions": "10월29일~11월15일 광역·25개 구 서울사랑상품권 결제액의 추가 5% 페이백. 기존 보유 대상 상품권도 포함. 별도 신청 없이 10월 결제분은 11월20일, 11월 결제분은 12월20일 상품권 지급 예정. 구매 할인·기존 페이백은 상품권별로 달라 모두 15% 혜택이 아님. 구매비용 발생, 기사 안내 월 구매 한도 50만원·보유 한도 150만원. 예산 소진 시 조기 종료, 현재 잔량·개인 지급 여부 미확인.",
-              "districts": [],
-              "verified_at": "2026-11-04T20:11:09.992823+09:00",
-              "valid_from": "2026-10-29",
-              "valid_until": "2026-11-15",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "paid",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "할인·적립",
-                "region": "서울",
-                "action": "결제 시 적용"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-16T00:00:00+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019785",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019785",
-              "title": "서울의 밤을 채울 새로운 즐거움 '서울 달빛야장'(ft. 달빛상품권)",
-              "summary": "달빛상품권 10% 할인 판매·야간 사용 안내",
-              "conditions": "10월23일10시 판매 개시, 소진 시 종료. 월 구매50만원·보유150만원, 17~24시 지정 가맹점 결제. 광진 화양·중랑 상봉2·도봉 창4·동작 사당1·관악 남현·강남 신사 대상. 발행규모는 현재 잔량이 아니며 앱 재고 미확인.",
-              "districts": [
-                "강남구",
-                "관악구",
-                "광진구",
-                "도봉구",
-                "동작구",
-                "중랑구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": "2026-10-23",
-              "valid_until": null,
-              "deadline_at": null,
-              "validity_kind": "ongoing",
-              "fee_status": "paid",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "할인·적립",
-                "region": "서울 6개 야간 상권",
-                "action": "구매 후 사용"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          },
-          {
-            "source": "seongnam",
-            "url": "https://snvision.seongnam.go.kr/23521",
-            "facts": {
-              "source": "seongnam",
-              "url": "https://snvision.seongnam.go.kr/23521",
-              "title": "성남 산성대로 미션투어",
-              "summary": "성남 관광·소비 미션 충족 시 모바일 상품권 최대 3만 원",
-              "conditions": "19세 이상. 관광지 등 대상 장소 2곳 이상 방문, 본인이 포함된 사진·영상과 해시태그를 넣은 SNS 후기 필요. 수정·중원구 대상 상점에서 5만 원 이상 소비 시 1만5천 원, 10만 원 이상 소비 시 3만 원. 후기 작성 후 7일 안에 통합예약 홈페이지에서 지급 신청. 대형마트·편의점·주유 경비 제외. 공고 세부 기준·예산 잔액·개인 자격·지급 성공은 별도 확인 필요.",
-              "districts": [
-                "성남시"
-              ],
-              "verified_at": "2026-10-27T23:17:50.018485+09:00",
-              "valid_from": null,
-              "valid_until": "2026-11-30",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "paid",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "할인·적립",
-                "audience": "19세 이상",
-                "region": "성남시 수정·중원구 대상 상점",
-                "action": "미션 참여"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-10T23:17:50.018485+09:00"
-            }
-          }
-        ]
-      },
-      {
-        "id": "night",
-        "title": "저녁에 이용하기",
-        "items": [
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019836",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019836",
-              "title": "청계 A01 무료 야간 자율주행버스",
-              "summary": "평일 저녁 청계광장~광장시장 무료 자율주행버스",
-              "conditions": "평일 19:00~23:50 운행 안내(주말·공휴일 미운행), 청계광장 출발 막차 23:00. 30분 간격 하루9회, 최대8명 탑승. 승하차 교통카드 태그 필수. 좌석이 없으면 탑승하지 못할 수 있으며 실시간 빈자리·당일 운행 여부는 확인하지 않음. 원문에 추후 유상전환 예정(성인1,400원)으로 안내돼 무료 기간 종료 시점은 미확인.",
-              "districts": [
-                "종로구",
-                "중구"
-              ],
-              "verified_at": "2026-11-04T20:11:09.992823+09:00",
-              "valid_from": "2026-10-22",
-              "valid_until": null,
-              "deadline_at": null,
-              "validity_kind": "ongoing",
-              "fee_status": "free",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "생활지원",
-                "region": "서울 청계광장~광장시장",
-                "action": "바로 이용"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T20:11:09.992823+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019568",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019568",
-              "title": "서울의 밤 걸으며, 건강과 포인트 챙겨요! 손목닥터9988 야간걷기 챌린지",
-              "summary": "손목닥터9988 야간 걷기 챌린지 포인트 안내",
-              "conditions": "10월1일부터 예산 소진 시까지. 앱 챌린지 등록·18시 이후 GPS 인증·완료 버튼 등 조건 필요. 야간명소 3곳 인증 선착순1만명 1천P, 2인3천보 선착순1만명 1인500P, 25개 구 코스 선착순1천명 1만P. 지급은 종료 후. 현재 예산·잔량·개인 지급 여부와 별도 참가비는 미확인.",
-              "districts": [
-                "서대문구"
-              ],
-              "verified_at": "2026-11-04T20:11:09.992823+09:00",
-              "valid_from": "2026-10-01",
-              "valid_until": null,
-              "deadline_at": null,
-              "validity_kind": "ongoing",
-              "fee_status": "unknown",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "할인·적립",
-                "region": "서울 야간명소·25개 구 코스",
-                "action": "미션 참여"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T20:11:09.992823+09:00"
-            }
-          }
-        ]
-      },
-      {
-        "id": "culture",
-        "title": "문화·체험",
-        "items": [
-          {
-            "source": "culture",
-            "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S220426092440232101",
-            "facts": {
-              "source": "culture",
-              "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S220426092440232101",
-              "title": "서울역사박물관(본관) 단체관람",
-              "summary": "서울역사박물관(본관) 단체관람",
-              "conditions": "20~100명 단체관람, 무료. 관람 전날 18시까지 예약. 9~18시 운영·17시30분 입장 마감·월요일 휴관. 성인 인솔자 동행 필수, 전시해설 미제공. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
-              "districts": [
-                "종로구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": null,
-              "valid_until": "2026-12-31",
-              "deadline_at": "2026-12-31T18:00:00+09:00",
-              "validity_kind": "fixed",
-              "fee_status": "free",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "문화·체험",
-                "audience": "20~100명 단체",
-                "region": "서울역사박물관",
-                "action": "신청·예약 필요"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019755",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019755",
-              "title": "가을 탄다 싶다면 가보세요! 힐링·예술·체험 다 되는 '서울식물원'",
-              "summary": "서울식물원 식물생활 전시 ‘초록, 속’: 12월 31일까지",
-              "conditions": "10월 주방·11월 침실과 책상·12월 베란다 식물생활 전시. 이 전시 자체의 입장료는 본문만으로 확인되지 않음. 식물원 온실·주제정원은 성인5천원·청소년3천원·어린이2천원, 야외는 무료이며 전시 적용 요금은 별도 확인.",
-              "districts": [
-                "강서구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": null,
-              "valid_until": "2026-12-31",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "unknown",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "문화·체험",
-                "region": "서울 강서구 서울식물원"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019571",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019571",
-              "title": "한글날, 세종대왕 발자취 따라가 볼까? 광화문·서촌 일대 6곳(ft. 참여행사)",
-              "summary": "대한민국역사박물관 특별전: 2027년 2월 9일까지 무료",
-              "conditions": "기사 속 현재 일정은 대한민국역사박물관 ‘일구이륙 무한이륙’ 전시. 월·화·목·금·일10~18시, 수·토10~21시. 1월1일·설날 당일 휴관. 함께 소개된 10월9일 행사는 종료됐으며 다른 박물관 요금은 각각 다름.",
-              "districts": [
-                "동대문구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": "2026-10-02",
-              "valid_until": "2027-02-09",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "free",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "문화·체험",
-                "region": "서울 대한민국역사박물관",
-                "action": "바로 이용"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019841",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019841",
-              "title": "자연과 평화가 만나는 자리…서울창포원 공공미술 전시",
-              "summary": "서울창포원 공공미술 ‘평화의 잔상’ 전시",
-              "conditions": "1부 전시10월24일~12월13일 서울창포원. 개장일 체험·보물찾기를 상시 프로그램으로 안내하지 않음. 전시 요금은 본문에 명시되지 않음. 2부는2027년 상반기 예정으로 이번 일정과 구분.",
-              "districts": [
-                "도봉구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": "2026-10-24",
-              "valid_until": "2026-12-13",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "unknown",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "문화·체험",
-                "region": "서울 도봉구 서울창포원"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019773",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019773",
-              "title": "서울시립과학관 과학관에 ON 예술가",
-              "summary": "과학·예술 융합 전시와 워크숍 일정",
-              "conditions": "10월24~25일 별빛축제와 공개관측회는 종료. 이 항목은 11월29일까지 운영한다고 명시한 과학관에 ON 예술가 프로젝트만 안내. 워크숍별 날짜·예약·잔여석과 별도 요금은 확인되지 않았으므로 무료나 현장 참여 가능으로 단정하지 않음.",
-              "districts": [
-                "노원구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": "2026-10-24",
-              "valid_until": "2026-11-29",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "unknown",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "문화·체험",
-                "region": "서울시립과학관"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          }
-        ]
-      },
-      {
-        "id": "learning",
-        "title": "배움·강좌",
-        "items": [
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019003",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019003",
-              "title": "영화·AI 등 192개 강좌 쏟아진다! 서울시민대학 선착순 신청",
-              "summary": "서울시민대학 2학기 강좌 운영: 11월 27일까지",
-              "conditions": "2차 강좌는 10월20일~11월27일. 10월6일 선착순 접수 개시 안내이며 현재 추가 접수·빈자리 여부는 미확인. 1~4주 무료, 5주 1만원, 10주 2만원, 학점은행 3만원.",
-              "districts": [
-                "관악구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": "2026-09-01",
-              "valid_until": "2026-11-27",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "mixed",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "교육·강좌",
-                "region": "서울시민대학 4개 캠퍼스",
-                "action": "신청·예약 필요"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019869",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019869",
-              "title": "제철 차, 명상 배워요! 웰니스 학습라운지 '다감' 개관…무료 교육",
-              "summary": "웰니스 학습라운지 다감: 무료 시범 프로그램 신청",
-              "conditions": "10월28일9:30 선착순 신청 개시, 11월9일~12월5일16개 프로그램106회 무료 운영. 서울시민·생활권자 대상, 사전 신청 후 확정. 일요일 휴관. 잔여석·신청 성공 미확인.",
-              "districts": [],
-              "verified_at": "2026-11-04T20:11:09.992823+09:00",
-              "valid_from": "2026-10-28",
-              "valid_until": "2026-12-05",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "free",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "교육·강좌",
-                "audience": "서울시민·생활권자",
-                "region": "서울 관악구 다시가는 캠퍼스",
-                "action": "신청·예약 필요"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T20:11:09.992823+09:00"
-            }
-          },
-          {
-            "source": "eshare",
-            "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27R5743483&rsrc_dcd=CPS001.006",
-            "facts": {
-              "source": "eshare",
-              "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27R5743483&rsrc_dcd=CPS001.006",
-              "title": "한국무용(프로그램)",
-              "summary": "성북구 석관동주민센터 한국무용 무료 프로그램",
-              "conditions": "이용 요금 무료, 온라인 직접 예약 후 관리자 심사·승인. 공유누리 자원정보 기준. 운영 요일·시간·이용 대상·정원은 자원정보에 기재되지 않아 신청 전 확인 필요. 예약 가능 여부·승인 결과는 확인하지 않음. 문의 02-2241-5766.",
-              "districts": [
-                "성북구"
-              ],
-              "verified_at": "2026-11-04T11:05:30.424869+09:00",
-              "valid_from": null,
-              "valid_until": null,
-              "deadline_at": null,
-              "validity_kind": "ongoing",
-              "fee_status": "free",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "교육·강좌",
-                "region": "서울 성북구 석관동주민센터",
-                "action": "신청·예약 필요"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T11:05:30.424869+09:00"
-            }
-          }
-        ]
-      },
-      {
-        "id": "family",
-        "title": "가족과 함께",
-        "items": [
-          {
-            "source": "seoul_lifelong",
-            "url": "https://sll.seoul.go.kr/lms/front/event/doJoinListEvent.do?main_se=lie&event_no=118&mnid=202412331716",
-            "facts": {
-              "source": "seoul_lifelong",
-              "url": "https://sll.seoul.go.kr/lms/front/event/doJoinListEvent.do?main_se=lie&event_no=118&mnid=202412331716",
-              "title": "서울런 키즈영어 참여이벤트",
-              "summary": "키즈영어 참여자 추첨 300명에게 5천 원 상품권",
-              "conditions": "10월20일~11월10일 레벨테스트와 학습계획서 발급 신청을 모두 완료하면 자동 응모. 11월30일 당첨 발표, 파리바게뜨 5천 원 상품권 추첨 300명. 참가비·정확한 연령·추가 자격 조건은 확인되지 않음. 경품 지급 보장 아님. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
-              "districts": [],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": null,
-              "valid_until": "2026-11-10",
-              "deadline_at": null,
-              "validity_kind": "fixed",
-              "fee_status": "unknown",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "공모·참여",
-                "region": "온라인(서울시 평생학습포털)",
-                "action": "응모"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-11T00:00:00+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019734",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019734",
-              "title": "서울 예비맘 주목! 임신하면 꼭 챙겨야 할 알짜 혜택들(ft. 교통비 지원)",
-              "summary": "서울 임산부 교통비 지원 공공 안내",
-              "conditions": "공식 기사에는 첫째70만원·둘째80만원·셋째 이상100만원, 서울3개월 이상 계속 거주 및 임신 확인 이후 출산6개월 이내 신청 기준을 안내. 지원 한도 밖 교통비는 본인 부담. 신청 비용은 본문 명시 없음. 개인 자격·지급 여부를 판단하지 않으며 신청 전 공식 사업의 최신 세부 기준 확인 필요.",
-              "districts": [
-                "은평구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": null,
-              "valid_until": null,
-              "deadline_at": null,
-              "validity_kind": "ongoing",
-              "fee_status": "unknown",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "생활지원",
-                "audience": "서울 3개월 이상 거주 임산부",
-                "region": "서울",
-                "action": "신청·예약 필요"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          },
-          {
-            "source": "seoul",
-            "url": "https://mediahub.seoul.go.kr/archives/2019524",
-            "facts": {
-              "source": "seoul",
-              "url": "https://mediahub.seoul.go.kr/archives/2019524",
-              "title": "키즈카페인 줄! 놀면서 떠나는 '물의 여행' (ft.서울물재생체험관)",
-              "summary": "서울물재생체험관 무료 관람·주차",
-              "conditions": "화~일10~17시, 10~12시·12:30~14:30·15~17시 회차. 사전 예약 필요하며 어린이는 보호자 동반. 월요일·공휴일·지정일 휴관. 예약 잔여석 미확인.",
-              "districts": [
-                "강서구"
-              ],
-              "verified_at": "2026-11-04T09:59:35.615876+09:00",
-              "valid_from": null,
-              "valid_until": null,
-              "deadline_at": null,
-              "validity_kind": "ongoing",
-              "fee_status": "free",
-              "needs_recheck": false,
-              "payment_terms": {},
-              "labels": {
-                "category": "문화·체험",
-                "region": "서울 강서구 서울물재생체험관",
-                "action": "신청·예약 필요"
-              },
-              "review": {
-                "kind": "human"
-              },
-              "display_until": "2026-11-18T09:59:35.615876+09:00"
-            }
-          }
-        ]
-      }
-    ]
+  "ai_quality": {
+    "last_run_checked": null,
+    "held": 0,
+    "dismissed": 0,
+    "prioritized": 0,
+    "findings": []
   },
   "festivals": {
     "schema_version": 1,
     "source": "kfes",
-    "fetched_at": "2026-11-09T08:46:11.123314+09:00",
+    "fetched_at": "2026-11-09T13:24:38.645151+09:00",
     "notice": "한국관광공사 '대한민국 구석구석' 게시 정보입니다. 사람 검증 전이며 일정·요금은 바뀔 수 있으니 공식 안내를 확인하세요.",
     "items": [
       {
@@ -4389,6 +3834,24 @@
         "modified": "2026-10-26"
       },
       {
+        "id": "47cc094e-78e5-4ebc-a7d5-f65430621719",
+        "name": "무안 YD 페스티벌",
+        "start": "2026-11-20",
+        "end": "2026-11-22",
+        "region": "전남광주통합특별시 무안군",
+        "place": "남악중앙공원",
+        "organizer": "무안군",
+        "fee_status": "mixed",
+        "fee_text": "무료(일부 프로그램 유료)",
+        "discount": "",
+        "summary": "무안YD페스티벌은 청년들의 문화 참여와 소통을 위해 무안군에서 개최하는 청년문화 축제이다. 2026년 제6회 무안YD페스티벌은 11월 20일부터 22일까지 3일간 무안군 삼향읍 남악중앙공원에서 개최되며, 올해 주제는 ‘PLAY YD’이다. 청년들이 다양한 문화 콘텐츠를 직접 즐기고 참여할 수 있도록 공연, 체험, 참여형 프로그램 등으로 구성하며, 청년들의 꿈과 끼를 펼칠 수 있는 기회와 청년 간 교류·소통의 장을 제공한다. 지역 청년을 비롯해 군민과 관광객이 함께 참여할 수 있는 프로그램을 운영하고, 청년문화에 대한 관심과 참여 기회를 확대하는 행사이다. 또한 청년도시 무안의 청년문화와 지역의 다양한 매력을 알리고, 청년들이 함께 어울리며 문화를 즐길 수 있는 공간을 마련하기 위해 추진하는 축제이다.",
+        "programs": "1. 메인프로그램 : 개막퍼레이드, 축하콘서트, 길거리 농구대회 등 2. 부대프로그램 : 국화 전시, 농수특산물 판매, 청년 참여 프로그램 등 3. 소비자 참여 프로그램 : 드론조종, 뷰티, AI게임 등 체험 프로그램 4. 기타 내용 : 거리퍼레이드, 버스킹 등 공연 행사 및 각종 홍보",
+        "homepage": "https://tour.muan.go.kr/tour/festival/yd_festival/introduce",
+        "culture_tourism": false,
+        "url": "https://korean.visitkorea.or.kr/kfes/detail/fstvlDetail.do?fstvlCntntsId=47cc094e-78e5-4ebc-a7d5-f65430621719",
+        "modified": "2026-10-20"
+      },
+      {
         "id": "870226d8-7912-4405-b4f6-8fadba5ddff0",
         "name": "순창 KOREA 떡볶이 페스타",
         "start": "2026-11-21",
@@ -4479,5 +3942,2223 @@
         "modified": "2026-11-02"
       }
     ]
+  },
+  "groceries": {
+    "schema_version": 1,
+    "source": "groceries",
+    "fetched_at": "2026-11-09T13:24:38.645151+09:00",
+    "notice": "KAMIS(aT)·축산물품질평가원이 조사한 전국 평균 소매가격입니다. 매장·산지·규격에 따라 실제 가격은 다르며, 사람 검증 전 공식 게시값을 그대로 옮겼습니다.",
+    "produce": {
+      "survey_date": "2026-11-06",
+      "items": [
+        {
+          "id": "쌀|20kg|20kg|상품",
+          "item": "쌀",
+          "kind": "20kg",
+          "unit": "20kg",
+          "grade": "상품",
+          "today": 63289,
+          "day_ago": 63298,
+          "week_ago": 63282,
+          "two_weeks_ago": 63042,
+          "year_ago": 64926,
+          "normal": 55692
+        },
+        {
+          "id": "쌀|10kg|10kg|상품",
+          "item": "쌀",
+          "kind": "10kg",
+          "unit": "10kg",
+          "grade": "상품",
+          "today": 34796,
+          "day_ago": 34796,
+          "week_ago": null,
+          "two_weeks_ago": 35544,
+          "year_ago": 34881,
+          "normal": 31253
+        },
+        {
+          "id": "찹쌀|일반계|1kg|상품",
+          "item": "찹쌀",
+          "kind": "일반계",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 4832,
+          "day_ago": 4844,
+          "week_ago": 4905,
+          "two_weeks_ago": 5239,
+          "year_ago": 5967,
+          "normal": 4214
+        },
+        {
+          "id": "혼식곡|국산|1kg|상품",
+          "item": "혼식곡",
+          "kind": "국산",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 7698,
+          "day_ago": 7853,
+          "week_ago": 7878,
+          "two_weeks_ago": 7985,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "현미|찰현미|1kg|상품",
+          "item": "현미",
+          "kind": "찰현미",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 5694,
+          "day_ago": 5694,
+          "week_ago": 5643,
+          "two_weeks_ago": 5685,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "보리쌀|찰보리|1kg|상품",
+          "item": "보리쌀",
+          "kind": "찰보리",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 5063,
+          "day_ago": 5063,
+          "week_ago": 5053,
+          "two_weeks_ago": 5048,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "콩|흰 콩(국산)|500g|상품",
+          "item": "콩",
+          "kind": "흰 콩(국산)",
+          "unit": "500g",
+          "grade": "상품",
+          "today": 5057,
+          "day_ago": 5057,
+          "week_ago": 5039,
+          "two_weeks_ago": 5047,
+          "year_ago": 5214,
+          "normal": 5251
+        },
+        {
+          "id": "팥|붉은 팥(국산)|500g|상품",
+          "item": "팥",
+          "kind": "붉은 팥(국산)",
+          "unit": "500g",
+          "grade": "상품",
+          "today": 13375,
+          "day_ago": 13387,
+          "week_ago": 13287,
+          "two_weeks_ago": 13563,
+          "year_ago": 13915,
+          "normal": 9116
+        },
+        {
+          "id": "녹두|국산|500g|상품",
+          "item": "녹두",
+          "kind": "국산",
+          "unit": "500g",
+          "grade": "상품",
+          "today": 12236,
+          "day_ago": 12216,
+          "week_ago": 12193,
+          "two_weeks_ago": 12208,
+          "year_ago": 11519,
+          "normal": 11376
+        },
+        {
+          "id": "고구마|밤|1kg|상품",
+          "item": "고구마",
+          "kind": "밤",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 3871,
+          "day_ago": 3819,
+          "week_ago": 3939,
+          "two_weeks_ago": 5135,
+          "year_ago": 4328,
+          "normal": 4963
+        },
+        {
+          "id": "감자|수미(노지)|100g|상품",
+          "item": "감자",
+          "kind": "수미(노지)",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 338,
+          "day_ago": 336,
+          "week_ago": 333,
+          "two_weeks_ago": 348,
+          "year_ago": 362,
+          "normal": 357
+        },
+        {
+          "id": "감자|수미(노지)|100g|중품",
+          "item": "감자",
+          "kind": "수미(노지)",
+          "unit": "100g",
+          "grade": "중품",
+          "today": 295,
+          "day_ago": 290,
+          "week_ago": 270,
+          "two_weeks_ago": 346,
+          "year_ago": 287,
+          "normal": 277
+        },
+        {
+          "id": "배추|가을|1포기|상품",
+          "item": "배추",
+          "kind": "가을",
+          "unit": "1포기",
+          "grade": "상품",
+          "today": 2823,
+          "day_ago": 2829,
+          "week_ago": 3775,
+          "two_weeks_ago": null,
+          "year_ago": 2599,
+          "normal": 3604
+        },
+        {
+          "id": "양배추|양배추|1포기|상품",
+          "item": "양배추",
+          "kind": "양배추",
+          "unit": "1포기",
+          "grade": "상품",
+          "today": 4701,
+          "day_ago": 4701,
+          "week_ago": 4711,
+          "two_weeks_ago": 4792,
+          "year_ago": 3567,
+          "normal": 4284
+        },
+        {
+          "id": "양배추|양배추|1포기|중품",
+          "item": "양배추",
+          "kind": "양배추",
+          "unit": "1포기",
+          "grade": "중품",
+          "today": 2981,
+          "day_ago": 2993,
+          "week_ago": 3549,
+          "two_weeks_ago": 3753,
+          "year_ago": 3015,
+          "normal": 3653
+        },
+        {
+          "id": "시금치|시금치|100g|상품",
+          "item": "시금치",
+          "kind": "시금치",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 839,
+          "day_ago": 846,
+          "week_ago": 826,
+          "two_weeks_ago": 830,
+          "year_ago": 1320,
+          "normal": 993
+        },
+        {
+          "id": "상추|적|100g|상품",
+          "item": "상추",
+          "kind": "적",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1011,
+          "day_ago": 1014,
+          "week_ago": 904,
+          "two_weeks_ago": 984,
+          "year_ago": 1671,
+          "normal": 1497
+        },
+        {
+          "id": "상추|청|100g|상품",
+          "item": "상추",
+          "kind": "청",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1029,
+          "day_ago": 1029,
+          "week_ago": 905,
+          "two_weeks_ago": 982,
+          "year_ago": 1914,
+          "normal": 1591
+        },
+        {
+          "id": "얼갈이배추|얼갈이배추|1kg|상품",
+          "item": "얼갈이배추",
+          "kind": "얼갈이배추",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 1850,
+          "day_ago": 1834,
+          "week_ago": 1817,
+          "two_weeks_ago": 1889,
+          "year_ago": 3830,
+          "normal": 3230
+        },
+        {
+          "id": "갓|갓|1kg|상품",
+          "item": "갓",
+          "kind": "갓",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 3779,
+          "day_ago": 3803,
+          "week_ago": null,
+          "two_weeks_ago": null,
+          "year_ago": 4765,
+          "normal": 3735
+        },
+        {
+          "id": "수박|수박|1개|상품",
+          "item": "수박",
+          "kind": "수박",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 20011,
+          "day_ago": 20233,
+          "week_ago": 20306,
+          "two_weeks_ago": 20733,
+          "year_ago": 24166,
+          "normal": 22491
+        },
+        {
+          "id": "수박|수박|1개|중품",
+          "item": "수박",
+          "kind": "수박",
+          "unit": "1개",
+          "grade": "중품",
+          "today": 17569,
+          "day_ago": 17415,
+          "week_ago": 17929,
+          "two_weeks_ago": 16653,
+          "year_ago": 22744,
+          "normal": 20649
+        },
+        {
+          "id": "오이|가시계통|10개|상품",
+          "item": "오이",
+          "kind": "가시계통",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 10306,
+          "day_ago": 10274,
+          "week_ago": 8045,
+          "two_weeks_ago": 7867,
+          "year_ago": 15956,
+          "normal": 14056
+        },
+        {
+          "id": "오이|다다기계통|10개|상품",
+          "item": "오이",
+          "kind": "다다기계통",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 8090,
+          "day_ago": 7925,
+          "week_ago": 6409,
+          "two_weeks_ago": 5628,
+          "year_ago": 12245,
+          "normal": 11160
+        },
+        {
+          "id": "오이|취청|10개|상품",
+          "item": "오이",
+          "kind": "취청",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 10166,
+          "day_ago": 9795,
+          "week_ago": 8011,
+          "two_weeks_ago": 7724,
+          "year_ago": 15427,
+          "normal": 14215
+        },
+        {
+          "id": "호박|애호박|1개|상품",
+          "item": "호박",
+          "kind": "애호박",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 1556,
+          "day_ago": 1528,
+          "week_ago": 1229,
+          "two_weeks_ago": 1144,
+          "year_ago": 2120,
+          "normal": 1910
+        },
+        {
+          "id": "호박|쥬키니|1개|상품",
+          "item": "호박",
+          "kind": "쥬키니",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 1693,
+          "day_ago": 1616,
+          "week_ago": 1502,
+          "two_weeks_ago": 1443,
+          "year_ago": 2435,
+          "normal": 2219
+        },
+        {
+          "id": "토마토|토마토|1kg|상품",
+          "item": "토마토",
+          "kind": "토마토",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 4557,
+          "day_ago": 4556,
+          "week_ago": 4983,
+          "two_weeks_ago": 5376,
+          "year_ago": 8355,
+          "normal": 7914
+        },
+        {
+          "id": "무|고랭지|1개|상품",
+          "item": "무",
+          "kind": "고랭지",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 2050,
+          "day_ago": 2050,
+          "week_ago": 2106,
+          "two_weeks_ago": 2214,
+          "year_ago": 1935,
+          "normal": 2224
+        },
+        {
+          "id": "무|가을|1개|상품",
+          "item": "무",
+          "kind": "가을",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 1836,
+          "day_ago": 1845,
+          "week_ago": 1986,
+          "two_weeks_ago": null,
+          "year_ago": 2041,
+          "normal": 2199
+        },
+        {
+          "id": "당근|무세척(국산)|1kg|상품",
+          "item": "당근",
+          "kind": "무세척(국산)",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 4673,
+          "day_ago": 4655,
+          "week_ago": 4467,
+          "two_weeks_ago": 4178,
+          "year_ago": 3139,
+          "normal": 4690
+        },
+        {
+          "id": "당근|무세척(국산)|1kg|중품",
+          "item": "당근",
+          "kind": "무세척(국산)",
+          "unit": "1kg",
+          "grade": "중품",
+          "today": 3660,
+          "day_ago": 3660,
+          "week_ago": 4038,
+          "two_weeks_ago": 3772,
+          "year_ago": 2981,
+          "normal": 3716
+        },
+        {
+          "id": "열무|열무|1kg|상품",
+          "item": "열무",
+          "kind": "열무",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 2220,
+          "day_ago": 2246,
+          "week_ago": 2016,
+          "two_weeks_ago": 1949,
+          "year_ago": 4156,
+          "normal": 3618
+        },
+        {
+          "id": "건고추|화건|600g|상품",
+          "item": "건고추",
+          "kind": "화건",
+          "unit": "600g",
+          "grade": "상품",
+          "today": 17148,
+          "day_ago": 17148,
+          "week_ago": 17600,
+          "two_weeks_ago": 17519,
+          "year_ago": 15522,
+          "normal": 16372
+        },
+        {
+          "id": "풋고추|풋고추(녹광 등)|100g|상품",
+          "item": "풋고추",
+          "kind": "풋고추(녹광 등)",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1684,
+          "day_ago": 1645,
+          "week_ago": 1570,
+          "two_weeks_ago": 1785,
+          "year_ago": 2040,
+          "normal": 1865
+        },
+        {
+          "id": "풋고추|꽈리고추|100g|상품",
+          "item": "풋고추",
+          "kind": "꽈리고추",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1420,
+          "day_ago": 1394,
+          "week_ago": 1478,
+          "two_weeks_ago": 1503,
+          "year_ago": 1667,
+          "normal": 1513
+        },
+        {
+          "id": "풋고추|청양고추|100g|상품",
+          "item": "풋고추",
+          "kind": "청양고추",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1120,
+          "day_ago": 1117,
+          "week_ago": 1065,
+          "two_weeks_ago": 1182,
+          "year_ago": 1187,
+          "normal": 1241
+        },
+        {
+          "id": "풋고추|오이맛고추|100g|상품",
+          "item": "풋고추",
+          "kind": "오이맛고추",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 954,
+          "day_ago": 943,
+          "week_ago": 899,
+          "two_weeks_ago": 970,
+          "year_ago": 1110,
+          "normal": 1206
+        },
+        {
+          "id": "붉은고추|붉은고추|100g|상품",
+          "item": "붉은고추",
+          "kind": "붉은고추",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1868,
+          "day_ago": 1870,
+          "week_ago": 1878,
+          "two_weeks_ago": 2216,
+          "year_ago": 2136,
+          "normal": 2097
+        },
+        {
+          "id": "양파|양파|1kg|상품",
+          "item": "양파",
+          "kind": "양파",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 1893,
+          "day_ago": 2050,
+          "week_ago": 1890,
+          "two_weeks_ago": 2165,
+          "year_ago": 2008,
+          "normal": 2088
+        },
+        {
+          "id": "파|대파|1kg|상품",
+          "item": "파",
+          "kind": "대파",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 2597,
+          "day_ago": 2607,
+          "week_ago": 2274,
+          "two_weeks_ago": 2784,
+          "year_ago": 2894,
+          "normal": 3164
+        },
+        {
+          "id": "파|쪽파|1kg|상품",
+          "item": "파",
+          "kind": "쪽파",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 4654,
+          "day_ago": 4501,
+          "week_ago": 4980,
+          "two_weeks_ago": 5319,
+          "year_ago": 9492,
+          "normal": 8127
+        },
+        {
+          "id": "생강|국산|1kg|상품",
+          "item": "생강",
+          "kind": "국산",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 10544,
+          "day_ago": 10561,
+          "week_ago": 11395,
+          "two_weeks_ago": 11354,
+          "year_ago": 9852,
+          "normal": 10309
+        },
+        {
+          "id": "고춧가루|국산|1kg|상품",
+          "item": "고춧가루",
+          "kind": "국산",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 29898,
+          "day_ago": 30324,
+          "week_ago": 31200,
+          "two_weeks_ago": 31414,
+          "year_ago": 30238,
+          "normal": 31959
+        },
+        {
+          "id": "고춧가루|중국|1kg|상품",
+          "item": "고춧가루",
+          "kind": "중국",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 13658,
+          "day_ago": 13646,
+          "week_ago": 13538,
+          "two_weeks_ago": 13532,
+          "year_ago": 13405,
+          "normal": 13212
+        },
+        {
+          "id": "가지|가지|3개|상품",
+          "item": "가지",
+          "kind": "가지",
+          "unit": "3개",
+          "grade": "상품",
+          "today": 2583,
+          "day_ago": 2541,
+          "week_ago": 2275,
+          "two_weeks_ago": 2238,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "미나리|미나리|100g|상품",
+          "item": "미나리",
+          "kind": "미나리",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1628,
+          "day_ago": 1617,
+          "week_ago": 1706,
+          "two_weeks_ago": 1810,
+          "year_ago": 1498,
+          "normal": 1482
+        },
+        {
+          "id": "깻잎|깻잎|50g|상품",
+          "item": "깻잎",
+          "kind": "깻잎",
+          "unit": "50g",
+          "grade": "상품",
+          "today": 1406,
+          "day_ago": 1395,
+          "week_ago": 1168,
+          "two_weeks_ago": 1238,
+          "year_ago": 1633,
+          "normal": 1399
+        },
+        {
+          "id": "부추|부추|100g|상품",
+          "item": "부추",
+          "kind": "부추",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 719,
+          "day_ago": 697,
+          "week_ago": 665,
+          "two_weeks_ago": 725,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "피망|청|100g|상품",
+          "item": "피망",
+          "kind": "청",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1379,
+          "day_ago": 1367,
+          "week_ago": 1254,
+          "two_weeks_ago": 1363,
+          "year_ago": 1589,
+          "normal": 1400
+        },
+        {
+          "id": "파프리카|파프리카|1개|상품",
+          "item": "파프리카",
+          "kind": "파프리카",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 1364,
+          "day_ago": 1398,
+          "week_ago": 1329,
+          "two_weeks_ago": 1399,
+          "year_ago": 1977,
+          "normal": 1851
+        },
+        {
+          "id": "파프리카|파프리카|1개|중품",
+          "item": "파프리카",
+          "kind": "파프리카",
+          "unit": "1개",
+          "grade": "중품",
+          "today": 1306,
+          "day_ago": 1306,
+          "week_ago": null,
+          "two_weeks_ago": 1358,
+          "year_ago": 1572,
+          "normal": 1422
+        },
+        {
+          "id": "멜론|멜론|1개|상품",
+          "item": "멜론",
+          "kind": "멜론",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 9806,
+          "day_ago": 9840,
+          "week_ago": 9461,
+          "two_weeks_ago": 9589,
+          "year_ago": 11043,
+          "normal": 10748
+        },
+        {
+          "id": "깐마늘(국산)|깐마늘(국산)|1kg|상품",
+          "item": "깐마늘(국산)",
+          "kind": "깐마늘(국산)",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 11982,
+          "day_ago": 11966,
+          "week_ago": 12150,
+          "two_weeks_ago": 10840,
+          "year_ago": 9851,
+          "normal": 10668
+        },
+        {
+          "id": "깐마늘(국산)|깐마늘(국산)|1kg|중품",
+          "item": "깐마늘(국산)",
+          "kind": "깐마늘(국산)",
+          "unit": "1kg",
+          "grade": "중품",
+          "today": 8421,
+          "day_ago": 8413,
+          "week_ago": 9813,
+          "two_weeks_ago": 9646,
+          "year_ago": 8438,
+          "normal": 8416
+        },
+        {
+          "id": "알배기배추|알배기배추|1포기|상품",
+          "item": "알배기배추",
+          "kind": "알배기배추",
+          "unit": "1포기",
+          "grade": "상품",
+          "today": 2323,
+          "day_ago": 2338,
+          "week_ago": 2647,
+          "two_weeks_ago": 2786,
+          "year_ago": 3452,
+          "normal": 3788
+        },
+        {
+          "id": "알배기배추|알배기배추|1포기|중품",
+          "item": "알배기배추",
+          "kind": "알배기배추",
+          "unit": "1포기",
+          "grade": "중품",
+          "today": 1919,
+          "day_ago": null,
+          "week_ago": 1915,
+          "two_weeks_ago": 1976,
+          "year_ago": 1939,
+          "normal": 2266
+        },
+        {
+          "id": "브로콜리|브로콜리(국산)|1개|상품",
+          "item": "브로콜리",
+          "kind": "브로콜리(국산)",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 2307,
+          "day_ago": 2278,
+          "week_ago": 2551,
+          "two_weeks_ago": 2587,
+          "year_ago": 3591,
+          "normal": 3204
+        },
+        {
+          "id": "참깨|백색(국산)|500g|상품",
+          "item": "참깨",
+          "kind": "백색(국산)",
+          "unit": "500g",
+          "grade": "상품",
+          "today": 16652,
+          "day_ago": 16652,
+          "week_ago": 16667,
+          "two_weeks_ago": 16810,
+          "year_ago": 18030,
+          "normal": 16816
+        },
+        {
+          "id": "참깨|중국|500g|중품",
+          "item": "참깨",
+          "kind": "중국",
+          "unit": "500g",
+          "grade": "중품",
+          "today": 4938,
+          "day_ago": 4938,
+          "week_ago": 4938,
+          "two_weeks_ago": 4954,
+          "year_ago": 5063,
+          "normal": 5073
+        },
+        {
+          "id": "땅콩|국산|100g|상품",
+          "item": "땅콩",
+          "kind": "국산",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 3289,
+          "day_ago": 3289,
+          "week_ago": 3298,
+          "two_weeks_ago": 3618,
+          "year_ago": 3715,
+          "normal": 3104
+        },
+        {
+          "id": "땅콩|수입|100g|중품",
+          "item": "땅콩",
+          "kind": "수입",
+          "unit": "100g",
+          "grade": "중품",
+          "today": 1105,
+          "day_ago": 1104,
+          "week_ago": 1092,
+          "two_weeks_ago": 1103,
+          "year_ago": 1126,
+          "normal": 1031
+        },
+        {
+          "id": "느타리버섯|느타리버섯|100g|상품",
+          "item": "느타리버섯",
+          "kind": "느타리버섯",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 1036,
+          "day_ago": 1018,
+          "week_ago": 990,
+          "two_weeks_ago": 982,
+          "year_ago": 851,
+          "normal": 1049
+        },
+        {
+          "id": "느타리버섯|애느타리버섯|100g|상품",
+          "item": "느타리버섯",
+          "kind": "애느타리버섯",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 622,
+          "day_ago": 624,
+          "week_ago": 598,
+          "two_weeks_ago": 610,
+          "year_ago": 587,
+          "normal": 583
+        },
+        {
+          "id": "팽이버섯|팽이버섯|150g|상품",
+          "item": "팽이버섯",
+          "kind": "팽이버섯",
+          "unit": "150g",
+          "grade": "상품",
+          "today": 504,
+          "day_ago": 505,
+          "week_ago": 509,
+          "two_weeks_ago": 497,
+          "year_ago": 545,
+          "normal": 584
+        },
+        {
+          "id": "새송이버섯|새송이버섯|100g|상품",
+          "item": "새송이버섯",
+          "kind": "새송이버섯",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 530,
+          "day_ago": 539,
+          "week_ago": 531,
+          "two_weeks_ago": 567,
+          "year_ago": 556,
+          "normal": 580
+        },
+        {
+          "id": "새송이버섯|새송이버섯|100g|중품",
+          "item": "새송이버섯",
+          "kind": "새송이버섯",
+          "unit": "100g",
+          "grade": "중품",
+          "today": 391,
+          "day_ago": 391,
+          "week_ago": 399,
+          "two_weeks_ago": 403,
+          "year_ago": 460,
+          "normal": 453
+        },
+        {
+          "id": "호두|수입|100g|중품",
+          "item": "호두",
+          "kind": "수입",
+          "unit": "100g",
+          "grade": "중품",
+          "today": 2085,
+          "day_ago": 2085,
+          "week_ago": 2113,
+          "two_weeks_ago": 1966,
+          "year_ago": 2175,
+          "normal": 1656
+        },
+        {
+          "id": "아몬드|수입|100g|중품",
+          "item": "아몬드",
+          "kind": "수입",
+          "unit": "100g",
+          "grade": "중품",
+          "today": 2082,
+          "day_ago": 2082,
+          "week_ago": 2070,
+          "two_weeks_ago": 2046,
+          "year_ago": 1898,
+          "normal": 1499
+        },
+        {
+          "id": "사과|후지|10개|상품",
+          "item": "사과",
+          "kind": "후지",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 18448,
+          "day_ago": 18579,
+          "week_ago": 21408,
+          "two_weeks_ago": null,
+          "year_ago": 27320,
+          "normal": 25931
+        },
+        {
+          "id": "사과|후지|10개|중품",
+          "item": "사과",
+          "kind": "후지",
+          "unit": "10개",
+          "grade": "중품",
+          "today": 15391,
+          "day_ago": 15278,
+          "week_ago": 17441,
+          "two_weeks_ago": null,
+          "year_ago": 19674,
+          "normal": 18833
+        },
+        {
+          "id": "사과|홍로|10개|상품",
+          "item": "사과",
+          "kind": "홍로",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 24523,
+          "day_ago": 24590,
+          "week_ago": 22056,
+          "two_weeks_ago": 19897,
+          "year_ago": 26125,
+          "normal": 24143
+        },
+        {
+          "id": "사과|홍로|10개|중품",
+          "item": "사과",
+          "kind": "홍로",
+          "unit": "10개",
+          "grade": "중품",
+          "today": 17422,
+          "day_ago": 17491,
+          "week_ago": 15944,
+          "two_weeks_ago": 14523,
+          "year_ago": 19196,
+          "normal": 19474
+        },
+        {
+          "id": "사과|시나노골드|10개|상품",
+          "item": "사과",
+          "kind": "시나노골드",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 19448,
+          "day_ago": 19324,
+          "week_ago": 18425,
+          "two_weeks_ago": 20248,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "사과|시나노골드|10개|중품",
+          "item": "사과",
+          "kind": "시나노골드",
+          "unit": "10개",
+          "grade": "중품",
+          "today": 13485,
+          "day_ago": 13894,
+          "week_ago": 15167,
+          "two_weeks_ago": 17193,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "배|신고|10개|상품",
+          "item": "배",
+          "kind": "신고",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 24596,
+          "day_ago": 24737,
+          "week_ago": 26491,
+          "two_weeks_ago": 27333,
+          "year_ago": 25709,
+          "normal": 28282
+        },
+        {
+          "id": "배|신고|10개|중품",
+          "item": "배",
+          "kind": "신고",
+          "unit": "10개",
+          "grade": "중품",
+          "today": 18469,
+          "day_ago": 18777,
+          "week_ago": 19478,
+          "two_weeks_ago": 19643,
+          "year_ago": 20164,
+          "normal": 23365
+        },
+        {
+          "id": "포도|캠벨얼리|1kg|L과",
+          "item": "포도",
+          "kind": "캠벨얼리",
+          "unit": "1kg",
+          "grade": "L과",
+          "today": null,
+          "day_ago": 7971,
+          "week_ago": 7832,
+          "two_weeks_ago": 7583,
+          "year_ago": 8078,
+          "normal": 8240
+        },
+        {
+          "id": "포도|샤인머스켓|2kg|L과",
+          "item": "포도",
+          "kind": "샤인머스켓",
+          "unit": "2kg",
+          "grade": "L과",
+          "today": 9645,
+          "day_ago": 9466,
+          "week_ago": 11621,
+          "two_weeks_ago": 11865,
+          "year_ago": 10714,
+          "normal": 19039
+        },
+        {
+          "id": "감귤|노지|10개|M과",
+          "item": "감귤",
+          "kind": "노지",
+          "unit": "10개",
+          "grade": "M과",
+          "today": 3589,
+          "day_ago": 3627,
+          "week_ago": 3842,
+          "two_weeks_ago": 3381,
+          "year_ago": 3322,
+          "normal": 3349
+        },
+        {
+          "id": "감귤|노지|10개|S과",
+          "item": "감귤",
+          "kind": "노지",
+          "unit": "10개",
+          "grade": "S과",
+          "today": 2884,
+          "day_ago": 2911,
+          "week_ago": 3082,
+          "two_weeks_ago": 2699,
+          "year_ago": 2667,
+          "normal": 2591
+        },
+        {
+          "id": "감귤|시설|10개|M과",
+          "item": "감귤",
+          "kind": "시설",
+          "unit": "10개",
+          "grade": "M과",
+          "today": null,
+          "day_ago": 6274,
+          "week_ago": 6209,
+          "two_weeks_ago": 7225,
+          "year_ago": 6144,
+          "normal": 6485
+        },
+        {
+          "id": "감귤|시설|10개|S과",
+          "item": "감귤",
+          "kind": "시설",
+          "unit": "10개",
+          "grade": "S과",
+          "today": null,
+          "day_ago": 4786,
+          "week_ago": 4734,
+          "two_weeks_ago": 5167,
+          "year_ago": 4702,
+          "normal": 4972
+        },
+        {
+          "id": "단감|부유|5개|상품",
+          "item": "단감",
+          "kind": "부유",
+          "unit": "5개",
+          "grade": "상품",
+          "today": 6165,
+          "day_ago": 6228,
+          "week_ago": 6267,
+          "two_weeks_ago": 6893,
+          "year_ago": 5890,
+          "normal": 6380
+        },
+        {
+          "id": "단감|부유|5개|중품",
+          "item": "단감",
+          "kind": "부유",
+          "unit": "5개",
+          "grade": "중품",
+          "today": 4467,
+          "day_ago": 4296,
+          "week_ago": 4146,
+          "two_weeks_ago": 5228,
+          "year_ago": 4602,
+          "normal": 4760
+        },
+        {
+          "id": "바나나|수입|100g|상품",
+          "item": "바나나",
+          "kind": "수입",
+          "unit": "100g",
+          "grade": "상품",
+          "today": 292,
+          "day_ago": 297,
+          "week_ago": 342,
+          "two_weeks_ago": 333,
+          "year_ago": 330,
+          "normal": 322
+        },
+        {
+          "id": "바나나|수입|100g|중품",
+          "item": "바나나",
+          "kind": "수입",
+          "unit": "100g",
+          "grade": "중품",
+          "today": 263,
+          "day_ago": 266,
+          "week_ago": 272,
+          "two_weeks_ago": 283,
+          "year_ago": 244,
+          "normal": 266
+        },
+        {
+          "id": "파인애플|수입|1개|상품",
+          "item": "파인애플",
+          "kind": "수입",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 7503,
+          "day_ago": 7503,
+          "week_ago": 7432,
+          "two_weeks_ago": 7523,
+          "year_ago": 7889,
+          "normal": 7360
+        },
+        {
+          "id": "파인애플|수입|1개|중품",
+          "item": "파인애플",
+          "kind": "수입",
+          "unit": "1개",
+          "grade": "중품",
+          "today": 6079,
+          "day_ago": 6079,
+          "week_ago": 6011,
+          "two_weeks_ago": 6079,
+          "year_ago": 6157,
+          "normal": 6247
+        },
+        {
+          "id": "오렌지|네이블 호주|10개|중품",
+          "item": "오렌지",
+          "kind": "네이블 호주",
+          "unit": "10개",
+          "grade": "중품",
+          "today": 11944,
+          "day_ago": 11944,
+          "week_ago": 11909,
+          "two_weeks_ago": 12663,
+          "year_ago": 14768,
+          "normal": 14193
+        },
+        {
+          "id": "방울토마토|방울토마토|1kg|상품",
+          "item": "방울토마토",
+          "kind": "방울토마토",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 7753,
+          "day_ago": 7890,
+          "week_ago": 9033,
+          "two_weeks_ago": 9627,
+          "year_ago": 11022,
+          "normal": 10657
+        },
+        {
+          "id": "방울토마토|대추방울토마토|1kg|상품",
+          "item": "방울토마토",
+          "kind": "대추방울토마토",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 6698,
+          "day_ago": 6654,
+          "week_ago": 7595,
+          "two_weeks_ago": 8532,
+          "year_ago": 9101,
+          "normal": 10155
+        },
+        {
+          "id": "레몬|수입|10개|상품",
+          "item": "레몬",
+          "kind": "수입",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 9107,
+          "day_ago": 9107,
+          "week_ago": 8877,
+          "two_weeks_ago": 8934,
+          "year_ago": 9832,
+          "normal": 9962
+        },
+        {
+          "id": "레몬|수입|10개|중품",
+          "item": "레몬",
+          "kind": "수입",
+          "unit": "10개",
+          "grade": "중품",
+          "today": 7743,
+          "day_ago": 7743,
+          "week_ago": 7701,
+          "two_weeks_ago": 7972,
+          "year_ago": 7586,
+          "normal": 8308
+        },
+        {
+          "id": "망고|수입|1개|상품",
+          "item": "망고",
+          "kind": "수입",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 4806,
+          "day_ago": 4949,
+          "week_ago": 5500,
+          "two_weeks_ago": 5697,
+          "year_ago": 5782,
+          "normal": 5936
+        },
+        {
+          "id": "블루베리|수입(냉동)|1kg|상품",
+          "item": "블루베리",
+          "kind": "수입(냉동)",
+          "unit": "1kg",
+          "grade": "상품",
+          "today": 11567,
+          "day_ago": 11567,
+          "week_ago": 11457,
+          "two_weeks_ago": 11538,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "아보카도|수입|1개|상품",
+          "item": "아보카도",
+          "kind": "수입",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 1690,
+          "day_ago": 1696,
+          "week_ago": 1888,
+          "two_weeks_ago": 1909,
+          "year_ago": 1814,
+          "normal": 1960
+        },
+        {
+          "id": "키위|골드|10개|상품",
+          "item": "키위",
+          "kind": "골드",
+          "unit": "10개",
+          "grade": "상품",
+          "today": 14004,
+          "day_ago": 15192,
+          "week_ago": 12763,
+          "two_weeks_ago": 14566,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "키위|골드|10개|중품",
+          "item": "키위",
+          "kind": "골드",
+          "unit": "10개",
+          "grade": "중품",
+          "today": 10657,
+          "day_ago": 12475,
+          "week_ago": 9840,
+          "two_weeks_ago": 11720,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "고등어|국산(염장)|1손|-",
+          "item": "고등어",
+          "kind": "국산(염장)",
+          "unit": "1손",
+          "grade": "-",
+          "today": 5953,
+          "day_ago": 5953,
+          "week_ago": 6021,
+          "two_weeks_ago": 5959,
+          "year_ago": 6751,
+          "normal": 4649
+        },
+        {
+          "id": "고등어|국산(신선 냉장)|1마리|大",
+          "item": "고등어",
+          "kind": "국산(신선 냉장)",
+          "unit": "1마리",
+          "grade": "大",
+          "today": 3814,
+          "day_ago": 3868,
+          "week_ago": 4528,
+          "two_weeks_ago": 4194,
+          "year_ago": 4907,
+          "normal": 4435
+        },
+        {
+          "id": "고등어|국산(신선 냉장)|1마리|中",
+          "item": "고등어",
+          "kind": "국산(신선 냉장)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 2985,
+          "day_ago": null,
+          "week_ago": null,
+          "two_weeks_ago": 3275,
+          "year_ago": 3418,
+          "normal": 3267
+        },
+        {
+          "id": "고등어|수입산(염장)|1손|大",
+          "item": "고등어",
+          "kind": "수입산(염장)",
+          "unit": "1손",
+          "grade": "大",
+          "today": 11712,
+          "day_ago": 11828,
+          "week_ago": 11801,
+          "two_weeks_ago": 11816,
+          "year_ago": 10022,
+          "normal": 7904
+        },
+        {
+          "id": "꽁치|냉동(수입)|5마리|-",
+          "item": "꽁치",
+          "kind": "냉동(수입)",
+          "unit": "5마리",
+          "grade": "-",
+          "today": 7558,
+          "day_ago": 7485,
+          "week_ago": 7361,
+          "two_weeks_ago": 7329,
+          "year_ago": 6633,
+          "normal": 6529
+        },
+        {
+          "id": "갈치|국산(냉장)|1마리|大",
+          "item": "갈치",
+          "kind": "국산(냉장)",
+          "unit": "1마리",
+          "grade": "大",
+          "today": 12644,
+          "day_ago": 12734,
+          "week_ago": 12962,
+          "two_weeks_ago": 13557,
+          "year_ago": 13444,
+          "normal": 13842
+        },
+        {
+          "id": "갈치|국산(냉장)|1마리|中",
+          "item": "갈치",
+          "kind": "국산(냉장)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 7011,
+          "day_ago": 7155,
+          "week_ago": 6920,
+          "two_weeks_ago": 6878,
+          "year_ago": 7399,
+          "normal": 7347
+        },
+        {
+          "id": "갈치|국산(냉장)|1마리|小",
+          "item": "갈치",
+          "kind": "국산(냉장)",
+          "unit": "1마리",
+          "grade": "小",
+          "today": 4263,
+          "day_ago": 4349,
+          "week_ago": 4456,
+          "two_weeks_ago": 4247,
+          "year_ago": 4000,
+          "normal": 4085
+        },
+        {
+          "id": "갈치|국산(냉동)|1마리|中",
+          "item": "갈치",
+          "kind": "국산(냉동)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 4725,
+          "day_ago": 4854,
+          "week_ago": 4012,
+          "two_weeks_ago": 5822,
+          "year_ago": 4970,
+          "normal": 5030
+        },
+        {
+          "id": "조기|참조기(신선 냉장)|1마리|中",
+          "item": "조기",
+          "kind": "참조기(신선 냉장)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 1548,
+          "day_ago": 1550,
+          "week_ago": 1571,
+          "two_weeks_ago": 1759,
+          "year_ago": 1718,
+          "normal": 1484
+        },
+        {
+          "id": "조기|참조기(신선 냉장)|1마리|小",
+          "item": "조기",
+          "kind": "참조기(신선 냉장)",
+          "unit": "1마리",
+          "grade": "小",
+          "today": 1211,
+          "day_ago": 1232,
+          "week_ago": 1259,
+          "two_weeks_ago": null,
+          "year_ago": 1306,
+          "normal": 1193
+        },
+        {
+          "id": "조기|참조기(냉동)|1마리|中",
+          "item": "조기",
+          "kind": "참조기(냉동)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 1735,
+          "day_ago": 1734,
+          "week_ago": 1623,
+          "two_weeks_ago": 1688,
+          "year_ago": 2264,
+          "normal": 1772
+        },
+        {
+          "id": "조기|굴비|1마리|中",
+          "item": "조기",
+          "kind": "굴비",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 2596,
+          "day_ago": 2679,
+          "week_ago": 2470,
+          "two_weeks_ago": 2711,
+          "year_ago": 2786,
+          "normal": 2460
+        },
+        {
+          "id": "명태|냉동(원양수입통합)|1마리|大",
+          "item": "명태",
+          "kind": "냉동(원양수입통합)",
+          "unit": "1마리",
+          "grade": "大",
+          "today": 4207,
+          "day_ago": 4207,
+          "week_ago": 4271,
+          "two_weeks_ago": 4365,
+          "year_ago": 4222,
+          "normal": 3866
+        },
+        {
+          "id": "명태|냉동(원양수입통합)|1마리|中",
+          "item": "명태",
+          "kind": "냉동(원양수입통합)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 3007,
+          "day_ago": 3007,
+          "week_ago": 3007,
+          "two_weeks_ago": 2721,
+          "year_ago": 2725,
+          "normal": 2725
+        },
+        {
+          "id": "명태|냉동가공|1kg|中",
+          "item": "명태",
+          "kind": "냉동가공",
+          "unit": "1kg",
+          "grade": "中",
+          "today": 7069,
+          "day_ago": 7069,
+          "week_ago": 6959,
+          "two_weeks_ago": 7712,
+          "year_ago": 7755,
+          "normal": 8965
+        },
+        {
+          "id": "삼치|냉장|1마리|大",
+          "item": "삼치",
+          "kind": "냉장",
+          "unit": "1마리",
+          "grade": "大",
+          "today": 7975,
+          "day_ago": 8486,
+          "week_ago": 8970,
+          "two_weeks_ago": 8364,
+          "year_ago": 7812,
+          "normal": 7812
+        },
+        {
+          "id": "물오징어|연근해(냉동)|1마리|大",
+          "item": "물오징어",
+          "kind": "연근해(냉동)",
+          "unit": "1마리",
+          "grade": "大",
+          "today": 5602,
+          "day_ago": 5602,
+          "week_ago": 5594,
+          "two_weeks_ago": 6032,
+          "year_ago": 5772,
+          "normal": 5129
+        },
+        {
+          "id": "물오징어|연근해(냉동)|1마리|中",
+          "item": "물오징어",
+          "kind": "연근해(냉동)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 3980,
+          "day_ago": 3980,
+          "week_ago": 3786,
+          "two_weeks_ago": 4942,
+          "year_ago": null,
+          "normal": 3249
+        },
+        {
+          "id": "물오징어|원양(냉동)|1마리|中",
+          "item": "물오징어",
+          "kind": "원양(냉동)",
+          "unit": "1마리",
+          "grade": "中",
+          "today": 5326,
+          "day_ago": 5402,
+          "week_ago": 5398,
+          "two_weeks_ago": 5392,
+          "year_ago": 4708,
+          "normal": 4455
+        },
+        {
+          "id": "물오징어|원양(냉동)|1마리|小",
+          "item": "물오징어",
+          "kind": "원양(냉동)",
+          "unit": "1마리",
+          "grade": "小",
+          "today": 3103,
+          "day_ago": 3103,
+          "week_ago": 3585,
+          "two_weeks_ago": 3798,
+          "year_ago": 3340,
+          "normal": 2847
+        },
+        {
+          "id": "마른멸치|마른멸치|100g|대멸",
+          "item": "마른멸치",
+          "kind": "마른멸치",
+          "unit": "100g",
+          "grade": "대멸",
+          "today": 2371,
+          "day_ago": 2371,
+          "week_ago": 2322,
+          "two_weeks_ago": 2592,
+          "year_ago": 2460,
+          "normal": 2353
+        },
+        {
+          "id": "마른멸치|마른멸치|100g|중멸",
+          "item": "마른멸치",
+          "kind": "마른멸치",
+          "unit": "100g",
+          "grade": "중멸",
+          "today": 2393,
+          "day_ago": 2393,
+          "week_ago": 2399,
+          "two_weeks_ago": 2927,
+          "year_ago": 2942,
+          "normal": 2873
+        },
+        {
+          "id": "마른멸치|마른멸치|100g|세멸",
+          "item": "마른멸치",
+          "kind": "마른멸치",
+          "unit": "100g",
+          "grade": "세멸",
+          "today": 3322,
+          "day_ago": 3322,
+          "week_ago": 3292,
+          "two_weeks_ago": 3539,
+          "year_ago": 3227,
+          "normal": 3229
+        },
+        {
+          "id": "마른오징어|마른오징어|10마리|-",
+          "item": "마른오징어",
+          "kind": "마른오징어",
+          "unit": "10마리",
+          "grade": "-",
+          "today": 79553,
+          "day_ago": 79553,
+          "week_ago": 79812,
+          "two_weeks_ago": 83635,
+          "year_ago": 78788,
+          "normal": 70390
+        },
+        {
+          "id": "김|마른김|10장|-",
+          "item": "김",
+          "kind": "마른김",
+          "unit": "10장",
+          "grade": "-",
+          "today": 1427,
+          "day_ago": 1427,
+          "week_ago": 1432,
+          "two_weeks_ago": 1432,
+          "year_ago": 1353,
+          "normal": 1098
+        },
+        {
+          "id": "김|구운김|10장|-",
+          "item": "김",
+          "kind": "구운김",
+          "unit": "10장",
+          "grade": "-",
+          "today": 2070,
+          "day_ago": 2069,
+          "week_ago": 2071,
+          "two_weeks_ago": 2095,
+          "year_ago": 1976,
+          "normal": 1772
+        },
+        {
+          "id": "마른미역|마른미역|100g|-",
+          "item": "마른미역",
+          "kind": "마른미역",
+          "unit": "100g",
+          "grade": "-",
+          "today": 2989,
+          "day_ago": 2989,
+          "week_ago": 2948,
+          "two_weeks_ago": 3097,
+          "year_ago": 3032,
+          "normal": 2982
+        },
+        {
+          "id": "굴|굴|1kg|-",
+          "item": "굴",
+          "kind": "굴",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 18732,
+          "day_ago": 18713,
+          "week_ago": 19976,
+          "two_weeks_ago": 24268,
+          "year_ago": 20707,
+          "normal": 22974
+        },
+        {
+          "id": "수입조기|부세수입(냉동)|1마리|-",
+          "item": "수입조기",
+          "kind": "부세수입(냉동)",
+          "unit": "1마리",
+          "grade": "-",
+          "today": 4777,
+          "day_ago": 4777,
+          "week_ago": 4685,
+          "two_weeks_ago": 4685,
+          "year_ago": 4609,
+          "normal": 3921
+        },
+        {
+          "id": "새우젓|새우젓|1kg|-",
+          "item": "새우젓",
+          "kind": "새우젓",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 20091,
+          "day_ago": 20074,
+          "week_ago": 19025,
+          "two_weeks_ago": 20863,
+          "year_ago": 14300,
+          "normal": 16072
+        },
+        {
+          "id": "멸치액젓|멸치액젓|1kg|-",
+          "item": "멸치액젓",
+          "kind": "멸치액젓",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 5713,
+          "day_ago": 5713,
+          "week_ago": 5845,
+          "two_weeks_ago": 6259,
+          "year_ago": 5619,
+          "normal": 5237
+        },
+        {
+          "id": "천일염|천일염|5kg|-",
+          "item": "천일염",
+          "kind": "천일염",
+          "unit": "5kg",
+          "grade": "-",
+          "today": 11134,
+          "day_ago": 11134,
+          "week_ago": 11243,
+          "two_weeks_ago": 11936,
+          "year_ago": 10806,
+          "normal": 11393
+        },
+        {
+          "id": "전복|냉장|5마리|-",
+          "item": "전복",
+          "kind": "냉장",
+          "unit": "5마리",
+          "grade": "-",
+          "today": 11431,
+          "day_ago": 11481,
+          "week_ago": 10561,
+          "two_weeks_ago": 12054,
+          "year_ago": 11868,
+          "normal": 13153
+        },
+        {
+          "id": "새우|흰다리(수입)|10마리|-",
+          "item": "새우",
+          "kind": "흰다리(수입)",
+          "unit": "10마리",
+          "grade": "-",
+          "today": 5398,
+          "day_ago": 5398,
+          "week_ago": 5458,
+          "two_weeks_ago": 5567,
+          "year_ago": 5571,
+          "normal": 4762
+        },
+        {
+          "id": "꽃게|냉동|1kg|-",
+          "item": "꽃게",
+          "kind": "냉동",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 15848,
+          "day_ago": 15848,
+          "week_ago": 15543,
+          "two_weeks_ago": 15804,
+          "year_ago": 21442,
+          "normal": 21442
+        },
+        {
+          "id": "꽃게|수꽃게(냉장)|1kg|-",
+          "item": "꽃게",
+          "kind": "수꽃게(냉장)",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 20709,
+          "day_ago": 21160,
+          "week_ago": 23545,
+          "two_weeks_ago": 20323,
+          "year_ago": 14762,
+          "normal": 14762
+        },
+        {
+          "id": "홍합|깐홍합(냉장)|100g|-",
+          "item": "홍합",
+          "kind": "깐홍합(냉장)",
+          "unit": "100g",
+          "grade": "-",
+          "today": 2789,
+          "day_ago": 2826,
+          "week_ago": 2910,
+          "two_weeks_ago": 2899,
+          "year_ago": 3138,
+          "normal": 2978
+        },
+        {
+          "id": "홍합|안깐홍합(냉장)|1kg|-",
+          "item": "홍합",
+          "kind": "안깐홍합(냉장)",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 3723,
+          "day_ago": 3667,
+          "week_ago": 3750,
+          "two_weeks_ago": 3902,
+          "year_ago": 4178,
+          "normal": 4322
+        },
+        {
+          "id": "가리비|해만가리비(홍가리비)|1kg|-",
+          "item": "가리비",
+          "kind": "해만가리비(홍가리비)",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 6852,
+          "day_ago": 6767,
+          "week_ago": 7474,
+          "two_weeks_ago": 7133,
+          "year_ago": 7508,
+          "normal": 7588
+        },
+        {
+          "id": "건다시마|완도산|100g|-",
+          "item": "건다시마",
+          "kind": "완도산",
+          "unit": "100g",
+          "grade": "-",
+          "today": 3163,
+          "day_ago": 3160,
+          "week_ago": 3195,
+          "two_weeks_ago": 3230,
+          "year_ago": 3187,
+          "normal": 3476
+        },
+        {
+          "id": "바지락|냉장|1kg|-",
+          "item": "바지락",
+          "kind": "냉장",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 9180,
+          "day_ago": 9061,
+          "week_ago": 10623,
+          "two_weeks_ago": 10353,
+          "year_ago": 10785,
+          "normal": 10785
+        },
+        {
+          "id": "고등어필렛|수입|1kg|-",
+          "item": "고등어필렛",
+          "kind": "수입",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 20693,
+          "day_ago": 20693,
+          "week_ago": 19837,
+          "two_weeks_ago": 22576,
+          "year_ago": 17992,
+          "normal": 17992
+        },
+        {
+          "id": "고등어필렛|국산|1kg|-",
+          "item": "고등어필렛",
+          "kind": "국산",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 18355,
+          "day_ago": 18355,
+          "week_ago": 15994,
+          "two_weeks_ago": 19350,
+          "year_ago": 19174,
+          "normal": 19174
+        },
+        {
+          "id": "낙지|수입(냉동)|100g|-",
+          "item": "낙지",
+          "kind": "수입(냉동)",
+          "unit": "100g",
+          "grade": "-",
+          "today": 2338,
+          "day_ago": 2338,
+          "week_ago": 2341,
+          "two_weeks_ago": 2336,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "꼬막|국산(새꼬막)|1kg|-",
+          "item": "꼬막",
+          "kind": "국산(새꼬막)",
+          "unit": "1kg",
+          "grade": "-",
+          "today": 8153,
+          "day_ago": 8095,
+          "week_ago": 9253,
+          "two_weeks_ago": 9476,
+          "year_ago": null,
+          "normal": null
+        },
+        {
+          "id": "즉석밥|CJ 햇반 백미밥 210g×8개|1묶음|상품",
+          "item": "즉석밥",
+          "kind": "CJ 햇반 백미밥 210g×8개",
+          "unit": "1묶음",
+          "grade": "상품",
+          "today": 11124,
+          "day_ago": 11062,
+          "week_ago": 10324,
+          "two_weeks_ago": 11274,
+          "year_ago": 9889,
+          "normal": 10106
+        },
+        {
+          "id": "두부|풀무원 국산콩 300g×2|1개|상품",
+          "item": "두부",
+          "kind": "풀무원 국산콩 300g×2",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 4884,
+          "day_ago": 4884,
+          "week_ago": 4864,
+          "two_weeks_ago": 5001,
+          "year_ago": 5415,
+          "normal": 5291
+        },
+        {
+          "id": "김치|대상 종가집 포기김치 2.8kg|1개|상품",
+          "item": "김치",
+          "kind": "대상 종가집 포기김치 2.8kg",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 30220,
+          "day_ago": 30220,
+          "week_ago": 29910,
+          "two_weeks_ago": 29693,
+          "year_ago": 29791,
+          "normal": 29791
+        },
+        {
+          "id": "고추장|해찬들 우리쌀로만든 태양초고추장 1kg|1개|상품",
+          "item": "고추장",
+          "kind": "해찬들 우리쌀로만든 태양초고추장 1kg",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 17855,
+          "day_ago": 17855,
+          "week_ago": 15251,
+          "two_weeks_ago": 15206,
+          "year_ago": 13521,
+          "normal": 14109
+        },
+        {
+          "id": "된장|청정원 재래식 생된장 1kg|1개|상품",
+          "item": "된장",
+          "kind": "청정원 재래식 생된장 1kg",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 7339,
+          "day_ago": 7339,
+          "week_ago": 7334,
+          "two_weeks_ago": 8639,
+          "year_ago": 6155,
+          "normal": 6710
+        },
+        {
+          "id": "간장|샘표 양조간장 501 1.7L|1개|상품",
+          "item": "간장",
+          "kind": "샘표 양조간장 501 1.7L",
+          "unit": "1개",
+          "grade": "상품",
+          "today": 15558,
+          "day_ago": 15558,
+          "week_ago": 13588,
+          "two_weeks_ago": 15100,
+          "year_ago": 14073,
+          "normal": 12868
+        },
+        {
+          "id": "맛김(조미김)|동원에프앤비 양반 들기름김 5g×20봉|1묶음|상품",
+          "item": "맛김(조미김)",
+          "kind": "동원에프앤비 양반 들기름김 5g×20봉",
+          "unit": "1묶음",
+          "grade": "상품",
+          "today": 10754,
+          "day_ago": 10754,
+          "week_ago": 10513,
+          "two_weeks_ago": 9200,
+          "year_ago": 9855,
+          "normal": 9008
+        },
+        {
+          "id": "콩나물|풀무원 국산콩 콩나물 340g|1봉|상품",
+          "item": "콩나물",
+          "kind": "풀무원 국산콩 콩나물 340g",
+          "unit": "1봉",
+          "grade": "상품",
+          "today": 2474,
+          "day_ago": 2473,
+          "week_ago": 2455,
+          "two_weeks_ago": 2487,
+          "year_ago": 2478,
+          "normal": 2506
+        }
+      ]
+    },
+    "meat": {
+      "survey_date": "2026-11-08",
+      "items": [
+        {
+          "id": "4301-21-안심 1++등급",
+          "cut": "한우 안심",
+          "label": "안심 1++등급",
+          "unit": "원/100g",
+          "national": 19108,
+          "seoul": 20268,
+          "min": 17377,
+          "min_region": "전남광주",
+          "max": 22118,
+          "max_region": "세종"
+        },
+        {
+          "id": "4301-21-안심 1+등급",
+          "cut": "한우 안심",
+          "label": "안심 1+등급",
+          "unit": "원/100g",
+          "national": 17013,
+          "seoul": 18796,
+          "min": 15606,
+          "min_region": "울산",
+          "max": 19180,
+          "max_region": "강원"
+        },
+        {
+          "id": "4301-21-안심 1등급",
+          "cut": "한우 안심",
+          "label": "안심 1등급",
+          "unit": "원/100g",
+          "national": 16733,
+          "seoul": 17961,
+          "min": 15713,
+          "min_region": "경북",
+          "max": 17961,
+          "max_region": "서울"
+        },
+        {
+          "id": "4301-22-등심 1++등급",
+          "cut": "한우 등심",
+          "label": "등심 1++등급",
+          "unit": "원/100g",
+          "national": 15645,
+          "seoul": 16311,
+          "min": 14571,
+          "min_region": "경북",
+          "max": 18124,
+          "max_region": "세종"
+        },
+        {
+          "id": "4301-22-등심 1+등급",
+          "cut": "한우 등심",
+          "label": "등심 1+등급",
+          "unit": "원/100g",
+          "national": 13676,
+          "seoul": 14255,
+          "min": 12387,
+          "min_region": "세종",
+          "max": 14325,
+          "max_region": "경기"
+        },
+        {
+          "id": "4301-22-등심 1등급",
+          "cut": "한우 등심",
+          "label": "등심 1등급",
+          "unit": "원/100g",
+          "national": 12140,
+          "seoul": 13305,
+          "min": 11239,
+          "min_region": "대구",
+          "max": 14033,
+          "max_region": "대전"
+        },
+        {
+          "id": "4301-40-양지 1++등급",
+          "cut": "한우 양지",
+          "label": "양지 1++등급",
+          "unit": "원/100g",
+          "national": 7633,
+          "seoul": 7769,
+          "min": 7166,
+          "min_region": "경북",
+          "max": 8014,
+          "max_region": "경기"
+        },
+        {
+          "id": "4301-40-양지 1+등급",
+          "cut": "한우 양지",
+          "label": "양지 1+등급",
+          "unit": "원/100g",
+          "national": 7049,
+          "seoul": 7204,
+          "min": 6443,
+          "min_region": "충북",
+          "max": 7486,
+          "max_region": "제주"
+        },
+        {
+          "id": "4301-40-양지 1등급",
+          "cut": "한우 양지",
+          "label": "양지 1등급",
+          "unit": "원/100g",
+          "national": 6949,
+          "seoul": 7836,
+          "min": 6394,
+          "min_region": "대전",
+          "max": 7836,
+          "max_region": "서울"
+        },
+        {
+          "id": "4301-50-갈비 1++등급",
+          "cut": "한우 갈비",
+          "label": "갈비 1++등급",
+          "unit": "원/100g",
+          "national": 8550,
+          "seoul": 9667,
+          "min": 4500,
+          "min_region": "제주",
+          "max": 11230,
+          "max_region": "세종"
+        },
+        {
+          "id": "4301-50-갈비 1+등급",
+          "cut": "한우 갈비",
+          "label": "갈비 1+등급",
+          "unit": "원/100g",
+          "national": 7153,
+          "seoul": 7882,
+          "min": 4500,
+          "min_region": "제주",
+          "max": 8628,
+          "max_region": "대구"
+        },
+        {
+          "id": "4301-50-갈비 1등급",
+          "cut": "한우 갈비",
+          "label": "갈비 1등급",
+          "unit": "원/100g",
+          "national": 7008,
+          "seoul": 7970,
+          "min": 4500,
+          "min_region": "제주",
+          "max": 9167,
+          "max_region": "경남"
+        },
+        {
+          "id": "4301-36-설도 1++등급",
+          "cut": "한우 설도",
+          "label": "설도 1++등급",
+          "unit": "원/100g",
+          "national": 5514,
+          "seoul": 5312,
+          "min": 5037,
+          "min_region": "경북",
+          "max": 5910,
+          "max_region": "세종"
+        },
+        {
+          "id": "4301-36-설도 1+등급",
+          "cut": "한우 설도",
+          "label": "설도 1+등급",
+          "unit": "원/100g",
+          "national": 4877,
+          "seoul": 4892,
+          "min": 4419,
+          "min_region": "울산",
+          "max": 5262,
+          "max_region": "전북"
+        },
+        {
+          "id": "4301-36-설도 1등급",
+          "cut": "한우 설도",
+          "label": "설도 1등급",
+          "unit": "원/100g",
+          "national": 4924,
+          "seoul": 4853,
+          "min": 4155,
+          "min_region": "세종",
+          "max": 5407,
+          "max_region": "제주"
+        },
+        {
+          "id": "4304-27-삼겹살",
+          "cut": "돼지 삼겹살",
+          "label": "삼겹살",
+          "unit": "원/100g",
+          "national": 2768,
+          "seoul": 2866,
+          "min": 2598,
+          "min_region": "경남",
+          "max": 2979,
+          "max_region": "전북"
+        },
+        {
+          "id": "4304-68-목심",
+          "cut": "돼지 목심",
+          "label": "목심",
+          "unit": "원/100g",
+          "national": 2591,
+          "seoul": 2714,
+          "min": 2445,
+          "min_region": "부산",
+          "max": 2768,
+          "max_region": "인천"
+        }
+      ],
+      "missing": [
+        "돼지 앞다리",
+        "돼지 갈비",
+        "닭(육계)",
+        "계란 특란 30구",
+        "수입 소 갈비살",
+        "수입 소 척아이롤",
+        "수입 돼지 삼겹살"
+      ]
+    }
   }
 }
