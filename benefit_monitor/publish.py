@@ -373,7 +373,15 @@ def run(root, now=None, failure=False):
         from .festivals import sanitize
         bundle = sanitize(load(root/'cache/festivals.json', None), now)
         if bundle is not None:data['festivals'] = bundle
+        attach_groceries(root,data,now)
     return write_export(root,data)
+
+
+def attach_groceries(root,data,now):
+    """Separate grocery price channel (approved 2026-11-09); dropped when stale or malformed."""
+    from .groceries import sanitize
+    bundle = sanitize(load(Path(root)/'cache/groceries.json', None), now)
+    if bundle is not None:data['groceries'] = bundle
 
 
 def write_export(root,data):
