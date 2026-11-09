@@ -46,6 +46,15 @@ for(const width of [390,1440])test(`grocery section: featured rows, calculator a
  expect(new Set(requests)).toEqual(new Set([origin]));
 });
 
+test('a bundle collected minutes ago shows right away (not hidden as future data)',async({page})=>{
+ // Clock 20 minutes past the hour, data collected 10 minutes past: an hour-rounded "now" would hide it.
+ await page.clock.install({time:new Date(NOW+20*60000)});
+ const fresh={...groceries,fetched_at:new Date(NOW+10*60000).toISOString()};
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:fresh})}));
+ await page.goto('./');
+ await expect(page.locator('#groceries h2')).toContainText('장보기 시세');
+});
+
 test('missing grocery bundle hides the section and the shortcut',async({page})=>{
  await page.clock.install({time:new Date(NOW)});
  await page.route('**/briefing.json',route=>route.fulfill({json:snapshot()}));

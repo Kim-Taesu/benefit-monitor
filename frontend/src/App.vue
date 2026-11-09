@@ -14,9 +14,10 @@ import {benefitKey,loadFavorites,saveFavorites,clearFavorites,visibleFavorites,s
 import {loadInterests,saveInterests,clearInterests,initialInterests} from './preferences';
 import { adapt, select, timing, coverageLabels, readFilters, filterUrl, formatDate, timestamp } from './benefits';
 const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.now());
-// Parsed once per hour, not on every 1-second tick: freshness windows are hours or days.
-const groceryHour=computed(()=>Math.floor(now.value/3600000)*3600000);
-const groceries=computed(()=>parseGroceries(raw.value,groceryHour.value));
+// Parsed once per minute, not on every 1-second tick. Rounding down stays within the 5-minute
+// future tolerance, so data collected minutes ago is not mistaken for future data (an hour key did that).
+const groceryMinute=computed(()=>Math.floor(now.value/60000)*60000);
+const groceries=computed(()=>parseGroceries(raw.value,groceryMinute.value));
 function pageFilters(search:string){const value=readFilters(search);return {...value,category:'',region:DISTRICTS.includes(value.region)?value.region:''};}
 const filters=reactive(pageFilters(location.search));
 let interestStorage:Storage|null=null;
