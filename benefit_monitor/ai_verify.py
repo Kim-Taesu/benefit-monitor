@@ -25,6 +25,8 @@ from . import verify_contract as vc
 
 AUDIT_DAYS = 7
 TRIAGE_DAYS = 7
+# A dismissed candidate still listed is re-read this often; only a changed body is triaged again.
+DISMISSED_DAYS = 30
 STATE = 'cache/ai_verify/state.json'
 FINDINGS = 'cache/ai_verify/findings.json'
 SENTENCE = re.compile(r'[^.。]+[.。]?')
@@ -83,9 +85,10 @@ def run(root, approved, candidates, state, sources, now, max_items=0, execute=Fa
                     work.append(('audit', item.id, item.data(), claims_of(item)))
         for data in candidates:
             item = Benefit(**{k: v for k, v in data.items() if k in Benefit.__dataclass_fields__})
-            if item.id in approved_ids or not allowed(item.source) or records.get(item.id, {}).get('ai_dismissed'):
+            if item.id in approved_ids or not allowed(item.source):
                 continue
-            if _due(vstate['items'].get(item.id, {}), TRIAGE_DAYS, now):
+            days = DISMISSED_DAYS if records.get(item.id, {}).get('ai_dismissed') else TRIAGE_DAYS
+            if _due(vstate['items'].get(item.id, {}), days, now):
                 work.append(('triage', item.id, data, []))
         # Least recently checked first; audits before triage at equal age.
         work.sort(key=lambda w: (vstate['items'].get(w[1], {}).get('last_checked_at', ''), w[0] != 'audit'))
@@ -110,6 +113,7 @@ def run(root, approved, candidates, state, sources, now, max_items=0, execute=Fa
             signature = hashlib.sha256(json.dumps([purpose, iid, doc['body_hash'], claims, prompt],
                                                   ensure_ascii=False).encode()).hexdigest()
             row = dict(purpose=purpose, body_hash=doc['body_hash'], signature=signature, last_checked_at=now.isoformat())
+            fresh = False
             if previous.get('signature') == signature and previous.get('decision'):
                 decision = previous['decision']
                 out['unchanged'] += 1
@@ -134,12 +138,22 @@ def run(root, approved, candidates, state, sources, now, max_items=0, execute=Fa
                         break
                     continue
                 misses = 0
-                decision = vc.decide(_result(model['run_id']), host, now)
+                try:
+                    decision = vc.decide(_result(model['run_id']), host, now)
+                except (OSError, ValueError, KeyError, TypeError):
+                    # Never crash after a paid call; the run folder stays for inspection.
+                    out['failures'].append({'item_id': iid, 'code': 'unreadable_result'})
+                    vstate['items'][iid] = dict(row, decision=None, run_id=model['run_id'])
+                    continue
                 row['run_id'] = model['run_id']
                 out['checked'] += 1
+                fresh = True
             vstate['items'][iid] = dict(row, decision=decision)
             target = records.setdefault(iid, dict(source=data['source'], first_seen_at=now.isoformat()))
-            if decision['action'] == 'hold' and not target.get('hold_at'):
+            if decision['action'] != 'dismiss' and target.get('ai_dismissed'):
+                target.pop('ai_dismissed')  # The official body changed and is no longer ended / not a benefit.
+            # Only a fresh judgment holds: a human who re-verified the same body overrides a cached one.
+            if decision['action'] == 'hold' and fresh and not target.get('hold_at'):
                 target.update(hold_at=now.isoformat(), hold_reason='ai_contradicted')
                 findings[iid] = dict(url=data['url'], title=data.get('title', ''), at=now.isoformat(),
                                      claims=[dict(claim=f['claim_text'], official_quotes=f['quotes']) for f in decision['findings']])

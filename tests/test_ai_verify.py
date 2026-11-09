@@ -151,7 +151,7 @@ class PipelineTests(unittest.TestCase):
     def transport(self, request):
         return Response(b'User-agent: *\nAllow: /' if request.full_url.endswith('/robots.txt') else self.page)
 
-    def run_ai(self, decisions, now=NOW):
+    def run_ai(self, decisions, now=NOW, research=None):
         from benefit_monitor import cli
         calls = []
         def fake_invoke(root, kind, path):
@@ -164,7 +164,7 @@ class PipelineTests(unittest.TestCase):
              patch('benefit_monitor.cli.collect', return_value=[self.candidate]), \
              patch('benefit_monitor.ai_verify.invoke', side_effect=fake_invoke), \
              patch('benefit_monitor.ai_verify._result', side_effect=fake_result), \
-             patch('benefit_monitor.ai_review.invoke', side_effect=AssertionError('no research call')):
+             patch('benefit_monitor.ai_review.invoke', **(research or {'side_effect': AssertionError('no research call')})):
             report = cli.run(self.root, self.root/'inputs/items.json', True, now, ai_review=True,
                              ai_execute=True, ai_max_candidates=1, ai_max_verify=5)
         return report, calls
@@ -221,6 +221,33 @@ class PipelineTests(unittest.TestCase):
             report = cli.run(self.root, self.root/'inputs/items.json', True, NOW, ai_review=True,
                              ai_execute=True, ai_max_candidates=1, ai_max_verify=8)
         self.assertEqual((len(calls), report['ai_verify']['stopped']), (3, 'no_results'))
+
+    def test_human_reverification_is_not_undone_by_the_cached_judgment(self):
+        from benefit_monitor.store import load, save
+        self.run_ai({'audit': self.contradiction(), 'triage': self.ended()})
+        # A human checks the page, keeps the conditions and re-verifies after the hold.
+        self.approved['verified_at'] = (NOW + timedelta(days=7)).isoformat()
+        (self.root/'inputs/items.json').write_text(json.dumps([self.approved], ensure_ascii=False))
+        report, calls = self.run_ai({}, NOW + timedelta(days=8))
+        self.assertEqual(calls, [])
+        self.assertEqual(report['ai_verify']['held'], 0)
+        self.assertNotIn(self.approved['url'], [i['url'] for i in report['needs_recheck']])
+
+    def test_dismissed_candidate_is_triaged_again_only_after_its_body_changes(self):
+        self.run_ai({'audit': self.contradiction(), 'triage': self.ended()})
+        _, calls = self.run_ai({}, NOW + timedelta(days=31))  # same body: cached, no paid call
+        self.assertNotIn(('verify', 'triage'), calls)
+        self.page = self.page.replace('종료되었습니다'.encode(), '12월 31일까지 계속 운영합니다'.encode())
+        ongoing = dict(self.ended(), item_status='ongoing', status_quotes=['계속 운영'])
+        report, calls = self.run_ai({'triage': ongoing, 'audit': self.contradiction()}, NOW + timedelta(days=62),
+                                    research={'return_value': {'status': 'rejected_draft', 'run_id': None}})
+        self.assertIn(('verify', 'triage'), calls)
+        from benefit_monitor.store import load
+        from benefit_monitor.models import Benefit
+        cid = Benefit(**self.candidate).id
+        row = load(self.root/'cache/operational_state.json', {})['items'][cid]
+        self.assertNotIn('ai_dismissed', row)
+        self.assertEqual(row['ai_triage'], 'ongoing')
 
     def test_without_verify_budget_nothing_is_checked(self):
         from benefit_monitor import cli
