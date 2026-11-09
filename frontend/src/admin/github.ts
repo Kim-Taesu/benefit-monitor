@@ -53,6 +53,11 @@ export async function readTakedowns(token:string,options:Options={}):Promise<Lis
  checkToken(token);const {list,sha}=await read(token,options);return {list,sha};
 }
 
+// One read for the admin page: item takedowns and grocery text mutes come from the same file.
+export async function readAdminState(token:string,options:Options={}):Promise<{list:Takedown[];mutes:string[]}>{
+ checkToken(token);const {list,raw}=await read(token,options);return {list,mutes:mutesIn(raw)};
+}
+
 // Read, change, write with the sha precondition; on 409/422 re-read once and re-apply the change.
 // Entries the page does not understand are kept as they are (the backend reads any dict).
 async function update(token:string,options:Options,change:(raw:unknown[])=>unknown[]|null,message:string){
@@ -95,5 +100,34 @@ export async function restore(token:string,item:{candidate_id:string;title_key:s
  const {candidate_id,title_key}=item;
  const match=(t:unknown)=>sameCandidate(candidate_id)(t)||(!!title_key&&!!t&&typeof t==='object'&&(t as Record<string,unknown>).title_key===title_key);
  await update(token,options,raw=>raw.some(match)?raw.filter(t=>!match(t)):null,'Restore '+candidate_id);
+ await redeploy(token,options);
+}
+
+// Weekly grocery pick: mute the AI summary/menus for one survey day (the card falls back to prices only).
+const GROCERY_KIND='grocery_pick_text';
+const DAY=/^\d{4}-\d{2}-\d{2}$/;
+const sameMute=(day:string)=>(t:unknown)=>!!t&&typeof t==='object'&&(t as Record<string,unknown>).kind===GROCERY_KIND&&(t as Record<string,unknown>).survey_date===day;
+
+function mutesIn(raw:unknown[]):string[]{
+ return raw.flatMap(t=>{const v=t as Record<string,unknown>;return v&&typeof v==='object'&&v.kind===GROCERY_KIND&&typeof v.survey_date==='string'&&DAY.test(v.survey_date)?[v.survey_date]:[];});
+}
+export async function readGroceryMutes(token:string,options:Options={}):Promise<string[]>{
+ checkToken(token);return mutesIn((await read(token,options)).raw);
+}
+
+export async function muteGroceryText(token:string,surveyDay:string,note:string,options:Options={}):Promise<void>{
+ checkToken(token);
+ const memo=note.trim();
+ if(!DAY.test(surveyDay))throw new Error('조사일 형식이 올바르지 않습니다');
+ if(memo.length>NOTE_MAX)throw new Error(`메모는 ${NOTE_MAX}자 이하로 적으세요`);
+ const entry={kind:GROCERY_KIND,survey_date:surveyDay,taken_down_at:(options.now?.()||new Date()).toISOString(),note:memo};
+ await update(token,options,raw=>raw.some(sameMute(surveyDay))?null:[...raw,entry],'Mute grocery pick text '+surveyDay);
+ await redeploy(token,options);
+}
+
+export async function unmuteGroceryText(token:string,surveyDay:string,options:Options={}):Promise<void>{
+ checkToken(token);
+ if(!DAY.test(surveyDay))throw new Error('조사일 형식이 올바르지 않습니다');
+ await update(token,options,raw=>raw.some(sameMute(surveyDay))?raw.filter(t=>!sameMute(surveyDay)(t)):null,'Unmute grocery pick text '+surveyDay);
  await redeploy(token,options);
 }

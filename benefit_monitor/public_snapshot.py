@@ -129,7 +129,12 @@ def validate(root,data,now,auto=None):
     if data.get('groceries') and clean['status']!='collection_failed':
         from .groceries import sanitize as groceries
         bundle=groceries(data['groceries'],now)
-        if bundle is not None:clean['groceries']=bundle
+        if bundle is not None:
+            clean['groceries']=bundle
+            if data.get('grocery_pick'):
+                from .grocery_pick import public as grocery_pick
+                pick=grocery_pick(data['grocery_pick'],bundle,(auto if auto is not None else auto_release.load(root))[1],now)
+                if pick is not None:clean['grocery_pick']=pick
     return clean
 
 

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows} from '../src/groceries.ts';
+import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows,parsePick} from '../src/groceries.ts';
 
 const NOW=Date.parse('2026-11-09T09:00:00+09:00');
 function produce(over:Record<string,unknown>={}){
@@ -106,4 +106,19 @@ test('featured view: one 상품 row per listed produce item and every meat grade
  const rows=featuredRows(g.rows);
  assert.deepEqual(rows.map(r=>r.name+(r.kind==='meat'?' '+r.detail:'')),['양파','배추','브로콜리','한우 등심 1++등급','한우 등심 1등급','돼지 삼겹살 ']);
  assert.equal(rows[1].current,2823);
+});
+
+test('weekly pick links picks to bundle rows and keeps the AI label',()=>{
+ const g=parseGroceries(raw(),NOW)!;
+ const pickRaw=(over:Record<string,unknown>={})=>({...raw(),grocery_pick:{schema_version:1,generated_at:'2026-11-09T01:30:00+09:00',survey_date:'2026-11-06',
+  source:'ai',summary:'양파가 싸요. 양파볶음으로 주말 반찬을 준비해 보세요.',picks:[{id:'양파|양파|1kg|상품',menu:'양파볶음'},{id:'4304-27-삼겹살',menu:'수육'},{id:'없는|품목|1개|상품',menu:'x'}],...over}});
+ const pick=parsePick(pickRaw(),g)!;
+ assert.equal(pick.source,'ai');
+ assert.deepEqual(pick.picks.map(p=>[p.row.name,p.menu]),[['양파','양파볶음'],['돼지 삼겹살','수육']]);
+ assert.equal(parsePick(pickRaw({survey_date:'2026-11-05'}),g),null);
+ assert.equal(parsePick(pickRaw({summary:'<b>x</b>'}),g),null);
+ assert.equal(parsePick(pickRaw({source:'other'}),g),null);
+ const rule=parsePick(pickRaw({source:'rule',summary:null,picks:[{id:'양파|양파|1kg|상품',menu:null}]}),g)!;
+ assert.deepEqual([rule.source,rule.summary,rule.picks[0].menu],['rule',null,null]);
+ assert.equal(parsePick(raw(),g),null);
 });

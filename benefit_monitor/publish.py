@@ -381,7 +381,13 @@ def attach_groceries(root,data,now):
     """Separate grocery price channel (approved 2026-11-09); dropped when stale or malformed."""
     from .groceries import sanitize
     bundle = sanitize(load(Path(root)/'cache/groceries.json', None), now)
-    if bundle is not None:data['groceries'] = bundle
+    if bundle is None:return
+    data['groceries'] = bundle
+    # The weekly pick is re-checked against this exact bundle; an admin mute strips the AI text.
+    from . import auto_release
+    from .grocery_pick import public
+    pick = public(load(Path(root)/'cache/grocery_pick/pick.json', None), bundle, auto_release.load(root)[1], now)
+    if pick is not None:data['grocery_pick'] = pick
 
 
 def write_export(root,data):

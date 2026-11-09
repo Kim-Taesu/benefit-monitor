@@ -144,3 +144,21 @@ export function guideFor(row:PriceRow):Guide|null{
 }
 export function wikiLink(g:Guide):string|null{return g.wiki&&/^\d+$/.test(g.wiki)?guide.wiki_url+g.wiki:null;}
 export function won(n:number):string{return n.toLocaleString('ko-KR')+'원';}
+
+export interface WeeklyPick{source:'ai'|'rule';summary:string|null;surveyDate:string;picks:{row:PriceRow;menu:string|null}[]}
+/** The weekly pick (grocery_pick), already re-checked by the publisher; prices come from the bundle rows. */
+export function parsePick(raw:unknown,bundle:GroceryBundle):WeeklyPick|null{
+ if(!record(raw)||!record(raw.grocery_pick))return null;
+ const p=raw.grocery_pick;
+ if(p.schema_version!==1||(p.source!=='ai'&&p.source!=='rule')||p.survey_date!==bundle.produceDate||!Array.isArray(p.picks)||p.picks.length>5)return null;
+ if(p.source==='ai'?!text(p.summary,220):p.summary!==null)return null;
+ // Produce ids (item|kind|unit|grade) and meat ids (species-part-label) never collide.
+ const rows=new Map(bundle.rows.map(r=>[r.id,r] as const));
+ const picks:{row:PriceRow;menu:string|null}[]=[];
+ for(const x of p.picks){
+  if(!record(x)||typeof x.id!=='string')continue;
+  const row=rows.get(x.id),menu=x.menu===null?null:text(x.menu,16)?x.menu:undefined;
+  if(row&&menu!==undefined)picks.push({row,menu:p.source==='rule'?null:menu});
+ }
+ return picks.length?{source:p.source,summary:p.source==='ai'?p.summary as string:null,surveyDate:bundle.produceDate as string,picks}:null;
+}

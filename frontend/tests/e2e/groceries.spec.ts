@@ -12,6 +12,26 @@ const groceries={schema_version:1,source:'groceries',fetched_at:new Date(NOW-360
   {id:'4304-27-삼겹살',cut:'돼지 삼겹살',label:'삼겹살',unit:'원/100g',national:2768,seoul:2866,min:2598,min_region:'경남',max:2979,max_region:'전북'},
   {id:'4301-22-등심 1++등급',cut:'한우 등심',label:'등심 1++등급',unit:'원/100g',national:15645,seoul:16000,min:14000,min_region:'경북',max:17000,max_region:'서울'}]}};
 
+const weekly={schema_version:1,generated_at:new Date(NOW-1800000).toISOString(),survey_date:kst(1),source:'ai',
+ summary:'[테스트] 이번 주는 파(2,597원)가 싸요. 파전으로 주말 반찬을 준비해 보세요.',
+ picks:[{id:'파|대파|1kg|상품',menu:'파전'},{id:'양파|양파|1kg|상품',menu:'양파볶음'},{id:'4304-27-삼겹살',menu:'수육'}]};
+
+test('weekly pick card shows the AI summary, linked prices and the rule fallback',async({page})=>{
+ await page.clock.install({time:new Date(NOW)});
+ let pick:Record<string,unknown>=weekly;
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries,grocery_pick:pick})}));
+ await page.goto('./');
+ const card=page.locator('.grocery-pick');
+ await expect(card.locator('.grocery-badge').first()).toHaveText('AI 작성');
+ await expect(card).toContainText('[테스트] 이번 주는 파(2,597원)가 싸요.');
+ await expect(card.locator('li')).toHaveText([/파 2,597원.*파전/,/양파 1,893원.*양파볶음/,/돼지 삼겹살 2,768원.*수육/]);
+ pick={...weekly,source:'rule',summary:null,picks:weekly.picks.map(p=>({...p,menu:null}))};
+ await page.reload();
+ await expect(card.locator('.grocery-badge').first()).toHaveText('자동 선정');
+ await expect(card.locator('.grocery-pick-summary')).toHaveCount(0);
+ await expect(card.locator('.grocery-pick-menu')).toHaveCount(0);
+});
+
 for(const width of [390,1440])test(`grocery section: featured rows, calculator and guide ${width}`,async({page})=>{
  await page.setViewportSize({width,height:900});
  await page.clock.install({time:new Date(NOW)});

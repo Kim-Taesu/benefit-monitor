@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type GroceryBundle } from './groceries';
+import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type GroceryBundle, type WeeklyPick } from './groceries';
 import GroceryCalc from './GroceryCalc.vue';
 import { formatDate } from './benefits';
-const props=defineProps<{bundle:GroceryBundle}>();
+const props=defineProps<{bundle:GroceryBundle;weekly:WeeklyPick|null}>();
 const PAGE=12,FEATURED='자주 사는 품목';
 const bundle=computed(()=>props.bundle);
 const q=ref(''),category=ref(FEATURED),cheapOnly=ref(false),shown=ref(PAGE);
@@ -35,6 +35,18 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
       <template v-if="bundle.produceDate"> 농·수산물 {{ md(bundle.produceDate) }} 조사</template><template v-if="bundle.meatDate"> · 육류·계란 {{ md(bundle.meatDate) }} 조사</template>
       · 수집 <time :datetime="bundle.fetchedAt">{{ formatDate(bundle.fetchedAt) }}</time></p>
     <p v-if="bundle.missing.length" class="fine-print">일부 품목 미수집: {{ bundle.missing.join(', ') }}</p>
+    <article v-if="weekly" class="grocery-pick" aria-labelledby="grocery-pick-title">
+      <div class="card-meta"><h3 id="grocery-pick-title">이번 주 장보기 추천</h3><span class="grocery-badge" :class="weekly.source==='ai'?'ai':'normal'">{{ weekly.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
+      <p v-if="weekly.summary" class="grocery-pick-summary">{{ weekly.summary }}</p>
+      <ul>
+        <li v-for="p in weekly.picks" :key="p.row.kind+p.row.id">
+          <strong>{{ p.row.name }}</strong> {{ won(p.row.current) }}<small> / {{ p.row.unit.replace(/^원\//,'') }}</small>
+          <span v-if="level(p.row)" class="grocery-badge" :class="level(p.row)!.level">{{ level(p.row)!.label }}</span>
+          <span v-if="p.menu" class="grocery-pick-menu">→ {{ p.menu }}</span>
+        </li>
+      </ul>
+      <p class="fine-print">{{ weekly.source==='ai'?'AI가 공식 조사값 안에서 쓴 문장이에요. 문장 속 숫자와 품목은 공개 전에 코드가 원본과 대조했어요.':'평년보다 많이 싼 순서로 자동 선정했어요.' }}</p>
+    </article>
     <div class="filter-row grocery-filters">
       <div class="filter-field grocery-search"><label for="grocery-q">품목 찾기</label><input id="grocery-q" v-model="q" type="search" placeholder="예: 양파, 삼겹살, 고등어" autocomplete="off" @input="shown=PAGE"></div>
       <div class="quick-filters"><button type="button" :aria-pressed="cheapOnly" @click="cheapOnly=!cheapOnly;shown=PAGE">평년보다 싼 것만</button></div>

@@ -35,12 +35,24 @@ class AIDailyTests(unittest.TestCase):
         def collect(root,**kw):seen.append(('collect',kw['ai_execute']));return {'ai_review':{'queued':1}}
         def refresh(root,**kw):seen.append(('topics',kw['execute']));return {'topics':[],'used_fallback':True}
         def publish(root,**kw):seen.append(('publish',True));return {'status':'awaiting_verification'}
-        with patch('benefit_monitor.ai_daily.collect',side_effect=collect),patch('benefit_monitor.ai_daily.refresh',side_effect=refresh),patch('benefit_monitor.ai_daily.publish_briefing',side_effect=publish):
+        def grocery(root,now,execute):seen.append(('grocery',execute));return {'status':'completed','source':'ai','model':{'status':'validated_draft'}}
+        with patch('benefit_monitor.ai_daily.collect',side_effect=collect),patch('benefit_monitor.ai_daily.refresh',side_effect=refresh),patch('benefit_monitor.ai_daily.publish_briefing',side_effect=publish),patch('benefit_monitor.ai_daily.grocery_refresh',side_effect=grocery):
             first=self.run_daily(online=True,allow_spend=True,publish=True)
             second=self.run_daily(online=True,allow_spend=True,publish=True)
         self.assertEqual(first['status'],'completed')
         self.assertEqual(second['status'],'already_completed_today')
-        self.assertEqual(seen,[('collect',True),('topics',True),('publish',True)])
+        self.assertEqual(seen,[('collect',True),('topics',True),('grocery',True),('publish',True)])
+        self.assertEqual(first['grocery']['source'],'ai')
+
+    def test_grocery_pick_skips_paid_call_after_credit_runs_out(self):
+        self.policy.update(recurring_spend_approved=True);self.save()
+        seen=[]
+        def grocery(root,now,execute):seen.append(execute);return {'status':'completed','source':'rule','model':{'status':'not_requested'}}
+        with patch('benefit_monitor.ai_daily.collect',return_value={'ai_review':{'credit_exhausted':True}}),\
+                patch('benefit_monitor.ai_daily.refresh',side_effect=AssertionError('no topic call')),\
+                patch('benefit_monitor.ai_daily.grocery_refresh',side_effect=grocery):
+            result=self.run_daily(online=True,allow_spend=True)
+        self.assertEqual((result['status'],seen),('credit_exhausted',[False]))
 
     def test_crash_does_not_repeat_paid_daily_attempt(self):
         self.policy['recurring_spend_approved']=True;self.save()
@@ -98,3 +110,17 @@ class AIDailyTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+
+class GroceryIsolationTests(unittest.TestCase):
+    setUp,save,run_daily=AIDailyTests.setUp,AIDailyTests.save,AIDailyTests.run_daily
+
+    def test_grocery_failure_does_not_fail_the_day(self):
+        self.policy.update(recurring_spend_approved=True,public_application_approved=True);self.save()
+        published=[]
+        with patch('benefit_monitor.ai_daily.collect',return_value={'ai_review':{}}),\
+                patch('benefit_monitor.ai_daily.refresh',return_value={'topics':[]}),\
+                patch('benefit_monitor.ai_daily.grocery_refresh',side_effect=KeyError('days')),\
+                patch('benefit_monitor.ai_daily.publish_briefing',side_effect=lambda root,**kw:published.append(1) or {'status':'ok'}):
+            result=self.run_daily(online=True,allow_spend=True,publish=True)
+        self.assertEqual((result['status'],result['grocery']['status'],published),('completed','failed',[1]))

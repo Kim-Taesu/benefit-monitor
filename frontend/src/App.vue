@@ -4,7 +4,7 @@ import BenefitCard from './BenefitCard.vue';
 import BetaPanel from './BetaPanel.vue';
 import FestivalSection from './FestivalSection.vue';
 import GrocerySection from './GrocerySection.vue';
-import {parseGroceries} from './groceries';
+import {parseGroceries,parsePick} from './groceries';
 import {DISTRICTS,isSeoulCandidate} from './beta';
 import type {Topic} from './beta';
 const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=ref<Topic|null>(null);
@@ -18,6 +18,7 @@ const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.n
 // future tolerance, so data collected minutes ago is not mistaken for future data (an hour key did that).
 const groceryMinute=computed(()=>Math.floor(now.value/60000)*60000);
 const groceries=computed(()=>parseGroceries(raw.value,groceryMinute.value));
+const groceryPick=computed(()=>groceries.value?parsePick(raw.value,groceries.value):null);
 function pageFilters(search:string){const value=readFilters(search);return {...value,category:'',region:DISTRICTS.includes(value.region)?value.region:''};}
 const filters=reactive(pageFilters(location.search));
 let interestStorage:Storage|null=null;
@@ -111,7 +112,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" :saved="favorites.includes(benefitKey(item))" @toggle-favorite="toggleFavorite(item)" @official-click="topicPanel?.officialClick()" /></div>
       <div v-else-if="!loading" class="empty-state"><span class="empty-symbol" aria-hidden="true">⌕</span><h3>{{ savedOnly?'현재 조건에 맞는 즐겨찾기가 없어요':all.length?'조건에 맞는 검증 항목이 없어요':state==='partial'?'현재 표시 가능한 검증 항목이 없어요':'확인된 목록이 준비되면 여기에 표시됩니다' }}</h3><p>{{ all.length?'다른 검색어나 지역로 찾아보세요.':'개별 표시기한 경과 또는 검증 보류일 수 있습니다. 실제 혜택이 없거나 행사가 종료됐다는 뜻은 아닙니다.' }}</p><button v-if="active" type="button" class="primary-button" @click="reset">필터 초기화</button></div>
     </section>
-    <GrocerySection v-if="groceries" :bundle="groceries" />
+    <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" />
     <FestivalSection :raw="raw" :now="now" :query="filters.q" />
     <section class="trust-section" aria-labelledby="trust-title"><div class="trust-intro"><p class="eyebrow">확인 가능한 정보, 명확한 한계</p><h2 id="trust-title">혜택의 근거까지 살펴보세요.</h2><p>공식 확인과 신청 자격은 별개입니다.<br>비용·최소 지출·결제 조건은 각 항목의 상세 조건과 원문을 확인하세요.</p></div><div class="collection-details"><details><summary>수집·검증 현황 <span>{{ data?.sources.length||0 }}개 출처</span></summary><div class="coverage-body"><p v-if="data">생성 {{ formatDate(data.generatedAt) }}<br>수집 기준 {{ formatDate(data.sourceReportAt) }}<br>파일 표시기한 {{ formatDate(data.validThrough) }}<br>{{ data.runLabel }}</p><p>재검증 대기 {{ data?.pending||0 }}건 · 화면 검증에서 제외 {{ data?.withheldCount||0 }}건</p><p v-if="data">AI 원문 대조: 최근 실행 {{ data.aiQuality.checked ?? '–' }}건 확인 · 불일치로 보류 {{ data.aiQuality.held }}건 · 끝남·혜택 아님으로 대기 제외 {{ data.aiQuality.dismissed }}건 · 진행 중 우선 확인 {{ data.aiQuality.prioritized }}건</p><ul v-if="data?.aiQuality.findings.length" class="ai-findings"><li v-for="f in data.aiQuality.findings" :key="f.title+f.url"><strong><a v-if="f.url" :href="f.url" target="_blank" rel="noopener noreferrer">{{ f.title }}</a><template v-else>{{ f.title }}</template></strong><small v-for="c in f.claims" :key="c.claim">저장된 조건 “{{ c.claim }}” · 공식 원문 “{{ c.quotes.join(' / ') }}”</small></li></ul><p>표시기한 경과는 행사 종료나 잔여석 소진과 다릅니다. 0건은 실제 혜택이 없다는 뜻이 아닙니다.</p><ul><li v-for="row in data?.sources||[]" :key="row.source"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span><small v-if="row.scope">{{ row.scope }}</small></li></ul><h3 v-if="data?.districts.length">서울 자치구 수집 범위</h3><p>{{ data?.scope||'수집 범위 확인 필요' }}</p><ul><li v-for="row in data?.districts||[]" :key="row.name"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span></li></ul></div></details><details class="interest-settings"><summary>관심 지역 기억하기</summary><div class="coverage-body"><p>이 브라우저에만 저장합니다. 로그인이나 개인정보 입력이 필요하지 않습니다. 공유 링크의 필터가 우선하며, 저장값 삭제는 현재 검색 필터를 바꾸지 않습니다.</p><p>현재 선택: {{ filters.region || '서울시 전체' }}</p><p v-if="remembered">저장한 관심 설정: {{ regions.includes(remembered.region) ? remembered.region : '서울시 전체' }}</p><p v-else>저장한 관심 설정이 없습니다.</p><div class="preference-actions"><button type="button" @click="clearSaved">즐겨찾기 모두 해제</button><button type="button" @click="remember">현재 지역 저장</button><button type="button" @click="forget">저장값 삭제</button></div><p role="status" aria-live="polite">{{ preferenceNotice }}</p></div></details><p class="fine-print">검증 시각은 수집 시각과 다릅니다. 구 선택 시 전국·서울 공통 안내는 함께 포함하지 않습니다. 전체 지역·모든 혜택을 수집한 서비스가 아닙니다.</p></div></section>
     <div id="collection-notice" v-if="!loading&&!notice" class="notice" role="status"><span class="status-dot" aria-hidden="true"></span><div><strong>부분 수집 결과입니다<span v-if="failed"> · 수집 실패 {{ failed }}곳</span></strong><p>미검증 후보 제외 · 자격·재고·잔여석은 공식 안내에서 확인하세요.</p></div></div>
