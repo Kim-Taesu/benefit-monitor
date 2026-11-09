@@ -12,6 +12,7 @@ from .collectors.districts import collect as collect_districts
 from .collectors.public import collect as collect_public
 from . import cost_policy
 from . import festivals
+from . import groceries
 from . import operations
 from . import collection_snapshot
 from .models import Benefit
@@ -63,6 +64,14 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                             successful_sources.append(s["id"])
                             continue
                         failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
+                    if online and s.get("collector") == "grocery_prices":
+                        # Separate display channel like festivals: official averages only, no review or AI.
+                        try:
+                            save(root/"cache/groceries.json", groceries.collect(s, now))
+                            successful_sources.append(s["id"])
+                        except Exception as e:
+                            failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
+                        continue
                     if online and s.get("collector") == "kfes_festivals":
                         # Separate display channel: never review candidates, AI research or topic cards.
                         try:

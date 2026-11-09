@@ -1,0 +1,140 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "groceries",
+  "name": "장보기 시세(KAMIS·축산물품질평가원)",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.kamis.or.kr",
+      "www.ekapepia.com"
+    ],
+    "routes": [
+      "https://www.kamis.or.kr/customer/price/agricultureRetail/catalogue.do",
+      "https://www.ekapepia.com/v3/hereMeat/regionAvgPrice.do"
+    ],
+    "feed_url": null,
+    "collector": "grocery_prices",
+    "lookback_days": 5,
+    "cuts": [
+      {
+        "species": "4301",
+        "part": "21",
+        "name": "한우 안심"
+      },
+      {
+        "species": "4301",
+        "part": "22",
+        "name": "한우 등심"
+      },
+      {
+        "species": "4301",
+        "part": "40",
+        "name": "한우 양지"
+      },
+      {
+        "species": "4301",
+        "part": "50",
+        "name": "한우 갈비"
+      },
+      {
+        "species": "4301",
+        "part": "36",
+        "name": "한우 설도"
+      },
+      {
+        "species": "4304",
+        "part": "27",
+        "name": "돼지 삼겹살"
+      },
+      {
+        "species": "4304",
+        "part": "68",
+        "name": "돼지 목심"
+      },
+      {
+        "species": "4304",
+        "part": "25",
+        "name": "돼지 앞다리"
+      },
+      {
+        "species": "4304",
+        "part": "28",
+        "name": "돼지 갈비"
+      },
+      {
+        "species": "9901",
+        "part": "99",
+        "name": "닭(육계)"
+      },
+      {
+        "species": "9903",
+        "part": "23",
+        "name": "계란 특란 30구"
+      },
+      {
+        "species": "4401",
+        "part": "37",
+        "name": "수입 소 갈비살"
+      },
+      {
+        "species": "4401",
+        "part": "62",
+        "name": "수입 소 척아이롤"
+      },
+      {
+        "species": "4402",
+        "part": "27",
+        "name": "수입 돼지 삼겹살"
+      }
+    ],
+    "ai_review": false,
+    "collection_scope": "KAMIS 부류별 일간 소매가(채소·과일·곡물·수산·일부 가공식품, 평년·1년전 포함) + 축평원 지역별 평균 소비자가 14개 부위 · 별도 장보기 시세 섹션 · 사람 검증 전"
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-09",
+    "entry_urls": [
+      "https://www.kamis.or.kr/customer/price/agricultureRetail/catalogue.do",
+      "https://www.ekapepia.com/v3/hereMeat/regionAvgPrice.do"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "text"
+    },
+    "extraction": [
+      "KAMIS: catalogue.do?action=daily&regday=YYYY-MM-DD&convert_kg_yn=N 한 번에 전 부류. table summary='소매가격전체부류별/일간 가격정보', 열은 품목·품종·단위·등급·당일·1일전·1주일전·2주일전·1년전·평년. 기준일은 span.txt_date 'YYYY.MM.DD 기준'.",
+      "축평원: regionAvgPrice.do?searchStartDate=D&searchEndDate=D&searchCondition1=<축종>&searchCondition2=<부위>. table summary='지역별 소비자가격 평균 테이블', 16개 시·도 + 전국 평균. 단위는 '단위 : 원/100g)' 표기. 부위 코드는 /supPrice/getRtsalSelectCode.json(POST ctsed=<축종>)에서 확인.",
+      "축평원 페이지는 조회일을 searchStartDate 입력값으로 되돌려 준다. 이 값이 요청일과 다르면 쓰지 않는다. 첫 부위로 최근 3일 안의 조사일을 찾고 나머지 부위는 그 날짜로 받는다."
+    ],
+    "pitfalls": [
+      "KAMIS는 조사 없는 날(주말·공휴일) 표 자체가 없다. 전날부터 lookback_days까지 하루씩 거슬러 찾는다. 2026-11-09 실측: 11/08(일) 표 없음, 11/06(금) 164행.",
+      "평년 = 최근 5년 중 최고·최저를 뺀 3년 평균(5일 이동평균). 축산물은 2026-07-01 조사 방법 변경으로 평년·1년전이 없다. 축평원 기간별가격 페이지(periodPrice.do)는 쿼리 파라미터를 무시하고 기본값(소 안심)만 서버 렌더링한다.",
+      "한우 표의 '근내 지방도' 하위 행(7·8·9)은 본 행과 칸 수가 같을 수 있어 라벨로 건너뛴다.",
+      "검증 혜택 목록·검토 큐·AI 조사·주제 카드에 넣지 않는다. 실제 매장 가격이 아니라 전국 평균임을 화면에 표시한다.",
+      "닭은 통닭 단위만 조사된다(육계 kg·9~12호·토종닭). 부위(가슴살·다리·날개) 소매가는 축평원 지역별·업태별 페이지에 없다. 2026-11-09 육계10호(part 03)는 '원/kg' 표기에 549원이 나와 단위가 불확실해 수집하지 않는다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe groceries --budget 25"
+    ],
+    "on_failure": [
+      "KAMIS·축평원 모두 실패하면 실패로 기록하고 장보기 섹션을 비운다. 일부 부위만 실패하면 missing에 이름을 남기고 화면에 '일부 품목 미수집'을 표시한다."
+    ],
+    "code": [
+      "benefit_monitor/groceries.py",
+      "frontend/src/groceries.ts",
+      "frontend/src/grocery-guide.json"
+    ],
+    "history": [
+      {
+        "date": "2026-11-09",
+        "note": "추가. 사용자 승인: 별도 장보기 시세 섹션(평년 대비 판정·매장 가격 계산기·고르는 법). 사용자 요청으로 한우·돼지 전 부위 포함. 실행당 요청 robots 2 + KAMIS 1~5 + 부위 14."
+      }
+    ]
+  }
+}

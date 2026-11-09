@@ -18,6 +18,7 @@ from .store import load, save
 
 SNAPSHOT = 'cache/collection_snapshot.json'
 FESTIVALS = 'cache/festivals.json'
+GROCERIES = 'cache/groceries.json'
 RECIPIENT = 'public/ai-recipient.txt'
 SEOUL = ZoneInfo('Asia/Seoul')
 LISTS = ('incoming', 'district_coverage', 'successful_sources', 'failures', 'handoffs')
@@ -26,9 +27,10 @@ LISTS = ('incoming', 'district_coverage', 'successful_sources', 'failures', 'han
 def capture(root, now, incoming, district_coverage, successful_sources, failures, handoffs):
     root = Path(root)
     festivals = load(root/FESTIVALS, None) if 'kfes' in successful_sources else None
+    groceries = load(root/GROCERIES, None) if 'groceries' in successful_sources else None
     save(root/SNAPSHOT, dict(schema_version=1, collected_at=now.isoformat(), incoming=incoming,
                              district_coverage=district_coverage, successful_sources=successful_sources,
-                             failures=failures, handoffs=handoffs, festivals=festivals))
+                             failures=failures, handoffs=handoffs, festivals=festivals, groceries=groceries))
 
 
 def parse_today(raw, now):
@@ -52,9 +54,11 @@ def parse_today(raw, now):
 
 
 def unpack(root, data):
-    """(incoming, district_coverage, successful_sources, failures, handoffs); restores festivals."""
+    """(incoming, district_coverage, successful_sources, failures, handoffs); restores festivals and groceries."""
     if data.get('festivals') is not None:
         save(Path(root)/FESTIVALS, data['festivals'])
+    if data.get('groceries') is not None:
+        save(Path(root)/GROCERIES, data['groceries'])
     return tuple(list(data[k]) for k in LISTS)
 
 

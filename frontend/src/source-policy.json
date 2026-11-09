@@ -127,6 +127,13 @@
       "domains": [
         "korean.visitkorea.or.kr"
       ]
+    },
+    "groceries": {
+      "name": "장보기 시세(KAMIS·축산물품질평가원)",
+      "domains": [
+        "www.kamis.or.kr",
+        "www.ekapepia.com"
+      ]
     }
   },
   "districts": [

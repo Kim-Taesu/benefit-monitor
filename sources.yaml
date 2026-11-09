@@ -406,6 +406,96 @@
       "window_days": 90,
       "ai_review": false,
       "collection_scope": "대한민국 구석구석 전국축제 목록의 개최중·개최예정 전체(필터별 최대 5페이지) 중 90일 안 시작 · 별도 축제 섹션 · 사람 검증 전"
+    },
+    {
+      "id": "groceries",
+      "name": "장보기 시세(KAMIS·축산물품질평가원)",
+      "tier": "A",
+      "domains": [
+        "www.kamis.or.kr",
+        "www.ekapepia.com"
+      ],
+      "routes": [
+        "https://www.kamis.or.kr/customer/price/agricultureRetail/catalogue.do",
+        "https://www.ekapepia.com/v3/hereMeat/regionAvgPrice.do"
+      ],
+      "feed_url": null,
+      "collector": "grocery_prices",
+      "lookback_days": 5,
+      "cuts": [
+        {
+          "species": "4301",
+          "part": "21",
+          "name": "한우 안심"
+        },
+        {
+          "species": "4301",
+          "part": "22",
+          "name": "한우 등심"
+        },
+        {
+          "species": "4301",
+          "part": "40",
+          "name": "한우 양지"
+        },
+        {
+          "species": "4301",
+          "part": "50",
+          "name": "한우 갈비"
+        },
+        {
+          "species": "4301",
+          "part": "36",
+          "name": "한우 설도"
+        },
+        {
+          "species": "4304",
+          "part": "27",
+          "name": "돼지 삼겹살"
+        },
+        {
+          "species": "4304",
+          "part": "68",
+          "name": "돼지 목심"
+        },
+        {
+          "species": "4304",
+          "part": "25",
+          "name": "돼지 앞다리"
+        },
+        {
+          "species": "4304",
+          "part": "28",
+          "name": "돼지 갈비"
+        },
+        {
+          "species": "9901",
+          "part": "99",
+          "name": "닭(육계)"
+        },
+        {
+          "species": "9903",
+          "part": "23",
+          "name": "계란 특란 30구"
+        },
+        {
+          "species": "4401",
+          "part": "37",
+          "name": "수입 소 갈비살"
+        },
+        {
+          "species": "4401",
+          "part": "62",
+          "name": "수입 소 척아이롤"
+        },
+        {
+          "species": "4402",
+          "part": "27",
+          "name": "수입 돼지 삼겹살"
+        }
+      ],
+      "ai_review": false,
+      "collection_scope": "KAMIS 부류별 일간 소매가(채소·과일·곡물·수산·일부 가공식품, 평년·1년전 포함) + 축평원 지역별 평균 소비자가 14개 부위 · 별도 장보기 시세 섹션 · 사람 검증 전"
     }
   ],
   "seoul_district_coverage": true,
