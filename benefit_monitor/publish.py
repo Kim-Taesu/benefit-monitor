@@ -225,7 +225,7 @@ def page(data):
         sections.append('<li>' + esc(row["name"]) + ': ' + esc(STATUS[row["status"]]) + ' · 후보 ' + str(row["candidates_count"]) + '건 · 공개 검증 ' + str(row["verified_count"]) + '건</li>')
     sections.append('</ul><p>0건은 혜택이 없다는 뜻이 아닙니다. 미검증 후보는 추천에 포함하지 않습니다.</p></details></section>')
     if data.get("review_queue"):
-        reasons={"title_changed":"제목 변경", "body_changed":"본문 변경", "verification_expired":"검증 유효기간 경과", "manual_review":"조건 확인 필요"}
+        reasons={"title_changed":"제목 변경", "body_changed":"본문 변경", "verification_expired":"검증 유효기간 경과", "manual_review":"조건 확인 필요", "ai_contradicted":"AI 원문 대조 불일치"}
         names={row["source"]:row["name"] for row in cov.get("sources",[])}
         sections.append('<section><details><summary>재검증 대기 '+str(len(data["review_queue"]))+'건</summary><ul>')
         for row in data["review_queue"]:
@@ -338,7 +338,27 @@ def payload(root, now=None, failure=False, report=None, state=None, auto=None):
     data["review_queue"] = operations.queue(report, state, now, config.get("max_age_days", 7)) if not failure and data["source_report_at"] else []
     if "withheld" in data:
         data["withheld"]["pending"] = max(data["withheld"]["pending"],len(data["review_queue"]))
+    data["ai_quality"] = ai_quality(root, report, state)
     return data
+
+
+def ai_quality(root, report, state):
+    """Public summary of the AI quality check. Counts come from the operational state (kept by every
+    run); details are ours and the official page's words only (claim + official quotes), never model text."""
+    items = state.get("items", {})
+    held = sorted(k for k, r in items.items() if r.get("hold_reason") == "ai_contradicted" and r.get("hold_at"))
+    try:
+        findings = load(Path(root) / "cache/ai_verify/findings.json", {})
+        findings = findings if isinstance(findings, dict) else {}
+    except (OSError, ValueError):
+        findings = {}
+    run = (report or {}).get("ai_verify") or {}
+    return dict(last_run_checked=run.get("checked"), held=len(held),
+                dismissed=sum(1 for r in items.values() if r.get("ai_dismissed")),
+                prioritized=sum(1 for r in items.values() if r.get("ai_triage")),
+                findings=[dict(item_id=k, source=items[k].get("source", ""), url=findings[k]["url"], title=findings[k]["title"],
+                               claims=[dict(claim=c["claim"], official_quotes=c["official_quotes"]) for c in findings[k]["claims"]])
+                          for k in held if isinstance(findings.get(k), dict)])
 
 
 def run(root, now=None, failure=False):

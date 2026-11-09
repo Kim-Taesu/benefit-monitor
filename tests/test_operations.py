@@ -159,3 +159,45 @@ class OperationsTests(unittest.TestCase):
     def test_candidate_with_future_deadline_keeps_its_own_expiry(self):
         result=self.queued_then_missing(5,item=dict(valid_until='2026-12-31'))
         self.assertEqual([r['id'] for r in result['review_queue']],[self.item.id])
+
+    def test_ai_verification_marks_survive_state_restore(self):
+        from benefit_monitor import operations
+        key = 'a' * 24
+        state = {'schema_version': 1, 'sources': {}, 'items': {key: {
+            'source': 'test', 'first_seen_at': NOW.isoformat(), 'hold_at': NOW.isoformat(), 'hold_reason': 'ai_contradicted',
+            'pending_reason': 'ai_contradicted', 'ai_triage': 'ongoing',
+            'ai_dismissed': {'reason': 'ended', 'body_hash': 'b' * 64, 'at': NOW.isoformat()}}}}
+        row = operations.sanitize(state, {'test'}, NOW)['items'][key]
+        self.assertEqual((row['hold_reason'], row['pending_reason'], row['ai_triage']), ('ai_contradicted',) * 2 + ('ongoing',))
+        self.assertEqual(row['ai_dismissed']['reason'], 'ended')
+        for bad in ({'reason': 'whatever', 'body_hash': 'b' * 64, 'at': NOW.isoformat()},
+                    {'reason': 'ended', 'body_hash': 'x', 'at': NOW.isoformat()}, 'ended'):
+            state['items'][key]['ai_dismissed'] = bad
+            with self.subTest(bad=bad):
+                self.assertNotIn('ai_dismissed', operations.sanitize(state, {'test'}, NOW)['items'][key])
+
+    def test_ai_dismissed_candidate_leaves_queue_and_ongoing_goes_first(self):
+        from benefit_monitor import operations
+        a, b, c = 'a' * 24, 'b' * 24, 'c' * 24
+        def item(url):
+            return dict(source='test', url=url, title='t', summary='s', needs_recheck=True)
+        from benefit_monitor.models import Benefit
+        rows = {u: Benefit(**item(u)).id for u in ('https://official.example/1', 'https://official.example/2', 'https://official.example/3')}
+        report = {'needs_recheck': [item(u) for u in rows]}
+        ids = list(rows.values())
+        state = {'items': {ids[0]: {'source': 'test', 'ai_dismissed': {'reason': 'ended', 'body_hash': 'b' * 64, 'at': NOW.isoformat()}},
+                           ids[2]: {'source': 'test', 'ai_triage': 'ongoing'}}}
+        queue = operations.queue(report, state, NOW)
+        self.assertEqual([r['id'] for r in queue], [ids[2], ids[1]])
+        self.assertNotIn('pending_reason', state['items'][ids[0]])
+
+    def test_human_verified_items_are_not_sent_to_research(self):
+        seen = {}
+        def capture(root, candidates, now, max_candidates=2, execute=False):
+            seen['urls'] = [c['url'] for c in candidates]
+            return dict(changed_ids=[], rows=[])
+        candidate = dict(source='test', url='https://official.example/new', title='New notice', summary='candidate', needs_recheck=True)
+        with patch('benefit_monitor.cli.collect', return_value=[candidate]), \
+             patch('benefit_monitor.ai_review.review_candidates', side_effect=capture):
+            cli.run(self.root, self.root/'inputs/items.json', True, NOW, ai_review=True)
+        self.assertEqual(seen['urls'], ['https://official.example/new'])

@@ -423,6 +423,50 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(metadata['preflight']['input_tokens'],812)
         self.assertFalse(metadata['preflight']['billed'])
 
+    def test_cli_verify_response_is_validated_without_real_network(self):
+        import hashlib,shutil
+        from contextlib import redirect_stdout
+        from benefit_monitor.claude_trial import main
+        root=self.root
+        (root/'docs/ai/prompts').mkdir(parents=True)
+        shutil.copy(ROOT/'docs/ai/prompts/verify-system.md',root/'docs/ai/prompts/verify-system.md')
+        (root/'sources.yaml').write_text(json.dumps({'sources':[{'id':'emart24','domains':['emart24.co.kr']}]}))
+        live=root/'.tools/claude-trial/live'
+        TrialBudget.initialize(live/'budget.json','claude-haiku-5-5','0.10','0.50')
+        body='KT멤버십 안내.\nGOLD / SILVER 1,000원당 50원 차감 할인.'
+        doc=dict(id='doc',source_id='emart24',requested_url='https://emart24.co.kr/service/alliance',final_url='https://emart24.co.kr/service/alliance',
+                 publisher_type='unknown',document_role='notice',retrieved_at='2026-11-05T12:00:00+09:00',published_at=None,
+                 body_hash=hashlib.sha256(body.encode()).hexdigest(),hash_algorithm='sha256-utf8-exact',extraction_scope='test',fetch_status='ok',body=body)
+        host=dict(schema_version='verify-input-v1',mode='api_agent',synthetic=False,now='2026-11-05T12:00:00+09:00',purpose='audit',
+                  item=dict(item_id='a'*24,source_id='emart24',title='제휴',claims=[dict(claim_id='c1',field='conditions',text='GOLD는 1천 원당 100원')]),
+                  documents=[doc])
+        path=root/'input.json';path.write_text(json.dumps(host,ensure_ascii=False))
+        wire=dict(wire_version='verify-wire-v1',item_status='ongoing',status_segment_ids=['d1s2'],
+                  claims=[dict(claim_id='c1',verdict='contradicted',segment_ids=['d1s2'],official_text='GOLD 50원')])
+        response=self.message(content=[{'type':'text','text':json.dumps(wire,ensure_ascii=False)}])
+        sent=[]
+        def transport(request):
+            sent.append(json.loads(request.data))
+            if request.full_url.endswith('/count_tokens'):return self.response({'input_tokens':500})
+            if sent[-1]['max_tokens']==16:
+                return self.response(self.message(content=[{'type':'text','text':'{"wire'}],stop_reason='max_tokens',
+                                                  usage={'input_tokens':900,'output_tokens':16}))
+            return self.response(response)
+        output=io.StringIO()
+        with patch('sys.argv',['trial','run','--root',str(root),'--kind','verify','--input',str(path)]), \
+             patch('benefit_monitor.claude_trial.__file__',str(root/'benefit_monitor/claude_trial.py')), \
+             patch('benefit_monitor.claude_trial.load_key',return_value='fake-secret-for-tests'), \
+             patch('benefit_monitor.claude_trial.network_open',side_effect=transport),redirect_stdout(output):
+            self.assertEqual(main(),0)
+        sent_doc=json.loads(sent[2]['messages'][0]['content'])['documents'][0]
+        self.assertNotIn('body',sent_doc)
+        self.assertIn('품질 검증자',sent[2]['system'])
+        status=json.loads(output.getvalue())
+        self.assertEqual(status['status'],'validated_draft')
+        result=json.loads((Path(status['output'])/'result.json').read_text())
+        self.assertEqual(result['claims'][0]['quotes'],['GOLD / SILVER 1,000원당 50원 차감 할인.'])
+        self.assertEqual(json.loads((Path(status['output'])/'metadata.json').read_text())['model_output_contract'],'verify-wire-v1')
+
     def test_preflight_rejection_stops_before_reservation(self):
         client=ClaudeClient(self.root,self.budget,'fake-secret-for-tests')
         error=HTTPError('https://api.anthropic.com/v1/messages/count_tokens',400,'bad',{},

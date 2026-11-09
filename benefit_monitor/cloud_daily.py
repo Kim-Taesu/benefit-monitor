@@ -56,8 +56,9 @@ def disable_workflow(store):
 # GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
 FALLBACK_REFRESH_HOUR=10
 ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
-# Per-day paid request limits: research 20, topic 1, grammar probe 2.
+# Per-day paid request limits: verification 40, research 20, topic 1, grammar probes (one per new schema).
 MAX_DAILY_RESEARCH=20
+MAX_DAILY_VERIFY=40
 STATUS_FILE='cache/ai_daily/status.json'
 
 
@@ -239,7 +240,8 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     public_lease=restore_public(root,store,now)
     if not retried:session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
-         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH})
+         'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH,
+         'max_ai_verifications_per_day':MAX_DAILY_VERIFY})
     try:
         # Today's free collection, when uploaded, replaces a second listing collection.
         snapshot=collection_snapshot.restore(store,now)

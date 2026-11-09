@@ -209,6 +209,8 @@ class CloudDailyTests(unittest.TestCase):
              patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
             m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
         self.assertIs(seen['snapshot'],snapshot)
+        policy=load(self.root/'ai-automation.json',{})
+        self.assertEqual((policy['max_ai_verifications_per_day'],policy['max_ai_candidates_per_day']),(40,20))
 
     def test_todays_refresh_counts_collecting_runs_and_ignores_other_days(self):
         m=self.module()

@@ -122,10 +122,11 @@ class AIReviewTests(unittest.TestCase):
         from benefit_monitor.cli import run
         approved=dict(self.candidate,needs_recheck=False,verified_at=NOW.isoformat(),valid_until='2026-11-30',evidence='테스트 승인 근거')
         path=self.root/'incoming.json';path.write_text(json.dumps([approved]))
+        # Approved items are audited by verification (every 7 days), which reports a changed body.
         with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport):
-            run(self.root,path,online=True,now=NOW,ai_review=True)
+            run(self.root,path,online=True,now=NOW,ai_review=True,ai_max_verify=1)
             self.page=b'<html><main>Changed conditions and new eligibility require human review before release. All previous terms must be rechecked.</main></html>'
-            report=run(self.root,path,online=True,now=NOW+timedelta(hours=7),ai_review=True)
+            report=run(self.root,path,online=True,now=NOW+timedelta(days=7,hours=1),ai_review=True,ai_max_verify=1)
         self.assertEqual(len(report['needs_recheck']),1)
         self.assertTrue(report['needs_recheck'][0]['needs_recheck'])
         self.assertEqual(report['review_queue'][0]['reason'],'body_changed')
