@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import {computed,onMounted,ref} from 'vue';
-import {DeployError,NOTE_MAX,REPO,readTakedowns,restore,takeDown,validToken,type Takedown} from './github';
+import {DeployError,NOTE_MAX,REPO,readAdminState,restore,takeDown,validToken,muteGroceryText,unmuteGroceryText,type Takedown} from './github';
 import {clearToken,loadToken,saveToken as storeToken} from './token-store';
 
 type Doc={url:string;title:string};
 type AutoItem={candidateId:string;titleKey:string;title:string;source:string;url:string;conditions:string;validityKind:string;
  validFrom:string;validUntil:string;deadlineAt:string;documentCount:number;documents:Doc[];checkedAt:string};
 type AiStatus={state:string;lastSuccessDay:string|null}|null;
+type GroceryPick={source:string;surveyDate:string;summary:string}|null;
 
 const text=(v:unknown)=>typeof v==='string'?v:'';
 const record=(v:unknown)=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};
@@ -26,6 +27,10 @@ function parseItems(raw:unknown):AutoItem[]{
    documents,checkedAt:text(review.checked_at)}];
  });
 }
+function parsePick(raw:unknown):GroceryPick{
+ const p=record(record(raw).grocery_pick);
+ return /^\d{4}-\d{2}-\d{2}$/.test(text(p.survey_date))?{source:text(p.source),surveyDate:text(p.survey_date),summary:text(p.summary)}:null;
+}
 function parseStatus(raw:unknown):AiStatus{
  const s=record(record(raw).ai_status);
  return ['ok','credit_exhausted','failed'].includes(text(s.state))?{state:text(s.state),lastSuccessDay:text(s.last_success_day)||null}:null;
@@ -35,6 +40,7 @@ function parseStatus(raw:unknown):AiStatus{
 const token=ref(''),draft=ref(''),remember=ref(false),items=ref<AutoItem[]>([]),aiStatus=ref<AiStatus>(null),briefingError=ref(false);
 const takedowns=ref<Takedown[]|null>(null),takedownError=ref(''),message=ref(''),busy=ref(false);
 const notes=ref<Record<string,string>>({});
+const groceryPick=ref<GroceryPick>(null),groceryMutes=ref<string[]>([]),groceryNote=ref('');
 
 const statusLine=computed(()=>{
  const s=aiStatus.value;
@@ -55,12 +61,12 @@ async function loadBriefing(){
   const response=await fetch(import.meta.env.BASE_URL+'briefing.json',{cache:'no-store',credentials:'omit'});
   if(!response.ok)throw new Error('HTTP');
   const raw:unknown=await response.json();
-  items.value=parseItems(raw);aiStatus.value=parseStatus(raw);
+  items.value=parseItems(raw);aiStatus.value=parseStatus(raw);groceryPick.value=parsePick(raw);
  }catch{briefingError.value=true;}
 }
 async function loadTakedowns(){
- if(!token.value){takedowns.value=null;return;}
- try{takedowns.value=(await readTakedowns(token.value)).list;takedownError.value='';}
+ if(!token.value){takedowns.value=null;groceryMutes.value=[];return;}
+ try{const state=await readAdminState(token.value);takedowns.value=state.list;groceryMutes.value=state.mutes;takedownError.value='';}
  catch(e){takedowns.value=null;takedownError.value=e instanceof Error?e.message:'내림 목록을 읽지 못했습니다';}
 }
 async function saveToken(){
@@ -86,6 +92,12 @@ const down=(i:AutoItem)=>run(()=>takeDown(token.value,{candidate_id:i.candidateI
  '내렸습니다. 반영까지 2~3분 걸립니다.');
 const revive=(t:Takedown)=>run(()=>restore(token.value,{candidate_id:t.candidate_id,title_key:t.title_key}),
  '되살렸습니다. 같은 후보 ID나 같은 제목 키로 내린 기록도 함께 지웠습니다. 다음 공개 실행에서 기준을 다시 통과하면 다시 공개됩니다.');
+
+const groceryMuted=computed(()=>!!groceryPick.value&&groceryMutes.value.includes(groceryPick.value.surveyDate));
+const muteGrocery=()=>groceryPick.value&&run(()=>muteGroceryText(token.value,groceryPick.value!.surveyDate,groceryNote.value),
+ 'AI 장보기 문구를 껐습니다. 2~3분 뒤 카드가 평년보다 많이 싼 품목·가격만 보이는 자동 선정으로 바뀝니다.');
+const unmuteGrocery=()=>groceryPick.value&&run(()=>unmuteGroceryText(token.value,groceryPick.value!.surveyDate),
+ '다시 켰습니다. 이미 내린 오늘 문구는 돌아오지 않고, 다음 AI 실행(보통 다음 날 새벽)부터 새 AI 문구가 공개됩니다.');
 
 onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),loadTakedowns()]);});
 </script>
@@ -118,6 +130,22 @@ onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),lo
   </section>
 
   <p class="ai-status" :class="aiStatus?.state" data-ai-status><strong>{{statusLine.label}}</strong> <span v-if="statusLine.day">({{statusLine.day}})</span></p>
+
+  <section aria-labelledby="grocery-heading">
+   <h2 id="grocery-heading">AI 장보기 문구</h2>
+   <p v-if="!groceryPick">지금 공개된 장보기 추천이 없습니다.</p>
+   <template v-else>
+    <p>조사일 {{groceryPick.surveyDate}} · {{groceryPick.source==='ai'?'AI 작성 문구 공개 중':'자동 선정(문구 없음)'}}</p>
+    <blockquote v-if="groceryPick.summary">{{groceryPick.summary}}</blockquote>
+    <p v-if="groceryMuted" class="pending">이 조사일의 AI 문구는 꺼져 있습니다.</p>
+    <div class="row">
+     <label for="grocery-note">메모 (공개 저장소에 기록됩니다)</label>
+     <input id="grocery-note" v-model="groceryNote" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">
+     <button v-if="!groceryMuted" type="button" :disabled="!token||busy" @click="muteGrocery">AI 장보기 문구 끄기</button>
+     <button v-else type="button" :disabled="!token||busy" @click="unmuteGrocery">다시 켜기</button>
+    </div>
+   </template>
+  </section>
 
   <section aria-labelledby="auto-heading">
    <h2 id="auto-heading">자동 공개 항목</h2>

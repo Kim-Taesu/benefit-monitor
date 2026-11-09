@@ -32,6 +32,7 @@ from .topic_semantics import FACETS
 PROJECT = Path(__file__).resolve().parents[1]
 RESEARCH_WIRE = 'research-wire-v1'
 TOPIC_WIRE = 'topic-wire-v1'
+GROCERY_WIRE = 'grocery-wire-v1'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
 GRAMMAR_UNION_LIMIT = 0
@@ -313,7 +314,25 @@ def topic_from_wire(wire, host):
                                if x['item_id'] not in {l['item_id'] for t in topics for l in t['item_links']}]}
 
 
+def grocery_wire_schema(host):
+    """Summary plus picks. Ids are plain strings so the schema (and its one grammar probe) stays the same
+    every day; grocery_pick.review rejects ids outside today's candidates."""
+    pick = _object({'id': _string(), 'menu': _string()})
+    schema = _object({'wire_version': {'enum': [GROCERY_WIRE]}, 'summary': _string(),
+                      'picks': {'type': 'array', 'items': pick}})
+    check_limits(schema)
+    return schema
+
+
+def grocery_from_wire(wire, host):
+    if not isinstance(wire, dict) or wire.get('wire_version') != GROCERY_WIRE or set(wire) != {'wire_version', 'summary', 'picks'}:
+        raise ValueError('grocery wire contract mismatch')
+    return {'summary': wire['summary'], 'picks': wire['picks']}
+
+
 def schema_for(kind, host):
+    if kind == 'grocery':
+        return grocery_wire_schema(host)
     if kind == 'verify':
         from .verify_contract import wire_schema
         return wire_schema()
@@ -321,6 +340,8 @@ def schema_for(kind, host):
 
 
 def from_wire(kind, wire, host):
+    if kind == 'grocery':
+        return grocery_from_wire(wire, host)
     if kind == 'verify':
         from .verify_contract import from_wire as verify_from_wire
         return verify_from_wire(wire, host)

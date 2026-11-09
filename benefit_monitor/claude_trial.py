@@ -297,6 +297,20 @@ def validate_host(host, kind, root):
         from .verify_contract import validate_host as validate_verify
         validate_verify(host, root)
         return
+    if kind == 'grocery':
+        # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
+        from .grocery_pick import host as grocery_host
+        from .groceries import sanitize
+        from .store import load
+        if set(host) != {'schema_version','mode','synthetic','now','survey_date','candidates'}:
+            raise ValueError('unexpected host fields; private data must not be sent')
+        now = datetime.fromisoformat(host['now'])
+        if now.tzinfo is None:
+            raise ValueError('host timestamp requires timezone')
+        expected = grocery_host(sanitize(load(Path(root)/'cache/groceries.json', None), now), now)
+        if expected is None or host != expected:
+            raise ValueError('grocery input differs from current groceries bundle')
+        return
     allowed_fields = ({'schema_version','mode','synthetic','now','output_schema_version','budget','candidates','documents','unverified_links'}
                       if kind == 'research' else
                       {'schema_version','mode','synthetic','now','evaluation_only','source_review_id','gate_owner','gate_description',
@@ -404,6 +418,11 @@ def evaluate_draft(draft, host, kind, required_version=None):
     if kind == 'verify':
         # from_wire already rejected unknown segments and claim mismatches; decide() applies the rules.
         return draft, {'valid': True, 'errors': []}
+    if kind == 'grocery':
+        # Bundle-wide item names are checked again in grocery_pick.refresh and at publication.
+        from .grocery_pick import review as grocery_review
+        errors = grocery_review(draft, host)
+        return draft, {'valid': not errors, 'errors': errors}
     if kind == 'research':
         if required_version is not None and draft.get('schema_version') != required_version:
             raise ValueError('model output contract version mismatch')
@@ -421,7 +440,8 @@ def evaluate_draft(draft, host, kind, required_version=None):
     return draft, report
 
 
-SYSTEM_PROMPTS = {'research':'research-system.md', 'topic':'topic-system.md', 'verify':'verify-system.md'}
+SYSTEM_PROMPTS = {'research':'research-system.md', 'topic':'topic-system.md', 'verify':'verify-system.md',
+                  'grocery':'grocery-system.md'}
 
 
 def system_prompt(root, kind):
@@ -448,7 +468,7 @@ def main():
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
     parser.add_argument('--repair-from')
-    parser.add_argument('--kind', choices=('research','topic','verify'))
+    parser.add_argument('--kind', choices=('research','topic','verify','grocery'))
     parser.add_argument('--input', type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
@@ -501,6 +521,8 @@ def main():
     if args.kind == 'verify':
         from .verify_contract import model_input as verify_model_input
         model_input = verify_model_input(host)
+    elif args.kind == 'grocery':
+        model_input = {'survey_date': host['survey_date'], 'candidates': host['candidates']}
     else:
         model_input = wire_format.research_model_input(host) if args.kind == 'research' else topic_model_input(host)
     user_input = model_input
@@ -541,7 +563,8 @@ def main():
                 'cached':client.last_cached,'wire_decoder':'structured-output-v1','usage':result['usage'],
                 'preflight':client.last_preflight,
                 'schema_sha256':hashlib.sha256(json.dumps(schema,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
-                'model_output_contract':{'research':wire_format.RESEARCH_WIRE,'topic':wire_format.TOPIC_WIRE,'verify':'verify-wire-v1'}[args.kind]}
+                'model_output_contract':{'research':wire_format.RESEARCH_WIRE,'topic':wire_format.TOPIC_WIRE,'verify':'verify-wire-v1',
+                                         'grocery':wire_format.GROCERY_WIRE}[args.kind]}
     (destination/'metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n')
     (destination/'input.json').write_text(json.dumps(host,ensure_ascii=False,indent=2)+'\n')
     (destination/'prompt.txt').write_text(system)
