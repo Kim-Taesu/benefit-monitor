@@ -199,6 +199,17 @@ class CloudDailyTests(unittest.TestCase):
         self.assertEqual(len(remote['budget']['requests']),31);self.assertEqual(remote['days']['2026-11-06']['status'],'completed')
         self.assertEqual(result['delivery']['status'],'dispatched_not_yet_verified')
 
+    def test_todays_free_collection_snapshot_is_handed_to_the_inner_run(self):
+        m=self.module();seen={}
+        def inner(*args,**kwargs):
+            seen.update(kwargs);return {'status':'completed'}
+        snapshot={'schema_version':1,'collected_at':NOW.isoformat()}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),\
+             patch.object(m.collection_snapshot,'restore',return_value=snapshot),\
+             patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        self.assertIs(seen['snapshot'],snapshot)
+
     def test_todays_refresh_counts_collecting_runs_and_ignores_other_days(self):
         m=self.module()
         def store(rows):

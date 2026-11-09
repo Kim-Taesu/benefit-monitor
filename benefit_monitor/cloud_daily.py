@@ -16,6 +16,7 @@ from .briefing import SEOUL
 from .claude_trial import ClaudeClient,configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
 from . import auto_release,runtime_retention
+from . import collection_snapshot
 from .mirror import AI_BASE,run as mirror,restore as restore_mirror,restore_ai,save_ai,lease as public_file_lease
 from .public_snapshot import validate
 from .wire_format import research_wire_schema
@@ -240,7 +241,9 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
          'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH})
     try:
-        result=daily(root,now=now,online=True,allow_spend=True,publish=True)
+        # Today's free collection, when uploaded, replaces a second listing collection.
+        snapshot=collection_snapshot.restore(store,now)
+        result=daily(root,now=now,online=True,allow_spend=True,publish=True,snapshot=snapshot)
         if result['status'] not in ('completed','credit_exhausted'):raise ValueError('inner daily did not complete')
         session.save_runtime()
         if result['status']=='credit_exhausted':
