@@ -292,6 +292,36 @@ class AutoPublishTests(unittest.TestCase):
         self.assertFalse(result['publish'])
         self.assertIn('no_current_evidence', result['reasons'])
 
+    def test_year_less_deadline_matching_a_current_year_dated_date_publishes(self):
+        # 2026-11-09 한강 배달존: "11월 30일까지" beside "2026년 10월 1일~11월 30일" in the same notice.
+        for body in (D1 + '\n신청은 11월 30일까지 받습니다.',
+                     '서울 미술 전시 안내.\n기간 : 2026년 11월 1일~11월 30일\n관람료는 무료입니다.\n누구나 관람할 수 있습니다.\n11월 30일까지 열립니다.'):
+            with self.subTest(body=body):
+                result = self.decide(host(body, D2), period_facts())
+                self.assertTrue(result['publish'], result['reasons'])
+
+    def test_year_less_deadline_matching_only_another_document_holds(self):
+        result = self.decide(host(D1, D2 + '\n신청은 11월 15일까지 받습니다.\n문의 2026-11-15까지'), period_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+        result = self.decide(host(D1 + '\n신청은 11월 15일까지 받습니다.', D2 + '\n문의 2026-11-15까지'), period_facts())
+        self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_year_less_deadline_with_day_only_holds(self):
+        result = self.decide(host(D1 + '\n신청은 30일까지 받습니다.', D2), period_facts())
+        self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_ongoing_item_uses_official_page_posting_date(self):
+        # The model left the posting date unknown; the page header date (read by code) decides.
+        facts = ongoing_facts(published_at={'unknown_reason': '본문에 없음'})
+        for posted, publish in (('2026-10-12', True), ('2026-06-01', False)):
+            with self.subTest(posted=posted):
+                docs = [doc(1, O1), doc(2, O2)]
+                docs[0]['published_at'] = posted
+                result = self.decide(host(docs=docs), facts)
+                self.assertEqual(result['publish'], publish, result['reasons'])
+        result = self.decide(host(O1, O2), facts)
+        self.assertIn('no_current_evidence', result['reasons'])
+
     def test_period_item_with_past_year_dated_deadline_holds(self):
         for phrase in ('신청 2026년 11월 1일까지 받습니다.', '접수는 2026.10.1 ~ 2026.10.31 입니다.',
                        '신청 2026년 10월 말까지 받습니다.', '신청 2026.11.31까지 받습니다.'):

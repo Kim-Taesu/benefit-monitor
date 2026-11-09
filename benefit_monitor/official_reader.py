@@ -1,7 +1,8 @@
 """Official bodies for AI review, sharing the existing public HTTP budget."""
-from datetime import timedelta
+from datetime import date, timedelta
 import hashlib
 import json
+import re
 from pathlib import Path
 import time
 from urllib.error import HTTPError, URLError
@@ -68,6 +69,19 @@ class _Anchors(HTMLParser):
             scoped=[i[0] for i in self.items if i[idx]]
             if scoped:return scoped
         return [i[0] for i in self.items]
+
+
+# Page header posting dates that code (not the model) reads; checked 2026-11-09 on live pages.
+PAGE_DATES={'mediahub.seoul.go.kr':re.compile(r'<p class="date">\s*발행일\s*<span class="num">\s*(\d{4})\.(\d{1,2})\.(\d{1,2})\.')}
+
+
+def page_published(html,url):
+    """ISO date of the official page header posting date, or None for other hosts or unreadable dates."""
+    pattern=PAGE_DATES.get(urlsplit(url).hostname or '')
+    found=pattern.search(html) if pattern else None
+    if not found:return None
+    try:return date(*map(int,found.groups())).isoformat()
+    except ValueError:return None
 
 
 def extract_links(html,base,limit=50):
@@ -153,7 +167,7 @@ class OfficialReader:
             if len(text)<80:raise ValueError('insufficient official body')
             digest=hashlib.sha256(text.encode()).hexdigest()
             doc=dict(id='doc-'+digest[:24],requested_url=url,final_url=url,source_id=source['id'],
-                     document_role='notice',publisher_type='unknown',retrieved_at=self.now.isoformat(),published_at=None,
+                     document_role='notice',publisher_type='unknown',retrieved_at=self.now.isoformat(),published_at=page_published(html,url),
                      body_hash=digest,hash_algorithm='sha256-utf8-exact',extraction_scope='collectors.body:'+mode,
                      fetch_status='ok',body=text,links=extract_links(html,url))
             relative='cache/ai_review/documents/'+key+'-'+digest+'.json'
