@@ -252,3 +252,26 @@ class ResilienceTests(unittest.TestCase):
         self.assertEqual(bundle['meat']['missing'], [])
         meat_days = [c.split('searchStartDate=')[1][:10] for c in calls if 'regionAvgPrice' in c]
         self.assertEqual(meat_days, ['2026-11-08', '2026-11-07', '2026-11-07'])
+
+
+class ConfiguredCutsTests(unittest.TestCase):
+    """2026-11-09 배포: 예산이 8번째 부위에서 끝나 돼지 앞다리·닭·계란이 빠지고 한우만 남았다."""
+
+    def setUp(self):
+        import json
+        root = Path(__file__).resolve().parents[1] / 'sources'
+        self.cuts = json.loads((root / 'groceries.json').read_text(encoding='utf-8'))['collect']['cuts']
+        self.limit = json.loads((root / '_config.json').read_text(encoding='utf-8'))['max_http_requests']
+
+    def test_pork_chicken_and_eggs_are_collected_before_hanwoo(self):
+        names = [c['name'] for c in self.cuts]
+        hanwoo = [i for i, n in enumerate(names) if n.startswith('한우')]
+        for name in ('돼지 삼겹살', '돼지 목심', '돼지 앞다리', '돼지 갈비', '닭(육계)', '계란 특란 30구'):
+            self.assertLess(names.index(name), min(hanwoo), name)
+        self.assertEqual(hanwoo, list(range(len(names) - len(hanwoo), len(names))), 'hanwoo cuts go last')
+
+    def test_run_budget_leaves_room_for_every_cut_after_a_heavy_day(self):
+        # 2026-11-09 13:24 run: other sources used 63 requests before groceries.
+        worst_grocery = 2 + 5 + (groceries.MEAT_LOOKBACK_DAYS - 1) + len(self.cuts)  # robots, KAMIS, meat lookback, cuts
+        self.assertLessEqual(self.limit, 100)
+        self.assertGreaterEqual(self.limit, 63 + worst_grocery)

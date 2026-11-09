@@ -4,7 +4,7 @@
   "expiring_days": 7,
   "max_age_days": 14,
   "seoul_district_coverage": true,
-  "max_http_requests": 75,
+  "max_http_requests": 95,
   "cost_policy": {
     "mode": "free_public_only",
     "paid_services_allowed": false

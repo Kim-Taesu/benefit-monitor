@@ -10,7 +10,9 @@ const groceries={schema_version:1,source:'groceries',fetched_at:new Date(NOW-360
  produce:{survey_date:kst(1),items:[produce('양파','양파','1kg',1893,2088),produce('파','대파','1kg',2597,3164),produce('레몬','레몬','10개',9000,9000)]},
  meat:{survey_date:kst(1),missing:['한우 갈비'],items:[
   {id:'4304-27-삼겹살',cut:'돼지 삼겹살',label:'삼겹살',unit:'원/100g',national:2768,seoul:2866,min:2598,min_region:'경남',max:2979,max_region:'전북'},
-  {id:'4301-22-등심 1++등급',cut:'한우 등심',label:'등심 1++등급',unit:'원/100g',national:15645,seoul:16000,min:14000,min_region:'경북',max:17000,max_region:'서울'}]}};
+  {id:'4301-22-등심 1++등급',cut:'한우 등심',label:'등심 1++등급',unit:'원/100g',national:15645,seoul:16000,min:14000,min_region:'경북',max:17000,max_region:'서울'},
+  {id:'4301-22-등심 1+등급',cut:'한우 등심',label:'등심 1+등급',unit:'원/100g',national:13676,seoul:14000,min:12500,min_region:'경북',max:15000,max_region:'서울'},
+  {id:'4301-22-등심 1등급',cut:'한우 등심',label:'등심 1등급',unit:'원/100g',national:12140,seoul:12500,min:11000,min_region:'경북',max:13500,max_region:'서울'}]}};
 
 const weekly={schema_version:1,generated_at:new Date(NOW-1800000).toISOString(),survey_date:kst(1),source:'ai',
  summary:'[테스트] 이번 주는 파(2,597원)가 싸요. 파전으로 주말 반찬을 준비해 보세요.',
@@ -46,8 +48,17 @@ for(const width of [390,1440])test(`grocery section: featured rows, calculator a
  await page.goto('./');
  const section=page.locator('#groceries');
  await expect(page.locator('.hero-jump')).toBeVisible();
- // 자주 사는 품목: listed produce and every meat row, without paging; 레몬 waits in the 과일 tab.
- await expect(section.locator('article h3')).toHaveText([/양파/,/파/,/한우 등심/,/돼지 삼겹살/]);
+ // 자주 사는 품목: listed produce and one card per meat cut (pork before 한우), without paging; 레몬 waits in the 과일 tab.
+ await expect(section.locator('article h3')).toHaveText([/양파/,/파/,/돼지 삼겹살/,/한우 등심\s*1\+등급/]);
+ const beef=section.locator('article',{hasText:'한우 등심'});
+ await expect(beef.locator('.grocery-price strong')).toHaveText('13,676원');
+ await expect(beef.locator('.grocery-others')).toHaveText('다른 등급: 1++등급 15,645원 · 1등급 12,140원');
+ await expect(section.locator('article',{hasText:'돼지 삼겹살'}).locator('.grocery-others')).toHaveCount(0);
+ // The 육류·계란 tab still lists every grade on its own card.
+ await section.getByRole('button',{name:'육류·계란'}).click();
+ await expect(section.locator('article h3')).toHaveText([/돼지 삼겹살/,/한우 등심\s*1\+\+등급/,/한우 등심\s*1\+등급/,/한우 등심\s*1등급/]);
+ await expect(section.locator('.grocery-others')).toHaveCount(0);
+ await section.getByRole('button',{name:'자주 사는 품목'}).click();
  await expect(section).toContainText('일부 품목 미수집: 한우 갈비');
  const onion=section.locator('article',{hasText:'양파'});
  await expect(onion.locator('.grocery-badge')).toHaveText('평년 수준 (9% 쌈)');
