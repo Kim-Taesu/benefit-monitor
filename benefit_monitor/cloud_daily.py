@@ -219,7 +219,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
                     cap_kind=data['budget'].get('cap_kind'),
                     month_exposure_microdollars=TrialBudget.month_exposure(data['budget'],now))
     if not session.control['active']:return {'status':'handoff_required'}
-    if now.hour<6:return {'status':'not_due'}
+    # No clock gate: today's completed free collection (todays_refresh) decides when the day runs.
     if not retry and day in session.control['days']:
         return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
     # Before the day (or its one retry) is used: a state too large to save afterwards never spends.

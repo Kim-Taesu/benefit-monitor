@@ -93,7 +93,10 @@ class CloudDailyTests(unittest.TestCase):
     def test_inactive_expired_not_due_and_wait_do_not_mark_day(self):
         m=self.module()
         with patch.object(m,'daily',side_effect=AssertionError('no paid work')),patch.object(m,'disable_workflow') as disable:
-            self.assertEqual(m.cloud_run(self.root,now=NOW.replace(hour=5),check_only=False,store=self.fixture.store())['status'],'not_due')
+            # No clock gate: before 06:00 the run still waits only for today's free collection.
+            with patch.object(m,'todays_refresh',return_value='missing'),patch.object(m,'dispatch_refresh') as dispatch:
+                self.assertEqual(m.cloud_run(self.root,now=NOW.replace(hour=5),check_only=False,store=self.fixture.store())['status'],'waiting_for_existing_refresh')
+                dispatch.assert_not_called()
             with patch.object(m,'todays_refresh',return_value='running'):
                 self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'waiting_for_existing_refresh')
             data=json.loads(self.fixture.store().read('control')[0]);data['active']=False
