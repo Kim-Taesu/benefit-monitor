@@ -127,17 +127,21 @@ export function compareShelf(ref:{unit:string;current:number;normal:number|null;
  return {perUnit,unitLabel:unit.label,vsCurrent:Math.round((perUnit/ref.current-1)*100),verdict:verdict(perUnit,ref.normal,ref.yearAgo)};
 }
 
-/** 자주 사는 품목: every meat row, and one representative row (상품 grade first) per listed produce item, in the guide's order. */
-export function featuredRows(rows:PriceRow[]):PriceRow[]{
- const best=new Map<string,PriceRow>();
- const score=(r:PriceRow)=>r.detail.endsWith('상품')||!r.detail.includes('품')?0:1;
+export type FeaturedRow=PriceRow&{others:{detail:string;current:number}[]};
+/** 자주 사는 품목: one card per meat cut (1+등급 first, other grades/kinds listed on the card) and one
+ * representative row (상품 grade first) per listed produce item, in the guide's order. */
+export function featuredRows(rows:PriceRow[]):FeaturedRow[]{
+ const best=new Map<string,PriceRow>(),meatRows=new Map<string,PriceRow[]>();
+ const score=(r:PriceRow)=>r.kind==='meat'?(r.detail==='1+등급'?0:1):r.detail.endsWith('상품')||!r.detail.includes('품')?0:1;
  for(const r of rows){
   if(r.featured<0&&r.kind!=='meat')continue;
-  const key=r.kind==='meat'?r.id:r.name,prev=best.get(key);
+  const key=r.kind+'|'+r.name,prev=best.get(key);
+  if(r.kind==='meat')meatRows.set(key,[...(meatRows.get(key)??[]),r]);
   if(!prev||score(r)<score(prev))best.set(key,r);
  }
  const rank=(r:PriceRow)=>r.featured<0?1e9:r.featured;
- return [...best.values()].sort((a,b)=>rank(a)-rank(b));
+ return [...best.entries()].map(([key,r])=>({...r,others:(meatRows.get(key)??[]).filter(x=>x!==r).map(x=>({detail:x.detail,current:x.current}))}))
+  .sort((a,b)=>rank(a)-rank(b));
 }
 export function guideFor(row:PriceRow):Guide|null{
  return (row.kind==='meat'?MEAT[row.guideKey]:ITEMS[row.guideKey]??ITEMS[row.name])??null;

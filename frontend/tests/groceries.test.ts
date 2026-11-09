@@ -97,15 +97,33 @@ test('guide lookup: produce by item name, meat by cut prefix',()=>{
  assert.equal(wikiLink(pork),null);
 });
 
-test('featured view: one 상품 row per listed produce item and every meat grade, in guide order',()=>{
+test('featured view: one 상품 row per listed produce item and one card per meat cut, pork before 한우',()=>{
  const g=parseGroceries(raw({produce:{survey_date:'2026-11-06',items:[
   produce({item:'배추',kind:'가을',unit:'1포기',grade:'중품',today:2500}),produce({item:'배추',kind:'가을',unit:'1포기',grade:'상품',today:2823}),
   produce(),produce({item:'브로콜리',kind:'브로콜리',unit:'1개',grade:'상품'}),produce({item:'레몬',kind:'레몬',unit:'10개',grade:'상품'})]},
   // 레몬 is not a listed item, so it is left to the 과일 tab
-  meat:{survey_date:'2026-11-08',items:[meat(),meat({id:'4301-22-등심 1++등급',cut:'한우 등심',label:'등심 1++등급'}),meat({id:'4301-22-등심 1등급',cut:'한우 등심',label:'등심 1등급'})],missing:[]}}),NOW)!;
+  meat:{survey_date:'2026-11-08',items:[
+   meat({id:'4301-22-등심 1++등급',cut:'한우 등심',label:'등심 1++등급',national:15645}),
+   meat({id:'4301-22-등심 1+등급',cut:'한우 등심',label:'등심 1+등급',national:13676}),
+   meat({id:'4301-22-등심 1등급',cut:'한우 등심',label:'등심 1등급',national:12140}),
+   meat(),
+   meat({id:'9903-23-XL30구 일반란',cut:'계란 특란 30구',label:'XL30구 일반란',unit:'원/30구',national:7354}),
+   meat({id:'9903-23-XL30구 동물복지',cut:'계란 특란 30구',label:'XL30구 동물복지',unit:'원/30구',national:10905})],missing:[]}}),NOW)!;
  const rows=featuredRows(g.rows);
- assert.deepEqual(rows.map(r=>r.name+(r.kind==='meat'?' '+r.detail:'')),['양파','배추','브로콜리','한우 등심 1++등급','한우 등심 1등급','돼지 삼겹살 ']);
+ // Before: 한우 등심 1++ / 1+ / 1 as three cards with the same title, ahead of pork.
+ assert.deepEqual(rows.map(r=>r.name+(r.kind==='meat'?' '+r.detail:'')),
+  ['양파','배추','브로콜리','돼지 삼겹살 ','계란 특란 30구 XL30구 일반란','한우 등심 1+등급']);
  assert.equal(rows[1].current,2823);
+ const beef=rows.find(r=>r.name==='한우 등심')!;
+ assert.equal(beef.current,13676);
+ assert.deepEqual(beef.others,[{detail:'1++등급',current:15645},{detail:'1등급',current:12140}]);
+ assert.deepEqual(rows.find(r=>r.name==='계란 특란 30구')!.others,[{detail:'XL30구 동물복지',current:10905}]);
+ assert.deepEqual(rows.find(r=>r.name==='돼지 삼겹살')!.others,[]);
+ // Without a 1+ row the first official row represents the cut.
+ const only=featuredRows(g.rows.filter(r=>r.detail!=='1+등급')).find(r=>r.name==='한우 등심')!;
+ assert.equal(only.detail,'1++등급');
+ // Other tabs still get every grade: featuredRows does not change the bundle rows.
+ assert.equal(g.rows.filter(r=>r.name==='한우 등심').length,3);
 });
 
 test('weekly pick links picks to bundle rows and keeps the AI label',()=>{

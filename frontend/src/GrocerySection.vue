@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type GroceryBundle, type WeeklyPick } from './groceries';
+import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type FeaturedRow, type GroceryBundle, type WeeklyPick } from './groceries';
 import GroceryCalc from './GroceryCalc.vue';
 import { formatDate } from './benefits';
 const props=defineProps<{bundle:GroceryBundle;weekly:WeeklyPick|null}>();
@@ -26,6 +26,13 @@ const filtered=computed(()=>{
 const paged=computed(()=>!!q.value.trim()||category.value!==FEATURED);
 const visible=computed(()=>paged.value?filtered.value.slice(0,shown.value):filtered.value);
 const md=(d:string|null)=>d?d.slice(5).replace('-','.'):'';
+// 자주 사는 품목 folds a cut's other grades (or kinds, e.g. 동물복지 계란) into one line on its card.
+function othersLine(r:PriceRow):string{
+ const others=(r as Partial<FeaturedRow>).others??[];
+ if(!others.length)return '';
+ const word=others.every(o=>o.detail.endsWith('등급'))?'다른 등급':'다른 종류';
+ return `${word}: ${others.map(o=>`${o.detail} ${won(o.current)}`).join(' · ')}`;
+}
 function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
 </script>
 <template>
@@ -66,6 +73,7 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
         <p v-else-if="row.range" class="grocery-compare">
           <span>지역별 {{ won(row.range.min) }}({{ row.range.minRegion }}) ~ {{ won(row.range.max) }}({{ row.range.maxRegion }})</span><span v-if="row.seoul">서울 {{ won(row.seoul) }}</span>
         </p>
+        <p v-if="othersLine(row)" class="grocery-compare grocery-others">{{ othersLine(row) }}</p>
         <details class="card-details">
           <summary>이 가격 싼가요? <span aria-hidden="true">+</span></summary>
           <div class="details-body"><GroceryCalc :row="row" /></div>
