@@ -4,7 +4,7 @@ import unittest
 from collections import Counter
 from pathlib import Path
 
-from benefit_monitor import grocery_baselines
+from benefit_monitor import grocery_baselines, groceries
 
 ROOT = Path(__file__).resolve().parent.parent
 FIXTURES = ROOT / 'tests' / 'fixtures' / 'grocery_baselines'
@@ -63,7 +63,7 @@ class BasketTests(unittest.TestCase):
                 grocery_baselines.basket(source)
 
     def test_basket_rows_exist_in_fixture_bundle(self):
-        ids = set(json.loads((FIXTURES / 'row_ids.json').read_text(encoding='utf-8')))
+        ids = set(json.loads((FIXTURES / 'row_ids.json').read_text(encoding='utf-8'))['ids'])
         for item in grocery_baselines.basket(repo_source()):
             self.assertIn(item['row']['id'], ids)
 
@@ -74,6 +74,24 @@ class BasketTests(unittest.TestCase):
                 self.assertEqual(item['row'], {'kind': 'meat', 'id': '%s-%s-%s' % (e['species'], e['part'], e['label'])})
             else:
                 self.assertEqual(item['row']['kind'], 'produce')
+
+class PeriodFixtureTests(unittest.TestCase):
+    # kamis_monthly_*.html (쌀, 감자, 고등어 월별 표 발췌)는 Task 2의 월별 파서가 쓴다.
+    CUT = dict(species='4304', part='27', name='돼지 삼겹살')
+
+    def national(self, name, day=None):
+        page = (FIXTURES / name).read_text(encoding='utf-8')
+        rows = groceries.parse_meat(page, self.CUT, day)
+        self.assertEqual([r['label'] for r in rows], ['삼겹살'])
+        return rows[0]['national']
+
+    def test_ekape_range_equals_calendar_day_mean(self):
+        days = ['2026-11-08', '2026-11-07', '2026-11-06']
+        daily = [self.national('ekape_day_pork_belly_%s.html' % d, d) for d in days]
+        self.assertEqual(daily, [2768, 2768, 2716])
+        ranged = self.national('ekape_range_pork_belly.html')
+        self.assertLessEqual(abs(ranged - round(sum(daily) / len(daily))), 1)
+        self.assertEqual(ranged, 2751)
 
 
 if __name__ == '__main__':
