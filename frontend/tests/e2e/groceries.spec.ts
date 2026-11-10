@@ -46,6 +46,8 @@ for(const width of [390,1440])test(`weekly pick sits on top and 더보기 opens 
  const [top,tabs]=await Promise.all([teaser.boundingBox(),page.locator('#site-tabs').boundingBox()]);
  expect(top!.y).toBeLessThan(tabs!.y);
  await expect(teaser.locator('li')).toHaveText([/파 2,597원.*파전/,/양파 1,893원/,/돼지 삼겹살 2,768원/]);
+ const [m,d]=kst(1).slice(5).split('-').map(Number);
+ await expect(teaser.locator('.pick-teaser-date')).toHaveText(`전국 평균 소매가 · 농·수산물 ${m}/${d} 조사 · 육류 ${m}/${d} 조사 기준`);
  await expect(page.locator('#groceries')).toBeHidden();
  await teaser.getByRole('button',{name:/장보기 시세 더보기/}).click();
  await expect(page.getByRole('tab',{name:'장보기'})).toHaveAttribute('aria-selected','true');

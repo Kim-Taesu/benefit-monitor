@@ -12,6 +12,8 @@ import type {Topic} from './beta';
 const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=ref<Topic|null>(null);
 function selectTopic(topic:Topic|null){selectedTopic.value=topic;}
 const gradeHelp=ref<InstanceType<typeof GradeHelp>|null>(null);
+// 'YYYY-MM-DD' -> 'M/D' (조사일 표시, 2026-11-10: 농산물·육류 조사일이 다를 수 있어 둘 다 보여준다).
+const md=(d:string|null|undefined)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
 // 탭(2026-11-10): 혜택·장보기·축제. 주소의 #groceries·#festivals로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
 type Tab='benefits'|'groceries'|'festivals';
 const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'}];
@@ -119,6 +121,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       <div class="card-meta"><h2 id="pick-teaser-title">이번 주 장보기 추천</h2><span class="grocery-badge" :class="groceryPick.source==='ai'?'ai':'normal'">{{ groceryPick.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
       <p v-if="groceryPick.summary" class="pick-teaser-summary">{{ groceryPick.summary }}</p>
       <ul class="pick-teaser-list"><li v-for="p in groceryPick.picks.slice(0,3)" :key="p.row.kind+p.row.id"><strong>{{ p.row.name }}</strong> {{ won(p.row.current) }}<span v-if="p.menu"> → {{ p.menu }}</span></li></ul>
+      <p class="pick-teaser-date">전국 평균 소매가 · 농·수산물 {{ md(groceries?.produceDate) }} 조사<template v-if="groceries?.meatDate"> · 육류 {{ md(groceries.meatDate) }} 조사</template> 기준</p>
       <button type="button" class="pick-teaser-more" @click="setTab('groceries',true)">장보기 시세 더보기 <span aria-hidden="true">→</span></button>
     </article>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="t.id==='benefits'&&!loading" class="tab-count">{{ all.length }}</span></button></div></nav>
