@@ -56,8 +56,8 @@ def disable_workflow(store):
 # GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
 FALLBACK_REFRESH_HOUR=10
 ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
-# Per-day paid request limits: verification 40, research 20, topic 1, grocery pick 1, grammar probes (one per new schema).
-MAX_DAILY_RESEARCH=20
+# Per-day paid request limits: verification 40, research 40 (2026-11-10), topic 1, grocery pick 1, grammar probes (one per new schema).
+MAX_DAILY_RESEARCH=40
 MAX_DAILY_VERIFY=40
 STATUS_FILE='cache/ai_daily/status.json'
 

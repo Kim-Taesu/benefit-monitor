@@ -1,4 +1,4 @@
-"""Credit exhaustion skips the day without halting; the daily request limit is 20."""
+"""Credit exhaustion skips the day without halting; the daily request limit is 40 (2026-11-10)."""
 import io
 import json
 import os
@@ -61,13 +61,13 @@ class ClientTests(unittest.TestCase):
 
 
 class DailyTests(unittest.TestCase):
-    def test_daily_candidate_limit_20(self):
+    def test_daily_candidate_limit_40(self):
         from benefit_monitor.ai_daily import daily
         from benefit_monitor.ai_review import review_candidates
         with tempfile.TemporaryDirectory(dir=ROOT) as tmp:
             root = Path(tmp)
             now = datetime.fromisoformat('2026-11-07T07:00:00+09:00')
-            for limit, ok in ((20, True), (21, False)):
+            for limit, ok in ((40, True), (41, False)):
                 (root / 'ai-automation.json').write_text(json.dumps({'schema_version': 1, 'enabled': True,
                     'recurring_spend_approved': False, 'public_application_approved': False,
                     'hour_kst': 6, 'minute_kst': 0, 'max_ai_candidates_per_day': limit}))
@@ -75,12 +75,12 @@ class DailyTests(unittest.TestCase):
                      patch('benefit_monitor.ai_daily.refresh', return_value={'topics': []}):
                     if ok:
                         self.assertEqual(daily(root, now=now, online=True)['status'], 'completed')
-                        self.assertEqual(collect.call_args.kwargs['ai_max_candidates'], 20)
+                        self.assertEqual(collect.call_args.kwargs['ai_max_candidates'], 40)
                     else:
                         with self.assertRaises(ValueError):daily(root, now=now, online=True)
             with patch('benefit_monitor.ai_review.OfficialReader'):
-                self.assertEqual(review_candidates(root, [], now, max_candidates=20)['queued'], 0)
-            with self.assertRaises(ValueError):review_candidates(root, [], now, max_candidates=21)
+                self.assertEqual(review_candidates(root, [], now, max_candidates=40)['queued'], 0)
+            with self.assertRaises(ValueError):review_candidates(root, [], now, max_candidates=41)
 
     def test_daily_skips_topic_step_on_credit_exhaustion_but_publishes(self):
         from benefit_monitor.ai_daily import daily
@@ -134,7 +134,7 @@ class CloudTests(cloud_fixture.CloudDailyTests):
             self.assertEqual(m.exit_code(first), 1)
             control = json.loads(self.fixture.store().read('control')[0])
             self.assertEqual(control['days']['2026-11-06']['status'], 'failed')
-            self.assertEqual(calls[0]['max_ai_candidates_per_day'], 20)
+            self.assertEqual(calls[0]['max_ai_candidates_per_day'], 40)
             self.assertNotIn('trial_expires_at', calls[0])
             status = json.loads((self.root / 'cache/ai_daily/status.json').read_text())
             self.assertEqual((status['state'], status['last_success_day']), ('credit_exhausted', None))
