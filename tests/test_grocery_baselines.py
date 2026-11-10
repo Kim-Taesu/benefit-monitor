@@ -403,3 +403,42 @@ class SanitizeTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class MainTests(unittest.TestCase):
+    def run_main(self, get, put, bundle):
+        import shutil
+        import tempfile
+        from benefit_monitor import mirror
+        with tempfile.TemporaryDirectory() as directory:
+            shutil.copy(ROOT / 'sources.yaml', directory)
+            with mock.patch.object(mirror, '_get', side_effect=get) as g, mock.patch.object(mirror, '_put', side_effect=put) as p, \
+                    mock.patch.object(grocery_baselines, 'collect', return_value=bundle) as c:
+                code = grocery_baselines.main(['--repository', 'o/r', '--root', directory], now=NOW)
+        return code, g, p, c
+
+    def test_main_reads_previous_and_puts_result(self):
+        prev = previous_bundle(good())
+        bundle = previous_bundle(good())
+        code, g, p, c = self.run_main([(prev, 'sha1')], [True], bundle)
+        self.assertEqual(code, 0)
+        self.assertEqual(c.call_args[0][2], prev)
+        self.assertEqual(c.call_args[0][0]['id'], 'groceries')
+        self.assertEqual(p.call_args[0][:2], ('o/r', 'grocery-baselines.json'))
+        self.assertEqual(p.call_args[0][3], 'sha1')
+        self.assertEqual(p.call_args[0][2]['source'], 'grocery_baselines')
+
+    def test_main_retries_once_on_stale_sha_then_fails(self):
+        bundle = previous_bundle(good())
+        code, g, p, c = self.run_main([(None, None), (None, 'sha2'), (None, 'sha3')], [False, True], bundle)
+        self.assertEqual(code, 0)
+        self.assertEqual(p.call_args_list[1][0][3], 'sha2')
+        self.assertEqual(c.call_count, 1)
+        code, g, p, c = self.run_main([(None, 's1'), (None, 's2'), (None, 's3')], [False, False, True], bundle)
+        self.assertEqual(code, 1)
+        self.assertEqual(p.call_count, 2)
+
+    def test_main_skips_put_when_sanitize_fails(self):
+        code, g, p, c = self.run_main([(None, None)], [True], {'schema_version': 2})
+        self.assertEqual(code, 1)
+        p.assert_not_called()

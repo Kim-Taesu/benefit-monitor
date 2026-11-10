@@ -302,3 +302,40 @@ def sanitize(bundle, now):
                 baseline = None
         out.append(dict(item, baseline=dict(baseline) if baseline else None))
     return dict(bundle, items=out)
+
+
+BASELINES_NAME = "grocery-baselines.json"
+
+
+def main(argv=None, now=None):
+    """Weekly run: read last bundle, collect, validate, write back to briefing-data. Exit code 0/1."""
+    import argparse
+    from pathlib import Path
+    from . import cost_policy, mirror
+    from .store import load, save
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--repository", required=True)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
+    args = parser.parse_args(argv)
+    now = (now or datetime.now(ZoneInfo("Asia/Seoul"))).astimezone(ZoneInfo("Asia/Seoul"))
+    config = load(args.root / "sources.yaml", None)
+    source = next(s for s in config["sources"] if s["id"] == "groceries")
+    cost_policy.reset(MAX_REQUESTS)
+    previous, sha = mirror._get(args.repository, BASELINES_NAME)
+    bundle = sanitize(collect(source, now, previous), now)
+    if bundle is None:
+        print("Baseline bundle failed validation; nothing saved")
+        return 1
+    for attempt in range(2):
+        if mirror._put(args.repository, BASELINES_NAME, bundle, sha):
+            save(args.root / mirror.BASELINES_FILE, bundle)
+            print("Grocery baselines saved;", sum(1 for i in bundle["items"] if i["baseline"]), "of", len(bundle["items"]), "items with a baseline")
+            return 0
+        if attempt == 0:
+            _, sha = mirror._get(args.repository, BASELINES_NAME)
+    print("Baselines changed twice during save")
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
