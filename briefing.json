@@ -1,35 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-10T08:54:37.150917+09:00",
-  "source_report_at": "2026-11-10T08:50:25.089005+09:00",
+  "generated_at": "2026-11-10T08:55:13.940199+09:00",
+  "source_report_at": "2026-11-10T08:55:13.940199+09:00",
   "valid_through": "2026-11-11T00:00:00+09:00",
   "status": "partial",
   "items": [
-    {
-      "source": "seoul_lifelong",
-      "url": "https://sll.seoul.go.kr/lms/front/event/doJoinListEvent.do?main_se=lie&event_no=118&mnid=202412331716",
-      "title": "서울런 키즈영어 참여이벤트",
-      "summary": "키즈영어 참여자 추첨 300명에게 5천 원 상품권",
-      "conditions": "10월20일~11월10일 레벨테스트와 학습계획서 발급 신청을 모두 완료하면 자동 응모. 11월30일 당첨 발표, 파리바게뜨 5천 원 상품권 추첨 300명. 참가비·정확한 연령·추가 자격 조건은 확인되지 않음. 경품 지급 보장 아님. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
-      "districts": [],
-      "verified_at": "2026-11-04T09:59:35.615876+09:00",
-      "valid_from": null,
-      "valid_until": "2026-11-10",
-      "deadline_at": null,
-      "validity_kind": "fixed",
-      "fee_status": "unknown",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "labels": {
-        "category": "공모·참여",
-        "region": "온라인(서울시 평생학습포털)",
-        "action": "응모"
-      },
-      "review": {
-        "kind": "human"
-      },
-      "display_until": "2026-11-11T00:00:00+09:00"
-    },
     {
       "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019868",
@@ -54,33 +29,6 @@
         "kind": "human"
       },
       "display_until": "2026-11-16T00:00:00+09:00"
-    },
-    {
-      "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019003",
-      "title": "영화·AI 등 192개 강좌 쏟아진다! 서울시민대학 선착순 신청",
-      "summary": "서울시민대학 2학기 강좌 운영: 11월 27일까지",
-      "conditions": "2차 강좌는 10월20일~11월27일. 10월6일 선착순 접수 개시 안내이며 현재 추가 접수·빈자리 여부는 미확인. 1~4주 무료, 5주 1만원, 10주 2만원, 학점은행 3만원.",
-      "districts": [
-        "관악구"
-      ],
-      "verified_at": "2026-11-04T09:59:35.615876+09:00",
-      "valid_from": "2026-09-01",
-      "valid_until": "2026-11-27",
-      "deadline_at": null,
-      "validity_kind": "fixed",
-      "fee_status": "mixed",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "labels": {
-        "category": "교육·강좌",
-        "region": "서울시민대학 4개 캠퍼스",
-        "action": "신청·예약 필요"
-      },
-      "review": {
-        "kind": "human"
-      },
-      "display_until": "2026-11-18T09:59:35.615876+09:00"
     },
     {
       "source": "seoul",
@@ -135,33 +83,6 @@
         "kind": "human"
       },
       "display_until": "2026-11-10T23:17:50.018485+09:00"
-    },
-    {
-      "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019606",
-      "title": "가을 한강 나들이 필수 팁! 서울배달+땡겨요 배달 할인, 상품권 환급까지",
-      "summary": "한강공원 땡겨요 배달 할인·상품권 결제 환급",
-      "conditions": "11개 공원17개 배달구역. 2만5천원 이상 주문3천원 쿠폰; 서울사랑상품권 1만5천원 이상 결제3천원·2만5천원 이상5천원 환급(다음 달14일). 음식·배달 비용 발생. 중복 적용·잔량·개인 적용 여부는 결제 전 별도 확인.",
-      "districts": [
-        "영등포구"
-      ],
-      "verified_at": "2026-11-04T20:11:09.992823+09:00",
-      "valid_from": "2026-10-01",
-      "valid_until": "2026-11-30",
-      "deadline_at": null,
-      "validity_kind": "fixed",
-      "fee_status": "paid",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "labels": {
-        "category": "할인·적립",
-        "region": "서울 한강공원 17개 배달존",
-        "action": "결제 시 적용"
-      },
-      "review": {
-        "kind": "human"
-      },
-      "display_until": "2026-11-18T20:11:09.992823+09:00"
     },
     {
       "source": "seoul",
@@ -241,32 +162,6 @@
     },
     {
       "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019841",
-      "title": "자연과 평화가 만나는 자리…서울창포원 공공미술 전시",
-      "summary": "서울창포원 공공미술 ‘평화의 잔상’ 전시",
-      "conditions": "1부 전시10월24일~12월13일 서울창포원. 개장일 체험·보물찾기를 상시 프로그램으로 안내하지 않음. 전시 요금은 본문에 명시되지 않음. 2부는2027년 상반기 예정으로 이번 일정과 구분.",
-      "districts": [
-        "도봉구"
-      ],
-      "verified_at": "2026-11-04T09:59:35.615876+09:00",
-      "valid_from": "2026-10-24",
-      "valid_until": "2026-12-13",
-      "deadline_at": null,
-      "validity_kind": "fixed",
-      "fee_status": "unknown",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "labels": {
-        "category": "문화·체험",
-        "region": "서울 도봉구 서울창포원"
-      },
-      "review": {
-        "kind": "human"
-      },
-      "display_until": "2026-11-18T09:59:35.615876+09:00"
-    },
-    {
-      "source": "seoul",
       "url": "https://mediahub.seoul.go.kr/archives/2019755",
       "title": "가을 탄다 싶다면 가보세요! 힐링·예술·체험 다 되는 '서울식물원'",
       "summary": "서울식물원 식물생활 전시 ‘초록, 속’: 12월 31일까지",
@@ -312,32 +207,6 @@
         "category": "문화·체험",
         "region": "서울 대한민국역사박물관",
         "action": "바로 이용"
-      },
-      "review": {
-        "kind": "human"
-      },
-      "display_until": "2026-11-18T09:59:35.615876+09:00"
-    },
-    {
-      "source": "convenience",
-      "url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
-      "title": "제휴 멤버십카드",
-      "summary": "CU 제휴 멤버십: KT 아침 간편식 할인·T멤버십 안내",
-      "conditions": "KT: 매일5~9시 대상 간편식1천원당200원 할인, 하루1회·최대1천원. T멤버십: VIP·골드1천원당100원, 실버50원 할인 또는 적립. T멤버십은1+1·2+1·담배·주류·서비스 등 제외. 타 할인·적립 중복 불가, 일부 특수시설 점포 제외. 상품 구매비용 발생. 개인 등급·포인트·잔여 한도·적용 성공 미확인.",
-      "districts": [],
-      "verified_at": "2026-11-04T09:59:35.615876+09:00",
-      "valid_from": null,
-      "valid_until": null,
-      "deadline_at": null,
-      "validity_kind": "ongoing",
-      "fee_status": "paid",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "labels": {
-        "category": "할인·적립",
-        "audience": "KT·T멤버십 회원",
-        "region": "전국 CU(일부 점포 제외)",
-        "action": "결제 시 적용"
       },
       "review": {
         "kind": "human"
@@ -555,32 +424,6 @@
         "audience": "성북구 1인 가구",
         "region": "서울 성북구",
         "action": "신청·예약 필요"
-      },
-      "review": {
-        "kind": "human"
-      },
-      "display_until": "2026-11-18T09:59:35.615876+09:00"
-    },
-    {
-      "source": "seoul",
-      "url": "https://mediahub.seoul.go.kr/archives/2019517",
-      "title": "북한산 보며 한복 입고 전시까지! '은평한옥마을' 가을 나들이 코스",
-      "summary": "은평한옥마을 한복 대여·박물관·미술관 이용 안내",
-      "conditions": "너나들이센터 한복 대여 무료·사전 예약 필요(수~월10~18시, 화요일 휴관). 은평역사한옥박물관 성인1천원·청소년500원, 삼각산금암미술관 무료. 시설마다 운영일이 다르며 대여 재고·예약 성공은 미확인.",
-      "districts": [
-        "은평구"
-      ],
-      "verified_at": "2026-11-04T09:59:35.615876+09:00",
-      "valid_from": null,
-      "valid_until": null,
-      "deadline_at": null,
-      "validity_kind": "ongoing",
-      "fee_status": "mixed",
-      "needs_recheck": false,
-      "payment_terms": {},
-      "labels": {
-        "category": "문화·체험",
-        "region": "서울 은평구 은평한옥마을"
       },
       "review": {
         "kind": "human"
@@ -840,9 +683,9 @@
   "coverage_incomplete": true,
   "message": "공식 확인을 거친 공개 승인 항목입니다. 전체 혜택을 확인한 결과는 아닙니다.",
   "withheld": {
-    "pending": 103,
-    "expired": 38,
-    "excluded": 15,
+    "pending": 109,
+    "expired": 0,
+    "excluded": 0,
     "invalid_or_conflicting": 0
   },
   "coverage": {
@@ -852,7 +695,7 @@
         "name": "서울시",
         "status": "checked",
         "scope": "",
-        "verified_count": 20
+        "verified_count": 16
       },
       {
         "source": "gangseo",
@@ -866,7 +709,7 @@
         "name": "은평구",
         "status": "checked",
         "scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님",
-        "verified_count": 2
+        "verified_count": 1
       },
       {
         "source": "seongnam",
@@ -908,14 +751,14 @@
         "name": "편의점 공식 제휴",
         "status": "checked",
         "scope": "CU 공식 제휴 멤버십 안내 · 다른 편의점·앱 전용 행사 미포함",
-        "verified_count": 1
+        "verified_count": 0
       },
       {
         "source": "seoul_lifelong",
         "name": "서울시 평생학습포털",
         "status": "checked",
         "scope": "평생학습포털 첫 화면 공식 이벤트 · 강좌 전체 수집 아님",
-        "verified_count": 1
+        "verified_count": 0
       },
       {
         "source": "seven",
@@ -1050,7 +893,7 @@
         "status": "checked",
         "checked_at": "2026-11-10T08:50:25.089005+09:00",
         "candidates_count": 4,
-        "verified_count": 2
+        "verified_count": 1
       },
       {
         "name": "노원구",
@@ -1064,7 +907,7 @@
         "status": "checked",
         "checked_at": "2026-11-10T08:50:25.089005+09:00",
         "candidates_count": 2,
-        "verified_count": 2
+        "verified_count": 1
       },
       {
         "name": "서대문구",
@@ -1113,7 +956,7 @@
         "status": "checked",
         "checked_at": "2026-11-10T08:50:25.089005+09:00",
         "candidates_count": 3,
-        "verified_count": 1
+        "verified_count": 0
       },
       {
         "name": "동작구",
@@ -1127,7 +970,7 @@
         "status": "checked",
         "checked_at": "2026-11-10T08:50:25.089005+09:00",
         "candidates_count": 5,
-        "verified_count": 2
+        "verified_count": 1
       },
       {
         "name": "서초구",
@@ -1160,11 +1003,6 @@
     ],
     "scope": "서울시 우리동네 뉴스 첫 페이지. 구청 전체 공지 수집과는 다릅니다."
   },
-  "ai_status": {
-    "state": "ok",
-    "last_success_day": "2026-11-09",
-    "updated_at": "2026-11-09T08:46:11.123314+09:00"
-  },
   "operational_state": {
     "schema_version": 1,
     "items": {
@@ -1172,7 +1010,7 @@
         "source": "seoul",
         "title_hash": "4944130257ca2b1fe56dca3c48da3e04bc9c697849e8b0b95eebe0d088b8a877",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "13729da628936932c2b8fad6": {
@@ -1186,21 +1024,21 @@
         "source": "seoul",
         "title_hash": "1ff0ee9c7816c1f65509cc0b73922291d2545cb1443c6926ba72adb7f40c13e4",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "b6926fd9f62f8f0ad914ec80": {
         "source": "seoul",
         "title_hash": "c3c17e92b9e3921a6bec8a1cba8355b20608bf2c1417d8b61242f51a2de0679b",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "4824b480f9e206c7958fa698": {
         "source": "seoul",
         "title_hash": "7830eb071a8f8a999846e2df3e65754afe02e7fa7610fa8384bec124e8145eaa",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "e1154eebcf0a5aeab3b76710": {
@@ -1232,7 +1070,7 @@
         "approved_hash": "6cd3a5ce55b0dc495428d016da7ace0414eaea82ecbd2de0b253355ceb6030e7",
         "body_target_hash": "f026de2c1ea602a0e61d1cb3f52f350539825c368da39bbc55f6e3a27e2ced4c",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-07T06:00:17.718589+09:00",
         "body_checked_at": "2026-11-07T06:00:17.718589+09:00",
         "body_status": "checked",
@@ -1244,7 +1082,7 @@
         "source": "seoul",
         "title_hash": "2aeba427a19dabd9ea1bdd8506016e29502623d8c6033f6b1e70e75e0fe6b6f9",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "416e1b422a93549688cd08e4": {
         "source": "seoul",
@@ -1253,7 +1091,7 @@
         "approved_hash": "5e5e67de07d882146e1566393651cd39f54afac1c5930cea9198d0157a3eebe9",
         "body_target_hash": "9159601e1908bf9dce441a812bf0ef708289c2fe349f51ebb140992cdb3e030f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1265,13 +1103,13 @@
         "source": "seoul",
         "title_hash": "3251b3b06ca95eeeb909353b3bbf3aa08b06ea7b27325b762dc249a5e305406e",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "a5fde59bbd3da33c8f139e94": {
         "source": "seoul",
         "title_hash": "384e41100b02d6b51d2445442ebce95c938bd4c9fe2d3a75572a40fecbee5c31",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "0946939ee45fee9df0f4a786": {
         "source": "seoul",
@@ -1280,7 +1118,7 @@
         "approved_hash": "3eb2a3aa44f78d8542d090d40c5af9e8a1a7f802637d2a7b4c80bb917c340349",
         "body_target_hash": "36a07039ed7c5cfe733fc893b091920ff435a244cf2dd394090893209e27d4cf",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-10T08:50:25.089005+09:00",
         "body_checked_at": "2026-11-10T08:50:25.089005+09:00",
         "body_status": "checked",
@@ -1292,19 +1130,19 @@
         "source": "seoul",
         "title_hash": "855aefd19fcf44059e2d89c9a6719acf478cbce3d67a53d75c5d53e2dc6f24fa",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "5f3758ba6d292afa004d701e": {
         "source": "seoul",
         "title_hash": "139c4e3ba3465883eadff912708418ea02642aa12a828e4df9b6ec0b3aa30322",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "40b46f3a59ef2e5d593a28ca": {
         "source": "seoul",
         "title_hash": "e641b7d2ac4a2b442fee58f5ff6b2eef589bd1098039bf805ea0fadd4e4325b5",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "b6cbbaff8b1f6407aa44154e": {
         "source": "seoul",
@@ -1313,7 +1151,7 @@
         "approved_hash": "e57ba5af7f70a4d41389fbe82a89dd731e118aa0be42a8b8e904202ed882a191",
         "body_target_hash": "31f6274b4bbf1a4821354e01b7e5eb276a05c74b5c2e28ab24b0cbb9a4b2d48f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-07T06:03:41.298812+09:00",
         "body_checked_at": "2026-11-07T06:03:41.298812+09:00",
         "body_status": "checked",
@@ -1328,7 +1166,7 @@
         "approved_hash": "2c80fcbc23e08bdcf8b69bd48e1029a605666754e61ca75a9e4c61f0ea808e54",
         "body_target_hash": "d9d2ae18de79903a79b3bb54edfc1d96af2e6c0f9ee1f534482dfc6ea9038172",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1340,7 +1178,7 @@
         "source": "seoul",
         "title_hash": "578fcf5bfce58a8c144224f97b5f3abe60b99de0739b7b15cde7b709e5700f12",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "e1183dc6e446326a3a8fade3": {
@@ -1350,19 +1188,23 @@
         "approved_hash": "b8e36a833c4f81d3f3b4ab958ab3c7bda179165217a2dae9108a85064f8c7447",
         "body_target_hash": "5ec67180b6c97ed1b145b09121a0d0d7d2b841f13a053c012865e3f08e4a6842",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-10T08:50:25.089005+09:00",
         "body_checked_at": "2026-11-10T08:50:25.089005+09:00",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
         "body_status": "checked",
         "body_parse_mode": "seoul_news",
         "body_comparison": "same",
-        "body_hash_version": 4
+        "body_hash_version": 4,
+        "pending_reason": "ai_contradicted",
+        "pending_deadline": "2026-12-13"
       },
       "0c972aef73a0bd1b0fb9c6aa": {
         "source": "seoul",
         "title_hash": "2ec4ffd4a4dd661a5a03dcccbdbc84ee01940641479a6af15d11a7bb7e5bf619",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "f6038f76c1f3c41fb51d5892": {
         "source": "seoul",
@@ -1371,7 +1213,7 @@
         "approved_hash": "ea9fa0d1bed30d9b40037c094946f2298b3f654a53f569ea4697832e4bb11e1a",
         "body_target_hash": "01413367932b7b9126f6a826c321caee008e034302bc796606e2bf67c1906c01",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-08T07:56:58.489064+09:00",
         "body_checked_at": "2026-11-06T07:59:28.785463+09:00",
         "body_status": "failed",
@@ -1385,7 +1227,7 @@
         "approved_hash": "7106c97e4d9f63611f77a7003afbbd4ca67b53eeb8af4f5fa3cffe1071e355f7",
         "body_target_hash": "e62f85505dd9adae172c4392866d7b89cd8df8aa90794dea2e24952f32953f9f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1400,13 +1242,16 @@
         "approved_hash": "42e3e269ca64cc616cb2ef8af7de5421427baf5819a809b71d121d90c467af10",
         "body_target_hash": "972423851bf0f4eac0d540b84ae611e18e16dab882946fe8d84c089b1318cffe",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-07T21:24:12.931817+09:00",
         "body_checked_at": "2026-11-07T21:24:12.931817+09:00",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
         "body_status": "checked",
         "body_parse_mode": "seoul_news",
         "body_comparison": "baseline",
-        "body_hash_version": 4
+        "body_hash_version": 4,
+        "pending_reason": "ai_contradicted"
       },
       "578c43d09997f3e4330f2ce7": {
         "source": "seoul",
@@ -1415,7 +1260,7 @@
         "approved_hash": "cdd3577bb0e4be4da649b3914b7faea0e7a8d7db967af4cb6a0ebc82b5119efd",
         "body_target_hash": "1937e8ea796711089f5161ec37baf6834f8451aa7b674667a0c0768358f376b2",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-07T06:00:17.718589+09:00",
         "body_checked_at": "2026-11-07T06:00:17.718589+09:00",
         "body_status": "checked",
@@ -1427,7 +1272,7 @@
         "source": "seoul",
         "title_hash": "3060e349efb5b599926e5b669f3652053eb5ed3b41e9f8e5ad20d23f8d7220e6",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "ff00b558fb87c751f9dc9fc8": {
         "source": "seoul",
@@ -1436,7 +1281,7 @@
         "approved_hash": "b98f626f7d77a23ad48d3535d4f0fa0583c28a42e6620c2ba7e289b8cc484d77",
         "body_target_hash": "e21daff08c5c32c2b4d78d7ffda3d69470f7d1a1214e336f25aad82edfeb89c4",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-07T21:24:12.931817+09:00",
         "body_checked_at": "2026-11-07T21:24:12.931817+09:00",
         "body_status": "checked",
@@ -1448,7 +1293,7 @@
         "source": "seoul",
         "title_hash": "c768e03736b24a3e089038d2bdf611d2389beb07976ab36b31ed7cf12bf8a64a",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "69277c9a1f849c711c83c6fa": {
@@ -1458,7 +1303,7 @@
         "approved_hash": "20837fb77e4ff33a1a9e81892454ae8f7d3a542eab5009f18eda539692113d33",
         "body_target_hash": "2f8467d04281b7d27cc3e8e803fab79dd8e7a10bc76f47007a83732526ec314e",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-10T08:50:25.089005+09:00",
         "body_checked_at": "2026-11-10T08:50:25.089005+09:00",
         "body_status": "checked",
@@ -1473,7 +1318,7 @@
         "approved_hash": "bd0f7feab1f7cb398a34306e80acf5d0dd5a05fc9bfd995853af405c6771f5e4",
         "body_target_hash": "364e8ebfaec059ae0784fd305055884477d0e61bf51a81df77b9df1349472797",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-07T06:03:41.298812+09:00",
         "body_checked_at": "2026-11-07T06:03:41.298812+09:00",
         "body_status": "checked",
@@ -1485,13 +1330,13 @@
         "source": "seoul",
         "title_hash": "8493d573f5cf5eee0ed471a9f1386771ec31a87e854c7d3d67adace4eba575d4",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "80babf161cd8239fb6b72205": {
         "source": "seoul",
         "title_hash": "37694028d053c7182c2032e13405550e23d7bab292b7e111e1e2ad3c21126e35",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "0dad716476f8004ebe5301ac": {
         "source": "seoul",
@@ -1500,25 +1345,29 @@
         "approved_hash": "766ab0b6a8448706f92cae22f8498a19c2e5e23032e5b3cc1cdf68b75e6b71d9",
         "body_target_hash": "09b443639897ca49b4a36657f7b4221964c99e035292878d7ed3612c1de09e38",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-09T04:53:56.163341+09:00",
         "body_checked_at": "2026-11-09T04:53:56.163341+09:00",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
         "body_status": "checked",
         "body_parse_mode": "seoul_news",
         "body_comparison": "same",
-        "body_hash_version": 4
+        "body_hash_version": 4,
+        "pending_reason": "ai_contradicted",
+        "pending_deadline": "2026-11-30"
       },
       "be8c44599aca9b38ffeb1b41": {
         "source": "seoul",
         "title_hash": "140545213e3a3ac7946b691c8d799e267d1e345e02580c51fe80a9fb92bddeae",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "864360fabf2c6c60ce0c9909": {
         "source": "seoul",
         "title_hash": "1a830be47579bba63b1655ac11e1a56d7560bdb9edde2cdba148a55b9400214b",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "c5b86e7e112d6e5edccbcc52": {
         "source": "seoul",
@@ -1530,7 +1379,7 @@
         "source": "seoul",
         "title_hash": "f39d4d60f78a2da50794b4c17fe02993b56c90cd302f04795f8d26897fe8148e",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "141cdea7ef4424b37216b336": {
@@ -1540,13 +1389,17 @@
         "approved_hash": "1b16d429878d6c490666099eded85d0830fc9b0e6093b0611c22c5eeec8653b7",
         "body_target_hash": "b3d7e35ab4db48d219a75160006f252799877751e3e3afad2c751c8b964f0e45",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-08T07:56:58.489064+09:00",
         "body_checked_at": "2026-11-08T07:56:58.489064+09:00",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
         "body_status": "checked",
         "body_parse_mode": "seoul_news",
         "body_comparison": "same",
-        "body_hash_version": 4
+        "body_hash_version": 4,
+        "pending_reason": "ai_contradicted",
+        "pending_deadline": "2026-11-27"
       },
       "0dae4f1cd62ceb2009809570": {
         "source": "seoul",
@@ -1588,7 +1441,7 @@
         "source": "government",
         "title_hash": "6c32226dee3e6056d6d57e5042f27925fe7700e204dc6fac3bd9c800797a135c",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "hold_at": "2026-11-09T08:46:11.123314+09:00",
         "hold_reason": "title_changed",
         "pending_reason": "title_changed"
@@ -1605,28 +1458,28 @@
         "source": "culture",
         "title_hash": "010e0a80531ac155f2ffd09992d135e58a5e9a7a9c9f39521f77e904306ccb1f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "ca5a7e0a510e3cc0420b5350": {
         "source": "culture",
         "title_hash": "88c3e9fdc8170992c503a3aa71b22c06cb35094786a24236a623dbc4e8b578eb",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "a0640c2ea3480598826b37e2": {
         "source": "culture",
         "title_hash": "6195e133a66a8bff4e6721495d67e4c6a024b4662887d498d8a3085b134b0d97",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "620a0273a70125896c5b798f": {
         "source": "culture",
         "title_hash": "27fda2cb69816836c20c788e31d0bcb55a61a4b4ba025b8637b554d2420c0687",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "69d9aee2485f2bdb52f9975c": {
@@ -1646,41 +1499,41 @@
         "source": "retail",
         "title_hash": "c162d7b0da12c879f6d2f777b56dcd893fd64a185881d4762eb32dc7df765e3b",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "07194538916337fdca10f79e": {
         "source": "retail",
         "title_hash": "8e305809ef89fea4e180cb5869f6891fb7dfa0c80548e8dfa41f87dc19be7cad",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "6b5a3296b162765d68c0e614": {
         "source": "retail",
         "title_hash": "f09dd7c7cad6af1b9f4899340e3f269fc6e668ad922f0b51016ba41acdd3c420",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "d0d0a2551be89baed59821cf": {
         "source": "retail",
         "title_hash": "4f8f2f37e89d20c4b12423e797bfa893857ea47d69516c360b4fac7769f78d95",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "da190ac8f7be17e706b7250e": {
         "source": "retail",
         "title_hash": "b4f3f1158adc5a13ecddf32c18cb2c9991841356a46e01cdc98fac76cc64ecab",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "595dbc6410ed35afda361c03": {
         "source": "retail",
         "title_hash": "84289c44b42f0f220edcebd8939c0ac56f019a2b264afa61b401a2efd13669ba",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "ead80c79c226bf4af00310a8": {
         "source": "retail",
@@ -1695,13 +1548,16 @@
         "approved_hash": "0d793a94377c9c51a940520b13e05d8327b3d090e0213b1400cb187b1f39f67e",
         "body_target_hash": "3768a51feed7ee48a244f88e4ff63eca6633955f1d6e2b63b162704b49273f29",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-07T06:00:17.718589+09:00",
         "body_checked_at": "2026-11-07T06:00:17.718589+09:00",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
         "body_status": "checked",
         "body_parse_mode": "document",
         "body_comparison": "baseline",
-        "body_hash_version": 4
+        "body_hash_version": 4,
+        "pending_reason": "ai_contradicted"
       },
       "102eb2e389e460259f14c5f3": {
         "source": "seoul_lifelong",
@@ -1710,19 +1566,23 @@
         "approved_hash": "173f89605d9d3dcd1ba5cb79127802090b7b116c1393e095180195fad796bae5",
         "body_target_hash": "8184aa7d4cc222d6b376ee785abfc4301cda2e0a58298251ad396080c9f1b30a",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-08T04:33:56.335786+09:00",
         "body_checked_at": "2026-11-08T04:33:56.335786+09:00",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
         "body_status": "checked",
         "body_parse_mode": "document",
         "body_comparison": "same",
-        "body_hash_version": 4
+        "body_hash_version": 4,
+        "pending_reason": "ai_contradicted",
+        "pending_deadline": "2026-11-10"
       },
       "35c8ef6fbfc75987ad67a6a0": {
         "source": "seoul_lifelong",
         "title_hash": "2c2de998b77dfaf6b66ef4580e3995cc34ec98b26188e29267d874f1965864f1",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "0b755abfa701e2ae4717d9a7": {
@@ -1752,7 +1612,7 @@
         "approved_hash": "1f438a566b995f02678e1339284448b22992edba5c413d05b7f0667afd4cb483",
         "body_target_hash": "a0b5e65f3c38cc7ab41ce3f9297f695cfb3b40fc4259c6b7fe67d6dc19988b02",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1767,7 +1627,7 @@
         "approved_hash": "b0942430ade02dbd2496ce66b59e9962ec8fc91fb40f74d71cc8e184303045d0",
         "body_target_hash": "2041fa679036296d2d5151f626dae692710027b34eef151d71a1af66a5d7c1be",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-08T04:33:56.335786+09:00",
         "body_checked_at": "2026-11-08T04:33:56.335786+09:00",
         "hold_at": "2026-11-08T04:33:56.335786+09:00",
@@ -1803,7 +1663,9 @@
         "title_hash": "d0d0ca0d342db876a0930aba1bd9d6ff3a2833bcc554b5a7a910c7e6319cf604",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
         "last_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "pending_reason": "manual_review",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
+        "pending_reason": "ai_contradicted",
         "pending_deadline": "2026-11-13"
       },
       "b4eaecca93d148e25d1d44c5": {
@@ -1813,7 +1675,7 @@
         "approved_hash": "0c0068d1a61d2319e6ffa40d549537fbce74b024b2d9b947b13f22b8af9943b0",
         "body_target_hash": "509a343fd9eddc693c4c0b412b4fa0b995aba5f3a1651d1f655e7ef6a548b6e1",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-05T13:12:05.196511+09:00",
         "body_checked_at": "2026-11-05T13:12:05.196511+09:00",
         "body_status": "checked",
@@ -1828,7 +1690,7 @@
         "approved_hash": "8351b23acb997c902819d351dfab923e5a9b71cfc6ba18753b9c8570cc0152eb",
         "body_target_hash": "eeca7a2ed165bf0f392aac9134c190cc1002019989c606ec8e2c1bc798cf5098",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "body_attempted_at": "2026-11-06T11:59:17.606935+09:00",
         "body_checked_at": "2026-11-06T11:59:17.606935+09:00",
         "body_status": "checked",
@@ -1840,76 +1702,76 @@
         "source": "eshare",
         "title_hash": "0df4bf26cac00da1a8f51fe4775bc7417cf8e23f90f42703efe52b9b1fe9251f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "8e17a6864acb8bbcad0bda78": {
         "source": "eshare",
         "title_hash": "222ad1b7dad3e14e756fb2f196f68cf3fb5993cff3e8844e8984816681f72a24",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "45edda409d6a33a511b8dd14": {
         "source": "eshare",
         "title_hash": "55463d928b9ca40dacdde339ab5b6961e47acccaac35111b503b9c5600e13564",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "21442659cdf3271b09bd7220": {
         "source": "eshare",
         "title_hash": "ba40efb5cf1141c3488db391e5bc0e6ab0a083359a81a5af35ca6ae622b7c6cf",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "48cedf08de62fe66a445af59": {
         "source": "eshare",
         "title_hash": "58f37aada2d781e87778af4152ec6ec73bf9fcb761e46c76a7bc5e88311e1a85",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "3fc55948006078ab5b774342": {
         "source": "eshare",
         "title_hash": "61c0e2e39894b7d1cb9ff16eb2b554d42e7c2e8fd734ed0b389d53490f549f41",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "52215a13353ed474ee7c0056": {
         "source": "eshare",
         "title_hash": "5ac7998a014e344d4523aed27caf2fbec00a597b18c074c9ac3bef6ed5f7cd01",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "3fbab94ad78407ff32e66fe3": {
         "source": "eshare",
         "title_hash": "ad6cd3da38e6b6f22d239a8dafc813b19941ceadb316b3de78c13b2eaad80c8f",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "bfe925e54359a368c8f7fb61": {
         "source": "eshare",
         "title_hash": "478686d30accd290f21284b860a62c02332e6886ddf4bba88d9ff23e7a24ab99",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "9bc4a3f9868cc5534393f751": {
         "source": "eshare",
         "title_hash": "0dc89ea8fe19daeca94ff825bb9c2992eff235b38608d996db80819a55002640",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "45a5c9fcd2650b69652dcdf8": {
         "source": "eshare",
         "title_hash": "fafd1c28e4365565e80f277ffef6655d1bbdfa1094708fbdabe9d78bbb3df1bd",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "c6da1e2a0e2008b2cce055ab": {
@@ -2152,7 +2014,9 @@
       "2d40249e066a326d4e7543a8": {
         "source": "culture",
         "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-        "pending_reason": "manual_review",
+        "hold_at": "2026-11-10T08:55:13.940199+09:00",
+        "hold_reason": "ai_contradicted",
+        "pending_reason": "ai_contradicted",
         "pending_deadline": "2026-11-20"
       },
       "39c5b96a888f00e7fc1b528a": {
@@ -2314,7 +2178,7 @@
         "source": "seoul",
         "title_hash": "df25be9e6e9c2c6224b9e3dde52305297627b98d8ae661e13ec0f79717b0886b",
         "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "b549622eee925e6ed20af55a": {
@@ -2377,14 +2241,14 @@
         "source": "seoul",
         "title_hash": "a2951705806639ea42c4e34205f9ee97764b306479601ac9fa7ff7e268018c1e",
         "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "01e03dabef2859c671642bca": {
         "source": "retail",
         "title_hash": "00377a0b0df3d92bb777990d7367ad3c47efff4f8e64588709e59d7d1881586c",
         "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "e4b77de798009e48f6fffb05": {
@@ -2405,56 +2269,56 @@
         "source": "emart24_events",
         "title_hash": "1be788ab0a2030e33f15c732bf951d85f4d60185ab915808e7b07985f53555ea",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "4782b82b805e33114dbe8df1": {
         "source": "emart24_events",
         "title_hash": "a353ef4a5526c0a8b7c7a2ea244faa30b145aec7f93f26775b72c381f7c772a7",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "c04690ea6a3bafa494605ffa": {
         "source": "emart24_events",
         "title_hash": "780077ca728dd043498c943c76c4932751f86cb1810969abf5923007ac0130d2",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "a3e35634d2e5cd9af9f200f6": {
         "source": "emart24_events",
         "title_hash": "442470be5ccea8ce634bd46901099c6bbef84e2c4c113517e2e3f87445ca51b1",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "29afeec76bcda173a6ee7caa": {
         "source": "emart24_events",
         "title_hash": "7fe23c43940a69306098292e8880cc9607349c2d3fa81c79a0257acfab80daa4",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "1ccf6907bd6e39f06e699fc5": {
         "source": "emart24_events",
         "title_hash": "cece14334689bbcc5b070a8f9bb9f2782ab21ba0d0b1d5ef66288295ab691c1d",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "c9d573f37c1a62d19363487c": {
         "source": "emart24_events",
         "title_hash": "646300957e2031a128ea47d04a1de3b1186f4beb29a4b41456c09b7617c1e2e8",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "89f08409903fb165b4970cba": {
         "source": "emart24_events",
         "title_hash": "5e4933d8400a31519bace2e07a3ffc95bd2dc7a254f9ad14f00298c598f54632",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "498d59ae5c6c9b2d553c000c": {
@@ -2468,21 +2332,21 @@
         "source": "emart24_events",
         "title_hash": "3e7c34eee762c5767db96489a56aa6f83778723f9664d0c4236f6b4cc86e3e06",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "8b5bf5c9c8311cbcd2bca292": {
         "source": "emart24_events",
         "title_hash": "abec9eb6da5f3b848ffaaac2a25b09b9fb94e0da0cdbc0f6ef87e633d82ed91e",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "01f408bbdedbf65c7b9dec57": {
         "source": "emart24_events",
         "title_hash": "269ddc4d418ebab019b7cbb599904b5557581a01a690b13635ec7c82b4e48066",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "8d55def96a2f5ad64f746b95": {
@@ -2496,14 +2360,14 @@
         "source": "emart24_events",
         "title_hash": "2adf0ea3a7e64e2d3a654dd2e591d04f2e449f1b3127a07e203f77d279c8754a",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "46bfa7e2db0c0075a153ad90": {
         "source": "emart24_events",
         "title_hash": "6a12a0590a571696df71dc56058ce744477fddb54eb965aee42ac2a145b22021",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "fb4c60abf568e6c9fe1b09f5": {
@@ -2517,28 +2381,28 @@
         "source": "emart24_events",
         "title_hash": "fa5dda746b0696ab9763ff98935ca508868e0dcbcc22a69c0c2bca8ba3cdc981",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "f9b5bfa9d44a758f160eef02": {
         "source": "emart24_events",
         "title_hash": "e6d0aa43a17cb8e036ed6aba663f1aec37e2cda015796cabcb20493499a6eea8",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "11a4ce6f2b5ba4997534e0ad": {
         "source": "emart24_events",
         "title_hash": "d67f75af07e9b8a2b1cb3bb93a654c602b948875e65b49c3f1a35f9dc7e66017",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "99e2d188d7ba84c31fefedc9": {
         "source": "emart24_events",
         "title_hash": "cd7749560a08542e2278612b21c35ce861d3d87cddd1b8681a8c559ec3b8ba87",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "2d9bbb48599864f796eb1ab3": {
@@ -2552,91 +2416,91 @@
         "source": "emart24_events",
         "title_hash": "4a533d4e0942fd1d0a3453fa81cd372567d104a91b157cea136b6845dd4fbda5",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "ee76eca4d42ffe5dd3337786": {
         "source": "emart24_events",
         "title_hash": "1f0acb9429fb4e40304bfbf58e4eb387fede7e1e03f605acf0be8ce3ab93fcfc",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "b3292ae6a8cfc8afb4e0f139": {
         "source": "emart24_events",
         "title_hash": "83d9325e4bbfb759b218543dcaafd987d61445fd75be52763167cc384694276b",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "d4b81a2a135300ac2af2af07": {
         "source": "emart24_events",
         "title_hash": "3905a848f07b9a4e0163288e60c4b0af509dd0cd3fc636388cf4dcdc8b08bb77",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "aea03117aeaec89caca84012": {
         "source": "emart24_events",
         "title_hash": "2c71905f274179a92c8cdfa7fa44a0c7cb6e73a413db92a83600254dc1f40312",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "5d486fd06726d6736ed81642": {
         "source": "emart24_events",
         "title_hash": "986790d02ca6e2d6bfde96d4ba22a16daf6fc17e029edf1daef88247790ef8f9",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "cca6df4a97dcff3281347afc": {
         "source": "emart24_events",
         "title_hash": "87c8ebbbe6780e1f3999f2f78efe0055479665378d3e2e63362c65d442bd5061",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "6b1d9db79a0dd14577615fa8": {
         "source": "emart24_events",
         "title_hash": "886b7a0faec7992eb4a6ed651ee1686532dc4059b4ebfefad45638c1a54addd4",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "97218bf7d1e81444c7b86eb6": {
         "source": "emart24_events",
         "title_hash": "4db0b866fe63597c45c12f701ed678d2820bd5599630c3d895f099882846ac55",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "cf6f52552c7f9a49dc65c9f0": {
         "source": "emart24_events",
         "title_hash": "98ff7ab877e4c780b138846cb67a9f72473fbf54d610b5478c05594512822750",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "df4d2d71aca0f1d614f7cc7a": {
         "source": "emart24_events",
         "title_hash": "77a7187d698e0bb5d1c0db5d59755764a787399f552f9ee6f806aec71ff37191",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "a7045e3c23f629ff350cb4eb": {
         "source": "emart24_events",
         "title_hash": "88d828afc278397194d5bc5ce5682455fc1e4ca09c757c7956ee784159b5146b",
         "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "796115a08d31e68bd283a3e1": {
         "source": "seoul",
         "title_hash": "4b248f2186d9e6e0c80ad8fbe594a22157eced2258462a761f73d729c6d736bf",
         "first_seen_at": "2026-11-07T06:00:17.718589+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "83c4bf2765f503aaa23dcc33": {
@@ -2699,300 +2563,307 @@
         "source": "emart24_events",
         "title_hash": "28598bd51ab220b53ed5adf9cc666bee3d33f479e3be78f3ad3181e28f8cc83a",
         "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "cb79f48336a575afebe3bcdd": {
         "source": "seoul",
         "title_hash": "caa5a7c87f8fa83e2b92bc348f9ac0f9851c3496292d0ec9468dc17057b509c5",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "595b181465d0e9f3a871863a": {
         "source": "seoul",
         "title_hash": "0ec571a5d4a448c7971ab2dc7fd9f7b69a4fbbb5e61cb3be31dc9e9312433da2",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "1fd67c84cca467f388c2cb3f": {
         "source": "seoul",
         "title_hash": "147b809b49c9e790a0d107b8e2f21f8b06b6737b7b017829561bef6eed375b25",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "6cef5b97b5eb63f452d6e299": {
         "source": "seoul",
         "title_hash": "9caceeda19dacad9df24e7941fc52be71f95d38b9917bafe675a74702198d14a",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "00cb8cbdaf0ff2ca65e6599a": {
         "source": "seoul",
         "title_hash": "1838ef5f7628e1038eb6c420b44b523e1c064ca1b7e43d57b5a62c8530c7c7c8",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "c2de1e681cd62c3fbb17a6f3": {
         "source": "government",
         "title_hash": "f21b22cb885e561116dd03c3c13e97b560b96abe9188a3bb151c325e2603ee00",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "772daaae9fd126547435fe2a": {
         "source": "government",
         "title_hash": "937fc1a7b7645bb5185214957a51c9bddba08e59a897a72558f3981bb5ad2a90",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "b141fd82b0d8dfa1b2c75a7f": {
         "source": "culture",
         "title_hash": "a1b721aa5b71609cdf03c9a63472b8156566dc511db01af84c3502be1f5c3991",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "e8899a7ef53251fca40b6634": {
         "source": "culture",
         "title_hash": "0d4a41109eefa8ec797dd121fe2c32fe804da46c164d2a4f4209f085f37cb992",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "4822f98e9009cb5568a18012": {
         "source": "culture",
         "title_hash": "8296d6b7269e6e5a92fb228a081eef640d0aa320b40df23be6017753d195d9ed",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "61a63a2de45d2d299476bfff": {
         "source": "culture",
         "title_hash": "1085bbcaecdc89a83bb321d3fa665c4fb5bc13418dc002ce0b9329054e7ce08c",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "f5b664eecd83e19abec70a65": {
         "source": "emart24_events",
         "title_hash": "baf9e2234da3074f83f6fe13f498cc58d70815cce4fd306020b03422c16e4ab1",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       },
       "fb349d4a4985fdf684f90eb9": {
         "source": "emart24_events",
         "title_hash": "0090c25dad7dab2159a3c851fe97db7c2526f6ca96eb7d5db331fb7d1a03f8e6",
         "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+        "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
         "pending_reason": "manual_review"
       }
     },
     "sources": {
       "seoul": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "gangseo": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "eunpyeong": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "government": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "culture": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "retail": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "convenience": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "seoul_lifelong": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "seven": {
-        "consecutive_failures": 14,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+        "consecutive_failures": 15,
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
         "last_success_at": "2026-11-05T13:12:05.196511+09:00",
         "error_category": "timeout"
       },
       "emart24": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "sh": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "eshare": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "seongnam": {
-        "consecutive_failures": 15,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+        "consecutive_failures": 16,
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
         "error_category": "tls"
       },
       "heritage": {
-        "consecutive_failures": 15,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+        "consecutive_failures": 16,
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
         "error_category": "parse_or_empty"
       },
       "emart24_events": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "seven_events": {
-        "consecutive_failures": 10,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+        "consecutive_failures": 11,
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
         "error_category": "timeout"
       },
       "kfes": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       },
       "groceries": {
         "consecutive_failures": 0,
-        "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-        "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+        "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+        "last_success_at": "2026-11-10T08:55:13.940199+09:00"
       }
     }
   },
   "source_health": {
     "seoul": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "gangseo": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "eunpyeong": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "government": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "culture": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "retail": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "convenience": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "seoul_lifelong": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "seven": {
-      "consecutive_failures": 14,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+      "consecutive_failures": 15,
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
       "last_success_at": "2026-11-05T13:12:05.196511+09:00",
       "error_category": "timeout"
     },
     "emart24": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "sh": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "eshare": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "seongnam": {
-      "consecutive_failures": 15,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+      "consecutive_failures": 16,
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
       "error_category": "tls"
     },
     "heritage": {
-      "consecutive_failures": 15,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+      "consecutive_failures": 16,
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
       "error_category": "parse_or_empty"
     },
     "emart24_events": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "seven_events": {
-      "consecutive_failures": 10,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
+      "consecutive_failures": 11,
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
       "error_category": "timeout"
     },
     "kfes": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     },
     "groceries": {
       "consecutive_failures": 0,
-      "last_attempt_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_success_at": "2026-11-10T08:50:25.089005+09:00"
+      "last_attempt_at": "2026-11-10T08:55:13.940199+09:00",
+      "last_success_at": "2026-11-10T08:55:13.940199+09:00"
     }
   },
   "run_context": {
-    "trigger": "schedule",
-    "status": "scheduled_refresh",
-    "expected_collection_at": "2026-11-10T00:37:00+09:00",
-    "scheduled_run_confirmed": true
+    "trigger": "workflow_dispatch",
+    "status": "approved_snapshot",
+    "scheduled_run_confirmed": false
   },
-  "run_id": "42723607932",
+  "run_id": "approved-snapshot-e77ebd953bd224ca",
   "review_queue": [
+    {
+      "id": "102eb2e389e460259f14c5f3",
+      "source": "seoul_lifelong",
+      "reason": "ai_contradicted",
+      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
+      "deadline": "2026-11-10"
+    },
     {
       "id": "548f44d8ebf54f39a6bd01b9",
       "source": "sh",
-      "reason": "manual_review",
+      "reason": "ai_contradicted",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
       "last_seen_at": "2026-11-05T13:12:05.196511+09:00",
       "deadline": "2026-11-13"
@@ -3010,7 +2881,7 @@
       "source": "sh",
       "reason": "body_changed",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": "2026-11-13T17:30:00+09:00"
     },
     {
@@ -3032,7 +2903,7 @@
     {
       "id": "2d40249e066a326d4e7543a8",
       "source": "culture",
-      "reason": "manual_review",
+      "reason": "ai_contradicted",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
       "last_seen_at": null,
       "deadline": "2026-11-20"
@@ -3044,6 +2915,14 @@
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
       "last_seen_at": null,
       "deadline": "2026-11-22T00:00:00+09:00"
+    },
+    {
+      "id": "141cdea7ef4424b37216b336",
+      "source": "seoul",
+      "reason": "ai_contradicted",
+      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
+      "deadline": "2026-11-27"
     },
     {
       "id": "10f47f2e4a64c8bc994b9c84",
@@ -3078,6 +2957,22 @@
       "deadline": "2026-11-29T00:00:00+09:00"
     },
     {
+      "id": "0dad716476f8004ebe5301ac",
+      "source": "seoul",
+      "reason": "ai_contradicted",
+      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
+      "deadline": "2026-11-30"
+    },
+    {
+      "id": "e1183dc6e446326a3a8fade3",
+      "source": "seoul",
+      "reason": "ai_contradicted",
+      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
+      "deadline": "2026-12-13"
+    },
+    {
       "id": "080550205e1c548d6596d473",
       "source": "culture",
       "reason": "body_changed",
@@ -3090,7 +2985,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3106,7 +3001,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3114,7 +3009,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3122,7 +3017,7 @@
       "source": "seoul_lifelong",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3130,7 +3025,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3138,7 +3033,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3146,7 +3041,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3154,7 +3049,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3162,7 +3057,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3170,7 +3065,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3178,7 +3073,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3186,7 +3081,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3202,7 +3097,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3210,7 +3105,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3218,7 +3113,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3226,7 +3121,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3234,7 +3129,15 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
+      "deadline": null
+    },
+    {
+      "id": "b24e7eebfb6a166900f4bb9d",
+      "source": "convenience",
+      "reason": "ai_contradicted",
+      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3242,7 +3145,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3250,7 +3153,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3258,7 +3161,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3266,7 +3169,7 @@
       "source": "eshare",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3274,7 +3177,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3282,7 +3185,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3290,7 +3193,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3306,7 +3209,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3314,7 +3217,7 @@
       "source": "government",
       "reason": "title_changed",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3322,7 +3225,15 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
+      "deadline": null
+    },
+    {
+      "id": "f9d8f4fa227a7c19a87c5227",
+      "source": "seoul",
+      "reason": "ai_contradicted",
+      "first_seen_at": "2026-11-05T13:12:05.196511+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3330,7 +3241,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T06:53:48.491313+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3338,7 +3249,7 @@
       "source": "retail",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3346,7 +3257,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T10:06:29.527439+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3354,7 +3265,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3362,7 +3273,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3370,7 +3281,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3378,7 +3289,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3386,7 +3297,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3394,7 +3305,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3402,7 +3313,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3418,7 +3329,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3426,7 +3337,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3442,7 +3353,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3450,7 +3361,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3466,7 +3377,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3474,7 +3385,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3482,7 +3393,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3498,7 +3409,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3506,7 +3417,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3514,7 +3425,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3522,7 +3433,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3530,7 +3441,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3538,7 +3449,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3546,7 +3457,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3554,7 +3465,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3562,7 +3473,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3570,7 +3481,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3578,7 +3489,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3586,7 +3497,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3594,7 +3505,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3610,7 +3521,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3618,7 +3529,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-06T11:59:17.606935+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3650,7 +3561,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-07T06:00:17.718589+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3690,7 +3601,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-09T13:24:38.645151+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3714,7 +3625,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3722,7 +3633,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3730,7 +3641,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3738,7 +3649,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3746,7 +3657,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3754,7 +3665,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3762,7 +3673,7 @@
       "source": "government",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3770,7 +3681,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3778,7 +3689,7 @@
       "source": "government",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3786,7 +3697,7 @@
       "source": "seoul",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3794,7 +3705,7 @@
       "source": "culture",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3802,7 +3713,7 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     },
     {
@@ -3810,16 +3721,1151 @@
       "source": "emart24_events",
       "reason": "manual_review",
       "first_seen_at": "2026-11-10T08:50:25.089005+09:00",
-      "last_seen_at": "2026-11-10T08:50:25.089005+09:00",
+      "last_seen_at": "2026-11-10T08:55:13.940199+09:00",
       "deadline": null
     }
   ],
   "ai_quality": {
     "last_run_checked": null,
-    "held": 0,
+    "held": 8,
     "dismissed": 0,
     "prioritized": 0,
-    "findings": []
+    "findings": [
+      {
+        "item_id": "0dad716476f8004ebe5301ac",
+        "source": "seoul",
+        "url": "https://mediahub.seoul.go.kr/archives/2019606",
+        "title": "가을 한강 나들이 필수 팁! 서울배달+땡겨요 배달 할인, 상품권 환급까지",
+        "claims": [
+          {
+            "claim": "11개 공원17개 배달구역.",
+            "official_quotes": [
+              "©서울배달+땡겨요 앱 임시배달존, 찾기 쉽고 편하다 서울시는 11개 한강공원 내 17개 배달존 에서 ‘한강 배달존 특별 할인 행사’ 를 진행한다.",
+              "한강 배달존 특별 이벤트 ○ 기간 : 2026년 10월 1일~11월 30일 ○ 위치 : 여의도(4곳), 뚝섬(3곳), 광나루, 잠실, 잠원, 반포(2곳), 이촌, 양화, 난지, 강서, 망원 등 한강공원 17개 배달존 ☞ 배달존 위치 바로가기 ○ 혜택 : 2만 5,000원 이상 주문 시 3,000원 할인 쿠폰 / 서울사랑상품권 결제 시 1만 5,000원 이상 3,000원, 2만 5,000원 이상 5,000원 환급(익월 14일) ○ 서울시 공공배달앱 ‘서울배달+땡겨요’ : ☞ 구글플레이 ☞ 앱스토어"
+            ]
+          }
+        ]
+      },
+      {
+        "item_id": "102eb2e389e460259f14c5f3",
+        "source": "seoul_lifelong",
+        "url": "https://sll.seoul.go.kr/lms/front/event/doJoinListEvent.do?main_se=lie&event_no=118&mnid=202412331716",
+        "title": "서울런 키즈영어 참여이벤트",
+        "claims": [
+          {
+            "claim": "기간 ~2026-11-10",
+            "official_quotes": [
+              "목록 | 이벤트 | 새소식 | 서울시 평생학습포털 본문 바로가기 화면크기 화면축소 100% 화면확대 최근 검색어 학습지원 로그인 전체 전체메뉴 전체메뉴 온라인학습 디지털/AI 인문/교양 취미/생활 가족/건강 외국어 자격증 공통역량 직무역량 취업/창업 구독제 법정의무 장애인식개선 4대폭력 개인정보보호 아동학대 공인중개사연수 금융/경제 기타 생애주기별 어린이 청소년 청년 중장년 어르신 연계학습 서울런4050 K-MOOC 서민금융진흥원 오프라인학습 여성능력개발원 50플러스재단및센터 서울도서관 서울시청소년몽땅 자치구평생학습 특강정보 서울런키즈영어 학습소개 학습커리큘럼 학습평가 학습계정발급 학습가이드 학습문의 새소식 공지사항 이벤트 뉴스레터 자료실 온라인학습 디지털/AI 인문/교양 취미/생활 가족/건강 외국어 자격증 공통역량 직무역량 취업/창업 구독제 법정의무 장애인식개선 4대폭력 개인정보보호 아동학대 공인중개사연수 금융/경제 기타 생애주기별 어린이 청소년 청년 중장년 어르신 연계학습 서울런4050 K-MOOC 서민금융진흥원 오프라인학습 여성능력개발원 50플러스재단및센터 서울도서관 서울시청소년몽땅 자치구평생학습 특강정보 서울런키즈영어 학습소개 학습커리큘럼 학습평가 학습계정발급 학습가이드 학습문의 새소식 공지사항 이벤트 뉴스레터 자료실 공지사항 이벤트 뉴스레터 자료실 로그인 학습지원 온라인학습 법정의무 생애주기별 연계학습 오프라인학습 특강정보 서울런키즈영어 새소식 서울시민대학안내 정규과정 명예시민학위제 인생디자인학교 7학년교실 서울리테크 서울마이칼리지 온라인학습 디지털/AI 인문/교양 취미/생활 가족/건강 외국어 자격증 공통역량 직무역량 취업/창업 구독제 법정의무 장애인식개선 4대폭력 개인정보보호 아동학대 공인중개사연수 금융/경제 기타 생애주기별 어린이 청소년 청년 중장년 어르신 연계학습 서울런4050 K-MOOC 서민금융진흥원 오프라인학습 여성능력개발원 50플러스재단및센터 서울도서관 서울시청소년몽땅 자치구평생학습 특강정보 특강정보 서울런키즈영어 학습소개 학습커리큘럼 학습평가 학습계정발급 학습가이드 학습문의 새소식 공지사항 이벤트 뉴스레터 자료실 서울시민대학안내 사업소개 공지사항 캠퍼스위치안내 캠퍼스시설대관 프로그램북 진흥원뉴스레터 정규과정 전체 중부권캠퍼스 동남권캠퍼스 모두의학교캠퍼스 다시가는캠퍼스 온라인시민대학 연계시민대학 팝업스쿨 명예시민학위제 사업소개 전체 시민석사 시민박사 인생디자인학교 사업소개 수강신청 7학년교실 사업소개 입학신청 서울리테크 사업소개 경제교육신청 재무상담신청 비회원 재무상담신청 투자권유신고 서울마이칼리지 사업소개 수강신청 검색 검색어 검색 최근 검색어 이벤트 링크 서울런 키즈영어 참여이벤트 이벤트 기간 : 2026.10.20~2026.11.10 당첨자 발표 : 2026.11.30 이벤트 선물 : 파리바게뜨 교환권 5천원권 - 목록 첨부파일 파일을 선택해 주세요."
+            ]
+          }
+        ]
+      },
+      {
+        "item_id": "141cdea7ef4424b37216b336",
+        "source": "seoul",
+        "url": "https://mediahub.seoul.go.kr/archives/2019003",
+        "title": "영화·AI 등 192개 강좌 쏟아진다! 서울시민대학 선착순 신청",
+        "claims": [
+          {
+            "claim": "1~4주 무료, 5주 1만원, 10주 2만원, 학점은행 3만원.",
+            "official_quotes": [
+              "수강료는 5회차 과정이 1만 원, 그보다 짧은 과정은 모두 무료다.",
+              "오전 9시 30분~ 선착순 ○ 접수방법 : 서울시평생학습포털 에서 온라인 신청 ○ 교육장소별 프로그램 (총 4개 캠퍼스) - 중부권 캠퍼스 프로그램 ☞클릭 - 동남권 캠퍼스 프로그램 ☞클릭 - 모두의학교 캠퍼스 프로그램 ☞클릭 - 다시가는 캠퍼스 프로그램 ☞클릭 ○ 수강료 : (무료) 1~4주 과정 ※ (유료) 5주 과정 1만원, 10주 과정 2만원, 학점은행제 과정 3만원 ○ 교육일정 : (1차) 9.1.~10.16."
+            ]
+          }
+        ]
+      },
+      {
+        "item_id": "2d40249e066a326d4e7543a8",
+        "source": "culture",
+        "url": "https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S261027160505416170",
+        "title": "[강동구 앨리스유아숲] 11월 (토) 오전10시 주말 유아가족과 함께하는 숲체험 \"가을 숲 파티\"",
+        "claims": [
+          {
+            "claim": "기간 ~2026-11-20",
+            "official_quotes": [
+              "서울특별시 공공서비스예약 바로가기 메뉴 본문 바로가기 주메뉴 바로가기 전체메뉴열기 서울특별시 공공서비스예약 로그인 KOR KOR ENG 검색창 열기 통합검색 검색 서울특별시 공공서비스예약 로그인 KOR KOR ENG 시설 한 눈에 보기 챗봇 서울톡 나의 예약내역 이용 안내 120 수어 상담 바로가기 전체메뉴닫기 홈으로 이동 문화체험 체육시설 공간시설 문화체험 교육강좌 진료복지 이용안내 교육체험 교육체험 농장체험 문화행사 전시/관람 단체봉사 공원탐방 서울형키즈카페 산림여가 [강동구 앨리스유아숲] 11월 (토) 오전10시 주말 유아가족과 함께하는 숲체험 \"가을 숲 파티\" 예약마감 공유하기 열기 URL복사 트위터에 공유하기 페이스북에 공유하기 이미지 개수 + 1 이미지 크게 보기 별점0점 별점1점 별점2점 별점3점 별점4점 별점5점 ( 0 건) 대상 유아 장소 앨리스 유아숲체험원 지도보기 이용기간 2026.11.07 ~ 2026.11.21 접수기간 2026.10.28 08:00 ~ 2026.11.20 12:00 선정방법 선착순 모집정원 30 명 신청제한 1회에 2 ~ 5명 까지 신청가능 취소기간 이용일 1일 전까지 예약해제일 미적용 이용요금 무료 예약방법 인터넷 문의전화 강동구 / 010-2533-3995 예약마감 문자알림 목록 이용안내 장소안내 이용후기 필수 준수사항 ○모든 서비스의 이용은 담당 기관의 규정에 따릅니다."
+            ]
+          }
+        ]
+      },
+      {
+        "item_id": "548f44d8ebf54f39a6bd01b9",
+        "source": "sh",
+        "url": "https://www.i-sh.co.kr/app/lay2/program/S1T294C297/www/brd/m_247/view.do?multi_itm_seq=2&seq=312601",
+        "title": "2027년 양천영등포주거안심종합센터 희망돌보미(사무지원)모집공고",
+        "claims": [
+          {
+            "claim": "양천영등포주거안심종합센터 직접 제출, 접수 2026.",
+            "official_quotes": [
+              "접수기간 : 2026.11.03.(화)~11.13.(금) 09:00~17:00 8."
+            ]
+          },
+          {
+            "claim": "마감 시각은 게시글 17:00, 공고문 18:00(시작일 11.",
+            "official_quotes": [
+              "접수기간 : 2026.11.03.(화)~11.13.(금) 09:00~17:00 8."
+            ]
+          },
+          {
+            "claim": "2)으로 서로 달라 확인 필요.",
+            "official_quotes": [
+              "접수기간 : 2026.11.03.(화)~11.13.(금) 09:00~17:00 8."
+            ]
+          }
+        ]
+      },
+      {
+        "item_id": "b24e7eebfb6a166900f4bb9d",
+        "source": "convenience",
+        "url": "https://cu.bgfretail.com/service/membership_info.do?category=service&depth2=2&depth3=1",
+        "title": "제휴 멤버십카드",
+        "claims": [
+          {
+            "claim": "KT: 매일5~9시 대상 간편식1천원당200원 할인, 하루1회·최대1천원.",
+            "official_quotes": [
+              "제휴/광고 문의 전체 상품 CU 차별화 상품 행사 상품 생활편의 서비스 제휴카드 제휴 신용/체크카드 제휴 멤버십카드 T멤버십 VIP/골드 1,000원당 100원 할인 or 적립 실버 1,000원당 50원 할인 or 적립 T멤버십 가용포인트 CU에서 사용 가능 (대상상품에 대해서만 사용가능) 1+1 상품, 2+1 상품, 담배, 주류, 유가증권, 의약품, 서비스(택배, 로또 등), 일부 비식품면세(쓰레기봉투 등) 구매 시 제외 할인권(쿠폰) 사용 시 T멤버십 포인트 사용 불가 (할인 or 적립 가능) 타 할인/적립 서비스와 중복 불가 KT멤버십 매일 오전 5~9시 간편식 1,000원당 200원 할인 (도시락, 줄김밥, 삼각김밥, 햄버거, 샐러드 등) 1일 1회 적용 가능, 할인한도 1,000원 타 할인/적립 서비스와 중복 불가 현대자동차 블루멤버스 포인트 결제시 포인트로 사용가능(적립불가) 월 사용 한도 2만원 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 현대오일뱅크 보너스포인트 결제 시 포인트 사용가능 (적립불가) 최소 1,000원 포인트 이상 사용 가능 1일 1회 사용 가능 / 월 사용 한도 2만 포인트 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 하나머니 포인트 1) 하나머니로 CU멤버십 포인트 전환시 하나머니 100머니 = CU멤버십 100P 전환 (교환금액의 4% 하나머니로 재적립) 전환된 포인트는 취소할 수 없으며, CU멤버십 이용약관 적용 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 2) 하나머니로 현장 결제시 하나머니 바코드 결제로 사용 가능 유가증권, 서비스 상품(로또 등) 구매 시 제외 OK캐쉬백 포인트 결제시 포인트로 사용가능 (적립불가) 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 E1 오렌지포인트 결제시 제시하면 결제금액의 1% 적립 보유한 오렌지 포인트로 결제금액의 100% 포인트 결제 가능 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 SPC 해피포인트 결제금액의 15% 한도 내 포인트 사용 가능 (적립 불가) 결제금액 1,000원 이상부터 사용가능 보유포인트 1,000P이상 부터 사용 가능 해피포인트 제휴카드 (신용카드, 체크카드)는 포인트 사용 불가 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 CJ.ONE 포인트 가용포인트 1천P 이상 시, 포인트 사용 가능 1회 한도 최대 10만 포인트 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 H.Point CU 매장에서 H.Point 사용 가능 최소 100P부터 10P 단위 사용 가능 월 최대 2만P 사용 가능 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 현대카드(M포인트) 결제금액의 20% 포인트 결제 (현장 할인) 포인트 결제 시 나머지 금액은 동일한 현대카드로 결제해야 함 회원이 보유한 M포인트 내에서만 사용 가능 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 신한카드 (마이신한포인트) 결제금액의 100% 포인트 결제 (현장 할인) 포인트 결제 시 나머지 금액은 동일한 신한카드로 결제하여야 함 회원이 보유한 마이신한포인트 내에서만 사용 가능 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 신한BC카드 및 법인카드 제외 삼성카드 (보너스 포인트) 결제금액의 100% 포인트 결제 (현장 할인) 포인트 결제 시 나머지 금액은 동일한 삼성카드로 결제해야 함 회원이 보유한 보너스 포인트 내에서만 사용 가능 유가증권, 서비스 상품(택배,로또 등) 구매 시 제외 타 할인/적립 서비스와 중복 불가 씨티카드 (씨티포인트) 결제금액의 20% 포인트 결제 (청구 할인) 청구 시점에서 회원이 보유한 씨티포인트 내에서만 사용 가능 타 할인/적립 서비스와 중복 가능 * 일부 특수시설내 점포는 서비스가 적용되지 않습니다."
+            ]
+          }
+        ]
+      },
+      {
+        "item_id": "e1183dc6e446326a3a8fade3",
+        "source": "seoul",
+        "url": "https://mediahub.seoul.go.kr/archives/2019841",
+        "title": "자연과 평화가 만나는 자리…서울창포원 공공미술 전시",
+        "claims": [
+          {
+            "claim": "개장일 체험·보물찾기를 상시 프로그램으로 안내하지 않음.",
+            "official_quotes": [
+              "이 밖에도 서울창포원 곳곳에 숨겨진 보물 카드를 찾는 이벤트와 숲 해설가와 함께하는 서울창포원 및 작품 투어, 지란지교 작품을 활용한 스텐실 워크숍 등이 진행됐다.",
+              "©김아름 양말목으로 꽃을 만드는 뜨개 워크숍에 참여하는 시민들 ©김아름 레이어 스탬프를 활용한 엽서 만들기 체험 ©김아름 평화문화진지 전망대 도안에 색을 입히며 2027년의 변화를 상상해 보는 프로그램 ©김아름 창포원 곳곳에 숨겨진 보물 카드를 찾는 흥미로운 이벤트도 진행됐다."
+            ]
+          }
+        ]
+      },
+      {
+        "item_id": "f9d8f4fa227a7c19a87c5227",
+        "source": "seoul",
+        "url": "https://mediahub.seoul.go.kr/archives/2019517",
+        "title": "북한산 보며 한복 입고 전시까지! '은평한옥마을' 가을 나들이 코스",
+        "claims": [
+          {
+            "claim": "너나들이센터 한복 대여 무료·사전 예약 필요(수~월10~18시, 화요일 휴관).",
+            "official_quotes": [
+              "은평 한문화특구를 알리기 위해 2018년에 문을 연 곳 으로, 지하 한복체험실 에서는 예약만 하면 한복을 무료로 대여할 수 있다.",
+              "©김지연 은평한옥마을 ○ 위치 : 서울시 은평구 연서로50길 7-10 ○ 누리집 은평역사한옥박물관 ○ 위치 : 서울시 은평구 연서로50길 8 ○ 운영시간 : 09:00~18:00(입장 마감 17:00) ○ 휴무 : 월요일, 1월 1일, 설·추석 연휴 ○ 입장료 : 일반 1,000원, 초·중·고·군인 500원, 영유아·노인 무료 ○ 은평역사한옥박물관 누리집 너나들이센터 ○ 위치 : 서울시 은평구 연서로50길 10 ○ 운영시간 : 수~월요일 10:00~18:00 ○ 휴무 : 화요일 ○ 은평역사한옥박물관 누리집 삼각산금암미술관 ○ 위치 : 서울시 은평구 진관길 21-2 ○ 운영시간 : 화~일요일 10:00~18:00(입장마감 17:30), 점심시간(12:00~13:00) 시설 미운영 ○ 휴무 : 월요일, 1월 1일, 설·추석 연휴 ○ 은평역사한옥박물관 누리집"
+            ]
+          },
+          {
+            "claim": "은평역사한옥박물관 성인1천원·청소년500원, 삼각산금암미술관 무료.",
+            "official_quotes": [
+              "입장료도 성인 1,000원, 청소년 500원으로 부담이 없다.",
+              "관람료는 무료이며, 월요일은 휴관한다.",
+              "©김지연 은평한옥마을 ○ 위치 : 서울시 은평구 연서로50길 7-10 ○ 누리집 은평역사한옥박물관 ○ 위치 : 서울시 은평구 연서로50길 8 ○ 운영시간 : 09:00~18:00(입장 마감 17:00) ○ 휴무 : 월요일, 1월 1일, 설·추석 연휴 ○ 입장료 : 일반 1,000원, 초·중·고·군인 500원, 영유아·노인 무료 ○ 은평역사한옥박물관 누리집 너나들이센터 ○ 위치 : 서울시 은평구 연서로50길 10 ○ 운영시간 : 수~월요일 10:00~18:00 ○ 휴무 : 화요일 ○ 은평역사한옥박물관 누리집 삼각산금암미술관 ○ 위치 : 서울시 은평구 진관길 21-2 ○ 운영시간 : 화~일요일 10:00~18:00(입장마감 17:30), 점심시간(12:00~13:00) 시설 미운영 ○ 휴무 : 월요일, 1월 1일, 설·추석 연휴 ○ 은평역사한옥박물관 누리집"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "ai_status": {
+    "state": "ok",
+    "last_success_day": "2026-11-10",
+    "updated_at": "2026-11-10T08:55:13.940199+09:00"
+  },
+  "topic_cards": {
+    "schema_version": 1,
+    "generated_at": "2026-11-10T08:55:13.940199+09:00",
+    "valid_until": "2027-11-07T00:00:00+09:00",
+    "used_fallback": false,
+    "topics": [
+      {
+        "id": "vouchers",
+        "title": "상품권 혜택",
+        "items": [
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019868",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019868",
+              "title": "최대 15% 할인! 서울사랑상품권 '코.그.페' 행사",
+              "summary": "서울사랑상품권 결제 추가 5% 페이백",
+              "conditions": "10월29일~11월15일 광역·25개 구 서울사랑상품권 결제액의 추가 5% 페이백. 기존 보유 대상 상품권도 포함. 별도 신청 없이 10월 결제분은 11월20일, 11월 결제분은 12월20일 상품권 지급 예정. 구매 할인·기존 페이백은 상품권별로 달라 모두 15% 혜택이 아님. 구매비용 발생, 기사 안내 월 구매 한도 50만원·보유 한도 150만원. 예산 소진 시 조기 종료, 현재 잔량·개인 지급 여부 미확인.",
+              "districts": [],
+              "verified_at": "2026-11-04T20:11:09.992823+09:00",
+              "valid_from": "2026-10-29",
+              "valid_until": "2026-11-15",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "region": "서울",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-16T00:00:00+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019785",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019785",
+              "title": "서울의 밤을 채울 새로운 즐거움 '서울 달빛야장'(ft. 달빛상품권)",
+              "summary": "달빛상품권 10% 할인 판매·야간 사용 안내",
+              "conditions": "10월23일10시 판매 개시, 소진 시 종료. 월 구매50만원·보유150만원, 17~24시 지정 가맹점 결제. 광진 화양·중랑 상봉2·도봉 창4·동작 사당1·관악 남현·강남 신사 대상. 발행규모는 현재 잔량이 아니며 앱 재고 미확인.",
+              "districts": [
+                "강남구",
+                "관악구",
+                "광진구",
+                "도봉구",
+                "동작구",
+                "중랑구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": "2026-10-23",
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "region": "서울 6개 야간 상권",
+                "action": "구매 후 사용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          },
+          {
+            "source": "seongnam",
+            "url": "https://snvision.seongnam.go.kr/23521",
+            "facts": {
+              "source": "seongnam",
+              "url": "https://snvision.seongnam.go.kr/23521",
+              "title": "성남 산성대로 미션투어",
+              "summary": "성남 관광·소비 미션 충족 시 모바일 상품권 최대 3만 원",
+              "conditions": "19세 이상. 관광지 등 대상 장소 2곳 이상 방문, 본인이 포함된 사진·영상과 해시태그를 넣은 SNS 후기 필요. 수정·중원구 대상 상점에서 5만 원 이상 소비 시 1만5천 원, 10만 원 이상 소비 시 3만 원. 후기 작성 후 7일 안에 통합예약 홈페이지에서 지급 신청. 대형마트·편의점·주유 경비 제외. 공고 세부 기준·예산 잔액·개인 자격·지급 성공은 별도 확인 필요.",
+              "districts": [
+                "성남시"
+              ],
+              "verified_at": "2026-10-27T23:17:50.018485+09:00",
+              "valid_from": null,
+              "valid_until": "2026-11-30",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "19세 이상",
+                "region": "성남시 수정·중원구 대상 상점",
+                "action": "미션 참여"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-10T23:17:50.018485+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "night",
+        "title": "저녁에 이용하기",
+        "items": [
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019836",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019836",
+              "title": "청계 A01 무료 야간 자율주행버스",
+              "summary": "평일 저녁 청계광장~광장시장 무료 자율주행버스",
+              "conditions": "평일 19:00~23:50 운행 안내(주말·공휴일 미운행), 청계광장 출발 막차 23:00. 30분 간격 하루9회, 최대8명 탑승. 승하차 교통카드 태그 필수. 좌석이 없으면 탑승하지 못할 수 있으며 실시간 빈자리·당일 운행 여부는 확인하지 않음. 원문에 추후 유상전환 예정(성인1,400원)으로 안내돼 무료 기간 종료 시점은 미확인.",
+              "districts": [
+                "종로구",
+                "중구"
+              ],
+              "verified_at": "2026-11-04T20:11:09.992823+09:00",
+              "valid_from": "2026-10-22",
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "생활지원",
+                "region": "서울 청계광장~광장시장",
+                "action": "바로 이용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T20:11:09.992823+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019568",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019568",
+              "title": "서울의 밤 걸으며, 건강과 포인트 챙겨요! 손목닥터9988 야간걷기 챌린지",
+              "summary": "손목닥터9988 야간 걷기 챌린지 포인트 안내",
+              "conditions": "10월1일부터 예산 소진 시까지. 앱 챌린지 등록·18시 이후 GPS 인증·완료 버튼 등 조건 필요. 야간명소 3곳 인증 선착순1만명 1천P, 2인3천보 선착순1만명 1인500P, 25개 구 코스 선착순1천명 1만P. 지급은 종료 후. 현재 예산·잔량·개인 지급 여부와 별도 참가비는 미확인.",
+              "districts": [
+                "서대문구"
+              ],
+              "verified_at": "2026-11-04T20:11:09.992823+09:00",
+              "valid_from": "2026-10-01",
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "unknown",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "region": "서울 야간명소·25개 구 코스",
+                "action": "미션 참여"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T20:11:09.992823+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "culture",
+        "title": "문화·체험",
+        "items": [
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019755",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019755",
+              "title": "가을 탄다 싶다면 가보세요! 힐링·예술·체험 다 되는 '서울식물원'",
+              "summary": "서울식물원 식물생활 전시 ‘초록, 속’: 12월 31일까지",
+              "conditions": "10월 주방·11월 침실과 책상·12월 베란다 식물생활 전시. 이 전시 자체의 입장료는 본문만으로 확인되지 않음. 식물원 온실·주제정원은 성인5천원·청소년3천원·어린이2천원, 야외는 무료이며 전시 적용 요금은 별도 확인.",
+              "districts": [
+                "강서구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": null,
+              "valid_until": "2026-12-31",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "unknown",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "문화·체험",
+                "region": "서울 강서구 서울식물원"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019571",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019571",
+              "title": "한글날, 세종대왕 발자취 따라가 볼까? 광화문·서촌 일대 6곳(ft. 참여행사)",
+              "summary": "대한민국역사박물관 특별전: 2027년 2월 9일까지 무료",
+              "conditions": "기사 속 현재 일정은 대한민국역사박물관 ‘일구이륙 무한이륙’ 전시. 월·화·목·금·일10~18시, 수·토10~21시. 1월1일·설날 당일 휴관. 함께 소개된 10월9일 행사는 종료됐으며 다른 박물관 요금은 각각 다름.",
+              "districts": [
+                "동대문구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": "2026-10-02",
+              "valid_until": "2027-02-09",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "문화·체험",
+                "region": "서울 대한민국역사박물관",
+                "action": "바로 이용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          },
+          {
+            "source": "eshare",
+            "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=DI08M5621147&rsrc_dcd=CPS001.006",
+            "facts": {
+              "source": "eshare",
+              "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=DI08M5621147&rsrc_dcd=CPS001.006",
+              "title": "옥인육아어울림센터 AR벽화 체험",
+              "summary": "옥인육아어울림센터 AR 벽화 무료 체험",
+              "conditions": "자원 설명: 별도 예약·비용 없이 매주 수~토 10:00~16:00 옥인육아어울림센터 지하1층 방문, '스펀지 AR' 앱으로 체험. 같은 자원정보 표에는 온라인 직접 예약·관리자 승인으로 표기되어 있어 방문 전 문의 권장(02-2148-2944). 운영 변경 여부는 확인하지 않음.",
+              "districts": [
+                "종로구"
+              ],
+              "verified_at": "2026-11-04T11:05:30.424869+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "문화·체험",
+                "audience": "누구나",
+                "region": "서울 종로구 옥인동"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T11:05:30.424869+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019773",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019773",
+              "title": "서울시립과학관 과학관에 ON 예술가",
+              "summary": "과학·예술 융합 전시와 워크숍 일정",
+              "conditions": "10월24~25일 별빛축제와 공개관측회는 종료. 이 항목은 11월29일까지 운영한다고 명시한 과학관에 ON 예술가 프로젝트만 안내. 워크숍별 날짜·예약·잔여석과 별도 요금은 확인되지 않았으므로 무료나 현장 참여 가능으로 단정하지 않음.",
+              "districts": [
+                "노원구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": "2026-10-24",
+              "valid_until": "2026-11-29",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "unknown",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "문화·체험",
+                "region": "서울시립과학관"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "learning",
+        "title": "배움·강좌",
+        "items": [
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019869",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019869",
+              "title": "제철 차, 명상 배워요! 웰니스 학습라운지 '다감' 개관…무료 교육",
+              "summary": "웰니스 학습라운지 다감: 무료 시범 프로그램 신청",
+              "conditions": "10월28일9:30 선착순 신청 개시, 11월9일~12월5일16개 프로그램106회 무료 운영. 서울시민·생활권자 대상, 사전 신청 후 확정. 일요일 휴관. 잔여석·신청 성공 미확인.",
+              "districts": [],
+              "verified_at": "2026-11-04T20:11:09.992823+09:00",
+              "valid_from": "2026-10-28",
+              "valid_until": "2026-12-05",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "교육·강좌",
+                "audience": "서울시민·생활권자",
+                "region": "서울 관악구 다시가는 캠퍼스",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T20:11:09.992823+09:00"
+            }
+          },
+          {
+            "source": "eshare",
+            "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27R5743483&rsrc_dcd=CPS001.006",
+            "facts": {
+              "source": "eshare",
+              "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27R5743483&rsrc_dcd=CPS001.006",
+              "title": "한국무용(프로그램)",
+              "summary": "성북구 석관동주민센터 한국무용 무료 프로그램",
+              "conditions": "이용 요금 무료, 온라인 직접 예약 후 관리자 심사·승인. 공유누리 자원정보 기준. 운영 요일·시간·이용 대상·정원은 자원정보에 기재되지 않아 신청 전 확인 필요. 예약 가능 여부·승인 결과는 확인하지 않음. 문의 02-2241-5766.",
+              "districts": [
+                "성북구"
+              ],
+              "verified_at": "2026-11-04T11:05:30.424869+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "교육·강좌",
+                "region": "서울 성북구 석관동주민센터",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T11:05:30.424869+09:00"
+            }
+          },
+          {
+            "source": "eshare",
+            "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27S0250015&rsrc_dcd=CPS001.006",
+            "facts": {
+              "source": "eshare",
+              "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27S0250015&rsrc_dcd=CPS001.006",
+              "title": "생활영어(프로그램)",
+              "summary": "성북구 석관동주민센터 생활영어 무료 프로그램",
+              "conditions": "이용 요금 무료, 온라인 직접 예약 후 관리자 심사·승인. 공유누리 자원정보 기준. 운영 요일·시간·이용 대상·정원은 자원정보에 기재되지 않아 신청 전 확인 필요. 예약 가능 여부·승인 결과는 확인하지 않음. 문의 02-2241-5766.",
+              "districts": [
+                "성북구"
+              ],
+              "verified_at": "2026-11-04T11:05:30.424869+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "교육·강좌",
+                "region": "서울 성북구 석관동주민센터",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T11:05:30.424869+09:00"
+            }
+          },
+          {
+            "source": "eshare",
+            "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27S0913438&rsrc_dcd=CPS001.006",
+            "facts": {
+              "source": "eshare",
+              "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ27S0913438&rsrc_dcd=CPS001.006",
+              "title": "하모니카(프로그램)",
+              "summary": "성북구 석관동주민센터 하모니카 무료 프로그램",
+              "conditions": "이용 요금 무료, 온라인 직접 예약 후 관리자 심사·승인. 공유누리 자원정보 기준. 운영 요일·시간·이용 대상·정원은 자원정보에 기재되지 않아 신청 전 확인 필요. 예약 가능 여부·승인 결과는 확인하지 않음. 문의 02-2241-5766.",
+              "districts": [
+                "성북구"
+              ],
+              "verified_at": "2026-11-04T11:05:30.424869+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "교육·강좌",
+                "region": "서울 성북구 석관동주민센터",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T11:05:30.424869+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "shopping",
+        "title": "장보기·멤버십",
+        "items": [
+          {
+            "source": "emart24",
+            "url": "https://emart24.co.kr/service/alliance",
+            "facts": {
+              "source": "emart24",
+              "url": "https://emart24.co.kr/service/alliance",
+              "title": "제휴 서비스",
+              "summary": "이마트24 KT멤버십 할인·현대카드 M포인트 사용",
+              "conditions": "KT멤버십: VVIP·VIP는 1천 원당 100원, GOLD·SILVER·WHITE·일반은 50원 포인트 차감 할인, 하루 1회. 담배·주류·서비스 등 일부 상품 제외. 현대카드 M포인트는 결제금액의 20% 포인트 결제로 안내되며 상세 제외 품목·최소 보유 포인트는 이 안내만으로 확인되지 않음. 구매비용 발생. 개인 등급·포인트 잔액·당일 사용 이력·적용 성공 및 두 혜택의 중복 적용은 미확인. 유료 구독 가입은 포함하지 않음.",
+              "districts": [],
+              "verified_at": "2026-11-09T08:02:50+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "KT멤버십·현대카드 M포인트 보유자",
+                "region": "전국 이마트24",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-23T08:02:50+09:00"
+            }
+          },
+          {
+            "source": "seven",
+            "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+            "facts": {
+              "source": "seven",
+              "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+              "title": "할인 카드",
+              "summary": "세븐일레븐 T멤버십 할인·현대카드 M포인트 사용",
+              "conditions": "T멤버십 VIP·Gold는 1천 원당 100원, Silver는 50원 할인 또는 적립. 하루 1회, 공식 안내에는 최대 2만 원 할인·적립 가능(등급별 차등)으로 표기되어 세부 한도는 사용 전 확인 필요. 현대카드 M포인트는 결제금액 10% 차감 안내. 담배·주류·서비스·일부 행사상품 및 점포 제외, 상세 제외 품목 확인 필요. 구매비용 발생, 보유 포인트 및 등급 미확인. 유료 구독 가입은 추천하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+              "districts": [],
+              "verified_at": "2026-10-28T01:08:52.475577+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "T멤버십·현대카드 M포인트 보유자",
+                "region": "전국 세븐일레븐(일부 제외)",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-11T01:08:52.475577+09:00"
+            }
+          },
+          {
+            "source": "seven",
+            "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=3",
+            "facts": {
+              "source": "seven",
+              "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=3",
+              "title": "멤버십 카드",
+              "summary": "세븐일레븐 L.POINT 적립·사용",
+              "conditions": "구매금액 0.1% 적립, 하루 5천 포인트·월 1만5천 포인트 한도 및 하루 적립 10회. 1포인트 단위 사용. 담배·서비스 등 제외, 참여 점포·품목별 조건 확인 필요. 구매비용 발생. 신규 카드 발급이나 개인 포인트 잔액은 확인하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+              "districts": [],
+              "verified_at": "2026-10-28T01:08:52.475577+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "L.POINT 회원",
+                "region": "전국 세븐일레븐(참여 점포)",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-11T01:08:52.475577+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019670",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019670",
+              "title": "어르신께 10% 할인! 숙대 앞 '시니어 동행상점' 미용실 가보니",
+              "summary": "시니어 동행상점: 형한나미용실 65세 이상 10% 할인",
+              "conditions": "기사의 해당 미용실 안내 기준. 남성8천원(샴푸 별도)·여성1만원·파마3만원부터이며 할인 전후 금액을 추가 계산해 단정하지 않음. 연령 확인·예약 및 적용 조건은 매장 확인 필요. 다른 동행상점은 할인율·시간이 다름.",
+              "districts": [
+                "용산구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "65세 이상",
+                "region": "서울 용산구 숙대 앞",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "convenience",
+        "title": "편의점 혜택",
+        "items": [
+          {
+            "source": "seven",
+            "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+            "facts": {
+              "source": "seven",
+              "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+              "title": "할인 카드",
+              "summary": "세븐일레븐 T멤버십 할인·현대카드 M포인트 사용",
+              "conditions": "T멤버십 VIP·Gold는 1천 원당 100원, Silver는 50원 할인 또는 적립. 하루 1회, 공식 안내에는 최대 2만 원 할인·적립 가능(등급별 차등)으로 표기되어 세부 한도는 사용 전 확인 필요. 현대카드 M포인트는 결제금액 10% 차감 안내. 담배·주류·서비스·일부 행사상품 및 점포 제외, 상세 제외 품목 확인 필요. 구매비용 발생, 보유 포인트 및 등급 미확인. 유료 구독 가입은 추천하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+              "districts": [],
+              "verified_at": "2026-10-28T01:08:52.475577+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "T멤버십·현대카드 M포인트 보유자",
+                "region": "전국 세븐일레븐(일부 제외)",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-11T01:08:52.475577+09:00"
+            }
+          },
+          {
+            "source": "seven",
+            "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=3",
+            "facts": {
+              "source": "seven",
+              "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=3",
+              "title": "멤버십 카드",
+              "summary": "세븐일레븐 L.POINT 적립·사용",
+              "conditions": "구매금액 0.1% 적립, 하루 5천 포인트·월 1만5천 포인트 한도 및 하루 적립 10회. 1포인트 단위 사용. 담배·서비스 등 제외, 참여 점포·품목별 조건 확인 필요. 구매비용 발생. 신규 카드 발급이나 개인 포인트 잔액은 확인하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+              "districts": [],
+              "verified_at": "2026-10-28T01:08:52.475577+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "L.POINT 회원",
+                "region": "전국 세븐일레븐(참여 점포)",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-11T01:08:52.475577+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "carrier",
+        "title": "통신사·멤버십",
+        "items": [
+          {
+            "source": "emart24",
+            "url": "https://emart24.co.kr/service/alliance",
+            "facts": {
+              "source": "emart24",
+              "url": "https://emart24.co.kr/service/alliance",
+              "title": "제휴 서비스",
+              "summary": "이마트24 KT멤버십 할인·현대카드 M포인트 사용",
+              "conditions": "KT멤버십: VVIP·VIP는 1천 원당 100원, GOLD·SILVER·WHITE·일반은 50원 포인트 차감 할인, 하루 1회. 담배·주류·서비스 등 일부 상품 제외. 현대카드 M포인트는 결제금액의 20% 포인트 결제로 안내되며 상세 제외 품목·최소 보유 포인트는 이 안내만으로 확인되지 않음. 구매비용 발생. 개인 등급·포인트 잔액·당일 사용 이력·적용 성공 및 두 혜택의 중복 적용은 미확인. 유료 구독 가입은 포함하지 않음.",
+              "districts": [],
+              "verified_at": "2026-11-09T08:02:50+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "KT멤버십·현대카드 M포인트 보유자",
+                "region": "전국 이마트24",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-23T08:02:50+09:00"
+            }
+          },
+          {
+            "source": "seven",
+            "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+            "facts": {
+              "source": "seven",
+              "url": "https://www.7-eleven.co.kr/product/cardInfo.asp?gbn=2",
+              "title": "할인 카드",
+              "summary": "세븐일레븐 T멤버십 할인·현대카드 M포인트 사용",
+              "conditions": "T멤버십 VIP·Gold는 1천 원당 100원, Silver는 50원 할인 또는 적립. 하루 1회, 공식 안내에는 최대 2만 원 할인·적립 가능(등급별 차등)으로 표기되어 세부 한도는 사용 전 확인 필요. 현대카드 M포인트는 결제금액 10% 차감 안내. 담배·주류·서비스·일부 행사상품 및 점포 제외, 상세 제외 품목 확인 필요. 구매비용 발생, 보유 포인트 및 등급 미확인. 유료 구독 가입은 추천하지 않음. 개인별 자격·잔여석·예약 성공은 확인하지 않음.",
+              "districts": [],
+              "verified_at": "2026-10-28T01:08:52.475577+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "T멤버십·현대카드 M포인트 보유자",
+                "region": "전국 세븐일레븐(일부 제외)",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-11T01:08:52.475577+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "outdoors",
+        "title": "야외 활동",
+        "items": [
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019823",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019823",
+              "title": "울긋불긋~ 남산으로 가을소풍가요! 11월 투어·체험 신청",
+              "summary": "남산둘레길 가을소풍: 11월 행사·체험 예약 안내",
+              "conditions": "11월1~30일 운영, 7~8일 투어·체험은 10월26일14시 접수 개시. 프로그램별 연령·인원 제한 있으며 잔여석 미확인. 활쏘기대회 신청11월2~8일, 행사14일. 사진전11월1~30일. 참가비 본문 명시 없음.",
+              "districts": [],
+              "verified_at": "2026-11-04T20:11:09.992823+09:00",
+              "valid_from": "2026-10-26",
+              "valid_until": "2026-11-30",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "unknown",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "문화·체험",
+                "region": "서울 남산공원",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T20:11:09.992823+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019849",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019849",
+              "title": "알라딘 독보적 챌린지 2차",
+              "summary": "독서·걷기 미션을 7일 이상 실천하면 1,000포인트",
+              "conditions": "11월2일~12월6일 북플에서 독서 또는 하루 3,000보 이상 걷기 활동을 7일 이상 실천하면 미션 달성자에게 알라딘 1,000포인트 지급 안내. 별도 책 추천 댓글 이벤트는 5,000명 추첨으로 구분. 참가비는 본문에 명시되지 않으며 포인트 사용 시 구매 비용이 생길 수 있음. 개인별 참여 가능 여부·지급 성공·잔량 미확인.",
+              "districts": [],
+              "verified_at": "2026-11-04T20:11:09.992823+09:00",
+              "valid_from": "2026-11-02",
+              "valid_until": "2026-12-06",
+              "deadline_at": null,
+              "validity_kind": "fixed",
+              "fee_status": "unknown",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "region": "온라인(알라딘 북플)",
+                "action": "미션 참여"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T20:11:09.992823+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019619",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019619",
+              "title": "무거운 가방 맡기고 가볍게 달리자! 월드컵경기장역 '러너지원공간'",
+              "summary": "월드컵경기장역 러너 지원 공간 무료 이용",
+              "conditions": "매일5:30~23시 지하철 운영 연계. 네이버 QR 인증 입장, 탈의실·보관함·세면대 무료. 자판기 구매는 별도 비용. 빈 보관함·현장 운영 변경 여부는 미확인.",
+              "districts": [
+                "마포구"
+              ],
+              "verified_at": "2026-10-27T23:46:28.922319+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "생활지원",
+                "region": "서울 월드컵경기장역",
+                "action": "바로 이용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-10T23:46:28.922319+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "age",
+        "title": "연령별 혜택",
+        "items": [
+          {
+            "source": "eshare",
+            "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ29L3650261&rsrc_dcd=CPS001.006",
+            "facts": {
+              "source": "eshare",
+              "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ29L3650261&rsrc_dcd=CPS001.006",
+              "title": "어르신한글교실",
+              "summary": "성북구 종암동 어르신한글교실 무료 프로그램",
+              "conditions": "이용 요금 무료, 온라인 직접 예약 후 관리자 심사·승인. 공유누리 자원정보 기준. 운영 요일·시간·이용 대상·정원은 자원정보에 기재되지 않아 신청 전 확인 필요. 예약 가능 여부·승인 결과는 확인하지 않음.",
+              "districts": [
+                "성북구"
+              ],
+              "verified_at": "2026-11-04T11:05:30.424869+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "교육·강좌",
+                "region": "서울 성북구 종암동",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T11:05:30.424869+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019121",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019121",
+              "title": "완벽 방음에 최신 장비 갖춘 '화상면접실'이 무료! '서울청년센터 성북'",
+              "summary": "성북청년센터 화상면접실 무료 이용",
+              "conditions": "서울 생활권 19~39세 청년. 공공서비스예약 신청 후 승인 및 신분 확인 필요. 평일10~21시·토10~16시, 월5회·하루1회 최대4시간. 매월20일 다음 달 예약 개시(휴일이면 다음 평일). 빈자리 미확인.",
+              "districts": [
+                "성북구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "생활지원",
+                "audience": "서울 생활권 19~39세 청년",
+                "region": "서울 성북구",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019670",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019670",
+              "title": "어르신께 10% 할인! 숙대 앞 '시니어 동행상점' 미용실 가보니",
+              "summary": "시니어 동행상점: 형한나미용실 65세 이상 10% 할인",
+              "conditions": "기사의 해당 미용실 안내 기준. 남성8천원(샴푸 별도)·여성1만원·파마3만원부터이며 할인 전후 금액을 추가 계산해 단정하지 않음. 연령 확인·예약 및 적용 조건은 매장 확인 필요. 다른 동행상점은 할인율·시간이 다름.",
+              "districts": [
+                "용산구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "paid",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "할인·적립",
+                "audience": "65세 이상",
+                "region": "서울 용산구 숙대 앞",
+                "action": "결제 시 적용"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          }
+        ]
+      },
+      {
+        "id": "family",
+        "title": "가족과 함께",
+        "items": [
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019734",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019734",
+              "title": "서울 예비맘 주목! 임신하면 꼭 챙겨야 할 알짜 혜택들(ft. 교통비 지원)",
+              "summary": "서울 임산부 교통비 지원 공공 안내",
+              "conditions": "공식 기사에는 첫째70만원·둘째80만원·셋째 이상100만원, 서울3개월 이상 계속 거주 및 임신 확인 이후 출산6개월 이내 신청 기준을 안내. 지원 한도 밖 교통비는 본인 부담. 신청 비용은 본문 명시 없음. 개인 자격·지급 여부를 판단하지 않으며 신청 전 공식 사업의 최신 세부 기준 확인 필요.",
+              "districts": [
+                "은평구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "unknown",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "생활지원",
+                "audience": "서울 3개월 이상 거주 임산부",
+                "region": "서울",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          },
+          {
+            "source": "seoul",
+            "url": "https://mediahub.seoul.go.kr/archives/2019524",
+            "facts": {
+              "source": "seoul",
+              "url": "https://mediahub.seoul.go.kr/archives/2019524",
+              "title": "키즈카페인 줄! 놀면서 떠나는 '물의 여행' (ft.서울물재생체험관)",
+              "summary": "서울물재생체험관 무료 관람·주차",
+              "conditions": "화~일10~17시, 10~12시·12:30~14:30·15~17시 회차. 사전 예약 필요하며 어린이는 보호자 동반. 월요일·공휴일·지정일 휴관. 예약 잔여석 미확인.",
+              "districts": [
+                "강서구"
+              ],
+              "verified_at": "2026-11-04T09:59:35.615876+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "문화·체험",
+                "region": "서울 강서구 서울물재생체험관",
+                "action": "신청·예약 필요"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T09:59:35.615876+09:00"
+            }
+          },
+          {
+            "source": "eshare",
+            "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=DI08M5621147&rsrc_dcd=CPS001.006",
+            "facts": {
+              "source": "eshare",
+              "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=DI08M5621147&rsrc_dcd=CPS001.006",
+              "title": "옥인육아어울림센터 AR벽화 체험",
+              "summary": "옥인육아어울림센터 AR 벽화 무료 체험",
+              "conditions": "자원 설명: 별도 예약·비용 없이 매주 수~토 10:00~16:00 옥인육아어울림센터 지하1층 방문, '스펀지 AR' 앱으로 체험. 같은 자원정보 표에는 온라인 직접 예약·관리자 승인으로 표기되어 있어 방문 전 문의 권장(02-2148-2944). 운영 변경 여부는 확인하지 않음.",
+              "districts": [
+                "종로구"
+              ],
+              "verified_at": "2026-11-04T11:05:30.424869+09:00",
+              "valid_from": null,
+              "valid_until": null,
+              "deadline_at": null,
+              "validity_kind": "ongoing",
+              "fee_status": "free",
+              "needs_recheck": false,
+              "payment_terms": {},
+              "labels": {
+                "category": "문화·체험",
+                "audience": "누구나",
+                "region": "서울 종로구 옥인동"
+              },
+              "review": {
+                "kind": "human"
+              },
+              "display_until": "2026-11-18T11:05:30.424869+09:00"
+            }
+          }
+        ]
+      }
+    ]
   },
   "festivals": {
     "schema_version": 1,
@@ -6452,5 +7498,26 @@
       ],
       "missing": []
     }
+  },
+  "grocery_pick": {
+    "schema_version": 1,
+    "generated_at": "2026-11-10T08:55:13.940199+09:00",
+    "survey_date": "2026-11-06",
+    "source": "ai",
+    "summary": "이번 주말엔 얼갈이배추(1,850원/1kg, 평년보다 43% 쌈)와 토마토(4,557원/1kg, 평년보다 42% 쌈)가 특히 싸요. 얼갈이배추는 겉절이로 무치고, 토마토는 샐러드로 곁들이면 좋아요. 곁들일 고기는 돼지 삼겹살로 골라 보세요.",
+    "picks": [
+      {
+        "id": "얼갈이배추|얼갈이배추|1kg|상품",
+        "menu": "얼갈이 겉절이"
+      },
+      {
+        "id": "토마토|토마토|1kg|상품",
+        "menu": "토마토 샐러드"
+      },
+      {
+        "id": "4304-27-삼겹살",
+        "menu": "삼겹살 구이"
+      }
+    ]
   }
 }
