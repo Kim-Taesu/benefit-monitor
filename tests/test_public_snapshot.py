@@ -119,5 +119,29 @@ class PublicSnapshotTests(unittest.TestCase):
             self.assertFalse((target/'.tools/claude-trial/live/budget.json').exists())
             self.assertFalse((target/'cache/ai_topics/draft.json').exists())
 
+    def test_public_snapshot_passes_baselines_through_sanitize(self):
+        from unittest.mock import patch
+        from test_publish import baseline_bundle
+        raw=publish.payload(self.root,now=NOW)
+        raw['groceries']={'x':1};raw['grocery_baselines']=baseline_bundle('2026-09-01')
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+            clean=self.stage(raw)
+        self.assertIsNone(clean['grocery_baselines']['items'][0]['baseline'])
+        raw['grocery_baselines']=dict(baseline_bundle(),source='x')
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+            self.assertNotIn('grocery_baselines',self.stage(raw))
+        raw['grocery_baselines']=baseline_bundle()
+        with patch('benefit_monitor.groceries.sanitize',return_value=None):
+            self.assertNotIn('grocery_baselines',self.stage(raw))
+
+    def test_public_snapshot_drops_baselines_on_collection_failed(self):
+        from unittest.mock import patch
+        from test_publish import baseline_bundle
+        failed=publish.payload(self.root,now=NOW,failure=True)
+        failed['groceries']={'x':1};failed['grocery_baselines']=baseline_bundle()
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+            clean=self.stage(failed)
+        self.assertNotIn('grocery_baselines',clean);self.assertNotIn('groceries',clean)
+
 
 if __name__=='__main__':unittest.main()

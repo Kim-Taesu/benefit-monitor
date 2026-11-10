@@ -9,6 +9,48 @@ from benefit_monitor.store import save
 from test_pipeline import benefit, SOURCE, NOW
 
 
+def baseline_bundle(checked='2026-10-25'):
+    return dict(schema_version=1, source='grocery_baselines', fetched_at='2026-10-25T08:00:00+09:00', items=[
+        dict(id='onion', name='양파', aliases=['양파'], group='채소', row=dict(kind='produce', id='onion'),
+             baseline=dict(avg=2000, months=12, **{'from': '2025-10', 'to': '2026-09'}, unit='1kg', kind='양파',
+                           grade='상품', checked_at=checked))])
+
+
+class GroceryBaselinePublishTests(unittest.TestCase):
+    def attach(self, files, groceries=True):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name, value in files.items():
+                (root / name).parent.mkdir(parents=True, exist_ok=True)
+                if isinstance(value, str):
+                    (root / name).write_text(value)
+                else:
+                    save(root / name, value)
+            data = {}
+            with patch('benefit_monitor.groceries.sanitize', return_value={'notice': 'x'} if groceries else None):
+                publish.attach_groceries(root, data, NOW)
+            return data
+
+    def test_publish_attaches_sanitized_baselines(self):
+        data = self.attach({'cache/groceries.json': {}, 'cache/grocery_baselines.json': baseline_bundle()})
+        self.assertEqual(data['grocery_baselines'], baseline_bundle())
+        old = self.attach({'cache/groceries.json': {}, 'cache/grocery_baselines.json': baseline_bundle('2026-09-01')})
+        self.assertIsNone(old['grocery_baselines']['items'][0]['baseline'])
+
+    def test_publish_omits_baselines_without_groceries(self):
+        data = self.attach({'cache/groceries.json': {}, 'cache/grocery_baselines.json': baseline_bundle()}, groceries=False)
+        self.assertNotIn('grocery_baselines', data)
+
+    def test_publish_omits_baselines_when_file_missing_or_bad(self):
+        for files in ({'cache/groceries.json': {}},
+                      {'cache/groceries.json': {}, 'cache/grocery_baselines.json': 'not json{'},
+                      {'cache/groceries.json': {}, 'cache/grocery_baselines.json': dict(baseline_bundle(), source='x')}):
+            data = self.attach(files)
+            self.assertIn('groceries', data)
+            self.assertNotIn('grocery_baselines', data)
+
+
 class PublishTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
