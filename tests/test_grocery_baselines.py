@@ -149,6 +149,12 @@ class KamisMonthlyTests(unittest.TestCase):
         self.assertIsNone(grocery_baselines.parse_kamis_monthly(page, self.TODAY))
         self.assertIsNone(grocery_baselines.parse_kamis_monthly('<html></html>', self.TODAY))
 
+    def test_kamis_monthly_none_without_year_columns(self):
+        page = self.rice()
+        for y in ('2026', '2025', '2024', '2023'):
+            page = page.replace('>%s년<' % y, '>%s분기<' % y)
+        self.assertIsNone(grocery_baselines.parse_kamis_monthly(page, self.TODAY))
+
     def test_kamis_monthly_rejects_odd_price_cell(self):
         page = self.rice().replace('>62,411<', '>6x,411<')
         self.assertIsNone(grocery_baselines.parse_kamis_monthly(page, self.TODAY))
@@ -160,8 +166,16 @@ class KamisMonthlyTests(unittest.TestCase):
 class EkapeRangeTests(unittest.TestCase):
     START, END = date(2026, 7, 1), date(2026, 11, 7)
 
-    def page(self):
-        return fixture('ekape_range_pork_belly.html')
+    def page(self, start='2026-07-01', end='2026-11-07'):
+        return (fixture('ekape_range_pork_belly.html').replace('value="2026-11-06"', 'value="%s"' % start)
+                .replace('value="2026-11-08"', 'value="%s"' % end))
+
+    def test_ekape_range_rejects_echoed_date_mismatch(self):
+        raw = fixture('ekape_range_pork_belly.html')  # echoes 11-06..11-08, not the asked range
+        self.assertIsNone(grocery_baselines.parse_ekape_range(raw, '삼겹살', self.START, self.END))
+        for page in (self.page(start='2026-07-02'), self.page(end='2026-11-06'),
+                     self.page().replace('id="searchEndDate"', 'id="other"')):
+            self.assertIsNone(grocery_baselines.parse_ekape_range(page, '삼겹살', self.START, self.END))
 
     def test_ekape_range_national_average(self):
         got = grocery_baselines.parse_ekape_range(self.page(), '삼겹살', self.START, self.END)

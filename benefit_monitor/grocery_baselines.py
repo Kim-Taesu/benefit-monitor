@@ -89,6 +89,8 @@ def parse_kamis_monthly(page, today):
         match = re.fullmatch(r"(\d{4})년?", head)
         if match:
             years[int(match.group(1))] = index
+    if not years:
+        return None
     values = {}
     for cells in rows[1:]:
         match = re.fullmatch(r"(\d{1,2})월", cells[0]) if cells else None
@@ -116,10 +118,15 @@ def parse_kamis_monthly(page, today):
 def parse_ekape_range(page, label, start, end):
     """National mean over start..end from a 축평원 regional page fetched for that range, or None.
 
-    The page is the same table as the one-day page, so groceries.parse_meat does the cell checks.
+    The page must echo exactly start/end in its date inputs (a clamped or default page is None).
+    The table is the same as the one-day page, so groceries.parse_meat does the cell checks.
     """
     months = (end - start).days // 30
     if months < 1:
+        return None
+    echoed = [re.search(r'id="%s"\s+value="(\d{4}-\d{2}-\d{2})"' % name, page)
+              for name in ("searchStartDate", "searchEndDate")]
+    if not all(echoed) or (echoed[0].group(1), echoed[1].group(1)) != (start.isoformat(), end.isoformat()):
         return None
     rows = groceries.parse_meat(page, {"species": "", "part": "", "name": ""})
     row = next((r for r in rows if r["label"] == label), None)
