@@ -178,8 +178,12 @@ class _Requests:
         return groceries.fetch(url, self.domains)
 
 
+# 기간별 소매가 페이지: 월별 표(action=monthly)는 여기에만 있다. 일간 catalogue.do는 이 파라미터를 무시한다.
+KAMIS_PERIOD = groceries.KAMIS + "/customer/price/agricultureRetail/period.do"
+
+
 def _kamis_url(item, today):
-    return groceries.KAMIS_DAILY + "?" + urlencode(dict(action="monthly", yyyy=today.year, period=3,
+    return KAMIS_PERIOD + "?" + urlencode(dict(action="monthly", yyyy=today.year, period=3,
                                                          convert_kg_yn="N", **item["kamis"]))
 
 
@@ -202,7 +206,7 @@ def collect(source, now, previous):
     kept = sanitize(previous, now)
     prev = {i["id"]: i for i in kept["items"]} if kept else {}
     requests = _Requests(domains)
-    for base, url in ((groceries.KAMIS, groceries.KAMIS_DAILY), (groceries.EKAPE, groceries.EKAPE_REGION)):
+    for base, url in ((groceries.KAMIS, KAMIS_PERIOD), (groceries.EKAPE, groceries.EKAPE_REGION)):
         requests.used += 1
         groceries._robots(base, url, domains)
     result = {}
