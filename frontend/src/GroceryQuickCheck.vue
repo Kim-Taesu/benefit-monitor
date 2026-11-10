@@ -21,7 +21,7 @@ const view=computed(()=>{
     <h3>{{ view.item.name }} · 전국 평균 소매가</h3>
     <p class="grocery-quick-price"><strong>{{ won(view.row.current) }}</strong> /{{ view.row.unit.replace(/^원\//,'') }}</p>
     <span v-if="view.badge" class="grocery-badge" :class="view.badge.level">{{ view.badge.label }}</span>
-    <p class="grocery-quick-note"><template v-if="view.avg">{{ Math.min(view.avg.months,12) }}개월 평균 {{ won(view.avg.avg) }}<template v-if="view.date"> · </template></template><template v-if="view.date">{{ view.date }} 조사</template></p>
+    <p class="grocery-quick-note"><template v-if="view.avg"><template v-if="view.row.kind==='meat'">조사 방식 변경(7월) 후 </template>{{ Math.min(view.avg.months,12) }}개월 평균 {{ won(view.avg.avg) }}<template v-if="view.date"> · </template></template><template v-if="view.date">{{ view.date }} 조사</template></p>
     <p v-if="view.others.length" class="grocery-quick-links"><template v-for="(o,i) in view.others" :key="o.id"><template v-if="i"> · </template><button type="button" @click="emit('pick',o.name)">{{ o.name }}</button></template> ›</p>
   </div>
   </div>

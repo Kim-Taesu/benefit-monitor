@@ -124,7 +124,7 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 - 매장 가격 계산기는 브라우저 안에서만 계산하고 입력값을 저장·전송하지 않는다.
 - 이 변경으로 `publish.py`·`public_snapshot.py`가 바뀌어 `public/topic-publication.json`의 `policy_sha256`을 다시 기록했다. 주제 카드 게이트 로직은 바뀌지 않았다.
 
-장보기 "싼지 빠르게 확인" 카드의 기간 평균 기준값은 주 1회(일요일 23:07 KST, `.github/workflows/grocery-baselines.yml`)만 따로 수집한다. 요청은 약 27회이며 상한은 30회(`grocery_baselines.MAX_REQUESTS`)다. 결과는 `briefing-data/grocery-baselines.json`에 두고 일일 실행은 복원만 한다. 축산물은 2026-07-01(조사 방법 변경일) 이후만 평균에 쓰고, 30일이 지난 기준값은 폐기해 값으로 쓰지 않는다. 같은 무료 출처·익명 GET·robots·허용목록 규칙이며 사용자 승인일은 2026-11-10이다.
+장보기 "싼지 빠르게 확인" 카드의 기간 평균 기준값은 주 1회(일요일 23:07 KST, `.github/workflows/grocery-baselines.yml`)만 따로 수집한다. 요청은 약 27회이며 상한은 30회(`grocery_baselines.MAX_REQUESTS`)다. 결과는 `briefing-data/grocery-baselines.json`에 두고 일일 실행은 복원만 한다. 축산물은 2026-07-01(조사 방법 변경일) 이후만 평균에 쓰고, 30일이 지난 기준값은 폐기해 값으로 쓰지 않는다. 같은 무료 출처·익명 GET·robots·허용목록 규칙이며 사용자 승인일은 2026-11-10이다. 주간 워크플로는 일일 pages 실행과 동시 실행 그룹 `benefit-pages`를 일부러 공유한다(둘 다 briefing-data에 쓰기 때문). 그 순간 대기 중이던 pages 실행은 교체될 수 있으니 다시 dispatch한다. KAMIS 계절 품종(배추·무·감자)이 바뀌면 `sources/groceries.json`의 장바구니 행을 직접 고쳐야 하며, 고치기 전까지 그 카드는 숨겨진다(안전한 실패).
 
 ## 승인된 AI 주말 장보기 추천(모델 문장 공개 예외) — 2026-11-09
 

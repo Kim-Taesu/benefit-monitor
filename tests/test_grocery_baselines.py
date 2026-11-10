@@ -319,6 +319,16 @@ class CollectTests(unittest.TestCase):
         self.assertEqual(got['rice']['baseline'], good())  # previous value and previous checked_at
         self.assertEqual(got['potato']['baseline']['checked_at'], '2026-11-10')
 
+    def test_collect_drops_previous_when_basket_row_changed(self):
+        previous = previous_bundle(good())
+        for item in previous['items']:
+            if item['id'] == 'rice':
+                item['row'] = {'kind': 'produce', 'id': 'old-row-id'}
+        web = FakeWeb(fail={'111': OSError('boom')})
+        got = by_id(run_collect(web, previous))
+        self.assertIsNone(got['rice']['baseline'])  # old row's average is not inherited by the new row
+        self.assertEqual(got['potato']['baseline']['checked_at'], '2026-11-10')
+
     def test_collect_robots_disallow_raises(self):
         def web(url, domains):
             if url.endswith('/robots.txt'):

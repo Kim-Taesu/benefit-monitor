@@ -200,7 +200,7 @@ def collect(source, now, previous):
     today = _kst_today(now)
     checked = today.isoformat()
     kept = sanitize(previous, now)
-    prev = {i["id"]: i["baseline"] for i in kept["items"]} if kept else {}
+    prev = {i["id"]: i for i in kept["items"]} if kept else {}
     requests = _Requests(domains)
     for base, url in ((groceries.KAMIS, groceries.KAMIS_DAILY), (groceries.EKAPE, groceries.EKAPE_REGION)):
         requests.used += 1
@@ -249,7 +249,12 @@ def collect(source, now, previous):
             pass
     out = []
     for item in items:
-        baseline = result[item["id"]] if item["id"] in result else prev.get(item["id"])
+        if item["id"] in result:
+            baseline = result[item["id"]]
+        else:
+            old = prev.get(item["id"])
+            # Inherit only when the basket row is unchanged; a changed row would carry another series' average.
+            baseline = old["baseline"] if old and old["row"] == item["row"] else None
         out.append({k: item[k] for k in ("id", "name", "aliases", "group", "row")} | {"baseline": baseline})
     return {"schema_version": 1, "source": "grocery_baselines", "fetched_at": now.isoformat(), "items": out}
 

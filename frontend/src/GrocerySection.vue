@@ -38,8 +38,13 @@ function othersLine(r:PriceRow):string{
 const inBasket=computed(()=>!!quickMatch(q.value,basketItems.value));
 // Without a basket (baselines missing/stale) we cannot claim an item is outside it.
 const showNotInBasket=computed(()=>!!q.value.trim()&&basketItems.value.length>0&&!inBasket.value);
-// Bring the search field to the top so the card's answer (price + badge) is on the first screen.
-watch(q,()=>nextTick(()=>{if(document.querySelector('.grocery-quick'))document.querySelector('.grocery-filters')?.scrollIntoView({block:'start'});}));
+// The card shows only when the best basket match has a row today (same rule as GroceryQuickCheck).
+const quickKey=computed(()=>{
+ const hit=quickMatch(q.value,basketItems.value);
+ return hit&&bundle.value?.rows.some(r=>r.kind+r.id===hit.best.rowKey)?hit.best.rowKey:'';
+});
+// Bring the search field to the top once when the card first appears (or its best item changes), not on every keystroke.
+watch(quickKey,k=>{if(k)nextTick(()=>document.querySelector('.grocery-filters')?.scrollIntoView({block:'start'}));});
 function pickName(name:string){q.value=name;shown.value=PAGE;nextTick(()=>document.getElementById('grocery-q')?.focus());}
 function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
 </script>
@@ -103,7 +108,7 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
         <a class="grocery-source" :href="row.kind==='meat'?EKAPE_SOURCE:KAMIS_SOURCE" target="_blank" rel="noopener noreferrer">출처 {{ row.kind==='meat'?'축산물품질평가원':'KAMIS' }} <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a>
       </article>
     </div>
-    <div v-else class="empty-state"><h3>조건에 맞는 품목이 없어요</h3><p>다른 부류를 고르거나 검색어를 바꿔 보세요.</p><p v-if="showNotInBasket">아직 자주 사는 품목에 없어요</p></div>
+    <div v-else-if="!quickKey" class="empty-state"><h3>조건에 맞는 품목이 없어요</h3><p>다른 부류를 고르거나 검색어를 바꿔 보세요.</p><p v-if="showNotInBasket">아직 자주 사는 품목에 없어요</p></div>
     <button v-if="filtered.length>visible.length" type="button" class="festival-more" @click="shown+=PAGE">더 보기 ({{ filtered.length-visible.length }}개 남음)</button>
   </section>
 </template>
