@@ -166,3 +166,70 @@ export function parsePick(raw:unknown,bundle:GroceryBundle):WeeklyPick|null{
  }
  return picks.length?{source:p.source,summary:p.source==='ai'?p.summary as string:null,surveyDate:bundle.produceDate as string,picks}:null;
 }
+
+export interface BasketBaseline{avg:number;months:number;from:string;to:string;unit:string}
+export interface BasketItem{id:string;name:string;aliases:string[];group:'고기·알'|'채소'|'기타';rowKey:string;baseline:BasketBaseline|null}
+const BASKET_GROUPS=new Set(['고기·알','채소','기타']);
+const MONTH=/^\d{4}-\d{2}$/,MAX_BASELINE_AGE=30;
+
+function basketBaseline(v:unknown,now:number):BasketBaseline|null{
+ if(!record(v))return null;
+ const {avg,months,from,to,unit,checked_at}=v;
+ if(!Number.isInteger(avg)||(avg as number)<=0||(avg as number)>MAX_PRICE)return null;
+ if(!Number.isInteger(months)||(months as number)<=0||(months as number)>120)return null;
+ if(typeof from!=='string'||!MONTH.test(from)||typeof to!=='string'||!MONTH.test(to)||!text(unit,20))return null;
+ if(typeof checked_at!=='string'||!DATE.test(checked_at))return null;
+ const age=(Date.parse(kstDate(now))-Date.parse(checked_at))/DAY;
+ if(!Number.isFinite(age)||age<0||age>MAX_BASELINE_AGE)return null;
+ return {avg:avg as number,months:months as number,from,to,unit};
+}
+/** Basket items with their multi-month average (baseline=null when stale or malformed). */
+export function parseBaselines(raw:unknown,now:number):BasketItem[]{
+ if(!record(raw)||!record(raw.grocery_baselines))return [];
+ const g=raw.grocery_baselines;
+ if(g.schema_version!==1||g.source!=='grocery_baselines'||!Array.isArray(g.items)||g.items.length>100)return [];
+ const out:BasketItem[]=[],seen=new Set<string>();
+ for(const x of g.items){
+  if(!record(x)||!text(x.id,40)||!text(x.name,40)||!Array.isArray(x.aliases)||!x.aliases.every(a=>text(a,40)))continue;
+  if(typeof x.group!=='string'||!BASKET_GROUPS.has(x.group)||!record(x.row)||(x.row.kind!=='produce'&&x.row.kind!=='meat')||!text(x.row.id,80))continue;
+  if(seen.has(x.id))continue;
+  seen.add(x.id);
+  out.push({id:x.id,name:x.name,aliases:x.aliases as string[],group:x.group as BasketItem['group'],rowKey:x.row.kind+x.row.id,baseline:basketBaseline(x.baseline,now)});
+ }
+ return out;
+}
+
+const squash=(s:string)=>s.replace(/\s+/g,'').toLowerCase();
+/** 0 exact, 1 prefix, 2 partial; null when the query does not hit the item's name or aliases. */
+function matchRank(q:string,item:BasketItem):number|null{
+ let best:number|null=null;
+ for(const t of [item.name,...item.aliases].map(squash)){
+  const r=t===q?0:t.startsWith(q)?1:t.includes(q)?2:null;
+  if(r!==null&&(best===null||r<best))best=r;
+ }
+ return best;
+}
+/** Search the basket: exact > prefix > partial, ties keep basket order. others = other hits, then same-group fillers (max 3). */
+export function quickMatch(q:string,basket:BasketItem[]):{best:BasketItem;others:BasketItem[]}|null{
+ const key=squash(q);
+ if(!key)return null;
+ const hits=basket.map((item,i)=>({item,i,r:matchRank(key,item)})).filter((h):h is {item:BasketItem;i:number;r:number}=>h.r!==null)
+  .sort((a,b)=>a.r-b.r||a.i-b.i).map(h=>h.item);
+ if(!hits.length)return null;
+ const best=hits[0];
+ const others=hits.slice(1);
+ for(const item of basket)if(others.length<3&&item!==best&&item.group===best.group&&!others.includes(item))others.push(item);
+ return {best,others:others.slice(0,3)};
+}
+
+/** Badge of today's price against the item's multi-month average (±10% is normal). Null when the row/unit does not match. */
+export function baselineBadge(row:PriceRow,item:BasketItem):{level:'cheap'|'normal'|'pricey';pct:number;label:string}|null{
+ const b=item.baseline;
+ if(!b||b.months<=0||!(b.avg>0)||!(row.current>0)||row.kind+row.id!==item.rowKey)return null;
+ const a=parseUnit(row.unit),c=parseUnit(b.unit);
+ if(a&&c?a.base!==c.base||a.amount!==c.amount:row.unit!==b.unit)return null;
+ const pct=Math.round((row.current/b.avg-1)*100),span=`${Math.min(b.months,12)}개월 평균`;
+ const level=pct<=-10?'cheap':pct>=10?'pricey':'normal';
+ const label=pct===0?`${span}과 같음`:pct<0?`▼ ${span}보다 ${-pct}% 쌈`:`▲ ${span}보다 ${pct}% 비쌈`;
+ return {level,pct,label};
+}

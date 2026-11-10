@@ -103,3 +103,50 @@ class MirrorTests(unittest.TestCase):
             state=json.loads((root/'cache/operational_state.json').read_text())
             self.assertEqual(state['items'][key],local)
             self.assertEqual(state['sources']['test']['consecutive_failures'],3)
+
+
+class RestoreBaselinesTests(unittest.TestCase):
+    def setup_root(self, directory):
+        root = Path(directory)
+        save(root / 'sources.yaml', {'sources': [{'id': 'test'}]})
+        return root
+
+    def api(self, baselines):
+        remote = {'operational_state': {'schema_version': 1, 'items': {}, 'sources': {}}}
+        def run(args, **kwargs):
+            url = args[-1]
+            if 'grocery-baselines.json' in url:
+                return baselines(args)
+            envelope = {'encoding': 'base64', 'content': base64.b64encode(json.dumps(remote).encode()).decode()}
+            return subprocess.CompletedProcess(args, 0, json.dumps(envelope), '')
+        return run
+
+    def test_mirror_restore_saves_grocery_baselines(self):
+        bundle = {'schema_version': 1, 'source': 'grocery_baselines', 'fetched_at': 'x', 'items': []}
+        def baselines(args):
+            env = {'encoding': 'base64', 'content': base64.b64encode(json.dumps(bundle).encode()).decode(), 'sha': 's'}
+            return subprocess.CompletedProcess(args, 0, json.dumps(env), '')
+        with tempfile.TemporaryDirectory() as d:
+            root = self.setup_root(d)
+            with patch('benefit_monitor.mirror.subprocess.run', side_effect=self.api(baselines)):
+                mirror.restore(root, 'o/r')
+            self.assertEqual(json.loads((root / 'cache/grocery_baselines.json').read_text()), bundle)
+
+    def test_mirror_restore_missing_baselines_is_not_error(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.setup_root(d)
+            with patch('benefit_monitor.mirror.subprocess.run',
+                       side_effect=self.api(lambda a: subprocess.CompletedProcess(a, 1, '', 'gh: Not Found (HTTP 404)'))):
+                mirror.restore(root, 'o/r')
+            self.assertFalse((root / 'cache/grocery_baselines.json').exists())
+            self.assertTrue((root / 'cache/operational_state.json').exists())
+
+    def test_mirror_restore_baselines_read_error_is_not_fatal(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = self.setup_root(d)
+            save(root / 'cache/grocery_baselines.json', {'stale': True})
+            with patch('benefit_monitor.mirror.subprocess.run',
+                       side_effect=self.api(lambda a: subprocess.CompletedProcess(a, 1, '', 'HTTP 500'))):
+                mirror.restore(root, 'o/r')
+            self.assertFalse((root / 'cache/grocery_baselines.json').exists())
+            self.assertTrue((root / 'cache/operational_state.json').exists())

@@ -122,3 +122,87 @@ test('missing grocery bundle hides the section and the shortcut',async({page})=>
  await expect(page.locator('#groceries')).toHaveCount(0);
  await expect(page.locator('.pick-teaser')).toHaveCount(0);
 });
+
+const quickGroceries={...groceries,meat:{...groceries.meat,items:[...groceries.meat.items,
+ {id:'4304-28-목살',cut:'돼지 목살',label:'목살',unit:'원/100g',national:2500,seoul:2600,min:2300,min_region:'경남',max:2700,max_region:'전북'}]}};
+const baseUnit='원/100g',checked=kst(1);
+const bl=(avg:number)=>({avg,months:14,from:'2025-09',to:'2026-10',unit:baseUnit,checked_at:checked});
+const grocery_baselines={schema_version:1,source:'grocery_baselines',items:[
+ {id:'samgyeop',name:'돼지 삼겹살',aliases:['삼겹살','삼겹'],group:'고기·알',row:{kind:'meat',id:'4304-27-삼겹살'},baseline:{...bl(3000),months:4}},
+ {id:'daepae',name:'대패삼겹',aliases:['대패'],group:'고기·알',row:{kind:'meat',id:'9999-0-대패삼겹'},baseline:null},
+ {id:'moksal',name:'목살',aliases:['돼지 목살'],group:'고기·알',row:{kind:'meat',id:'4304-28-목살'},baseline:null},
+ {id:'apdari',name:'앞다리',aliases:['돼지 앞다리'],group:'고기·알',row:{kind:'meat',id:'9999-1-앞다리'},baseline:null}]};
+
+for(const [width,height] of [[360,800],[390,844]])test(`quick check card answers a basket search above the weekly pick ${width}`,async({page})=>{
+ await page.setViewportSize({width,height});
+ await page.clock.install({time:new Date(NOW)});
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:quickGroceries,grocery_pick:weekly,grocery_baselines})}));
+ await page.goto('./');
+ await page.getByRole('tab',{name:'장보기'}).click();
+ await page.locator('#grocery-q').fill('삼겹');
+ const card=page.locator('.grocery-quick');
+ await expect(card).toBeInViewport();
+ // The answer itself (price and badge) must be fully on the first screen.
+ await expect(card.locator('.grocery-quick-price')).toBeInViewport({ratio:1});
+ await expect(card.locator('.grocery-badge')).toBeInViewport({ratio:1});
+ await expect(card.locator('.grocery-quick-note')).toBeInViewport({ratio:1});
+ await expect(page.locator('#groceries [role=status]')).toContainText('돼지 삼겹살 전국 평균 소매가 2,768원 /100g');
+ const [c,p]=await Promise.all([card.boundingBox(),page.locator('.grocery-pick').boundingBox()]);
+ expect(c!.y).toBeLessThan(p!.y);
+ const [m,d]=kst(1).slice(5).split('-').map(Number);
+ await expect(card.locator('h3')).toHaveText('돼지 삼겹살 · 전국 평균 소매가');
+ await expect(card.locator('.grocery-quick-price')).toHaveText(/2,768원\s*\/100g/);
+ await expect(card.locator('.grocery-badge')).toContainText('개월 평균보다');
+ await expect(card.locator('.grocery-quick-note')).toHaveText(`조사 방식 변경(7월) 후 4개월 평균 3,000원 · ${m}/${d} 조사`);
+ // Items without a row today (대패삼겹, 앞다리) are not offered as links.
+ await expect(card.locator('.grocery-quick-links')).toHaveText('목살 ›');
+ await expect(card.getByRole('button',{name:'대패삼겹'})).toHaveCount(0);
+ await expect(card.getByRole('button',{name:'앞다리'})).toHaveCount(0);
+ await page.screenshot({path:`../docs/qa/screenshots/grocery-quick-check-${width}.png`});
+ await card.getByRole('button',{name:'목살'}).click();
+ await expect(page.locator('#grocery-q')).toHaveValue('목살');
+ await expect(page.locator('#grocery-q')).toBeFocused();
+ await expect(card.locator('h3')).toHaveText('목살 · 전국 평균 소매가');
+ await expect(card.locator('.grocery-badge')).toHaveCount(0);
+ await expect(card.locator('.grocery-quick-note')).toHaveText(`${m}/${d} 조사`);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+});
+
+test('an alias-only search shows the card without the empty-state block and scrolls once',async({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ await page.clock.install({time:new Date(NOW)});
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:quickGroceries,grocery_pick:weekly,grocery_baselines})}));
+ await page.goto('./');
+ await page.getByRole('tab',{name:'장보기'}).click();
+ await page.evaluate(()=>{(window as any).__sc=0;const o=Element.prototype.scrollIntoView;Element.prototype.scrollIntoView=function(...a){if((this as Element).classList.contains('grocery-filters'))(window as any).__sc++;return o.apply(this,a as any);};});
+ const input=page.locator('#grocery-q');
+ await input.fill('삼겹');
+ await expect(page.locator('.grocery-quick h3')).toHaveText('돼지 삼겹살 · 전국 평균 소매가');
+ await input.pressSequentially('살');
+ await expect(page.locator('.grocery-quick h3')).toHaveText('돼지 삼겹살 · 전국 평균 소매가');
+ expect(await page.evaluate(()=>(window as any).__sc)).toBe(1);
+ await input.fill('돼지 목살');
+ await expect(page.locator('.grocery-quick h3')).toHaveText('목살 · 전국 평균 소매가');
+ await expect(page.locator('#groceries .empty-state')).toHaveCount(0);
+ expect(await page.evaluate(()=>(window as any).__sc)).toBe(2);
+});
+
+test('a search outside the basket explains it and shows no card',async({page})=>{
+ await page.clock.install({time:new Date(NOW)});
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:quickGroceries,grocery_baselines})}));
+ await page.goto('./');
+ await page.getByRole('tab',{name:'장보기'}).click();
+ await page.locator('#grocery-q').fill('없는품목');
+ await expect(page.locator('.grocery-quick')).toHaveCount(0);
+ await expect(page.locator('#groceries .empty-state')).toContainText('아직 자주 사는 품목에 없어요');
+});
+
+test('an empty basket never claims the item is missing from it',async({page})=>{
+ await page.clock.install({time:new Date(NOW)});
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:quickGroceries})}));
+ await page.goto('./');
+ await page.getByRole('tab',{name:'장보기'}).click();
+ await page.locator('#grocery-q').fill('없는품목');
+ await expect(page.locator('#groceries .empty-state')).toBeVisible();
+ await expect(page.locator('#groceries .empty-state')).not.toContainText('아직 자주 사는 품목에 없어요');
+});

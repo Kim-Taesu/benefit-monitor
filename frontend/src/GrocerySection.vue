@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type FeaturedRow, type GroceryBundle, type WeeklyPick } from './groceries';
+import { computed, ref, watch, nextTick } from 'vue';
+import GroceryQuickCheck from './GroceryQuickCheck.vue';
+import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type BasketItem, quickMatch, type FeaturedRow, type GroceryBundle, type WeeklyPick } from './groceries';
 import GroceryCalc from './GroceryCalc.vue';
 import { formatDate } from './benefits';
-const props=defineProps<{bundle:GroceryBundle;weekly:WeeklyPick|null}>();
+const props=defineProps<{bundle:GroceryBundle;weekly:WeeklyPick|null;basket?:BasketItem[]}>();
+const basketItems=computed(()=>props.basket??[]);
 const PAGE=12,FEATURED='자주 사는 품목';
 const bundle=computed(()=>props.bundle);
 const q=ref(''),category=ref(FEATURED),cheapOnly=ref(false),shown=ref(PAGE);
@@ -33,6 +35,17 @@ function othersLine(r:PriceRow):string{
  const word=others.every(o=>o.detail.endsWith('등급'))?'다른 등급':'다른 종류';
  return `${word}: ${others.map(o=>`${o.detail} ${won(o.current)}`).join(' · ')}`;
 }
+const inBasket=computed(()=>!!quickMatch(q.value,basketItems.value));
+// Without a basket (baselines missing/stale) we cannot claim an item is outside it.
+const showNotInBasket=computed(()=>!!q.value.trim()&&basketItems.value.length>0&&!inBasket.value);
+// The card shows only when the best basket match has a row today (same rule as GroceryQuickCheck).
+const quickKey=computed(()=>{
+ const hit=quickMatch(q.value,basketItems.value);
+ return hit&&bundle.value?.rows.some(r=>r.kind+r.id===hit.best.rowKey)?hit.best.rowKey:'';
+});
+// Bring the search field to the top once when the card first appears (or its best item changes), not on every keystroke.
+watch(quickKey,k=>{if(k)nextTick(()=>document.querySelector('.grocery-filters')?.scrollIntoView({block:'start'}));});
+function pickName(name:string){q.value=name;shown.value=PAGE;nextTick(()=>document.getElementById('grocery-q')?.focus());}
 function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
 </script>
 <template>
@@ -42,6 +55,11 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
       <template v-if="bundle.produceDate"> 농·수산물 {{ md(bundle.produceDate) }} 조사</template><template v-if="bundle.meatDate"> · 육류·계란 {{ md(bundle.meatDate) }} 조사</template>
       · 수집 <time :datetime="bundle.fetchedAt">{{ formatDate(bundle.fetchedAt) }}</time></p>
     <p v-if="bundle.missing.length" class="fine-print">일부 품목 미수집: {{ bundle.missing.join(', ') }}</p>
+    <div class="filter-row grocery-filters">
+      <div class="filter-field grocery-search"><label for="grocery-q">품목 찾기</label><input id="grocery-q" v-model="q" type="search" placeholder="예: 양파, 삼겹살, 고등어" autocomplete="off" @input="shown=PAGE"></div>
+      <div class="quick-filters"><button type="button" :aria-pressed="cheapOnly" @click="cheapOnly=!cheapOnly;shown=PAGE">평년보다 싼 것만</button></div>
+    </div>
+    <GroceryQuickCheck :q="q" :basket="basketItems" :rows="bundle.rows" :produce-date="bundle.produceDate" :meat-date="bundle.meatDate" @pick="pickName" />
     <article v-if="weekly" class="grocery-pick" aria-labelledby="grocery-pick-title">
       <div class="card-meta"><h3 id="grocery-pick-title">이번 주 장보기 추천</h3><span class="grocery-badge" :class="weekly.source==='ai'?'ai':'normal'">{{ weekly.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
       <p v-if="weekly.summary" class="grocery-pick-summary">{{ weekly.summary }}</p>
@@ -54,10 +72,6 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
       </ul>
       <p class="fine-print">{{ weekly.source==='ai'?'AI가 공식 조사값 안에서 쓴 문장이에요. 문장 속 숫자와 품목은 공개 전에 코드가 원본과 대조했어요.':'평년보다 많이 싼 순서로 자동 선정했어요.' }}</p>
     </article>
-    <div class="filter-row grocery-filters">
-      <div class="filter-field grocery-search"><label for="grocery-q">품목 찾기</label><input id="grocery-q" v-model="q" type="search" placeholder="예: 양파, 삼겹살, 고등어" autocomplete="off" @input="shown=PAGE"></div>
-      <div class="quick-filters"><button type="button" :aria-pressed="cheapOnly" @click="cheapOnly=!cheapOnly;shown=PAGE">평년보다 싼 것만</button></div>
-    </div>
     <div class="quick-filters grocery-tabs" role="group" aria-label="부류">
       <button v-for="c in tabs" :key="c" type="button" :aria-pressed="!q.trim()&&category===c" @click="pick(c)">{{ c }}</button>
     </div>
@@ -94,7 +108,7 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
         <a class="grocery-source" :href="row.kind==='meat'?EKAPE_SOURCE:KAMIS_SOURCE" target="_blank" rel="noopener noreferrer">출처 {{ row.kind==='meat'?'축산물품질평가원':'KAMIS' }} <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a>
       </article>
     </div>
-    <div v-else class="empty-state"><h3>조건에 맞는 품목이 없어요</h3><p>다른 부류를 고르거나 검색어를 바꿔 보세요.</p></div>
+    <div v-else-if="!quickKey" class="empty-state"><h3>조건에 맞는 품목이 없어요</h3><p>다른 부류를 고르거나 검색어를 바꿔 보세요.</p><p v-if="showNotInBasket">아직 자주 사는 품목에 없어요</p></div>
     <button v-if="filtered.length>visible.length" type="button" class="festival-more" @click="shown+=PAGE">더 보기 ({{ filtered.length-visible.length }}개 남음)</button>
   </section>
 </template>

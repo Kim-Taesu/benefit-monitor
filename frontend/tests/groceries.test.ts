@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows,parsePick} from '../src/groceries.ts';
+import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows,parsePick,parseBaselines,quickMatch,baselineBadge,type BasketItem,type PriceRow} from '../src/groceries.ts';
 
 const NOW=Date.parse('2026-11-09T09:00:00+09:00');
 function produce(over:Record<string,unknown>={}){
@@ -139,4 +139,87 @@ test('weekly pick links picks to bundle rows and keeps the AI label',()=>{
  const rule=parsePick(pickRaw({source:'rule',summary:null,picks:[{id:'양파|양파|1kg|상품',menu:null}]}),g)!;
  assert.deepEqual([rule.source,rule.summary,rule.picks[0].menu],['rule',null,null]);
  assert.equal(parsePick(raw(),g),null);
+});
+
+function bItem(id:string,name:string,aliases:string[],group:BasketItem['group'],row:{kind:string;id:string},baseline:Record<string,unknown>|null){
+ return {id,name,aliases,group,row,baseline};
+}
+const BASE={avg:2880,months:12,from:'2025-11',to:'2026-10',unit:'1kg',kind:null,grade:null,checked_at:'2026-11-09'};
+function baselines(over:Record<string,unknown>={},items?:unknown[]){
+ return {grocery_baselines:{schema_version:1,source:'grocery_baselines',fetched_at:'2026-11-09T00:40:00+09:00',items:items??[
+  bItem('pork_belly','삼겹살',['삼겹살','삼겹','돼지고기'],'고기·알',{kind:'meat',id:'4304-27-삼겹살'},{...BASE,avg:2700,unit:'원/100g'}),
+  bItem('pork_neck','목심',['목심','목살'],'고기·알',{kind:'meat',id:'4304-68-목심'},null),
+  bItem('egg','계란',['계란','달걀'],'고기·알',{kind:'meat',id:'9903-23-XL30구 일반란'},null),
+  bItem('chicken','닭(육계)',['닭','생닭'],'고기·알',{kind:'meat',id:'9901-99-육계(kg)'},null),
+  bItem('onion','양파',['양파'],'채소',{kind:'produce',id:'양파|양파|1kg|상품'},BASE),
+  bItem('green_onion','대파',['대파','파'],'채소',{kind:'produce',id:'파|대파|1kg|상품'},BASE),
+  bItem('rice','쌀',['쌀','백미'],'기타',{kind:'produce',id:'쌀|20kg|20kg|상품'},{...BASE,avg:60000,unit:'20kg'}),
+ ],...over}};
+}
+const basket=parseBaselines(baselines(),NOW);
+const byName=(n:string)=>basket.find(i=>i.name===n)!;
+function prow(over:Partial<PriceRow>={}):PriceRow{
+ return {id:'양파|양파|1kg|상품',kind:'produce',name:'양파',detail:'',unit:'1kg',category:'채소',guideKey:'양파',current:2650,currentLabel:'당일',
+  normal:null,yearAgo:null,weekAgo:null,range:null,seoul:null,featured:0,...over};
+}
+
+test('parseBaselines keeps basket order, rowKey and baseline freshness',()=>{
+ assert.equal(basket.length,7);
+ assert.equal(basket[0].rowKey,'meat4304-27-삼겹살');
+ assert.equal(byName('양파').baseline!.avg,2880);
+ const stale=parseBaselines(baselines({},[bItem('onion','양파',['양파'],'채소',{kind:'produce',id:'양파|양파|1kg|상품'},{...BASE,checked_at:'2026-10-09'})]),NOW);
+ assert.equal(stale[0].baseline,null);
+ const edge=parseBaselines(baselines({},[bItem('onion','양파',['양파'],'채소',{kind:'produce',id:'양파|양파|1kg|상품'},{...BASE,checked_at:'2026-10-10'})]),NOW);
+ assert.equal(edge[0].baseline!.avg,2880);
+ const future=parseBaselines(baselines({},[bItem('onion','양파',['양파'],'채소',{kind:'produce',id:'양파|양파|1kg|상품'},{...BASE,checked_at:'2026-11-10'})]),NOW);
+ assert.equal(future[0].baseline,null);
+ assert.deepEqual(parseBaselines(baselines({schema_version:2}),NOW),[]);
+ assert.deepEqual(parseBaselines({},NOW),[]);
+ assert.deepEqual(parseBaselines(baselines({items:'x'}),NOW),[]);
+});
+
+test('quickMatch ranks exact > prefix > partial and fills others',()=>{
+ assert.equal(quickMatch('삼겹',basket)!.best.name,'삼겹살');
+ assert.equal(quickMatch(' 대 파 ',basket)!.best.name,'대파');
+ assert.equal(quickMatch('달걀',basket)!.best.name,'계란');
+ assert.equal(quickMatch('파',basket)!.best.name,'대파');
+ assert.equal(quickMatch('QUICK',basket),null);
+ assert.equal(quickMatch('없는품목',basket),null);
+ assert.equal(quickMatch('',basket),null);
+ assert.equal(quickMatch('   ',basket),null);
+ const m=quickMatch('파',basket)!;
+ assert.ok(m.others.length<=3&&!m.others.includes(m.best));
+ assert.equal(m.others[0].name,'양파');
+ const all=quickMatch('삼겹',basket)!;
+ assert.deepEqual(all.others.map(i=>i.name),['목심','계란','닭(육계)']);
+});
+
+test('baselineBadge compares against the multi-month average',()=>{
+ const onion=byName('양파');
+ assert.deepEqual(baselineBadge(prow(),onion),{level:'normal',pct:-8,label:'▼ 12개월 평균보다 8% 쌈'});
+ const cheap=baselineBadge(prow({current:2500}),onion)!;
+ assert.equal(cheap.level,'cheap');assert.equal(cheap.pct,-13);
+ const pricey=baselineBadge(prow({current:3300}),onion)!;
+ assert.equal(pricey.level,'pricey');assert.equal(pricey.label,'▲ 12개월 평균보다 15% 비쌈');
+ assert.ok(baselineBadge(prow(),{...onion,baseline:{...BASE,months:4}})!.label.includes('4개월 평균'));
+ assert.equal(baselineBadge(prow({current:2880}),onion)!.label,'12개월 평균과 같음');
+ assert.ok(baselineBadge(prow(),{...onion,baseline:{...BASE,months:13}})!.label.includes('12개월 평균'));
+ assert.equal(baselineBadge(prow(),{...onion,baseline:{...BASE,months:0}}),null);
+ // unparseable units need strict equality
+ const odd={...onion,baseline:{...BASE,unit:'두부 300g×2'}};
+ assert.ok(baselineBadge(prow({unit:'두부 300g×2'}),odd));
+ assert.equal(baselineBadge(prow({unit:'두부 300g×2 묶음'}),odd),null);
+ assert.equal(baselineBadge(prow(),{...onion,baseline:null}),null);
+ assert.equal(baselineBadge(prow({unit:'10개'}),onion),null);
+ assert.equal(baselineBadge(prow({id:'다른|행|1kg|상품'}),onion),null);
+ assert.equal(baselineBadge(prow({kind:'meat'}),onion),null);
+});
+
+test('baselineBadge unit check passes for real produce and meat rows',()=>{
+ const rice=baselineBadge(prow({id:'쌀|20kg|20kg|상품',name:'쌀',unit:'20kg',current:63289}),byName('쌀'))!;
+ assert.equal(rice.pct,5);assert.equal(rice.level,'normal');
+ assert.equal(baselineBadge(prow({id:'쌀|10kg|10kg|상품',unit:'10kg',current:34796}),byName('쌀')),null);
+ const pork=baselineBadge(prow({id:'4304-27-삼겹살',kind:'meat',name:'돼지 삼겹살',unit:'원/100g',current:2768}),byName('삼겹살'))!;
+ assert.equal(pork.pct,3);
+ assert.equal(baselineBadge(prow({id:'4304-27-삼겹살',kind:'meat',unit:'원/kg',current:2768}),byName('삼겹살')),null);
 });

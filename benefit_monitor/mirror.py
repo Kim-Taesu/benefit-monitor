@@ -57,7 +57,27 @@ def restore(root, repository, now=None, env=None):
         if row.get('hold_at') and (not old.get('hold_at') or datetime.fromisoformat(row['hold_at'])>datetime.fromisoformat(old['hold_at'])):
             state['items'][key]=row
     save(root/"cache/operational_state.json",state)
+    restore_baselines(root,repository,env)
     return envelope.get("sha")
+
+
+BASELINES_NAME = "grocery-baselines.json"
+BASELINES_FILE = "cache/grocery_baselines.json"
+
+
+def restore_baselines(root, repository, env=None):
+    """Download the weekly grocery baselines. Never raises: any failure just leaves no local copy."""
+    from .store import save
+    path = Path(root) / BASELINES_FILE
+    try:
+        bundle, _ = _get(repository, BASELINES_NAME, env)
+        if isinstance(bundle, dict) and bundle.get("schema_version") == 1 and bundle.get("source") == "grocery_baselines":
+            save(path, bundle)
+            return True
+    except Exception:
+        pass
+    path.unlink(missing_ok=True)
+    return False
 
 
 AI_FILES = {"ai-approved.json": "cache/ai_publish/approved.json", "ai-takedowns.json": "cache/ai_publish/takedowns.json",

@@ -135,6 +135,11 @@ def validate(root,data,now,auto=None):
                 from .grocery_pick import public as grocery_pick
                 pick=grocery_pick(data['grocery_pick'],bundle,(auto if auto is not None else auto_release.load(root))[1],now)
                 if pick is not None:clean['grocery_pick']=pick
+            if data.get('grocery_baselines'):
+                from .grocery_baselines import sanitize as baselines
+                try:baseline_bundle=baselines(data['grocery_baselines'],now)
+                except Exception:baseline_bundle=None
+                if baseline_bundle is not None:clean['grocery_baselines']=baseline_bundle
     return clean
 
 

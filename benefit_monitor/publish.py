@@ -388,6 +388,18 @@ def attach_groceries(root,data,now):
     from .grocery_pick import public
     pick = public(load(Path(root)/'cache/grocery_pick/pick.json', None), bundle, auto_release.load(root)[1], now)
     if pick is not None:data['grocery_pick'] = pick
+    attach_grocery_baselines(root,data,now)
+
+
+def attach_grocery_baselines(root,data,now):
+    """Period-average baselines for the quick check; only beside groceries, never able to fail publishing."""
+    if 'groceries' not in data:return
+    try:
+        from .grocery_baselines import sanitize
+        bundle = sanitize(load(Path(root)/'cache/grocery_baselines.json', None), now)
+    except Exception:
+        return
+    if bundle is not None:data['grocery_baselines'] = bundle
 
 
 def write_export(root,data):
