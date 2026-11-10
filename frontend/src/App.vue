@@ -6,7 +6,7 @@ import FestivalSection from './FestivalSection.vue';
 import GrocerySection from './GrocerySection.vue';
 import GradeHelp from './GradeHelp.vue';
 import {won} from './groceries';
-import {parseGroceries,parsePick} from './groceries';
+import {parseGroceries,parsePick,parseBaselines} from './groceries';
 import {DISTRICTS,isSeoulCandidate} from './beta';
 import type {Topic} from './beta';
 const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=ref<Topic|null>(null);
@@ -39,6 +39,7 @@ const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.n
 // future tolerance, so data collected minutes ago is not mistaken for future data (an hour key did that).
 const groceryMinute=computed(()=>Math.floor(now.value/60000)*60000);
 const groceries=computed(()=>parseGroceries(raw.value,groceryMinute.value));
+const basket=computed(()=>parseBaselines(raw.value,groceryMinute.value));
 const groceryPick=computed(()=>groceries.value?parsePick(raw.value,groceries.value):null);
 function pageFilters(search:string){const value=readFilters(search);return {...value,category:'',region:DISTRICTS.includes(value.region)?value.region:''};}
 const filters=reactive(pageFilters(location.search));
@@ -144,7 +145,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     </section>
     </div>
     <div id="panel-groceries" v-show="tab==='groceries'" role="tabpanel" aria-labelledby="tab-groceries">
-      <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" />
+      <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" :basket="basket" />
       <p v-else-if="!loading" class="empty-state">이번 실행에서 장보기 시세를 가져오지 못했어요.</p>
     </div>
     <div id="panel-festivals" v-show="tab==='festivals'" role="tabpanel" aria-labelledby="tab-festivals">
