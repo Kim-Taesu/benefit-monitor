@@ -1,0 +1,421 @@
+{
+  "schema_version": 1,
+  "source": "grocery_baselines",
+  "fetched_at": "2026-11-11T08:36:42.919968+09:00",
+  "items": [
+    {
+      "id": "pork_belly",
+      "name": "삼겹살",
+      "aliases": [
+        "삼겹살",
+        "삼겹",
+        "돼지고기"
+      ],
+      "group": "고기·알",
+      "row": {
+        "kind": "meat",
+        "id": "4304-27-삼겹살"
+      },
+      "baseline": {
+        "avg": 2905,
+        "months": 4,
+        "from": "2026-07",
+        "to": "2026-11",
+        "unit": "원/100g",
+        "kind": null,
+        "grade": null,
+        "checked_at": "2026-11-11"
+      }
+    },
+    {
+      "id": "pork_neck",
+      "name": "목심",
+      "aliases": [
+        "목심",
+        "목살",
+        "돼지 목살"
+      ],
+      "group": "고기·알",
+      "row": {
+        "kind": "meat",
+        "id": "4304-68-목심"
+      },
+      "baseline": {
+        "avg": 2719,
+        "months": 4,
+        "from": "2026-07",
+        "to": "2026-11",
+        "unit": "원/100g",
+        "kind": null,
+        "grade": null,
+        "checked_at": "2026-11-11"
+      }
+    },
+    {
+      "id": "pork_shoulder",
+      "name": "앞다리",
+      "aliases": [
+        "앞다리",
+        "앞다릿살",
+        "돼지 앞다리"
+      ],
+      "group": "고기·알",
+      "row": {
+        "kind": "meat",
+        "id": "4304-25-앞다리"
+      },
+      "baseline": {
+        "avg": 1621,
+        "months": 4,
+        "from": "2026-07",
+        "to": "2026-11",
+        "unit": "원/100g",
+        "kind": null,
+        "grade": null,
+        "checked_at": "2026-11-11"
+      }
+    },
+    {
+      "id": "hanwoo_sirloin",
+      "name": "한우 등심 1등급",
+      "aliases": [
+        "한우",
+        "등심",
+        "소고기"
+      ],
+      "group": "고기·알",
+      "row": {
+        "kind": "meat",
+        "id": "4301-22-등심 1등급"
+      },
+      "baseline": {
+        "avg": 11045,
+        "months": 4,
+        "from": "2026-07",
+        "to": "2026-11",
+        "unit": "원/100g",
+        "kind": null,
+        "grade": null,
+        "checked_at": "2026-11-11"
+      }
+    },
+    {
+      "id": "us_short_rib",
+      "name": "미국산 갈비살",
+      "aliases": [
+        "갈비살",
+        "소갈비살",
+        "미국산"
+      ],
+      "group": "고기·알",
+      "row": {
+        "kind": "meat",
+        "id": "4401-37-갈비살(냉장) 미국산"
+      },
+      "baseline": {
+        "avg": 5227,
+        "months": 4,
+        "from": "2026-07",
+        "to": "2026-11",
+        "unit": "원/100g",
+        "kind": null,
+        "grade": null,
+        "checked_at": "2026-11-11"
+      }
+    },
+    {
+      "id": "chicken",
+      "name": "닭(육계)",
+      "aliases": [
+        "닭",
+        "생닭",
+        "닭고기"
+      ],
+      "group": "고기·알",
+      "row": {
+        "kind": "meat",
+        "id": "9901-99-육계(kg)"
+      },
+      "baseline": {
+        "avg": 5851,
+        "months": 4,
+        "from": "2026-07",
+        "to": "2026-11",
+        "unit": "원/kg",
+        "kind": null,
+        "grade": null,
+        "checked_at": "2026-11-11"
+      }
+    },
+    {
+      "id": "egg_tray",
+      "name": "계란 30구",
+      "aliases": [
+        "계란",
+        "달걀",
+        "계란 30구"
+      ],
+      "group": "고기·알",
+      "row": {
+        "kind": "meat",
+        "id": "9903-23-XL30구 일반란"
+      },
+      "baseline": {
+        "avg": 7181,
+        "months": 4,
+        "from": "2026-07",
+        "to": "2026-11",
+        "unit": "원/30구",
+        "kind": null,
+        "grade": null,
+        "checked_at": "2026-11-11"
+      }
+    },
+    {
+      "id": "napa_cabbage",
+      "name": "배추",
+      "aliases": [
+        "배추",
+        "가을배추"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "배추|가을|1포기|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "radish",
+      "name": "무",
+      "aliases": [
+        "무",
+        "가을무"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "무|가을|1개|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "onion",
+      "name": "양파",
+      "aliases": [
+        "양파"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "양파|양파|1kg|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "green_onion",
+      "name": "대파",
+      "aliases": [
+        "대파",
+        "파"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "파|대파|1kg|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "potato",
+      "name": "감자",
+      "aliases": [
+        "감자",
+        "수미감자"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "감자|수미(노지)|100g|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "carrot",
+      "name": "당근",
+      "aliases": [
+        "당근"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "당근|무세척(국산)|1kg|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "cucumber",
+      "name": "오이",
+      "aliases": [
+        "오이",
+        "다다기오이"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "오이|다다기계통|10개|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "zucchini",
+      "name": "애호박",
+      "aliases": [
+        "애호박",
+        "호박"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "호박|애호박|1개|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "lettuce",
+      "name": "상추",
+      "aliases": [
+        "상추",
+        "적상추"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "상추|적|100g|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "spinach",
+      "name": "시금치",
+      "aliases": [
+        "시금치"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "시금치|시금치|100g|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "bean_sprouts",
+      "name": "콩나물",
+      "aliases": [
+        "콩나물"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "콩나물|풀무원 국산콩 콩나물 340g|1봉|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "garlic_peeled",
+      "name": "깐마늘",
+      "aliases": [
+        "깐마늘",
+        "마늘"
+      ],
+      "group": "채소",
+      "row": {
+        "kind": "produce",
+        "id": "깐마늘(국산)|깐마늘(국산)|1kg|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "rice",
+      "name": "쌀",
+      "aliases": [
+        "쌀",
+        "백미"
+      ],
+      "group": "기타",
+      "row": {
+        "kind": "produce",
+        "id": "쌀|20kg|20kg|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "tofu",
+      "name": "두부",
+      "aliases": [
+        "두부"
+      ],
+      "group": "기타",
+      "row": {
+        "kind": "produce",
+        "id": "두부|풀무원 국산콩 300g×2|1개|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "apple",
+      "name": "사과",
+      "aliases": [
+        "사과",
+        "후지"
+      ],
+      "group": "기타",
+      "row": {
+        "kind": "produce",
+        "id": "사과|후지|10개|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "banana",
+      "name": "바나나",
+      "aliases": [
+        "바나나"
+      ],
+      "group": "기타",
+      "row": {
+        "kind": "produce",
+        "id": "바나나|수입|100g|상품"
+      },
+      "baseline": null
+    },
+    {
+      "id": "mackerel",
+      "name": "고등어",
+      "aliases": [
+        "고등어",
+        "생선"
+      ],
+      "group": "기타",
+      "row": {
+        "kind": "produce",
+        "id": "고등어|국산(신선 냉장)|1마리|大"
+      },
+      "baseline": null
+    },
+    {
+      "id": "squid",
+      "name": "오징어",
+      "aliases": [
+        "오징어",
+        "물오징어"
+      ],
+      "group": "기타",
+      "row": {
+        "kind": "produce",
+        "id": "물오징어|연근해(냉동)|1마리|大"
+      },
+      "baseline": null
+    }
+  ]
+}
