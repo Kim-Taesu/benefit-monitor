@@ -4,11 +4,32 @@ import BenefitCard from './BenefitCard.vue';
 import BetaPanel from './BetaPanel.vue';
 import FestivalSection from './FestivalSection.vue';
 import GrocerySection from './GrocerySection.vue';
+import GradeHelp from './GradeHelp.vue';
+import {won} from './groceries';
 import {parseGroceries,parsePick} from './groceries';
 import {DISTRICTS,isSeoulCandidate} from './beta';
 import type {Topic} from './beta';
 const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=ref<Topic|null>(null);
 function selectTopic(topic:Topic|null){selectedTopic.value=topic;}
+const gradeHelp=ref<InstanceType<typeof GradeHelp>|null>(null);
+// 'YYYY-MM-DD' -> 'M/D' (조사일 표시, 2026-11-10: 농산물·육류 조사일이 다를 수 있어 둘 다 보여준다).
+const md=(d:string|null|undefined)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
+// 탭(2026-11-10): 혜택·장보기·축제. 주소의 #groceries·#festivals로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
+type Tab='benefits'|'groceries'|'festivals';
+const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'}];
+const tabFromHash=(hash:string):Tab=>hash==='#groceries'?'groceries':hash==='#festivals'?'festivals':'benefits';
+const tab=ref<Tab>(tabFromHash(location.hash));
+function setTab(next:Tab,scroll=false){
+ tab.value=next;
+ const url=new URL(location.href);url.hash=next==='benefits'?'':next;
+ if(url.href!==location.href)history.replaceState(history.state,'',url);
+ if(scroll)nextTick(()=>document.getElementById('site-tabs')?.scrollIntoView({block:'start'}));
+}
+function tabKey(event:KeyboardEvent,index:number){
+ const step=event.key==='ArrowRight'?1:event.key==='ArrowLeft'?-1:0;if(!step)return;
+ event.preventDefault();const next=TABS[(index+step+TABS.length)%TABS.length].id;setTab(next);
+ nextTick(()=>document.getElementById('tab-'+next)?.focus());
+}
 import type {Benefit} from './benefits';
 import {benefitKey,loadFavorites,saveFavorites,clearFavorites,visibleFavorites,searchShareUrl} from './favorites';
 import {loadInterests,saveInterests,clearInterests,initialInterests} from './preferences';
@@ -79,7 +100,7 @@ const notice=computed(()=>notices[state.value]);
 async function load(){
  controller?.abort();const request=new AbortController();controller=request;loading.value=true;error.value='';raw.value=undefined;
  const timeout=setTimeout(()=>request.abort(),15000);
- try{const response=await fetch(import.meta.env.BASE_URL+'briefing.json',{signal:request.signal,cache:'no-store',credentials:'omit'});if(!response.ok)throw new Error('HTTP');const body=await response.text();if(body.length>2*1024*1024)throw new Error('Size');const parsed:unknown=JSON.parse(body);if(controller!==request)return;raw.value=parsed;now.value=Date.now();if(location.hash==='#groceries')nextTick(()=>document.getElementById('groceries')?.scrollIntoView());}
+ try{const response=await fetch(import.meta.env.BASE_URL+'briefing.json',{signal:request.signal,cache:'no-store',credentials:'omit'});if(!response.ok)throw new Error('HTTP');const body=await response.text();if(body.length>2*1024*1024)throw new Error('Size');const parsed:unknown=JSON.parse(body);if(controller!==request)return;raw.value=parsed;now.value=Date.now();}
  catch{if(controller===request)error.value='공개 데이터를 불러오지 못했습니다';}
  finally{clearTimeout(timeout);if(controller===request)loading.value=false;}
 }
@@ -95,7 +116,16 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
   <a class="skip-link" href="#results">혜택 목록으로 건너뛰기</a>
   <header class="site-header"><div class="header-inner"><a class="brand" href="./" aria-label="Benefit Monitor 홈"><span class="brand-mark" aria-hidden="true">b<span>m</span></span>Benefit Monitor<span class="version">2.0</span></a><section class="overview" aria-label="브리핑 요약"><div><span class="metric-label">공개 혜택</span><strong>{{ loading?'—':all.length }}<small>건</small></strong></div><div><span class="metric-label">7일 내 마감</span><strong>{{ loading?'—':urgent }}<small>건</small></strong></div><div class="last-verified"><span class="metric-label">데이터 갱신</span><strong>{{ loading?'—':formatDate(updated) }}</strong></div><div class="last-verified"><span class="metric-label" title="사람이 공식 원문과 대조해 공개를 승인한 가장 최근 시각">마지막 사람 승인</span><strong>{{ loading?'—':formatDate(newest) }}</strong></div></section><div class="header-actions"><button type="button" :aria-pressed="savedOnly" :aria-label="'즐겨찾기만 보기 '+savedItems.length" @click="savedOnly=!savedOnly"><span aria-hidden="true">{{ savedOnly?'★':'☆' }} {{ savedItems.length }}</span></button><button type="button" aria-label="검색 조건 공유" @click="shareSearch">공유</button></div></div></header>
   <main class="container">
-    <section class="hero" aria-labelledby="hero-title"><h1 id="hero-title">오늘의 혜택, <span>한눈에.</span></h1><p class="hero-description">로그인 없이 탐색하고, 조건은 공식 안내에서 확인하세요.</p><a v-if="groceries" class="hero-jump" href="#groceries">장보기 시세 바로가기 <span aria-hidden="true">↓</span></a></section>
+    <section class="hero" aria-labelledby="hero-title"><h1 id="hero-title">오늘의 혜택, <span>한눈에.</span></h1><p class="hero-description">로그인 없이 탐색하고, 조건은 공식 안내에서 확인하세요.</p></section>
+    <article v-if="groceryPick" class="pick-teaser" aria-labelledby="pick-teaser-title">
+      <div class="card-meta"><h2 id="pick-teaser-title">이번 주 장보기 추천</h2><span class="grocery-badge" :class="groceryPick.source==='ai'?'ai':'normal'">{{ groceryPick.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
+      <p v-if="groceryPick.summary" class="pick-teaser-summary">{{ groceryPick.summary }}</p>
+      <ul class="pick-teaser-list"><li v-for="p in groceryPick.picks.slice(0,3)" :key="p.row.kind+p.row.id"><strong>{{ p.row.name }}</strong> {{ won(p.row.current) }}<span v-if="p.menu"> → {{ p.menu }}</span></li></ul>
+      <p class="pick-teaser-date">전국 평균 소매가 · 농·수산물 {{ md(groceries?.produceDate) }} 조사<template v-if="groceries?.meatDate"> · 육류 {{ md(groceries.meatDate) }} 조사</template> 기준</p>
+      <button type="button" class="pick-teaser-more" @click="setTab('groceries',true)">장보기 시세 더보기 <span aria-hidden="true">→</span></button>
+    </article>
+    <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="t.id==='benefits'&&!loading" class="tab-count">{{ all.length }}</span></button></div></nav>
+    <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits">
     <BetaPanel ref="topicPanel" :items="all" :now="now" :query="filters.q" :published-data="raw" @select-topic="selectTopic" />
     <section class="discovery" aria-label="혜택 검색 및 필터">
       <div class="search-box"><span aria-hidden="true" class="search-icon">⌕</span><label for="search" class="sr-only">혜택·조건·지역·기관 검색</label><input id="search" v-model="draft" type="search" maxlength="200" placeholder="혜택·조건·지역·기관을 검색하세요" autocomplete="off" aria-controls="results"></div>
@@ -109,11 +139,18 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       <p v-if="selectedTopic" class="topic-result-reason">{{ selectedTopic.reason }} · 검색·지역 필터도 함께 적용됩니다.</p>
       <p v-if="savedOnly" class="fine-print">이 브라우저에만 저장됩니다. 현재 표시 가능한 {{ savedItems.length }}건 · 현재 유효성을 확인할 수 없는 저장 항목 {{ Math.max(0,favorites.length-savedItems.length) }}건. 종료를 뜻하지 않습니다.</p>
       <p role="status" aria-live="polite" class="action-notice">{{ favoriteNotice }}</p><div v-if="shareLink" class="share-result"><p role="status" aria-live="polite">{{ shareNotice }}</p><label for="share-link">공유할 검색 링크</label><input id="share-link" :value="shareLink" readonly @focus="($event.target as HTMLInputElement).select()"><p class="fine-print">검색·지역·정렬·상태만 포함합니다. 개인화 주제·관심 설정·즐겨찾기 목록은 공유하지 않습니다.</p></div>
-      <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" :saved="favorites.includes(benefitKey(item))" @toggle-favorite="toggleFavorite(item)" @official-click="topicPanel?.officialClick()" /></div>
+      <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" :saved="favorites.includes(benefitKey(item))" :failures="data?.sourceFailures" @toggle-favorite="toggleFavorite(item)" @official-click="topicPanel?.officialClick()" @grade-help="gradeHelp?.open()" /></div>
       <div v-else-if="!loading" class="empty-state"><span class="empty-symbol" aria-hidden="true">⌕</span><h3>{{ savedOnly?'현재 조건에 맞는 즐겨찾기가 없어요':all.length?'조건에 맞는 검증 항목이 없어요':state==='partial'?'현재 표시 가능한 검증 항목이 없어요':'확인된 목록이 준비되면 여기에 표시됩니다' }}</h3><p>{{ all.length?'다른 검색어나 지역로 찾아보세요.':'개별 표시기한 경과 또는 검증 보류일 수 있습니다. 실제 혜택이 없거나 행사가 종료됐다는 뜻은 아닙니다.' }}</p><button v-if="active" type="button" class="primary-button" @click="reset">필터 초기화</button></div>
     </section>
-    <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" />
-    <FestivalSection :raw="raw" :now="now" :query="filters.q" />
+    </div>
+    <div id="panel-groceries" v-show="tab==='groceries'" role="tabpanel" aria-labelledby="tab-groceries">
+      <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" />
+      <p v-else-if="!loading" class="empty-state">이번 실행에서 장보기 시세를 가져오지 못했어요.</p>
+    </div>
+    <div id="panel-festivals" v-show="tab==='festivals'" role="tabpanel" aria-labelledby="tab-festivals">
+      <FestivalSection :raw="raw" :now="now" :query="''" />
+    </div>
+    <GradeHelp ref="gradeHelp" />
     <section class="trust-section" aria-labelledby="trust-title"><div class="trust-intro"><p class="eyebrow">확인 가능한 정보, 명확한 한계</p><h2 id="trust-title">혜택의 근거까지 살펴보세요.</h2><p>공식 확인과 신청 자격은 별개입니다.<br>비용·최소 지출·결제 조건은 각 항목의 상세 조건과 원문을 확인하세요.</p></div><div class="collection-details"><details><summary>수집·검증 현황 <span>{{ data?.sources.length||0 }}개 출처</span></summary><div class="coverage-body"><p v-if="data">생성 {{ formatDate(data.generatedAt) }}<br>수집 기준 {{ formatDate(data.sourceReportAt) }}<br>파일 표시기한 {{ formatDate(data.validThrough) }}<br>{{ data.runLabel }}</p><p>재검증 대기 {{ data?.pending||0 }}건 · 화면 검증에서 제외 {{ data?.withheldCount||0 }}건</p><p v-if="data">AI 원문 대조: 최근 실행 {{ data.aiQuality.checked ?? '–' }}건 확인 · 불일치로 보류 {{ data.aiQuality.held }}건 · 끝남·혜택 아님으로 대기 제외 {{ data.aiQuality.dismissed }}건 · 진행 중 우선 확인 {{ data.aiQuality.prioritized }}건</p><ul v-if="data?.aiQuality.findings.length" class="ai-findings"><li v-for="f in data.aiQuality.findings" :key="f.title+f.url"><strong><a v-if="f.url" :href="f.url" target="_blank" rel="noopener noreferrer">{{ f.title }}</a><template v-else>{{ f.title }}</template></strong><small v-for="c in f.claims" :key="c.claim">저장된 조건 “{{ c.claim }}” · 공식 원문 “{{ c.quotes.join(' / ') }}”</small></li></ul><p>표시기한 경과는 행사 종료나 잔여석 소진과 다릅니다. 0건은 실제 혜택이 없다는 뜻이 아닙니다.</p><ul><li v-for="row in data?.sources||[]" :key="row.source"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span><small v-if="row.scope">{{ row.scope }}</small></li></ul><h3 v-if="data?.districts.length">서울 자치구 수집 범위</h3><p>{{ data?.scope||'수집 범위 확인 필요' }}</p><ul><li v-for="row in data?.districts||[]" :key="row.name"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span></li></ul></div></details><details class="interest-settings"><summary>관심 지역 기억하기</summary><div class="coverage-body"><p>이 브라우저에만 저장합니다. 로그인이나 개인정보 입력이 필요하지 않습니다. 공유 링크의 필터가 우선하며, 저장값 삭제는 현재 검색 필터를 바꾸지 않습니다.</p><p>현재 선택: {{ filters.region || '서울시 전체' }}</p><p v-if="remembered">저장한 관심 설정: {{ regions.includes(remembered.region) ? remembered.region : '서울시 전체' }}</p><p v-else>저장한 관심 설정이 없습니다.</p><div class="preference-actions"><button type="button" @click="clearSaved">즐겨찾기 모두 해제</button><button type="button" @click="remember">현재 지역 저장</button><button type="button" @click="forget">저장값 삭제</button></div><p role="status" aria-live="polite">{{ preferenceNotice }}</p></div></details><p class="fine-print">검증 시각은 수집 시각과 다릅니다. 구 선택 시 전국·서울 공통 안내는 함께 포함하지 않습니다. 전체 지역·모든 혜택을 수집한 서비스가 아닙니다.</p></div></section>
     <div id="collection-notice" v-if="!loading&&!notice" class="notice" role="status"><span class="status-dot" aria-hidden="true"></span><div><strong>부분 수집 결과입니다<span v-if="failed"> · 수집 실패 {{ failed }}곳</span></strong><p>미검증 후보 제외 · 자격·재고·잔여석은 공식 안내에서 확인하세요.</p></div></div>
   </main>

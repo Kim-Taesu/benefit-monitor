@@ -172,13 +172,32 @@ class AutoPublishTests(unittest.TestCase):
         facts = period_facts(fee_status=sup('free', 'd1s3', 'd2s3'), event_period=sup(
             {'start': '2026-11-01', 'end': '2026-11-30'}, 'd1s2', 'd2s2'))
         result = self.decide(base, facts)
-        self.assertFalse(result['publish'])
-        self.assertIn('single_source', result['reasons'])
+        # Grade A (2026-11-10): one official document is enough when its own text states a current, year-dated end.
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual(result['record']['review']['document_count'], 1)
 
-    def test_end_date_from_one_document_is_single_source(self):
+    def test_end_date_from_one_document_publishes_when_year_is_stated(self):
         result = self.decide(host(D1, D2), period_facts(
             event_period=sup({'start': '2026-11-01', 'end': '2026-11-30'}, 'd1s2')))
-        self.assertIn('single_source', result['reasons'])
+        self.assertTrue(result['publish'], result['reasons'])
+
+    def test_one_document_still_holds_past_or_ended_items(self):
+        past = D1.replace('2026-11-30', '2026-11-05')
+        result = self.decide(host(past), period_facts(
+            fee_status=sup('free', 'd1s3'), event_period=sup({'start': '2026-11-01', 'end': '2026-11-05'}, 'd1s2')))
+        self.assertFalse(result['publish'])
+        self.assertIn('no_current_evidence', result['reasons'])
+        ended = self.decide(host(D1 + '\n지난 행사가 종료되었습니다.'), period_facts(
+            fee_status=sup('free', 'd1s3'), event_period=sup({'start': '2026-11-01', 'end': '2026-11-30'}, 'd1s2')))
+        self.assertFalse(ended['publish'])
+        self.assertIn('past_signal', ended['reasons'])
+
+    def test_one_document_without_year_in_quote_holds(self):
+        body = '서울 미술 전시 안내.\n전시는 11월 30일까지입니다.\n관람료는 무료입니다.\n누구나 관람할 수 있습니다.'
+        result = self.decide(host(body), period_facts(
+            fee_status=sup('free', 'd1s3'), event_period=sup({'start': '', 'end': '2026-11-30'}, 'd1s2')))
+        self.assertFalse(result['publish'])
+        self.assertIn('no_current_evidence', result['reasons'])
 
     def test_past_signal_in_any_document_holds(self):
         result = self.decide(host(D1, D2 + '\n지난 행사가 종료되었습니다.'), period_facts())
@@ -305,6 +324,18 @@ class AutoPublishTests(unittest.TestCase):
         self.assertTrue(result['publish'], result['reasons'])
         result = self.decide(host(D1 + '\n신청은 11월 15일까지 받습니다.', D2 + '\n문의 2026-11-15까지'), period_facts())
         self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_year_less_date_equal_to_the_stated_period_end_publishes(self):
+        # 2026-11-10 한강 배달존: one notice says "11월 30일까지", the other "2026년 10월 1일~11월 30일".
+        body = '서울 미술 전시 안내.\n11월 1일부터 11월 30일까지 열립니다.\n관람료는 무료입니다.\n누구나 관람할 수 있습니다.'
+        result = self.decide(host(body, D2), period_facts(event_period=sup(
+            {'start': '2026-11-01', 'end': '2026-11-30'}, 'd2s2')))
+        self.assertTrue(result['publish'], result['reasons'])
+        # A different year-less date (an unrelated, possibly passed deadline) still holds.
+        other = body + '\n신청은 11월 5일까지 받습니다.'
+        held = self.decide(host(other, D2), period_facts(event_period=sup(
+            {'start': '2026-11-01', 'end': '2026-11-30'}, 'd2s2')))
+        self.assertIn('no_current_evidence', held['reasons'])
 
     def test_year_less_deadline_with_day_only_holds(self):
         result = self.decide(host(D1 + '\n신청은 30일까지 받습니다.', D2), period_facts())

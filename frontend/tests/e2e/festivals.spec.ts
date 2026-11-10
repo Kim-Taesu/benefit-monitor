@@ -27,6 +27,7 @@ for(const width of [390,1440])test(`festival section filters and stays separate 
  });
  await page.goto('./');
  const section=page.locator('#festivals');
+ await page.getByRole('tab',{name:'축제'}).click();
  await expect(section.locator('h2')).toContainText('2건');
  await expect(section.locator('article').first()).toContainText('문화관광축제');
  await expect(section.locator('article').nth(1)).toContainText('할인: [테스트] 지역화폐 10% 할인');
