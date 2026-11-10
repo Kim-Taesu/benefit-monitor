@@ -10,15 +10,19 @@ const view=computed(()=>{
  const row=hit?props.rows.find(r=>r.kind+r.id===hit.best.rowKey):undefined;
  if(!hit||!row)return null;
  const badge=baselineBadge(row,hit.best);
- return {item:hit.best,row,others:hit.others,badge,avg:badge?hit.best.baseline:null,date:md(row.kind==='meat'?props.meatDate:props.produceDate)};
+ const live=new Set(props.rows.map(r=>r.kind+r.id));
+ return {item:hit.best,row,others:hit.others.filter(o=>live.has(o.rowKey)),badge,avg:badge?hit.best.baseline:null,date:md(row.kind==='meat'?props.meatDate:props.produceDate)};
 });
 </script>
 <template>
-  <div v-if="view" class="grocery-quick" role="region" :aria-label="view.item.name+' 전국 평균 소매가'">
+  <div>
+  <div class="sr-only" role="status" aria-live="polite"><template v-if="view">{{ view.item.name }} 전국 평균 소매가 {{ won(view.row.current) }} /{{ view.row.unit.replace(/^원\//,'') }}<template v-if="view.badge"> {{ view.badge.label }}</template></template></div>
+  <div v-if="view" class="grocery-quick">
     <h3>{{ view.item.name }} · 전국 평균 소매가</h3>
     <p class="grocery-quick-price"><strong>{{ won(view.row.current) }}</strong> /{{ view.row.unit.replace(/^원\//,'') }}</p>
     <span v-if="view.badge" class="grocery-badge" :class="view.badge.level">{{ view.badge.label }}</span>
     <p class="grocery-quick-note"><template v-if="view.avg">{{ Math.min(view.avg.months,12) }}개월 평균 {{ won(view.avg.avg) }}<template v-if="view.date"> · </template></template><template v-if="view.date">{{ view.date }} 조사</template></p>
     <p v-if="view.others.length" class="grocery-quick-links"><template v-for="(o,i) in view.others" :key="o.id"><template v-if="i"> · </template><button type="button" @click="emit('pick',o.name)">{{ o.name }}</button></template> ›</p>
+  </div>
   </div>
 </template>

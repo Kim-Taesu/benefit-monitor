@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch, nextTick } from 'vue';
 import GroceryQuickCheck from './GroceryQuickCheck.vue';
 import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type BasketItem, quickMatch, type FeaturedRow, type GroceryBundle, type WeeklyPick } from './groceries';
 import GroceryCalc from './GroceryCalc.vue';
@@ -36,6 +36,11 @@ function othersLine(r:PriceRow):string{
  return `${word}: ${others.map(o=>`${o.detail} ${won(o.current)}`).join(' · ')}`;
 }
 const inBasket=computed(()=>!!quickMatch(q.value,basketItems.value));
+// Without a basket (baselines missing/stale) we cannot claim an item is outside it.
+const showNotInBasket=computed(()=>!!q.value.trim()&&basketItems.value.length>0&&!inBasket.value);
+// Bring the search field to the top so the card's answer (price + badge) is on the first screen.
+watch(q,()=>nextTick(()=>{if(document.querySelector('.grocery-quick'))document.querySelector('.grocery-filters')?.scrollIntoView({block:'start'});}));
+function pickName(name:string){q.value=name;shown.value=PAGE;nextTick(()=>document.getElementById('grocery-q')?.focus());}
 function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
 </script>
 <template>
@@ -49,7 +54,7 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
       <div class="filter-field grocery-search"><label for="grocery-q">품목 찾기</label><input id="grocery-q" v-model="q" type="search" placeholder="예: 양파, 삼겹살, 고등어" autocomplete="off" @input="shown=PAGE"></div>
       <div class="quick-filters"><button type="button" :aria-pressed="cheapOnly" @click="cheapOnly=!cheapOnly;shown=PAGE">평년보다 싼 것만</button></div>
     </div>
-    <GroceryQuickCheck :q="q" :basket="basketItems" :rows="bundle.rows" :produce-date="bundle.produceDate" :meat-date="bundle.meatDate" @pick="name=>{q=name;shown=PAGE}" />
+    <GroceryQuickCheck :q="q" :basket="basketItems" :rows="bundle.rows" :produce-date="bundle.produceDate" :meat-date="bundle.meatDate" @pick="pickName" />
     <article v-if="weekly" class="grocery-pick" aria-labelledby="grocery-pick-title">
       <div class="card-meta"><h3 id="grocery-pick-title">이번 주 장보기 추천</h3><span class="grocery-badge" :class="weekly.source==='ai'?'ai':'normal'">{{ weekly.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
       <p v-if="weekly.summary" class="grocery-pick-summary">{{ weekly.summary }}</p>
@@ -98,7 +103,7 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
         <a class="grocery-source" :href="row.kind==='meat'?EKAPE_SOURCE:KAMIS_SOURCE" target="_blank" rel="noopener noreferrer">출처 {{ row.kind==='meat'?'축산물품질평가원':'KAMIS' }} <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a>
       </article>
     </div>
-    <div v-else class="empty-state"><h3>조건에 맞는 품목이 없어요</h3><p>다른 부류를 고르거나 검색어를 바꿔 보세요.</p><p v-if="q.trim()&&!inBasket">아직 자주 사는 품목에 없어요</p></div>
+    <div v-else class="empty-state"><h3>조건에 맞는 품목이 없어요</h3><p>다른 부류를 고르거나 검색어를 바꿔 보세요.</p><p v-if="showNotInBasket">아직 자주 사는 품목에 없어요</p></div>
     <button v-if="filtered.length>visible.length" type="button" class="festival-more" @click="shown+=PAGE">더 보기 ({{ filtered.length-visible.length }}개 남음)</button>
   </section>
 </template>
