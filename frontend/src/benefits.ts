@@ -18,7 +18,7 @@ export interface Coverage { name:string; source?:string; status:string; scope?:s
 export interface Briefing {
  state:string; items:Benefit[]; generatedAt:string; sourceReportAt:string|null; validThrough:string|null;
  sources:Coverage[]; districts:Coverage[]; scope:string; runLabel:string; pending:number; withheldCount:number;
- aiQuality:AIQuality;
+ aiQuality:AIQuality; sourceFailures:Record<string,number>;
 }
 export interface AIFinding { title:string; url:string; claims:{claim:string;quotes:string[]}[] }
 export interface AIQuality { checked:number|null; held:number; dismissed:number; prioritized:number; findings:AIFinding[] }
@@ -109,13 +109,17 @@ function coverageRows(value:unknown):Coverage[] {
  if(!Array.isArray(value))return [];
  return value.map(object).filter(v=>text(v.name)&&text(v.status)).map(v=>({name:text(v.name),source:text(v.source),status:text(v.status),scope:text(v.scope),verified_count:typeof v.verified_count==='number'?v.verified_count:0}));
 }
+/** 출처별 연속 수집 실패 횟수(공개 source_health). 형식이 맞지 않으면 0으로 본다. */
+function sourceFailures(value:unknown):Record<string,number> {
+ return Object.fromEntries(Object.entries(object(value)).map(([k,v])=>[k,count(object(v).consecutive_failures)]));
+}
 export function adapt(value:unknown,now=Date.now()):Briefing {
  const d=object(value); const generated=timestamp(d.generated_at),report=timestamp(d.source_report_at),until=timestamp(d.valid_through);
  if(d.schema_version!==1||!['partial','awaiting_verification','collection_failed'].includes(text(d.status))||!Array.isArray(d.items)||!Number.isFinite(generated)||generated>now)throw new Error('공개 데이터 형식을 확인할 수 없습니다.');
  if(d.status!=='collection_failed'&&(!Number.isFinite(until)||!Number.isFinite(report)||report>generated))throw new Error('공개 데이터 기준 시각을 확인할 수 없습니다.');
  const state=d.status==='collection_failed'?'collection_failed':until<=now?'stale':text(d.status);
  const cov=object(d.coverage);const context=object(d.run_context);
- const result:Briefing={state,items:[],generatedAt:text(d.generated_at),sourceReportAt:text(d.source_report_at)||null,validThrough:text(d.valid_through)||null,sources:coverageRows(cov.sources),districts:coverageRows(cov.districts),scope:text(cov.scope),runLabel:({scheduled_refresh:'정기 실행에서 생성',manual_refresh:'수동 갱신 · 정기 실행 성공과 별도',pre_schedule_snapshot:'정기 수집 예정시각 이전 결과',unavailable:'수집 실행 결과 확인 불가'} as Record<string,string>)[text(context.status)]||'실행 유형 미확인',pending:Math.max(0,Number(object(d.withheld).pending)||0),withheldCount:0,aiQuality:aiQuality(d.ai_quality)};
+ const result:Briefing={state,items:[],generatedAt:text(d.generated_at),sourceReportAt:text(d.source_report_at)||null,validThrough:text(d.valid_through)||null,sources:coverageRows(cov.sources),districts:coverageRows(cov.districts),scope:text(cov.scope),runLabel:({scheduled_refresh:'정기 실행에서 생성',manual_refresh:'수동 갱신 · 정기 실행 성공과 별도',pre_schedule_snapshot:'정기 수집 예정시각 이전 결과',unavailable:'수집 실행 결과 확인 불가'} as Record<string,string>)[text(context.status)]||'실행 유형 미확인',pending:Math.max(0,Number(object(d.withheld).pending)||0),withheldCount:0,aiQuality:aiQuality(d.ai_quality),sourceFailures:sourceFailures(d.source_health)};
  if(state!=='partial')return result;
  const seen=new Set<string>();
  for(const raw of d.items) {

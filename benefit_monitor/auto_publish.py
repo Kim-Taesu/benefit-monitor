@@ -157,6 +157,22 @@ def _year_from_same_document(phrase, phrases):
         return None
 
 
+def _period_end_without_year(phrase, ends):
+    """A year-less ending phrase equal to the item's own period end, whose year the cited text states.
+
+    Approved 2026-11-10: "11월 30일까지" in one notice and "2026년 10월 1일~11월 30일" quoted from
+    another describe the same end, so no new (possibly passed) deadline hides behind it. Any other
+    month-day stays unreadable and holds.
+    """
+    tokens = [t for t in DATE_TOKEN.finditer(phrase) if t['m']]
+    if not tokens or tokens[-1]['d'] in (None, '말'):
+        return None
+    wanted = (int(tokens[-1]['m']), int(tokens[-1]['d']))
+    days = {e['day'] for e in ends if (e['day'].month, e['day'].day) == wanted
+            and any(str(e['day'].year) in q for q in e['quotes'])}
+    return days.pop() if len(days) == 1 else None
+
+
 def _hold(reasons):
     return {'publish': False, 'reasons': reasons, 'record': None}
 
@@ -213,7 +229,9 @@ def decide(draft, host, now, takedowns):
         # The year itself must be written in the cited official text, not only in the model value.
         stated = any(str(end['day'].year) in q for q in end['quotes'])
         period_ok = period_ok and current and stated
-        single_ok = single_ok and len(end['hashes']) >= 2
+        # Grade A (approved 2026-11-10): one official document suffices for a fixed period because the
+        # year-dated end must itself be quoted from that text and still be current (period_ok above).
+        single_ok = single_ok and len(end['hashes']) >= 1
         year_trap = year_trap or end['day'].year not in (today.year, today.year + 1)
 
     published = supported('published_at')
@@ -242,6 +260,8 @@ def decide(draft, host, now, takedowns):
                         stated_end, moment = phrase_deadline(phrase)
                     else:
                         stated_end, moment = _year_from_same_document(phrase, matches), None
+                        if stated_end is None:
+                            stated_end = _period_end_without_year(phrase, ends)
                     if stated_end is None or stated_end < today or (moment is not None and moment <= now):
                         period_ok = False
                     else:
