@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "grocery_baselines",
-  "fetched_at": "2026-11-11T08:36:42.919968+09:00",
+  "fetched_at": "2026-11-11T08:40:21.231390+09:00",
   "items": [
     {
       "id": "pork_belly",
@@ -183,7 +183,16 @@
         "kind": "produce",
         "id": "배추|가을|1포기|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 4076,
+        "months": 3,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1포기",
+        "kind": "가을",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "radish",
@@ -197,7 +206,16 @@
         "kind": "produce",
         "id": "무|가을|1개|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 2302,
+        "months": 4,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1개",
+        "kind": "가을",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "onion",
@@ -224,7 +242,16 @@
         "kind": "produce",
         "id": "파|대파|1kg|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 2973,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1kg",
+        "kind": "대파",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "potato",
@@ -238,7 +265,16 @@
         "kind": "produce",
         "id": "감자|수미(노지)|100g|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 370,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "100g",
+        "kind": "수미(노지)",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "carrot",
@@ -251,7 +287,16 @@
         "kind": "produce",
         "id": "당근|무세척(국산)|1kg|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 3439,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1kg",
+        "kind": "무세척(국산)",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "cucumber",
@@ -265,7 +310,16 @@
         "kind": "produce",
         "id": "오이|다다기계통|10개|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 9358,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "10개",
+        "kind": "다다기계통",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "zucchini",
@@ -279,7 +333,16 @@
         "kind": "produce",
         "id": "호박|애호박|1개|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 1610,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1개",
+        "kind": "애호박",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "lettuce",
@@ -293,7 +356,16 @@
         "kind": "produce",
         "id": "상추|적|100g|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 1213,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "100g",
+        "kind": "적",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "spinach",
@@ -306,7 +378,16 @@
         "kind": "produce",
         "id": "시금치|시금치|100g|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 1139,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "100g",
+        "kind": "시금치",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "bean_sprouts",
@@ -319,7 +400,16 @@
         "kind": "produce",
         "id": "콩나물|풀무원 국산콩 콩나물 340g|1봉|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 2490,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1봉",
+        "kind": "풀무원 국산콩 콩나물 340g",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "garlic_peeled",
@@ -333,7 +423,16 @@
         "kind": "produce",
         "id": "깐마늘(국산)|깐마늘(국산)|1kg|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 11292,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1kg",
+        "kind": "깐마늘(국산)",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "rice",
@@ -347,7 +446,16 @@
         "kind": "produce",
         "id": "쌀|20kg|20kg|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 62530,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "20kg",
+        "kind": "전체(쌀20KG)",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "tofu",
@@ -360,7 +468,16 @@
         "kind": "produce",
         "id": "두부|풀무원 국산콩 300g×2|1개|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 5088,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1개",
+        "kind": "풀무원 국산콩 300g×2",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "apple",
@@ -374,7 +491,16 @@
         "kind": "produce",
         "id": "사과|후지|10개|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 26793,
+        "months": 11,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "10개",
+        "kind": "후지",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "banana",
@@ -387,7 +513,16 @@
         "kind": "produce",
         "id": "바나나|수입|100g|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 325,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "100g",
+        "kind": "수입",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "mackerel",
@@ -401,7 +536,16 @@
         "kind": "produce",
         "id": "고등어|국산(신선 냉장)|1마리|大"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 4505,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1마리",
+        "kind": "국산(신선 냉장)",
+        "grade": "大",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "squid",
@@ -415,7 +559,16 @@
         "kind": "produce",
         "id": "물오징어|연근해(냉동)|1마리|大"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 5892,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1마리",
+        "kind": "연근해(냉동)",
+        "grade": "大",
+        "checked_at": "2026-11-11"
+      }
     }
   ]
 }
