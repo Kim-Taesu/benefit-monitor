@@ -1,0 +1,6095 @@
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xml:lang="ko" lang="ko" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta charset="UTF-8">
+		
+		<title>가격정보 > 세부가격정보 > 소매가격 > 부류별 - KAMIS</title>
+		<meta http-equiv="Content-Script-Type" content="text/javascript">
+		<meta http-equiv="Content-Style-Type" content="text/css">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		
+		
+<!-- CSS -->
+<link rel="stylesheet" href="/css/jquery-ui-1.12.1.custom.css"/>
+<link rel="stylesheet" href="/css/basic.css"/>
+<link rel="stylesheet" href="/css/board.css"/>
+<link rel="stylesheet" href="/css/common_new.css"/>
+
+<!-- 필수 JS -->
+<script src="/common/js/jquery-3.6.0.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery-ui-1.12.1.custom.js"></script>
+
+<!-- highchart -->
+<script src="/js/highchart/highcharts.js"></script>
+<script src="/js/highchart/exporting.js"></script>
+<script src="/js/highchart/export-data.js"></script>
+<script src="/js/highchart/accessibility.js"></script>
+<script src="/js/highchart/offline-exporting.js"></script>
+
+<!-- 공용 및 유틸 -->
+<script src="/js/customer/common.js"></script>
+<script src="/js/customer/jsutil.js"></script>
+<script src="/js/customer/circulation/domestic.js"></script>
+<script src="/js/customer/iteminfo_util_common.js"></script>
+<script src="/common/js/common_new.js"></script>
+<script src="/js/basic.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/customer/respond.js"></script>
+
+<!-- scroll -->
+<script src="/lib/scroll/simplebar.min.js"></script>
+<link rel="stylesheet" href="/lib/scroll/simplebar.min.css"/>
+
+<!--[if lt IE 7]>
+	<script type="text/javascript">//location.href="";</script>
+<![endif]-->
+<!--[if lt IE 9]>
+	<script type="text/javascript" src="/js/customer/html5shiv.js"></script>
+<![endif]-->
+		<script src="/js/customer/iteminfo_util_new.js"></script>
+		<script src="/js/customer/excel_util.js"></script>
+		<script src="/js/customer/price/agricultureRetail/item_common.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				/* (new IteminfoUtil()).init({'productclscode' : '01', '$countycode' : $('#countycode'), '$yyyy' : $('#yyyy'), '$regday' : $('#regday'), '$itemcategorycode' : $('#itemcategorycode'), 'pepper_all_yn' : 'Y', '$itemcode' : $('#itemcode'), '$kindcode' : $('#kindcode'), '$productrankcode' : $('#productrankcode'), '$marketclscode' : $('#marketclscode')}); */
+			});
+		</script>
+	</head>
+	<body>
+		<div id="wrapper">
+               
+
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- 로컬서버 주석처리 -->
+<script src="https://apis.google.com/js/platform.js" async defer></script>	
+<script>
+$.browser={};(function(){
+	jQuery.browser.msie=false;
+	$.browser.version=0;if(navigator.userAgent.match(/MSIE ([0-9]+)\./)){
+	$.browser.msie=true;jQuery.browser.version=RegExp.$1;}
+})();
+	function logout(snsType) {
+		location.href = "/customer/customer_service/login/sns_login.do?snsType=" + snsType;
+	}
+
+	function fnSearch() {
+		$( ".smartWrap" ).slideToggle( "slow" );
+	}
+	
+	function naverLogout() {
+		$("#naverLogoutForm").submit();
+		location.href = "/customer/customer_service/login/logout.do";
+	}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8CD1P6L7J7"></script>
+<!-- 로컬서버에서 속도느림 주석처리 운영시 주석해제필요 -->
+<script> 
+  window.dataLayer = window.dataLayer || []; 
+  function gtag(){dataLayer.push(arguments);} 
+  gtag('js', new Date()); 
+ 
+  gtag('config', 'G-8CD1P6L7J7', {'content_group': 'KAMIS'}); 
+  gtag('config', 'G-1C6GSRP5Z8', {'content_group': 'KAMIS'}); 
+</script>
+<!-- skip menu -->
+<div class="skip" id="skipnavi">
+    <ul>
+        <li><a href="#gnb_menu" title="메뉴바로가기">메뉴바로가기</a></li>
+        <li><a href="#container" title="본문바로가기">본문바로가기</a></li>
+    </ul>
+</div>
+<!-- // skip menu -->
+<header id="header">
+	<div class="gnb_bg"></div>
+	<!-- pc -->
+	<div class="hd_top">
+	    <div class="wrap">
+	        <a href="https://www.at.or.kr/" class="at" target="_blank" title="한국농수산식품유통공사(새창 열림)"><span>한국농수산식품유통공사</span></a>
+	        <div class="utils">
+	            <ul>
+	                
+						
+						
+							
+							
+							
+							
+							
+<!-- < 							<li><a href="" class="event-btn ev1">버그찾기 이벤트</a></li> -->
+<!-- 								<li><a href="https://old.kamis.or.kr" class="event-btn ev1">기존 KAMIS홈페이지로 이동</a></li> -->
+<!-- 							<li><a href="" class="event-btn ev2">아이디어 이벤트</a></li> 	 -->
+<!-- 							<li><a href="/customer/inform/event/event.do" class="event-btn ev1">버그찾기 이벤트</a></li> -->
+<!-- 							<li><a href="/customer/customer_service/login/sns_login.do" class="event-btn ev1">버그찾기 이벤트</a></li> -->
+							<li><a href="/customer/customer_service/login/sns_login.do" class="event-btn ev2">아이디어 이벤트</a></li>
+							<li>
+								<a href="/customer/customer_service/login/sns_login.do" class="i01" title="로그인">로그인</a>
+							</li>
+							<li>
+<!-- 								<a href="https://www.kamis.or.kr/customer/customer_service/join/customer_sns_join.do?action=snsJoinType">회원가입</a> -->
+								<a href="/customer/customer_service/join/customer_sns_join.do?action=snsJoin" class="i02" title="회원가입">회원가입</a>
+							</li>
+							
+							
+						
+					
+	            </ul>
+	        </div>
+	    </div>
+	</div>
+	<!-- pc gnb -->
+<!-- 	<nav id="gnb" class="gnb_area"> -->
+	<nav id="gnb" class="gnb_area">
+	    <div class="wrap">
+	        <h1 class="logo"><a href="/customer/main/main.do" title="KAMIS 메인페이지"><span class="blind" title="메인페이지">KAMIS</span></a></h1>
+	        <ul class="gnb" id="gnb_menu" >
+	            <li>
+	                <a href="/customer/info/retail/period.do" title="가격정보">가격정보</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/info/retail/period.do" title="간편가격정보">간편가격정보</a></li>
+
+	                    	<li><a href="/customer/price/agricultureRetail/period.do" title="세부가격정보">세부가격정보</a></li>
+
+	                    <!-- <li><a href="">성수품 계산기</a></li> -->
+	                    <li><a href="/customer/price/knowhow/knowhow.do" title="가격정보 조사요령">가격정보 조사요령</a></li>
+	                    <li><a href="/customer/price/wholesale/garak.do" title="주요 농산물 일일도매가격">주요 농산물 일일도매가격</a></li>
+	                    <li><a href="/customer/old/online/item.do" title="온라인 가격">온라인 가격</a></li>
+	                </ul>
+	            </li>
+	            <li>
+<!-- 	                <a href="/customer/trend/trade/daily.do">동향/전망</a> -->
+	                <a href="/customer/trend/trade/daily.do" title="동향정보">동향정보</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/trend/trade/daily.do" title="거래동향">거래동향</a></li>
+	                    <li><a href="/customer/trend/product/product.do" title="제철 농수산물">제철 농수산물</a></li>
+	                    <li><a href="/customer/wiki/wiki.do" title="식재료 백과(카미위키)">식재료 백과(카미위키)</a></li>
+	                    <li><a href="/customer/trend/economic/economic.do?action=priceInfoNew" title="알뜰장보기">알뜰장보기</a></li>
+	                    <li><a href="/customer/trend/foreign_info/foreign_info.do" title="농산물 해외수입정보">농산물 해외수입정보</a></li>
+<!-- 	                    <li><a href="/customer/archive/archive.do" title="식재료 아카이브">식재료 아카이브</a></li> -->
+<!-- 	                    <li><a href="/customer/price/franchise.do">외식 프랜차이즈 가격 동향</a></li> -->
+<!-- 						<li><a href="/customer/trend/product/product_trend.do">주요 농축산물 가격동향</a></li> -->
+<!-- 	                    <li><a href="/customer/trend/economic/economic.do">알뜰장보기</a></li> -->
+	                </ul>
+	            </li>
+	            <li>
+	                <a href="/customer/circulation/domestic/cost.do" title="유통실태">유통실태</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/circulation/domestic/cost.do" title="국내유통실태">국내유통실태</a></li>
+<!-- 	                    <li><a href="/customer/circulation/overseas/overseas.do">해외유통실태</a></li> -->
+<!-- 	                    <li><a href="/customer/circulation/spend/spend.do">소비실태</a></li> -->
+	                    <li><a href="/customer/circulation/standard/standard_shipment.do" title="농산물표준규격">농산물표준규격</a></li>
+	                    <li><a href="/customer/circulation/distribution/state.do" title="실태조사요령">실태조사요령</a></li>
+	                    <li><a href="/customer/circulation/spend/spend.do" title="유통실태 통합 자료실">유통실태 통합 자료실</a></li>
+	                </ul>
+	            </li>
+	            <li>
+	                <a href="/customer/price/eco/summary.do" title="친환경농산물 유통정보">친환경농산물 유통정보</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/price/eco/summary.do" title="친환경농산물 개요">친환경농산물 개요</a></li>
+	                    <li><a href="/customer/nature/domestic.do" title="조사보고서">조사보고서</a></li>
+	                    <li><a href="/customer/info/nature/period.do" title="친환경농산물 소매가격">친환경농산물 소매가격</a></li>
+	                </ul>
+	            </li>
+	            <li>
+	                <a href="/customer/inform/about/about.do" title="고객센터">고객센터</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/inform/about/about.do" title="KAMIS 소개">KAMIS 소개</a></li>
+	                    <li><a href="/customer/inform/notice/notice.do" title="공지 및 보도자료">공지 및 보도자료</a></li>
+	                    <li><a href="/customer/inform/tidings/tidings.do">KAMIS SNS</a></li>
+<!-- 	                    <li><a href="/customer/square/counsel/counsel.do">묻고답하기</a></li> -->
+<!-- 	                    <li><a href="/customer/square/counsel/faq.do">자주묻는 질문</a></li> -->
+	                    <!-- <li><a href="/customer/square/participation/survey.do">설문참여</a></li> -->
+<!-- 	                    <li><a href="/customer/inform/about/about.do?action=contact">찾아오시는 길</a></li> -->
+	                    <li><a href="/customer/reference/openapi_list.do" title="Open-API">Open-API</a></li>
+<!-- 	                    <li><a href="/customer/circulation/other/other.do" title="통합 자료실">통합 자료실</a></li> -->
+	                    <li><a href="/customer/information_services/about.do?action=about5" title="이용안내">이용안내</a></li>
+	                    <li><a href="/customer/inform/event/event.do" title="이벤트">이벤트</a></li>
+	                </ul>
+	            </li>
+	        </ul>
+	        <div class="btns">
+	            <button type="button" class="i_search js-tschOpen" title="통합검색 열기"><span class="blind" title="통합검색 열기">통합검색 열기</span></button>
+	            <button type="button" id="openSitemapButton" class="i_bars js-smOpen" title="사이트맵 열기"><span class="blind" title="사이트맵 열기">사이트맵 열기</span></button>
+	        </div>
+	    </div>
+	</nav>
+	<!-- // pc gnb -->
+	<!-- // pc -->
+	<!-- mb -->
+	<div class="mb_top">
+	    <div>
+	        <a href="/customer/main/main.do" class="logo"  title="KAMIS 메인페이지">
+	            <svg xmlns="http://www.w3.org/2000/svg" width="120.011" height="56.495" viewBox="0 0 120.011 56.495">
+	                <g transform="translate(3112.985 -7933.997)">
+	                    <path d="M119.066,10.636a.587.587,0,0,1-.145.818l-10.384,7.271a.588.588,0,1,1-.674-.963l10.383-7.271a.587.587,0,0,1,.818.145" transform="translate(-3153.16 7935.823)" fill="#3ab7c7"/>
+	                    <path d="M96.139,10.636a.587.587,0,0,0,.145.818l10.384,7.271a.588.588,0,1,0,.674-.963L96.957,10.491a.587.587,0,0,0-.818.145" transform="translate(-3155.196 7935.823)" fill="#3ab7c7"/>
+	                    <path d="M91.647,36.083H86.558a.774.774,0,0,1-.725-.654l-1.306-5.96H77.078l-1.307,5.96a.778.778,0,0,1-.729.654H69.954a.562.562,0,0,1-.617-.582,1.486,1.486,0,0,0,.038-.182l5.412-22.525c.836-3.487,3.525-4.032,6.031-4.032s5.158.544,6,4.032l5.413,22.525a1.524,1.524,0,0,0,.036.182.562.562,0,0,1-.616.582M81.291,14.465c-.073-.362-.146-.543-.474-.543s-.433.181-.508.543L78.093,24.493h5.415Z" transform="translate(-3159.889 7935.538)" fill="#0b4943"/>
+	                    <path d="M70.933,10.025,62.406,22.138,70.97,35a.664.664,0,0,1,.146.4c0,.216-.182.357-.5.357H64.449a.841.841,0,0,1-.788-.5L56.384,23.429v11.61a.717.717,0,0,1-.715.716h-4.7a.718.718,0,0,1-.716-.716V9.81a.687.687,0,0,1,.716-.68h4.695a.686.686,0,0,1,.715.68V21.2L64.271,9.559a.817.817,0,0,1,.788-.429h5.482c.393,0,.575.178.575.393a1.068,1.068,0,0,1-.182.5" transform="translate(-3163.243 7935.603)" fill="#0b4943"/>
+	                    <path d="M145.5,36.093a35.245,35.245,0,0,1-8.2-.992,1.017,1.017,0,0,1-.855-1.036V30.418a.829.829,0,0,1,.855-.858h.182c2.434.316,6.219.631,7.66.631,2.162,0,2.66-.587,2.66-1.759,0-.675-.408-1.171-1.667-1.892l-5.858-3.38a7.444,7.444,0,0,1-4.011-6.669c0-4.552,3.017-6.984,9.238-6.984a29.154,29.154,0,0,1,8.019,1.035,1.023,1.023,0,0,1,.858,1.037v3.65a.762.762,0,0,1-.769.856h-.134A72.4,72.4,0,0,0,146,15.5c-1.757,0-2.389.272-2.389,1.309,0,.676.5,1.035,1.4,1.576l5.59,3.2c3.74,2.162,4.551,4.507,4.551,6.94,0,4.238-3.064,7.571-9.643,7.571" transform="translate(-3148.124 7935.669)" fill="#0b4943"/>
+	                    <path d="M100.227,31.927a3.852,3.852,0,1,1-7.7,0V12.839a3.852,3.852,0,1,1,7.7,0Z" transform="translate(-3155.813 7935.577)" fill="#1678ba"/>
+	                    <path d="M111.171,30.714a3.853,3.853,0,1,1-7.706,0V19.74a3.853,3.853,0,1,1,7.705,0Z" transform="translate(-3153.889 7936.791)" fill="#3ab7c7"/>
+	                    <path d="M122.112,31.927a3.853,3.853,0,0,1-7.706,0V12.839a3.853,3.853,0,1,1,7.706,0Z" transform="translate(-3151.966 7935.577)" fill="#58ab34"/>
+	                    <path d="M133.055,31.927a3.853,3.853,0,1,1-7.706,0V12.839a3.853,3.853,0,1,1,7.705,0Z" transform="translate(-3150.042 7935.577)" fill="#0b4943"/>
+	                    <path d="M133.026,3.825A3.827,3.827,0,1,1,129.2,0a3.827,3.827,0,0,1,3.826,3.825" transform="translate(-3150.038 7933.997)" fill="#db341a"/>
+	                    <path d="M104.724,46.724c-18.14,0-34.216-4.332-44.181-9.866,7.212,7.777,24.371,13.249,44.4,13.249,20.477,0,37.953-5.718,44.866-13.767-9.879,5.826-26.385,10.385-45.09,10.385" transform="translate(-3161.435 7940.385)" fill="#0b4943"/>
+	                </g>
+	            </svg>
+	            <span class="blind">KAMIS 메인페이지 로고</span>
+	        </a>
+	        <span class="chk">
+	            <span class="tgl dmt"><input type="checkbox" name="darkmode" id="darkmode_mb" title="다크모드"/><label for="darkmode_mb"><span class="blind">다크모드</span></label></span>
+	        </span>
+<!-- 			<a href="/customer/inform/event/event.do" class="event-btn ev2">버그찾기 이벤트</a> -->
+<!-- 			<a href="https://old.kamis.or.kr" class="event-btn ev2">기존 카미스 홈페이지 이동</a> -->
+	    </div>
+	    <div class="btns">
+	        <button type="button" class="i_search js-tschOpen"><span class="blind" title="통합검색 열기">통합검색 열기</span></button>
+	        <button type="button" class="i_bars js-mbSmOpen"><span class="blind" title="사이트맵 열기">사이트맵 열기</span></button>
+	    </div>
+	</div>
+	<!-- pc gnb -->
+	<nav id="mbGnb" class="gnb_area_mb">
+	    <div class="mo_gnb_top">
+	        <div class="top">
+	            <div class="btns">
+	                <div>
+	                    <a href=""><img src="/images/icon/i_home.svg" alt="home"/></a>
+	                    <span class="chk">
+	                        <span class="tgl dmt"><input type="checkbox" name="darkmode" id="darkmode" title="다크모드"/><label for="darkmode"><span class="blind">다크모드</span></label></span>
+	                    </span>
+	                </div>
+	                <div>
+	                    <button type="button" class="i_search_w js-tschOpen"><span class="blind" title="통합검색 열기">통합검색 열기</span></button>
+	                    <button type="button" class="i_close_w js-mbSmClose"><span class="blind" title="사이트맵 닫기">사이트맵 닫기</span></button>
+	                </div>
+	            </div>
+	            <div class="info">
+	            	
+						
+						
+							<span><strong>로그인</strong> 하시면 <br/>다양한 정보를 얻을 수 있습니다.</span>
+							<a href="/customer/customer_service/login/sns_login.do" title="로그인">로그인</a>
+						
+					
+	            </div>
+	        </div>
+	        <ul class="utils">
+	            <li><a href="/customer/mypage/my_kamis/my_kamis.do" class="i01" title="마이페이지">마이페이지</a></li>
+                <li><a href="/customer/mypage/my_counsel/my_counsel.do" class="i02" title="내상담내역">내상담내역</a></li>
+                <li><a href="/customer/mypage/my_item/my_favorite.do" class="i03" title="관심품목">관심품목</a></li>
+	        </ul>
+	    </div>
+	    <div class="wrap">
+	        <h1 class="logo"><a href="/customer/main/main.do"><span class="blind" title="logo">logo</span></a></h1>
+	        <ul class="gnb_mb">
+	            <li>
+	                <a href="/customer/info/retail/period.do" title="가격정보">가격정보</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/info/retail/period.do" title="간편가격정보">간편가격정보</a></li>
+
+	                    	<li><a href="/customer/price/agricultureRetail/period.do" title="세부가격정보">세부가격정보</a></li>
+
+	                    <!-- <li><a href="">성수품 계산기</a></li> -->
+	                    <li><a href="/customer/price/knowhow/knowhow.do" title="가격정보 조사요령">가격정보 조사요령</a></li>
+	                    <li><a href="/customer/price/wholesale/garak.do" title="주요 농산물 일일도매가격">주요 농산물 일일도매가격</a></li>
+	                    <li><a href="/customer/old/online/item.do" title="온라인 가격">온라인 가격</a></li>
+	                </ul>
+	            </li>
+	            <li>
+	                <a href="/customer/trend/trade/daily.do" title="동향정보">동향정보</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/trend/trade/daily.do" title="거래동향">거래동향</a></li>
+	                    <li><a href="/customer/trend/product/product.do" title="제철농수산물">제철농수산물</a></li>
+	                    <li><a href="/customer/wiki/wiki.do" title="식재료 백과(카미위키)">식재료 백과(카미위키)</a></li>
+	                    <li><a href="/customer/trend/economic/economic.do?action=priceInfoNew" title="알뜰장보기">알뜰장보기</a></li>
+	                    <li><a href="/customer/trend/foreign_info/foreign_info.do" title="농산물해외수입정보">농산물해외수입정보</a></li>
+<!-- 	                    <li><a href="/customer/trend/peakseason_info/peakseason_info.do">성수기정보</a></li> -->
+	                    
+<!-- 	                    <li><a href="/customer/trend/product/product_trend.do">주요 농축산물 가격동향</a></li> -->
+<!-- 	                    <li><a href="/customer/price/franchise.do">외식 프랜차이즈 가격 동향</a></li> -->
+<!-- 	                    <li><a href="/customer/trend/economic/economic.do">알뜰장보기</a></li> -->
+	                </ul>
+	            </li>
+	            <li>
+	                <a href="/customer/circulation/domestic/cost.do" title="유통실태">유통실태</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/circulation/domestic/cost.do" title="국내유통실태">국내유통실태</a></li>
+<!-- 	                    <li><a href="/customer/circulation/overseas/overseas.do">해외유통실태</a></li> -->
+<!-- 	                    <li><a href="/customer/circulation/spend/spend.do">소비실태</a></li> -->
+	                    <li><a href="/customer/circulation/standard/standard_shipment.do" title="농산물표준규격">농산물표준규격</a></li>
+	                    <li><a href="/customer/circulation/distribution/state.do" title="실태조사요령">실태조사요령</a></li>
+	                    <li><a href="/customer/circulation/spend/spend.do" title="유통실태 통합 자료실">유통실태 통합 자료실</a></li>
+	                </ul>
+	            </li>
+	            <li>
+	                <a href="/customer/price/eco/summary.do" title="친환경농산물 유통정보">친환경농산물 유통정보</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/price/eco/summary.do" title="친환경농산물 개요">친환경농산물 개요</a></li>
+	                    <li><a href="/customer/nature/domestic.do" title="조사보고서">조사보고서</a></li>
+	                    <li><a href="/customer/info/nature/period.do" title="친환경농산물 소매가격">친환경농산물 소매가격</a></li>
+	                </ul>
+	            </li>
+	            <li>
+	                <a href="/customer/inform/about/about.do" title="고객센터">고객센터</a>
+	                <ul class="dp2">
+	                    <li><a href="/customer/inform/about/about.do" title="KAMIS 소개">KAMIS 소개</a></li>
+						<li><a href="/customer/inform/notice/notice.do" title="공지·보도자료">공지·보도자료</a></li>
+						<li><a href="/customer/inform/tidings/tidings.do" title="KAMIS SNS">KAMIS SNS</a></li>
+<!-- 	                <li><a href="/customer/square/counsel/counsel.do">묻고답하기</a></li> -->
+<!-- 	                <li><a href="/customer/square/counsel/faq.do">자주묻는 질문</a></li> -->
+	                    <!-- <li><a href="/customer/square/participation/survey.do">설문참여</a></li> -->
+<!-- 	                <li><a href="/customer/inform/about/about.do?action=contact">찾아오시는 길</a></li> -->
+	                    <li><a href="/customer/reference/openapi_list.do" title="Open-API">Open-API</a></li>
+	                    <!-- <li><a href="/customer/trend/peakseason_info/peakseason_info.do" title="보도자료">보도자료</a></li> -->
+<!-- 	                    <li><a href="/customer/circulation/other/other.do" title="통합 자료실">통합 자료실</a></li> -->
+	                    <li><a href="/customer/information_services/about.do?action=about5" title="이용안내">이용안내</a></li>
+	                    <li><a href="/customer/inform/event/event.do" title="이벤트">이벤트</a></li>
+	                </ul>
+	            </li>
+	        </ul>
+	    </div>
+	</nav>
+	<!-- // pc gnb -->
+	<!-- // mb -->
+</header>
+               
+               <main id="container">
+                    <div class="wrap">
+				
+				
+					<div class="content">
+						
+
+
+
+
+
+	
+	
+	
+
+
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script type="text/javascript">
+function formSubmit() {
+
+	document.getElementById("search").submit();
+}
+
+function shareKakao(){
+	//사용할 앱의 JavaScript 키를 설정해 주세요.
+// 	Kakao.init('5aa1293c49c3c91b943426f2f8c3911b');	//운영
+	Kakao.init('daf6c4b5c45f7828ad43e837da841d42');		//로컬
+	
+	Kakao.Link.sendDefault({
+        objectType: 'feed',
+        content: {
+            title: 'KAMIS 농산물유통정보',
+            description: document.title,
+            imageUrl: 'https://www.kamis.or.kr/images/customer/bg_intro.png',
+            link: {
+                mobileWebUrl: location.href, 
+                webUrl: location.href
+            },
+        },
+        buttons: [
+            {
+                title: '바로가기',
+                link: {
+                	mobileWebUrl: location.href,
+                    webUrl: location.href
+                },
+            },
+        ]
+    });
+}
+
+function shareSNS(mode) {
+	var fullUrl;
+	var param = encodeURIComponent(location.href);
+	var m = document.getElementsByTagName('meta');
+	var title = "KAMIS 농산물유통정보";
+	var description = "";
+	
+	function isValidUrl(url) {
+        // URL 형식에 맞는지 확인하는 정규 표현식
+        var urlRegex = /^(https?:\/\/(?:www\.)?twitter\.com\/intent\/tweet|http:\/\/www\.facebook\.com\/sharer\/sharer\.php|https:\/\/story\.kakao\.com\/share)/;
+        return urlRegex.test(url);
+    }
+	
+	if (mode == 'twitter') {
+		fullUrl = "https://twitter.com/intent/tweet?text=" + title + "&url=" + param;
+	} else if (mode == 'facebook') {
+		fullUrl = "http://www.facebook.com/sharer/sharer.php?u=" + param;
+	} else {
+		fullUrl = "https://story.kakao.com/share?url=" + param;
+	}
+
+	if (isValidUrl(fullUrl)) {
+		var pWidth = 640;
+		var pHeight = 380;
+		var pLeft = (screen.width - pWidth) / 2;
+		var pTop = (screen.height - pHeight) / 2;
+		window.open(fullUrl,"","width="+ pWidth +",height="+ pHeight +",left="+ pLeft +",top="+ pTop +",location=no,menubar=no,status=no,scrollbars=no,resizable=no,titlebar=no,toolbar=no");
+	}
+}
+
+function createURL(){
+	$.ajax({
+		type : 'post'
+		, url : '/common/api_naver_short_url.do?action=shortUrl&url='+encodeURIComponent(location.href)
+		, dataType : 'json'
+		, contentType: "application/x-www-form-urlencoded; charset=UTF-8"
+		, success : function(data) {
+			
+			let url = data.result.url;
+			$('#shortUrl').val(url);
+
+		}, error : function(xhr, errmsg, errobj) {
+			console.log(errmsg);
+		}
+	});
+}
+function copyURL(){
+// 	let url = $('#shortUrl').val();
+	 const url = window.location.href; // 현재 페이지 URL
+     navigator.clipboard.writeText(url)
+       .then(() => {
+         alert("URL이 클립보드에 복사되었습니다!");
+       })
+       .catch(err => {
+         alert("복사에 실패했습니다: " + err);
+       });
+// 	const textarea = document.createElement("textarea");
+// 	document.body.appendChild(textarea);
+// 	textarea.value = url;
+// 	textarea.select();
+// 	document.execCommand("copy");
+// 	document.body.removeChild(textarea);
+
+// 	alert("URL이 복사되었습니다.");
+}
+</script>
+<!-- page_top -->
+<div class="page_top">
+    <div class="inner">
+        <ul class="breadcrumb">
+            <li><a href="/customer/main/main.do" class="home" title="메인페이지"><span class="blind">홈</span></a></li>
+            <li><a href="" class="depth1" title="가격정보">가격정보</a></li>
+            <li>
+            	
+        	    	<a href="" class="depth2" title="세부가격정보">세부가격정보</a>
+            	
+            </li>
+            
+            	<li><a href="" class="depth3" title="소매가격">소매가격</a></li>
+            
+        </ul>
+        <ul class="page_share">
+            <li><a href="#self" id="btn_print" class="i01 btn_print" aria-label="현재 페이지 프린트 새창열기"><span class="blind">현재 페이지 프린트 새창열기</span></a></li>
+            <li class="js-share">
+                <a href="javascript:createURL();" id="snsShareButton" class="i02" aria-label="현재 페이지 공유 메뉴 열기" aria-expanded="false" data-menu-name="현재 페이지 공유 메뉴"></a>
+                <div class="sns">
+                	<div class="inp_btn">
+<!-- 	                    <input type="text" id="shortUrl" title="url 복사"/> -->
+						<input type="hidden" id="shortUrl" title="url 복사"/>
+	                    <button type="button" class="btn blue" onclick="copyURL();">url 복사</button>
+	                </div>
+                    <ul>
+                        <li><a href="javascript:shareKakao();" title="카카오톡 공유하기(새창 열림)"><img src="/images/icon/i_soc_kt.svg" alt="카카오톡"/></a></li>
+                        <li><a href="javascript:shareSNS('twitter');" title="X 공유하기(새창 열림)"><img src="/images/icon/i_soc_tw.svg" alt="X"/></a></li>
+                        <li><a href="javascript:shareSNS('facebook');" title="페이스북 공유하기(새창 열림)"><img src="/images/icon/i_soc_fb.svg" alt="페이스북"/></a></li>
+<!--                         <li><a href="javascript:shareSNS('kakao');" title="카카오스토리 공유하기(새창 열림)"><img src="/images/icon/i_soc_ks.svg" alt="카카오스토리"></a></li> -->
+<!--                         <li><a href="javascript:copyURL();" title="링크 복사"><img src="/images/icon/i_copy.svg" alt="링크복사"></a></li> -->
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <!-- title -->
+    <h2 class="page_tit" >세부가격정보</h2>
+    <p class="page_info">내가 원하는대로 검색하고 정렬할 수 있는 KAMIS 농,수,축산물 가격정보</p>
+    <!-- // title -->
+</div>
+<!-- // page_top -->
+
+	<!-- tab basic -->
+	<div class="tab basic">
+	    <ul class="tab_menu">
+	    </ul>
+	</div>
+	<!-- //tab basic -->
+	<!-- info tooltip -->
+	
+		<div class="info_ttip right">
+		    <!-- 가락시장 경락가격 설명제외 -->
+			    
+			    	<span tabindex="0">소매가격<i class="i_help"></i></span>
+				    <div class="ttip"><p>대형마트, 전통시장 등에서 소비자에게 판매하는 가격</p></div>
+			    
+		</div>
+	
+	<!-- // info tooltip -->
+
+     
+<!-- 스크랩 레이어 -->
+
+
+<!--// 스크랩 레이어 -->
+
+
+<div class="loading" style="display:none;"><p>loading</p></div>
+<script>
+function fncSetSearchbox(div){
+	$("#search_option").val(div);
+}
+</script>
+						
+						
+						<form method="post" id="frm_excel" action="/jsp/common/excel_util.jsp">
+							<input type="hidden" class="excel_data" name="excel_data" />
+						</form>
+						
+						<form class="searchbox" id="frm_search" name="frm_search" method="get" action="/customer/price/agricultureRetail/catalogue.do">
+							<input type="hidden" id="action" name="action" value="daily" />
+							<input type="hidden" id="actionUrl" name="actionUrl" value="/customer/price/agricultureRetail/catalogue.do" />
+							<div id="searchDivn">
+								<input type="hidden" id="itemcategorycode" name="itemcategorycode" value=""/>
+								<input type="hidden" id="yyyy" name="yyyy" value="" />
+								<input type="hidden" id="start_mmdd" name="start_mmdd" value="" />
+								<input type="hidden" id="period" name="period" value="" />
+								<input type="hidden" id="mm" name="mm" value="" />
+								<input type="hidden" id="week" name="week" value="" />
+								<input type="hidden" id="regday" name="regday" value="2026-11-06" />
+								<input type="hidden" id="startday" name="startday" value="" />
+								<input type="hidden" id="endday" name="endday" value="" />
+								<input type="hidden" id="itemcode" name="itemcode" value="" />
+								<input type="hidden" id="kindcode" name="kindcode" value="" />
+								<input type="hidden" id="productrankcode" name="productrankcode" value="" />
+								<input type="hidden" id="marketclscode" name="marketclscode" value=""/>
+								<input type="hidden" id="marketcode" name="marketcode" value="" />
+								<input type="hidden" id="countycode" name="countycode" value="" />
+								<input type="hidden" id="convert_kg_yn" name="convert_kg_yn" value="N"/>
+							</div>
+							<script>
+								itemSearchDivSet($("#actionUrl").val())
+							</script>
+						</form>
+						<!--// 서브페이지에 들어가는 영역 -->
+						
+
+
+<script src="/js/customer/price/price_filter.js"></script>
+<div id="display_view_filter" class="layer_pop js-popup pop_sm">
+	<div class="pop_wrap">
+		<div class="pop_header">
+			<h2>선택</h2>
+			<button type="button" class="pop_close"
+				onclick="view_hide('_filter');">
+				<i class="feather icon-x"></i>닫기
+			</button>
+		</div>
+		<div class="pop_content">
+			<div class="popc_wrap">
+				<input type="hidden" id="tblId" />
+				
+					
+					
+					
+						<div id="filter_1" style="display: none;">
+							<div>
+								<h2 class="tit_lvl1"></h2>
+								<span class="chk lvl1"></span> <input type="hidden" id="lvl1_1" />
+							</div>
+							<div class="mar_t30">
+								<h2 class="tit_lvl4"></h2>
+								<span class="chk lvl4"></span> <input type="hidden" id="lvl4_1" />
+							</div>
+						</div>
+					
+				
+				
+					
+				
+			</div>
+		</div>
+		<div class="pop_footer">
+			<div class="btn_area">
+				<button type="button" id="btn_filter" class="btn bd blue">확인</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+						
+
+
+
+	
+
+
+	<div id="display_view_info" class="layer_pop js-popup pop_lg">
+		<div class="pop_wrap">
+	        <div class="pop_header">
+	            <h2>이용안내</h2>
+	            <button type="button" class="pop_close" onclick="view_hide('_info');"><i class="feather icon-x"></i>닫기</button>
+	        </div>
+			
+	        <div class="pop_content">
+				<div class="popc_wrap">
+		            <ul class="txt_list">
+						<li>계절성품목, 금어기, 소비과소품목 등은 평균값, 최고값, 최저값, 등락률을 제공하지 않습니다.</li>
+		            </ul>
+				</div>
+	        </div>
+		</div>
+    </div>
+
+
+
+						<div class="price_res_area">
+							<div class="flex_tit">
+								<h3 class="lg_tit">소매가격 - 부류별 - 일간가격</h3>
+								<div class="btn_area">
+									<div class="cms_area"></div>
+			                        
+									<button type="button" class="btn btn_excel" onclick="goExcel('1')" 
+										aria-label="전체, 전체, , ,  엑셀다운로드"
+									>
+										엑셀다운로드
+									</button>
+   								</div>
+							</div>
+							
+                           		<script>
+                             		$.ajax({
+    									method : "POST",
+    									url : "/customer/main/main.do?action=viewCms",
+    									data : {cmsSeq:"21", cmsTypeSeq:"228", typeDivn:"etc"},
+    									dataType : "HTML",
+    									success : function(data){
+    										$(".cms_area").html(data);
+    										resolve("success");
+    									},
+    									error : function(req, err, msg){
+    										reject("fail");
+    									}
+    								});
+                           		</script>
+                           	
+							<div class="flex_tit">
+								<h4 class="md_tit">
+ 									 전체
+									  
+									 
+									<span class="txt_date">2026.11.06 기준</span>
+								</h4>
+								<!-- 로그인상태 & 품목 선택된 경우에만 -->
+								
+							</div>
+							<div class="focusDiv" id="focusDiv"></div>
+							<script>
+						      setTimeout(function(){
+						    	  $("#focusDiv").attr("tabindex", -1).focus();
+								},1500);
+							</script>
+							<div class="detail_tbl_wrap">
+<!-- 								<div class="tbl_scr_wrap" data-showTr="10" data-showTrFix="10"> -->
+								<div class="tbl_scr_wrap">
+									<table class="tbl col" id="itemTable_1"
+										summary="소매가격전체부류별/일간 가격정보">
+										<caption>소매가격 
+										전체 
+										
+										
+										
+										
+										부류별/일간 가격정보</caption>
+										<colgroup>
+											
+												<col style="width:10%"/>
+												<col style="width:10%"/>
+												<col style="width:80px;"/>
+												<col style="width:80px;"/>
+												
+													
+														<col />
+													
+													
+														<col />
+													
+													
+													
+														<col />
+													
+													
+														<col />
+													
+													
+														<col />
+													
+													
+														<col />
+													
+												
+													
+																		
+										</colgroup>
+										<thead>
+											<tr>
+													<th class="first" scope="col">품목<button type="button" class="btn ic filter" title="필터" onclick="setTableId(1);"><i class="feather icon-filter"></i></button></th>
+													<th scope="col">품종</th>
+													<th scope="col">단위</th>
+													<th scope="col">등급<button type="button" class="btn ic filter" title="필터" onclick="setTableId(1);"><i class="feather icon-filter"></i></button></th>
+													
+												
+													
+														<th scope="col">당일 (11/06)<button type="button" class="btn ic sort" onclick="fncSortTbl(this, '#itemTable_1', 'desc');" title="기본 정렬됨"><i class="feather icon-align-justify"></i></button></th>
+													
+													
+														<th scope="col">1일전 (11/05)<button type="button" class="btn ic sort" onclick="fncSortTbl(this, '#itemTable_1', 'desc');" title="기본 정렬됨"><i class="feather icon-align-justify"></i></button></th>
+													
+													
+													
+														<th scope="col">1주일전 (10/30)<button type="button" class="btn ic sort" onclick="fncSortTbl(this, '#itemTable_1', 'desc');" title="기본 정렬됨"><i class="feather icon-align-justify"></i></button></th>
+													
+													
+														<th scope="col">2주일전 (10/23)<button type="button" class="btn ic sort" onclick="fncSortTbl(this, '#itemTable_1', 'desc');" title="기본 정렬됨"><i class="feather icon-align-justify"></i></button></th>
+													
+													
+													
+														<th scope="col">1년전<button type="button" class="btn ic sort" onclick="fncSortTbl(this, '#itemTable_1', 'desc');" title="기본 정렬됨"><i class="feather icon-align-justify"></i></button></th>
+													
+													
+														<th scope="col">평년<button type="button" class="btn ic sort" onclick="fncSortTbl(this, '#itemTable_1', 'desc');" title="기본 정렬됨"><i class="feather icon-align-justify"></i></button></th>
+													
+													
+												
+											</tr>
+										</thead>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">쌀</th>
+												<th scope="row" class="cell_tit2 lvl2">20kg</th>
+												<th scope="row" class="cell_tit3 lvl3">20kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>63,289</td>
+												
+												
+													<td>63,298</td>
+												
+												
+												
+													<td>63,282</td>
+												
+												
+													<td>63,042</td>
+												
+												
+												
+													<td>64,926</td>
+												
+												
+													<td>55,692</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">쌀</th>
+												<th scope="row" class="cell_tit2 lvl2">20kg(햅쌀)</th>
+												<th scope="row" class="cell_tit3 lvl3">20kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>64,177</td>
+												
+												
+													<td>64,509</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">쌀</th>
+												<th scope="row" class="cell_tit2 lvl2">10kg</th>
+												<th scope="row" class="cell_tit3 lvl3">10kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>34,796</td>
+												
+												
+													<td>34,796</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>35,544</td>
+												
+												
+												
+													<td>34,881</td>
+												
+												
+													<td>31,253</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">쌀</th>
+												<th scope="row" class="cell_tit2 lvl2">10kg(햅쌀)</th>
+												<th scope="row" class="cell_tit3 lvl3">10kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>33,708</td>
+												
+												
+													<td>36,757</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">찹쌀</th>
+												<th scope="row" class="cell_tit2 lvl2">일반계</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>4,832</td>
+												
+												
+													<td>4,844</td>
+												
+												
+												
+													<td>4,905</td>
+												
+												
+													<td>5,239</td>
+												
+												
+												
+													<td>5,967</td>
+												
+												
+													<td>4,214</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">혼식곡</th>
+												<th scope="row" class="cell_tit2 lvl2">국산</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>7,698</td>
+												
+												
+													<td>7,853</td>
+												
+												
+												
+													<td>7,878</td>
+												
+												
+													<td>7,985</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">현미</th>
+												<th scope="row" class="cell_tit2 lvl2">찰현미</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>5,694</td>
+												
+												
+													<td>5,694</td>
+												
+												
+												
+													<td>5,643</td>
+												
+												
+													<td>5,685</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">보리쌀</th>
+												<th scope="row" class="cell_tit2 lvl2">찰보리</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>5,063</td>
+												
+												
+													<td>5,063</td>
+												
+												
+												
+													<td>5,053</td>
+												
+												
+													<td>5,048</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">콩</th>
+												<th scope="row" class="cell_tit2 lvl2">흰 콩(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">500g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>5,057</td>
+												
+												
+													<td>5,057</td>
+												
+												
+												
+													<td>5,039</td>
+												
+												
+													<td>5,047</td>
+												
+												
+												
+													<td>5,214</td>
+												
+												
+													<td>5,251</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">팥</th>
+												<th scope="row" class="cell_tit2 lvl2">붉은 팥(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">500g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>13,375</td>
+												
+												
+													<td>13,387</td>
+												
+												
+												
+													<td>13,287</td>
+												
+												
+													<td>13,563</td>
+												
+												
+												
+													<td>13,915</td>
+												
+												
+													<td>9,116</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">녹두</th>
+												<th scope="row" class="cell_tit2 lvl2">국산</th>
+												<th scope="row" class="cell_tit3 lvl3">500g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>12,236</td>
+												
+												
+													<td>12,216</td>
+												
+												
+												
+													<td>12,193</td>
+												
+												
+													<td>12,208</td>
+												
+												
+												
+													<td>11,519</td>
+												
+												
+													<td>11,376</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고구마</th>
+												<th scope="row" class="cell_tit2 lvl2">밤</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>3,871</td>
+												
+												
+													<td>3,819</td>
+												
+												
+												
+													<td>3,939</td>
+												
+												
+													<td>5,135</td>
+												
+												
+												
+													<td>4,328</td>
+												
+												
+													<td>4,963</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고구마</th>
+												<th scope="row" class="cell_tit2 lvl2">밤</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>3,888</td>
+												
+												
+													<td>4,032</td>
+												
+												
+												
+													<td>4,049</td>
+												
+												
+													<td>4,259</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">감자</th>
+												<th scope="row" class="cell_tit2 lvl2">수미(노지)</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>338</td>
+												
+												
+													<td>336</td>
+												
+												
+												
+													<td>333</td>
+												
+												
+													<td>348</td>
+												
+												
+												
+													<td>362</td>
+												
+												
+													<td>357</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">감자</th>
+												<th scope="row" class="cell_tit2 lvl2">수미(노지)</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>295</td>
+												
+												
+													<td>290</td>
+												
+												
+												
+													<td>270</td>
+												
+												
+													<td>346</td>
+												
+												
+												
+													<td>287</td>
+												
+												
+													<td>277</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">배추</th>
+												<th scope="row" class="cell_tit2 lvl2">여름(고랭지)</th>
+												<th scope="row" class="cell_tit3 lvl3">1포기</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>4,423</td>
+												
+												
+													<td>4,537</td>
+												
+												
+												
+													<td>4,487</td>
+												
+												
+													<td>4,377</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">배추</th>
+												<th scope="row" class="cell_tit2 lvl2">가을</th>
+												<th scope="row" class="cell_tit3 lvl3">1포기</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,823</td>
+												
+												
+													<td>2,829</td>
+												
+												
+												
+													<td>3,775</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>2,599</td>
+												
+												
+													<td>3,604</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">양배추</th>
+												<th scope="row" class="cell_tit2 lvl2">양배추</th>
+												<th scope="row" class="cell_tit3 lvl3">1포기</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>4,701</td>
+												
+												
+													<td>4,701</td>
+												
+												
+												
+													<td>4,711</td>
+												
+												
+													<td>4,792</td>
+												
+												
+												
+													<td>3,567</td>
+												
+												
+													<td>4,284</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">양배추</th>
+												<th scope="row" class="cell_tit2 lvl2">양배추</th>
+												<th scope="row" class="cell_tit3 lvl3">1포기</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>2,981</td>
+												
+												
+													<td>2,993</td>
+												
+												
+												
+													<td>3,549</td>
+												
+												
+													<td>3,753</td>
+												
+												
+												
+													<td>3,015</td>
+												
+												
+													<td>3,653</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">시금치</th>
+												<th scope="row" class="cell_tit2 lvl2">시금치</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>839</td>
+												
+												
+													<td>846</td>
+												
+												
+												
+													<td>826</td>
+												
+												
+													<td>830</td>
+												
+												
+												
+													<td>1,320</td>
+												
+												
+													<td>993</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">상추</th>
+												<th scope="row" class="cell_tit2 lvl2">적</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,011</td>
+												
+												
+													<td>1,014</td>
+												
+												
+												
+													<td>904</td>
+												
+												
+													<td>984</td>
+												
+												
+												
+													<td>1,671</td>
+												
+												
+													<td>1,497</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">상추</th>
+												<th scope="row" class="cell_tit2 lvl2">청</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,029</td>
+												
+												
+													<td>1,029</td>
+												
+												
+												
+													<td>905</td>
+												
+												
+													<td>982</td>
+												
+												
+												
+													<td>1,914</td>
+												
+												
+													<td>1,591</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">얼갈이배추</th>
+												<th scope="row" class="cell_tit2 lvl2">얼갈이배추</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,850</td>
+												
+												
+													<td>1,834</td>
+												
+												
+												
+													<td>1,817</td>
+												
+												
+													<td>1,889</td>
+												
+												
+												
+													<td>3,830</td>
+												
+												
+													<td>3,230</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">갓</th>
+												<th scope="row" class="cell_tit2 lvl2">갓</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>3,779</td>
+												
+												
+													<td>3,803</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>4,765</td>
+												
+												
+													<td>3,735</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">수박</th>
+												<th scope="row" class="cell_tit2 lvl2">수박</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>20,011</td>
+												
+												
+													<td>20,233</td>
+												
+												
+												
+													<td>20,306</td>
+												
+												
+													<td>20,733</td>
+												
+												
+												
+													<td>24,166</td>
+												
+												
+													<td>22,491</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">수박</th>
+												<th scope="row" class="cell_tit2 lvl2">수박</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>17,569</td>
+												
+												
+													<td>17,415</td>
+												
+												
+												
+													<td>17,929</td>
+												
+												
+													<td>16,653</td>
+												
+												
+												
+													<td>22,744</td>
+												
+												
+													<td>20,649</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">오이</th>
+												<th scope="row" class="cell_tit2 lvl2">가시계통</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>10,306</td>
+												
+												
+													<td>10,274</td>
+												
+												
+												
+													<td>8,045</td>
+												
+												
+													<td>7,867</td>
+												
+												
+												
+													<td>15,956</td>
+												
+												
+													<td>14,056</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">오이</th>
+												<th scope="row" class="cell_tit2 lvl2">다다기계통</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>8,090</td>
+												
+												
+													<td>7,925</td>
+												
+												
+												
+													<td>6,409</td>
+												
+												
+													<td>5,628</td>
+												
+												
+												
+													<td>12,245</td>
+												
+												
+													<td>11,160</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">오이</th>
+												<th scope="row" class="cell_tit2 lvl2">다다기계통</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>5,223</td>
+												
+												
+													<td>4,921</td>
+												
+												
+												
+													<td>8,782</td>
+												
+												
+													<td>7,568</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">오이</th>
+												<th scope="row" class="cell_tit2 lvl2">취청</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>10,166</td>
+												
+												
+													<td>9,795</td>
+												
+												
+												
+													<td>8,011</td>
+												
+												
+													<td>7,724</td>
+												
+												
+												
+													<td>15,427</td>
+												
+												
+													<td>14,215</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">호박</th>
+												<th scope="row" class="cell_tit2 lvl2">애호박</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,556</td>
+												
+												
+													<td>1,528</td>
+												
+												
+												
+													<td>1,229</td>
+												
+												
+													<td>1,144</td>
+												
+												
+												
+													<td>2,120</td>
+												
+												
+													<td>1,910</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">호박</th>
+												<th scope="row" class="cell_tit2 lvl2">쥬키니</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,693</td>
+												
+												
+													<td>1,616</td>
+												
+												
+												
+													<td>1,502</td>
+												
+												
+													<td>1,443</td>
+												
+												
+												
+													<td>2,435</td>
+												
+												
+													<td>2,219</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">토마토</th>
+												<th scope="row" class="cell_tit2 lvl2">토마토</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>4,557</td>
+												
+												
+													<td>4,556</td>
+												
+												
+												
+													<td>4,983</td>
+												
+												
+													<td>5,376</td>
+												
+												
+												
+													<td>8,355</td>
+												
+												
+													<td>7,914</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">무</th>
+												<th scope="row" class="cell_tit2 lvl2">고랭지</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,050</td>
+												
+												
+													<td>2,050</td>
+												
+												
+												
+													<td>2,106</td>
+												
+												
+													<td>2,214</td>
+												
+												
+												
+													<td>1,935</td>
+												
+												
+													<td>2,224</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">무</th>
+												<th scope="row" class="cell_tit2 lvl2">고랭지</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>2,187</td>
+												
+												
+												
+													<td>1,738</td>
+												
+												
+													<td>2,039</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">무</th>
+												<th scope="row" class="cell_tit2 lvl2">가을</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,836</td>
+												
+												
+													<td>1,845</td>
+												
+												
+												
+													<td>1,986</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>2,041</td>
+												
+												
+													<td>2,199</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">당근</th>
+												<th scope="row" class="cell_tit2 lvl2">무세척(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>4,673</td>
+												
+												
+													<td>4,655</td>
+												
+												
+												
+													<td>4,467</td>
+												
+												
+													<td>4,178</td>
+												
+												
+												
+													<td>3,139</td>
+												
+												
+													<td>4,690</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">당근</th>
+												<th scope="row" class="cell_tit2 lvl2">무세척(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>3,660</td>
+												
+												
+													<td>3,660</td>
+												
+												
+												
+													<td>4,038</td>
+												
+												
+													<td>3,772</td>
+												
+												
+												
+													<td>2,981</td>
+												
+												
+													<td>3,716</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">열무</th>
+												<th scope="row" class="cell_tit2 lvl2">열무</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,220</td>
+												
+												
+													<td>2,246</td>
+												
+												
+												
+													<td>2,016</td>
+												
+												
+													<td>1,949</td>
+												
+												
+												
+													<td>4,156</td>
+												
+												
+													<td>3,618</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">건고추</th>
+												<th scope="row" class="cell_tit2 lvl2">화건</th>
+												<th scope="row" class="cell_tit3 lvl3">600g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>17,148</td>
+												
+												
+													<td>17,148</td>
+												
+												
+												
+													<td>17,600</td>
+												
+												
+													<td>17,519</td>
+												
+												
+												
+													<td>15,522</td>
+												
+												
+													<td>16,372</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">풋고추</th>
+												<th scope="row" class="cell_tit2 lvl2">풋고추(녹광 등)</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,684</td>
+												
+												
+													<td>1,645</td>
+												
+												
+												
+													<td>1,570</td>
+												
+												
+													<td>1,785</td>
+												
+												
+												
+													<td>2,040</td>
+												
+												
+													<td>1,865</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">풋고추</th>
+												<th scope="row" class="cell_tit2 lvl2">꽈리고추</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,420</td>
+												
+												
+													<td>1,394</td>
+												
+												
+												
+													<td>1,478</td>
+												
+												
+													<td>1,503</td>
+												
+												
+												
+													<td>1,667</td>
+												
+												
+													<td>1,513</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">풋고추</th>
+												<th scope="row" class="cell_tit2 lvl2">청양고추</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,120</td>
+												
+												
+													<td>1,117</td>
+												
+												
+												
+													<td>1,065</td>
+												
+												
+													<td>1,182</td>
+												
+												
+												
+													<td>1,187</td>
+												
+												
+													<td>1,241</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">풋고추</th>
+												<th scope="row" class="cell_tit2 lvl2">청양고추</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>796</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>783</td>
+												
+												
+													<td>807</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">풋고추</th>
+												<th scope="row" class="cell_tit2 lvl2">오이맛고추</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>954</td>
+												
+												
+													<td>943</td>
+												
+												
+												
+													<td>899</td>
+												
+												
+													<td>970</td>
+												
+												
+												
+													<td>1,110</td>
+												
+												
+													<td>1,206</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">붉은고추</th>
+												<th scope="row" class="cell_tit2 lvl2">붉은고추</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,868</td>
+												
+												
+													<td>1,870</td>
+												
+												
+												
+													<td>1,878</td>
+												
+												
+													<td>2,216</td>
+												
+												
+												
+													<td>2,136</td>
+												
+												
+													<td>2,097</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">양파</th>
+												<th scope="row" class="cell_tit2 lvl2">양파</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,893</td>
+												
+												
+													<td>2,050</td>
+												
+												
+												
+													<td>1,890</td>
+												
+												
+													<td>2,165</td>
+												
+												
+												
+													<td>2,008</td>
+												
+												
+													<td>2,088</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">파</th>
+												<th scope="row" class="cell_tit2 lvl2">대파</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,597</td>
+												
+												
+													<td>2,607</td>
+												
+												
+												
+													<td>2,274</td>
+												
+												
+													<td>2,784</td>
+												
+												
+												
+													<td>2,894</td>
+												
+												
+													<td>3,164</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">파</th>
+												<th scope="row" class="cell_tit2 lvl2">쪽파</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>4,654</td>
+												
+												
+													<td>4,501</td>
+												
+												
+												
+													<td>4,980</td>
+												
+												
+													<td>5,319</td>
+												
+												
+												
+													<td>9,492</td>
+												
+												
+													<td>8,127</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">생강</th>
+												<th scope="row" class="cell_tit2 lvl2">국산</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>10,544</td>
+												
+												
+													<td>10,561</td>
+												
+												
+												
+													<td>11,395</td>
+												
+												
+													<td>11,354</td>
+												
+												
+												
+													<td>9,852</td>
+												
+												
+													<td>10,309</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고춧가루</th>
+												<th scope="row" class="cell_tit2 lvl2">국산</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>29,898</td>
+												
+												
+													<td>30,324</td>
+												
+												
+												
+													<td>31,200</td>
+												
+												
+													<td>31,414</td>
+												
+												
+												
+													<td>30,238</td>
+												
+												
+													<td>31,959</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고춧가루</th>
+												<th scope="row" class="cell_tit2 lvl2">중국</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>13,658</td>
+												
+												
+													<td>13,646</td>
+												
+												
+												
+													<td>13,538</td>
+												
+												
+													<td>13,532</td>
+												
+												
+												
+													<td>13,405</td>
+												
+												
+													<td>13,212</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">가지</th>
+												<th scope="row" class="cell_tit2 lvl2">가지</th>
+												<th scope="row" class="cell_tit3 lvl3">3개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,583</td>
+												
+												
+													<td>2,541</td>
+												
+												
+												
+													<td>2,275</td>
+												
+												
+													<td>2,238</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">미나리</th>
+												<th scope="row" class="cell_tit2 lvl2">미나리</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,628</td>
+												
+												
+													<td>1,617</td>
+												
+												
+												
+													<td>1,706</td>
+												
+												
+													<td>1,810</td>
+												
+												
+												
+													<td>1,498</td>
+												
+												
+													<td>1,482</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">깻잎</th>
+												<th scope="row" class="cell_tit2 lvl2">깻잎</th>
+												<th scope="row" class="cell_tit3 lvl3">50g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,406</td>
+												
+												
+													<td>1,395</td>
+												
+												
+												
+													<td>1,168</td>
+												
+												
+													<td>1,238</td>
+												
+												
+												
+													<td>1,633</td>
+												
+												
+													<td>1,399</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">부추</th>
+												<th scope="row" class="cell_tit2 lvl2">부추</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>719</td>
+												
+												
+													<td>697</td>
+												
+												
+												
+													<td>665</td>
+												
+												
+													<td>725</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">피망</th>
+												<th scope="row" class="cell_tit2 lvl2">청</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,379</td>
+												
+												
+													<td>1,367</td>
+												
+												
+												
+													<td>1,254</td>
+												
+												
+													<td>1,363</td>
+												
+												
+												
+													<td>1,589</td>
+												
+												
+													<td>1,400</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">파프리카</th>
+												<th scope="row" class="cell_tit2 lvl2">파프리카</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,364</td>
+												
+												
+													<td>1,398</td>
+												
+												
+												
+													<td>1,329</td>
+												
+												
+													<td>1,399</td>
+												
+												
+												
+													<td>1,977</td>
+												
+												
+													<td>1,851</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">파프리카</th>
+												<th scope="row" class="cell_tit2 lvl2">파프리카</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>1,306</td>
+												
+												
+													<td>1,306</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>1,358</td>
+												
+												
+												
+													<td>1,572</td>
+												
+												
+													<td>1,422</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">멜론</th>
+												<th scope="row" class="cell_tit2 lvl2">멜론</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>9,806</td>
+												
+												
+													<td>9,840</td>
+												
+												
+												
+													<td>9,461</td>
+												
+												
+													<td>9,589</td>
+												
+												
+												
+													<td>11,043</td>
+												
+												
+													<td>10,748</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">멜론</th>
+												<th scope="row" class="cell_tit2 lvl2">멜론</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>8,436</td>
+												
+												
+													<td>8,925</td>
+												
+												
+												
+													<td>9,102</td>
+												
+												
+													<td>7,628</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">깐마늘(국산)</th>
+												<th scope="row" class="cell_tit2 lvl2">깐마늘(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>11,982</td>
+												
+												
+													<td>11,966</td>
+												
+												
+												
+													<td>12,150</td>
+												
+												
+													<td>10,840</td>
+												
+												
+												
+													<td>9,851</td>
+												
+												
+													<td>10,668</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">깐마늘(국산)</th>
+												<th scope="row" class="cell_tit2 lvl2">깐마늘(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>8,421</td>
+												
+												
+													<td>8,413</td>
+												
+												
+												
+													<td>9,813</td>
+												
+												
+													<td>9,646</td>
+												
+												
+												
+													<td>8,438</td>
+												
+												
+													<td>8,416</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">알배기배추</th>
+												<th scope="row" class="cell_tit2 lvl2">알배기배추</th>
+												<th scope="row" class="cell_tit3 lvl3">1포기</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,323</td>
+												
+												
+													<td>2,338</td>
+												
+												
+												
+													<td>2,647</td>
+												
+												
+													<td>2,786</td>
+												
+												
+												
+													<td>3,452</td>
+												
+												
+													<td>3,788</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">알배기배추</th>
+												<th scope="row" class="cell_tit2 lvl2">알배기배추</th>
+												<th scope="row" class="cell_tit3 lvl3">1포기</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>1,919</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>1,915</td>
+												
+												
+													<td>1,976</td>
+												
+												
+												
+													<td>1,939</td>
+												
+												
+													<td>2,266</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">브로콜리</th>
+												<th scope="row" class="cell_tit2 lvl2">브로콜리(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,307</td>
+												
+												
+													<td>2,278</td>
+												
+												
+												
+													<td>2,551</td>
+												
+												
+													<td>2,587</td>
+												
+												
+												
+													<td>3,591</td>
+												
+												
+													<td>3,204</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">참깨</th>
+												<th scope="row" class="cell_tit2 lvl2">백색(국산)</th>
+												<th scope="row" class="cell_tit3 lvl3">500g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>16,652</td>
+												
+												
+													<td>16,652</td>
+												
+												
+												
+													<td>16,667</td>
+												
+												
+													<td>16,810</td>
+												
+												
+												
+													<td>18,030</td>
+												
+												
+													<td>16,816</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">참깨</th>
+												<th scope="row" class="cell_tit2 lvl2">중국</th>
+												<th scope="row" class="cell_tit3 lvl3">500g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>4,938</td>
+												
+												
+													<td>4,938</td>
+												
+												
+												
+													<td>4,938</td>
+												
+												
+													<td>4,954</td>
+												
+												
+												
+													<td>5,063</td>
+												
+												
+													<td>5,073</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">땅콩</th>
+												<th scope="row" class="cell_tit2 lvl2">국산</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>3,289</td>
+												
+												
+													<td>3,289</td>
+												
+												
+												
+													<td>3,298</td>
+												
+												
+													<td>3,618</td>
+												
+												
+												
+													<td>3,715</td>
+												
+												
+													<td>3,104</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">땅콩</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>1,105</td>
+												
+												
+													<td>1,104</td>
+												
+												
+												
+													<td>1,092</td>
+												
+												
+													<td>1,103</td>
+												
+												
+												
+													<td>1,126</td>
+												
+												
+													<td>1,031</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">느타리버섯</th>
+												<th scope="row" class="cell_tit2 lvl2">느타리버섯</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,036</td>
+												
+												
+													<td>1,018</td>
+												
+												
+												
+													<td>990</td>
+												
+												
+													<td>982</td>
+												
+												
+												
+													<td>851</td>
+												
+												
+													<td>1,049</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">느타리버섯</th>
+												<th scope="row" class="cell_tit2 lvl2">애느타리버섯</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>622</td>
+												
+												
+													<td>624</td>
+												
+												
+												
+													<td>598</td>
+												
+												
+													<td>610</td>
+												
+												
+												
+													<td>587</td>
+												
+												
+													<td>583</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">팽이버섯</th>
+												<th scope="row" class="cell_tit2 lvl2">팽이버섯</th>
+												<th scope="row" class="cell_tit3 lvl3">150g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>504</td>
+												
+												
+													<td>505</td>
+												
+												
+												
+													<td>509</td>
+												
+												
+													<td>497</td>
+												
+												
+												
+													<td>545</td>
+												
+												
+													<td>584</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">새송이버섯</th>
+												<th scope="row" class="cell_tit2 lvl2">새송이버섯</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>530</td>
+												
+												
+													<td>539</td>
+												
+												
+												
+													<td>531</td>
+												
+												
+													<td>567</td>
+												
+												
+												
+													<td>556</td>
+												
+												
+													<td>580</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">새송이버섯</th>
+												<th scope="row" class="cell_tit2 lvl2">새송이버섯</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>391</td>
+												
+												
+													<td>391</td>
+												
+												
+												
+													<td>399</td>
+												
+												
+													<td>403</td>
+												
+												
+												
+													<td>460</td>
+												
+												
+													<td>453</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">호두</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>2,085</td>
+												
+												
+													<td>2,085</td>
+												
+												
+												
+													<td>2,113</td>
+												
+												
+													<td>1,966</td>
+												
+												
+												
+													<td>2,175</td>
+												
+												
+													<td>1,656</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">아몬드</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>2,082</td>
+												
+												
+													<td>2,082</td>
+												
+												
+												
+													<td>2,070</td>
+												
+												
+													<td>2,046</td>
+												
+												
+												
+													<td>1,898</td>
+												
+												
+													<td>1,499</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">사과</th>
+												<th scope="row" class="cell_tit2 lvl2">후지</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>18,448</td>
+												
+												
+													<td>18,579</td>
+												
+												
+												
+													<td>21,408</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>27,320</td>
+												
+												
+													<td>25,931</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">사과</th>
+												<th scope="row" class="cell_tit2 lvl2">후지</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>15,391</td>
+												
+												
+													<td>15,278</td>
+												
+												
+												
+													<td>17,441</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>19,674</td>
+												
+												
+													<td>18,833</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">사과</th>
+												<th scope="row" class="cell_tit2 lvl2">홍로</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>24,523</td>
+												
+												
+													<td>24,590</td>
+												
+												
+												
+													<td>22,056</td>
+												
+												
+													<td>19,897</td>
+												
+												
+												
+													<td>26,125</td>
+												
+												
+													<td>24,143</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">사과</th>
+												<th scope="row" class="cell_tit2 lvl2">홍로</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>17,422</td>
+												
+												
+													<td>17,491</td>
+												
+												
+												
+													<td>15,944</td>
+												
+												
+													<td>14,523</td>
+												
+												
+												
+													<td>19,196</td>
+												
+												
+													<td>19,474</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">사과</th>
+												<th scope="row" class="cell_tit2 lvl2">시나노골드</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>19,448</td>
+												
+												
+													<td>19,324</td>
+												
+												
+												
+													<td>18,425</td>
+												
+												
+													<td>20,248</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">사과</th>
+												<th scope="row" class="cell_tit2 lvl2">시나노골드</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>13,485</td>
+												
+												
+													<td>13,894</td>
+												
+												
+												
+													<td>15,167</td>
+												
+												
+													<td>17,193</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">배</th>
+												<th scope="row" class="cell_tit2 lvl2">신고</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>24,596</td>
+												
+												
+													<td>24,737</td>
+												
+												
+												
+													<td>26,491</td>
+												
+												
+													<td>27,333</td>
+												
+												
+												
+													<td>25,709</td>
+												
+												
+													<td>28,282</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">배</th>
+												<th scope="row" class="cell_tit2 lvl2">신고</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>18,469</td>
+												
+												
+													<td>18,777</td>
+												
+												
+												
+													<td>19,478</td>
+												
+												
+													<td>19,643</td>
+												
+												
+												
+													<td>20,164</td>
+												
+												
+													<td>23,365</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">포도</th>
+												<th scope="row" class="cell_tit2 lvl2">캠벨얼리</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">L과</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>7,971</td>
+												
+												
+												
+													<td>7,832</td>
+												
+												
+													<td>7,583</td>
+												
+												
+												
+													<td>8,078</td>
+												
+												
+													<td>8,240</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">포도</th>
+												<th scope="row" class="cell_tit2 lvl2">샤인머스켓</th>
+												<th scope="row" class="cell_tit3 lvl3">2kg</th>
+												<th scope="row" class="cell_tit4 lvl4">L과</th>
+												
+												
+													<td>9,645</td>
+												
+												
+													<td>9,466</td>
+												
+												
+												
+													<td>11,621</td>
+												
+												
+													<td>11,865</td>
+												
+												
+												
+													<td>10,714</td>
+												
+												
+													<td>19,039</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">감귤</th>
+												<th scope="row" class="cell_tit2 lvl2">노지</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">M과</th>
+												
+												
+													<td>3,589</td>
+												
+												
+													<td>3,627</td>
+												
+												
+												
+													<td>3,842</td>
+												
+												
+													<td>3,381</td>
+												
+												
+												
+													<td>3,322</td>
+												
+												
+													<td>3,349</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">감귤</th>
+												<th scope="row" class="cell_tit2 lvl2">노지</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">S과</th>
+												
+												
+													<td>2,884</td>
+												
+												
+													<td>2,911</td>
+												
+												
+												
+													<td>3,082</td>
+												
+												
+													<td>2,699</td>
+												
+												
+												
+													<td>2,667</td>
+												
+												
+													<td>2,591</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">감귤</th>
+												<th scope="row" class="cell_tit2 lvl2">시설</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">M과</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>6,274</td>
+												
+												
+												
+													<td>6,209</td>
+												
+												
+													<td>7,225</td>
+												
+												
+												
+													<td>6,144</td>
+												
+												
+													<td>6,485</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">감귤</th>
+												<th scope="row" class="cell_tit2 lvl2">시설</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">S과</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>4,786</td>
+												
+												
+												
+													<td>4,734</td>
+												
+												
+													<td>5,167</td>
+												
+												
+												
+													<td>4,702</td>
+												
+												
+													<td>4,972</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">단감</th>
+												<th scope="row" class="cell_tit2 lvl2">부유</th>
+												<th scope="row" class="cell_tit3 lvl3">5개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>6,165</td>
+												
+												
+													<td>6,228</td>
+												
+												
+												
+													<td>6,267</td>
+												
+												
+													<td>6,893</td>
+												
+												
+												
+													<td>5,890</td>
+												
+												
+													<td>6,380</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">단감</th>
+												<th scope="row" class="cell_tit2 lvl2">부유</th>
+												<th scope="row" class="cell_tit3 lvl3">5개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>4,467</td>
+												
+												
+													<td>4,296</td>
+												
+												
+												
+													<td>4,146</td>
+												
+												
+													<td>5,228</td>
+												
+												
+												
+													<td>4,602</td>
+												
+												
+													<td>4,760</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">바나나</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>292</td>
+												
+												
+													<td>297</td>
+												
+												
+												
+													<td>342</td>
+												
+												
+													<td>333</td>
+												
+												
+												
+													<td>330</td>
+												
+												
+													<td>322</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">바나나</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>263</td>
+												
+												
+													<td>266</td>
+												
+												
+												
+													<td>272</td>
+												
+												
+													<td>283</td>
+												
+												
+												
+													<td>244</td>
+												
+												
+													<td>266</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">파인애플</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>7,503</td>
+												
+												
+													<td>7,503</td>
+												
+												
+												
+													<td>7,432</td>
+												
+												
+													<td>7,523</td>
+												
+												
+												
+													<td>7,889</td>
+												
+												
+													<td>7,360</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">파인애플</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>6,079</td>
+												
+												
+													<td>6,079</td>
+												
+												
+												
+													<td>6,011</td>
+												
+												
+													<td>6,079</td>
+												
+												
+												
+													<td>6,157</td>
+												
+												
+													<td>6,247</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">오렌지</th>
+												<th scope="row" class="cell_tit2 lvl2">네이블 호주</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>11,944</td>
+												
+												
+													<td>11,944</td>
+												
+												
+												
+													<td>11,909</td>
+												
+												
+													<td>12,663</td>
+												
+												
+												
+													<td>14,768</td>
+												
+												
+													<td>14,193</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">방울토마토</th>
+												<th scope="row" class="cell_tit2 lvl2">방울토마토</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>7,753</td>
+												
+												
+													<td>7,890</td>
+												
+												
+												
+													<td>9,033</td>
+												
+												
+													<td>9,627</td>
+												
+												
+												
+													<td>11,022</td>
+												
+												
+													<td>10,657</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">방울토마토</th>
+												<th scope="row" class="cell_tit2 lvl2">대추방울토마토</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>6,698</td>
+												
+												
+													<td>6,654</td>
+												
+												
+												
+													<td>7,595</td>
+												
+												
+													<td>8,532</td>
+												
+												
+												
+													<td>9,101</td>
+												
+												
+													<td>10,155</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">레몬</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>9,107</td>
+												
+												
+													<td>9,107</td>
+												
+												
+												
+													<td>8,877</td>
+												
+												
+													<td>8,934</td>
+												
+												
+												
+													<td>9,832</td>
+												
+												
+													<td>9,962</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">레몬</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>7,743</td>
+												
+												
+													<td>7,743</td>
+												
+												
+												
+													<td>7,701</td>
+												
+												
+													<td>7,972</td>
+												
+												
+												
+													<td>7,586</td>
+												
+												
+													<td>8,308</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">망고</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>4,806</td>
+												
+												
+													<td>4,949</td>
+												
+												
+												
+													<td>5,500</td>
+												
+												
+													<td>5,697</td>
+												
+												
+												
+													<td>5,782</td>
+												
+												
+													<td>5,936</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">블루베리</th>
+												<th scope="row" class="cell_tit2 lvl2">수입(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>11,567</td>
+												
+												
+													<td>11,567</td>
+												
+												
+												
+													<td>11,457</td>
+												
+												
+													<td>11,538</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">아보카도</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>1,690</td>
+												
+												
+													<td>1,696</td>
+												
+												
+												
+													<td>1,888</td>
+												
+												
+													<td>1,909</td>
+												
+												
+												
+													<td>1,814</td>
+												
+												
+													<td>1,960</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">키위</th>
+												<th scope="row" class="cell_tit2 lvl2">골드</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>14,004</td>
+												
+												
+													<td>15,192</td>
+												
+												
+												
+													<td>12,763</td>
+												
+												
+													<td>14,566</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">키위</th>
+												<th scope="row" class="cell_tit2 lvl2">골드</th>
+												<th scope="row" class="cell_tit3 lvl3">10개</th>
+												<th scope="row" class="cell_tit4 lvl4">중품</th>
+												
+												
+													<td>10,657</td>
+												
+												
+													<td>12,475</td>
+												
+												
+												
+													<td>9,840</td>
+												
+												
+													<td>11,720</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고등어</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(염장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1손</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>5,953</td>
+												
+												
+													<td>5,953</td>
+												
+												
+												
+													<td>6,021</td>
+												
+												
+													<td>5,959</td>
+												
+												
+												
+													<td>6,751</td>
+												
+												
+													<td>4,649</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고등어</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(신선 냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">大</th>
+												
+												
+													<td>3,814</td>
+												
+												
+													<td>3,868</td>
+												
+												
+												
+													<td>4,528</td>
+												
+												
+													<td>4,194</td>
+												
+												
+												
+													<td>4,907</td>
+												
+												
+													<td>4,435</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고등어</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(신선 냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>2,985</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>3,275</td>
+												
+												
+												
+													<td>3,418</td>
+												
+												
+													<td>3,267</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고등어</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">大</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>3,485</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>4,127</td>
+												
+												
+													<td>4,211</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고등어</th>
+												<th scope="row" class="cell_tit2 lvl2">수입산(염장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1손</th>
+												<th scope="row" class="cell_tit4 lvl4">大</th>
+												
+												
+													<td>11,712</td>
+												
+												
+													<td>11,828</td>
+												
+												
+												
+													<td>11,801</td>
+												
+												
+													<td>11,816</td>
+												
+												
+												
+													<td>10,022</td>
+												
+												
+													<td>7,904</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">꽁치</th>
+												<th scope="row" class="cell_tit2 lvl2">냉동(수입)</th>
+												<th scope="row" class="cell_tit3 lvl3">5마리</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>7,558</td>
+												
+												
+													<td>7,485</td>
+												
+												
+												
+													<td>7,361</td>
+												
+												
+													<td>7,329</td>
+												
+												
+												
+													<td>6,633</td>
+												
+												
+													<td>6,529</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">갈치</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">大</th>
+												
+												
+													<td>12,644</td>
+												
+												
+													<td>12,734</td>
+												
+												
+												
+													<td>12,962</td>
+												
+												
+													<td>13,557</td>
+												
+												
+												
+													<td>13,444</td>
+												
+												
+													<td>13,842</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">갈치</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>7,011</td>
+												
+												
+													<td>7,155</td>
+												
+												
+												
+													<td>6,920</td>
+												
+												
+													<td>6,878</td>
+												
+												
+												
+													<td>7,399</td>
+												
+												
+													<td>7,347</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">갈치</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">小</th>
+												
+												
+													<td>4,263</td>
+												
+												
+													<td>4,349</td>
+												
+												
+												
+													<td>4,456</td>
+												
+												
+													<td>4,247</td>
+												
+												
+												
+													<td>4,000</td>
+												
+												
+													<td>4,085</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">갈치</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>4,725</td>
+												
+												
+													<td>4,854</td>
+												
+												
+												
+													<td>4,012</td>
+												
+												
+													<td>5,822</td>
+												
+												
+												
+													<td>4,970</td>
+												
+												
+													<td>5,030</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">조기</th>
+												<th scope="row" class="cell_tit2 lvl2">참조기(신선 냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>1,548</td>
+												
+												
+													<td>1,550</td>
+												
+												
+												
+													<td>1,571</td>
+												
+												
+													<td>1,759</td>
+												
+												
+												
+													<td>1,718</td>
+												
+												
+													<td>1,484</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">조기</th>
+												<th scope="row" class="cell_tit2 lvl2">참조기(신선 냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">小</th>
+												
+												
+													<td>1,211</td>
+												
+												
+													<td>1,232</td>
+												
+												
+												
+													<td>1,259</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>1,306</td>
+												
+												
+													<td>1,193</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">조기</th>
+												<th scope="row" class="cell_tit2 lvl2">참조기(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>1,735</td>
+												
+												
+													<td>1,734</td>
+												
+												
+												
+													<td>1,623</td>
+												
+												
+													<td>1,688</td>
+												
+												
+												
+													<td>2,264</td>
+												
+												
+													<td>1,772</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">조기</th>
+												<th scope="row" class="cell_tit2 lvl2">참조기(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">小</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>1,401</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>1,393</td>
+												
+												
+													<td>1,145</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">조기</th>
+												<th scope="row" class="cell_tit2 lvl2">굴비</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>2,596</td>
+												
+												
+													<td>2,679</td>
+												
+												
+												
+													<td>2,470</td>
+												
+												
+													<td>2,711</td>
+												
+												
+												
+													<td>2,786</td>
+												
+												
+													<td>2,460</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">명태</th>
+												<th scope="row" class="cell_tit2 lvl2">냉동(원양수입통합)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">大</th>
+												
+												
+													<td>4,207</td>
+												
+												
+													<td>4,207</td>
+												
+												
+												
+													<td>4,271</td>
+												
+												
+													<td>4,365</td>
+												
+												
+												
+													<td>4,222</td>
+												
+												
+													<td>3,866</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">명태</th>
+												<th scope="row" class="cell_tit2 lvl2">냉동(원양수입통합)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>3,007</td>
+												
+												
+													<td>3,007</td>
+												
+												
+												
+													<td>3,007</td>
+												
+												
+													<td>2,721</td>
+												
+												
+												
+													<td>2,725</td>
+												
+												
+													<td>2,725</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">명태</th>
+												<th scope="row" class="cell_tit2 lvl2">냉동가공</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>7,069</td>
+												
+												
+													<td>7,069</td>
+												
+												
+												
+													<td>6,959</td>
+												
+												
+													<td>7,712</td>
+												
+												
+												
+													<td>7,755</td>
+												
+												
+													<td>8,965</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">삼치</th>
+												<th scope="row" class="cell_tit2 lvl2">냉장</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">大</th>
+												
+												
+													<td>7,975</td>
+												
+												
+													<td>8,486</td>
+												
+												
+												
+													<td>8,970</td>
+												
+												
+													<td>8,364</td>
+												
+												
+												
+													<td>7,812</td>
+												
+												
+													<td>7,812</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">물오징어</th>
+												<th scope="row" class="cell_tit2 lvl2">연근해(신선 냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>7,135</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>5,154</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">물오징어</th>
+												<th scope="row" class="cell_tit2 lvl2">연근해(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">大</th>
+												
+												
+													<td>5,602</td>
+												
+												
+													<td>5,602</td>
+												
+												
+												
+													<td>5,594</td>
+												
+												
+													<td>6,032</td>
+												
+												
+												
+													<td>5,772</td>
+												
+												
+													<td>5,129</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">물오징어</th>
+												<th scope="row" class="cell_tit2 lvl2">연근해(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>3,980</td>
+												
+												
+													<td>3,980</td>
+												
+												
+												
+													<td>3,786</td>
+												
+												
+													<td>4,942</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>3,249</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">물오징어</th>
+												<th scope="row" class="cell_tit2 lvl2">원양(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">中</th>
+												
+												
+													<td>5,326</td>
+												
+												
+													<td>5,402</td>
+												
+												
+												
+													<td>5,398</td>
+												
+												
+													<td>5,392</td>
+												
+												
+												
+													<td>4,708</td>
+												
+												
+													<td>4,455</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">물오징어</th>
+												<th scope="row" class="cell_tit2 lvl2">원양(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">小</th>
+												
+												
+													<td>3,103</td>
+												
+												
+													<td>3,103</td>
+												
+												
+												
+													<td>3,585</td>
+												
+												
+													<td>3,798</td>
+												
+												
+												
+													<td>3,340</td>
+												
+												
+													<td>2,847</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">마른멸치</th>
+												<th scope="row" class="cell_tit2 lvl2">마른멸치</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">대멸</th>
+												
+												
+													<td>2,371</td>
+												
+												
+													<td>2,371</td>
+												
+												
+												
+													<td>2,322</td>
+												
+												
+													<td>2,592</td>
+												
+												
+												
+													<td>2,460</td>
+												
+												
+													<td>2,353</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">마른멸치</th>
+												<th scope="row" class="cell_tit2 lvl2">마른멸치</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">중멸</th>
+												
+												
+													<td>2,393</td>
+												
+												
+													<td>2,393</td>
+												
+												
+												
+													<td>2,399</td>
+												
+												
+													<td>2,927</td>
+												
+												
+												
+													<td>2,942</td>
+												
+												
+													<td>2,873</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">마른멸치</th>
+												<th scope="row" class="cell_tit2 lvl2">마른멸치</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">세멸</th>
+												
+												
+													<td>3,322</td>
+												
+												
+													<td>3,322</td>
+												
+												
+												
+													<td>3,292</td>
+												
+												
+													<td>3,539</td>
+												
+												
+												
+													<td>3,227</td>
+												
+												
+													<td>3,229</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">마른오징어</th>
+												<th scope="row" class="cell_tit2 lvl2">마른오징어</th>
+												<th scope="row" class="cell_tit3 lvl3">10마리</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>79,553</td>
+												
+												
+													<td>79,553</td>
+												
+												
+												
+													<td>79,812</td>
+												
+												
+													<td>83,635</td>
+												
+												
+												
+													<td>78,788</td>
+												
+												
+													<td>70,390</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">김</th>
+												<th scope="row" class="cell_tit2 lvl2">마른김</th>
+												<th scope="row" class="cell_tit3 lvl3">10장</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>1,427</td>
+												
+												
+													<td>1,427</td>
+												
+												
+												
+													<td>1,432</td>
+												
+												
+													<td>1,432</td>
+												
+												
+												
+													<td>1,353</td>
+												
+												
+													<td>1,098</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">김</th>
+												<th scope="row" class="cell_tit2 lvl2">구운김</th>
+												<th scope="row" class="cell_tit3 lvl3">10장</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>2,070</td>
+												
+												
+													<td>2,069</td>
+												
+												
+												
+													<td>2,071</td>
+												
+												
+													<td>2,095</td>
+												
+												
+												
+													<td>1,976</td>
+												
+												
+													<td>1,772</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">마른미역</th>
+												<th scope="row" class="cell_tit2 lvl2">마른미역</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>2,989</td>
+												
+												
+													<td>2,989</td>
+												
+												
+												
+													<td>2,948</td>
+												
+												
+													<td>3,097</td>
+												
+												
+												
+													<td>3,032</td>
+												
+												
+													<td>2,982</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">굴</th>
+												<th scope="row" class="cell_tit2 lvl2">굴</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>18,732</td>
+												
+												
+													<td>18,713</td>
+												
+												
+												
+													<td>19,976</td>
+												
+												
+													<td>24,268</td>
+												
+												
+												
+													<td>20,707</td>
+												
+												
+													<td>22,974</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">수입조기</th>
+												<th scope="row" class="cell_tit2 lvl2">부세수입(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">1마리</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>4,777</td>
+												
+												
+													<td>4,777</td>
+												
+												
+												
+													<td>4,685</td>
+												
+												
+													<td>4,685</td>
+												
+												
+												
+													<td>4,609</td>
+												
+												
+													<td>3,921</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">새우젓</th>
+												<th scope="row" class="cell_tit2 lvl2">새우젓</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>20,091</td>
+												
+												
+													<td>20,074</td>
+												
+												
+												
+													<td>19,025</td>
+												
+												
+													<td>20,863</td>
+												
+												
+												
+													<td>14,300</td>
+												
+												
+													<td>16,072</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">멸치액젓</th>
+												<th scope="row" class="cell_tit2 lvl2">멸치액젓</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>5,713</td>
+												
+												
+													<td>5,713</td>
+												
+												
+												
+													<td>5,845</td>
+												
+												
+													<td>6,259</td>
+												
+												
+												
+													<td>5,619</td>
+												
+												
+													<td>5,237</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">천일염</th>
+												<th scope="row" class="cell_tit2 lvl2">천일염</th>
+												<th scope="row" class="cell_tit3 lvl3">5kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>11,134</td>
+												
+												
+													<td>11,134</td>
+												
+												
+												
+													<td>11,243</td>
+												
+												
+													<td>11,936</td>
+												
+												
+												
+													<td>10,806</td>
+												
+												
+													<td>11,393</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">전복</th>
+												<th scope="row" class="cell_tit2 lvl2">냉장</th>
+												<th scope="row" class="cell_tit3 lvl3">5마리</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>11,431</td>
+												
+												
+													<td>11,481</td>
+												
+												
+												
+													<td>10,561</td>
+												
+												
+													<td>12,054</td>
+												
+												
+												
+													<td>11,868</td>
+												
+												
+													<td>13,153</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">새우</th>
+												<th scope="row" class="cell_tit2 lvl2">흰다리(수입)</th>
+												<th scope="row" class="cell_tit3 lvl3">10마리</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>5,398</td>
+												
+												
+													<td>5,398</td>
+												
+												
+												
+													<td>5,458</td>
+												
+												
+													<td>5,567</td>
+												
+												
+												
+													<td>5,571</td>
+												
+												
+													<td>4,762</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">꽃게</th>
+												<th scope="row" class="cell_tit2 lvl2">냉동</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>15,848</td>
+												
+												
+													<td>15,848</td>
+												
+												
+												
+													<td>15,543</td>
+												
+												
+													<td>15,804</td>
+												
+												
+												
+													<td>21,442</td>
+												
+												
+													<td>21,442</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">꽃게</th>
+												<th scope="row" class="cell_tit2 lvl2">수꽃게(냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>20,709</td>
+												
+												
+													<td>21,160</td>
+												
+												
+												
+													<td>23,545</td>
+												
+												
+													<td>20,323</td>
+												
+												
+												
+													<td>14,762</td>
+												
+												
+													<td>14,762</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">홍합</th>
+												<th scope="row" class="cell_tit2 lvl2">깐홍합(냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>2,789</td>
+												
+												
+													<td>2,826</td>
+												
+												
+												
+													<td>2,910</td>
+												
+												
+													<td>2,899</td>
+												
+												
+												
+													<td>3,138</td>
+												
+												
+													<td>2,978</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">홍합</th>
+												<th scope="row" class="cell_tit2 lvl2">안깐홍합(냉장)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>3,723</td>
+												
+												
+													<td>3,667</td>
+												
+												
+												
+													<td>3,750</td>
+												
+												
+													<td>3,902</td>
+												
+												
+												
+													<td>4,178</td>
+												
+												
+													<td>4,322</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">가리비</th>
+												<th scope="row" class="cell_tit2 lvl2">해만가리비(홍가리비)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>6,852</td>
+												
+												
+													<td>6,767</td>
+												
+												
+												
+													<td>7,474</td>
+												
+												
+													<td>7,133</td>
+												
+												
+												
+													<td>7,508</td>
+												
+												
+													<td>7,588</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">건다시마</th>
+												<th scope="row" class="cell_tit2 lvl2">완도산</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>3,163</td>
+												
+												
+													<td>3,160</td>
+												
+												
+												
+													<td>3,195</td>
+												
+												
+													<td>3,230</td>
+												
+												
+												
+													<td>3,187</td>
+												
+												
+													<td>3,476</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">바지락</th>
+												<th scope="row" class="cell_tit2 lvl2">냉장</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>9,180</td>
+												
+												
+													<td>9,061</td>
+												
+												
+												
+													<td>10,623</td>
+												
+												
+													<td>10,353</td>
+												
+												
+												
+													<td>10,785</td>
+												
+												
+													<td>10,785</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고등어필렛</th>
+												<th scope="row" class="cell_tit2 lvl2">수입</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>20,693</td>
+												
+												
+													<td>20,693</td>
+												
+												
+												
+													<td>19,837</td>
+												
+												
+													<td>22,576</td>
+												
+												
+												
+													<td>17,992</td>
+												
+												
+													<td>17,992</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고등어필렛</th>
+												<th scope="row" class="cell_tit2 lvl2">국산</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>18,355</td>
+												
+												
+													<td>18,355</td>
+												
+												
+												
+													<td>15,994</td>
+												
+												
+													<td>19,350</td>
+												
+												
+												
+													<td>19,174</td>
+												
+												
+													<td>19,174</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">낙지</th>
+												<th scope="row" class="cell_tit2 lvl2">수입(냉동)</th>
+												<th scope="row" class="cell_tit3 lvl3">100g</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>2,338</td>
+												
+												
+													<td>2,338</td>
+												
+												
+												
+													<td>2,341</td>
+												
+												
+													<td>2,336</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">꼬막</th>
+												<th scope="row" class="cell_tit2 lvl2">국산(새꼬막)</th>
+												<th scope="row" class="cell_tit3 lvl3">1kg</th>
+												<th scope="row" class="cell_tit4 lvl4">-</th>
+												
+												
+													<td>8,153</td>
+												
+												
+													<td>8,095</td>
+												
+												
+												
+													<td>9,253</td>
+												
+												
+													<td>9,476</td>
+												
+												
+												
+													<td>-</td>
+												
+												
+													<td>-</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">즉석밥</th>
+												<th scope="row" class="cell_tit2 lvl2">CJ 햇반 백미밥 210g×8개</th>
+												<th scope="row" class="cell_tit3 lvl3">1묶음</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>11,124</td>
+												
+												
+													<td>11,062</td>
+												
+												
+												
+													<td>10,324</td>
+												
+												
+													<td>11,274</td>
+												
+												
+												
+													<td>9,889</td>
+												
+												
+													<td>10,106</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">두부</th>
+												<th scope="row" class="cell_tit2 lvl2">풀무원 국산콩 300g×2</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>4,884</td>
+												
+												
+													<td>4,884</td>
+												
+												
+												
+													<td>4,864</td>
+												
+												
+													<td>5,001</td>
+												
+												
+												
+													<td>5,415</td>
+												
+												
+													<td>5,291</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">김치</th>
+												<th scope="row" class="cell_tit2 lvl2">대상 종가집 포기김치 2.8kg</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>30,220</td>
+												
+												
+													<td>30,220</td>
+												
+												
+												
+													<td>29,910</td>
+												
+												
+													<td>29,693</td>
+												
+												
+												
+													<td>29,791</td>
+												
+												
+													<td>29,791</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">고추장</th>
+												<th scope="row" class="cell_tit2 lvl2">해찬들 우리쌀로만든 태양초고추장 1kg</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>17,855</td>
+												
+												
+													<td>17,855</td>
+												
+												
+												
+													<td>15,251</td>
+												
+												
+													<td>15,206</td>
+												
+												
+												
+													<td>13,521</td>
+												
+												
+													<td>14,109</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">된장</th>
+												<th scope="row" class="cell_tit2 lvl2">청정원 재래식 생된장 1kg</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>7,339</td>
+												
+												
+													<td>7,339</td>
+												
+												
+												
+													<td>7,334</td>
+												
+												
+													<td>8,639</td>
+												
+												
+												
+													<td>6,155</td>
+												
+												
+													<td>6,710</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">간장</th>
+												<th scope="row" class="cell_tit2 lvl2">샘표 양조간장 501 1.7L</th>
+												<th scope="row" class="cell_tit3 lvl3">1개</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>15,558</td>
+												
+												
+													<td>15,558</td>
+												
+												
+												
+													<td>13,588</td>
+												
+												
+													<td>15,100</td>
+												
+												
+												
+													<td>14,073</td>
+												
+												
+													<td>12,868</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">맛김(조미김)</th>
+												<th scope="row" class="cell_tit2 lvl2">동원에프앤비 양반 들기름김 5g×20봉</th>
+												<th scope="row" class="cell_tit3 lvl3">1묶음</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>10,754</td>
+												
+												
+													<td>10,754</td>
+												
+												
+												
+													<td>10,513</td>
+												
+												
+													<td>9,200</td>
+												
+												
+												
+													<td>9,855</td>
+												
+												
+													<td>9,008</td>
+												
+												
+											</tr>
+										
+											<tr>
+												<th scope="row" class="first cell_tit1 lvl1">콩나물</th>
+												<th scope="row" class="cell_tit2 lvl2">풀무원 국산콩 콩나물 340g</th>
+												<th scope="row" class="cell_tit3 lvl3">1봉</th>
+												<th scope="row" class="cell_tit4 lvl4">상품</th>
+												
+												
+													<td>2,474</td>
+												
+												
+													<td>2,473</td>
+												
+												
+												
+													<td>2,455</td>
+												
+												
+													<td>2,487</td>
+												
+												
+												
+													<td>2,478</td>
+												
+												
+													<td>2,506</td>
+												
+												
+											</tr>
+										
+										
+									</table>
+								</div>
+							</div>
+							<script>
+                                 objOriginalTbl["#itemTable_1"] = $("#itemTable_1").html();
+                                 fncRowspan("#itemTable_1", 2);
+                                 fncRowspan("#itemTable_1", 1);
+                                 fncRowspan("#itemTable_1", 0);
+                            </script>
+						</div>
+					</div>
+				</div>
+				
+				
+				<form id="favoriteForm" name="favoriteForm" method="post">
+					<input type="hidden" name="loginYn" id="loginYn" value="N" />
+					<input type="hidden" name="itemcode" id="insertItemcode"/>
+					<input type="hidden" name="kindcode" id="insertKindcode"/>
+					<input type="hidden" name="action" value="insert"/>
+				</form>
+				<form id="delForm" name="delForm">
+					<input type="hidden" id="favoriteNo" name="favoriteNo" value=""/>
+					<input type="hidden" name="loginYn" value="N" />
+					<input type="hidden" name="itemcode" id="removeItemcode"/>
+					<input type="hidden" name="kindcode" id="removeKindcode"/>
+					<input type="hidden" name="action" value="remove"/>
+				</form>
+			</main>
+			
+<script type="text/javascript">
+function goFamilySite(obj){
+	var url = $( obj ).val();
+	if(url != ""){
+		window.open(url);
+	}
+}
+function goRelOffice(obj){
+	var url = $( obj ).val();
+	if(url != ""){
+		window.open(url);
+	}
+}
+</script>
+
+<!-- footer -->
+<footer id="footer">
+    <div class="ft_top">
+        <div class="wrap">
+            <ul class="links">
+            	<li class="mb_hide"><a href="/customer/information_services/about.do?action=about5"	title="이용안내">이용안내</a></li>
+				<li class="mb_hide"><a href="https://www.at.or.kr/sitemap/apko918000/privacy_policy.action" target="_blank" onclick="window.open(this.href, '', 'width=865px, height=680px, resizable=no, location=no, scrollbars=yes'); return false;" title="개인정보처리방침(새창 열림)"><strong>개인정보처리방침</strong></a></li>
+<!-- 				<li><a href="http://www.at.or.kr/html/member/at_acount_2.html" target="_blank" onclick="window.open(this.href, '', 'width=865px, height=680px, resizable=no, location=no, scrollbars=yes'); return false;" title="개인정보처리방침"><strong>개인정보처리방침</strong></a></li> -->
+<!-- 				<li><a href="/customer/information_services/viewer/viewer.do"				title="뷰어다운로드"		>뷰어다운로드</a></li> -->
+				<li class="mb_hide"><a href="http://www.at.or.kr/html/member/at_acount_3.html" target="_blank" onclick="window.open(this.href, '', 'width=865px, height=551px, resizable=no, location=no, scrollbars=yes'); return false;" title="저작권보호정책(새창 열림)"><strong>저작권보호정책</strong></a></li>
+<!-- 				<li><a href="/customer/information_services/email_reject/email_reject.do"	title="전자우편주소수집거부">전자우편주소수집거부</a></li> -->
+<!-- 				<li><a href="/customer/inform/about/about.do?action=contact"				title="찾아오시는길"		>오시는길</a></li> -->
+				<li><a href="https://aglook.krei.re.kr/main"						title="KREI농업관측센터(새창 열림)"	target="_blank">KREI농업관측센터</a></li>
+				<li><a href="https://www.foc.re.kr/web/main/main.do?rbsIdx=1"		title="KMI수산업관측센터(새창 열림)"	target="_blank">KMI수산업관측센터</a></li>
+				<li><a href="https://www.price.go.kr/tprice/portal/main/main.do"	title="참가격(새창 열림)"			target="_blank">참가격</a></li>
+				<li><a href="https://www.kbei.org/whistle/center/?code=at"	title="케이휘슬(새창 열림)"			target="_blank">케이휘슬</a></li>
+            </ul>
+            <div class="utils">
+                <div class="ft_sel">
+                    <button type="button" class="toggle-button" aria-expanded="false" aria-label="패밀리 사이트 열기" data-menu-name="패밀리 사이트">패밀리 사이트</button>
+                    <div class="ft_list">
+                        <div data-simplebar>
+                            <ul>
+                                <li><a href="http://www.at.or.kr" target="_blank" title="aT통합홈페이지(새창 열림)">aT통합홈페이지</a></li>
+                                <li><a href="http://www.nongnet.or.kr/front/index.do" target="_blank" title="농넷(새창 열림)">농넷</a></li>
+								<li><a href="http://www.kati.net/" target="_blank" title="KATI 농식품수출정보(새창 열림)">KATI 농식품수출정보</a></li>
+								<li><a href="https://www.atfis.or.kr/home/index.do" target="_blank" title="FIS식품산업통계정보(새창 열림)">FIS식품산업통계정보</a></li>
+								<li><a href="http://www.atfis.or.kr/fip/front/index.do" target="_blank" title="한국외식산업정보포털(The외식)(새창 열림)">한국외식산업정보포털(The외식)</a></li>
+<!-- 								<li><a href="http://atess.at.or.kr/" target="_blank" title="수출지원시스템(새창 열림)">수출지원시스템</a></li> -->
+								<li><a href="http://global.at.or.kr/" target="_blank" title="aT수출업체종합지원시스템(새창 열림)">aT수출종합지원시스템</a></li>
+								<li><a href="http://www.foodbiz.or.kr/" target="_blank" title="식품기업지원관리시스템(새창 열림)">식품기업지원관리시스템</a></li>
+<!-- 								<li><a href="http://www.agrotrade.net/" target="_blank">AgroTrade</a></li> -->
+								<li><a href="https://www.k-foodtrade.or.kr/index.do" target="_blank" title="K-FOODTRADE(새창 열림)">K-FOODTRADE</a></li>
+								<!-- <li><a href="http://whimori.at.or.kr">Whimori(휘모리 브랜드)</a></li> -->
+								<li><a href="http://www.eat.co.kr/attach/cyber/index.htm" target="_blank" title="aT농식품거래소(새창 열림)">aT농식품거래소</a></li>
+								<li><a href="http://www.baroinfo.com" target="_blank" title="바로정보(새창 열림)">바로정보</a></li>
+								<li><a href="http://www.atbid.co.kr/" target="_blank" title="비축농산물 전자입찰시스템(새창 열림)">비축농산물 전자입찰시스템</a></li>
+<!-- 								<li><a href="https://www.agromarket.kr" target="_blank">정가수의매매 예약정보제공 시스템</a></li> -->
+								<li><a href="http://atcenter.at.or.kr" target="_blank" title="aTCenter(새창 열림)">aTCenter</a></li>
+								<li><a href="http://edu.at.or.kr" target="_blank" title="aT농식품유통교육원(새창 열림)">aT농수산식품유통교육원</a></li>
+								<li><a href="https://flower.at.or.kr/yfmc/" target="_blank" title="aT화훼공판장(새창 열림)">aT화훼공판장</a></li>
+								<li><a href="http://thesool.com" target="_blank" title="더 술(새창 열림)">더 술</a></li>
+<!-- 								<li><a href="https://bms.at.or.kr/index.do" target="_blank">BMS</a></li> -->
+								<li><a href="https://kadx.co.kr/" target="_blank" title="카덱스(새창 열림)">카덱스</a></li>
+								<!-- <li><a href="http://www.foodbiz.or.kr/">aT농수산식품기업지원센터</a></li>
+								<li><a href="http://www.kati.net/">KATI</a></li>
+								<li><a href="http://www.agrotrade.net/">Agro Trade</a></li>
+								<li><a href="http://atcenter.at.or.kr">aT센터</a></li>
+								<li><a href="http://whimori.at.or.kr">휘모리</a></li>
+								 li><a href="http://forestproduct.at.or.kr">한국의 임산물</a></li
+								<li><a href="http://atess.at.or.kr/">수출지원시스템</a></li>
+								<li><a href="http://global.at.or.kr/">수출업체정보</a></li>
+								<li><a href="http://yfmc.at.or.kr">aT화훼공판장</a></li>
+								<li><a href="http://edu.at.or.kr">aT농식품유통교육원</a></li>
+								<li><a href="http://www.eat.co.kr/attach/cyber/index.htm">사이버거래소</a></li>
+								<li><a href="http://www.atbid.co.kr/">전자입찰</a></li> -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="ft_sel">
+                    <button type="button" class="toggle-button" aria-expanded="false" aria-label="유관기관 열기" data-menu-name="유관기관">유관기관</button>
+                    <div class="ft_list">
+                        <div data-simplebar>
+                            <ul>
+                                <li><a href="" title="유관기관">유관기관</a></li>
+                                <!-- <li><a href="http://www.maf.go.kr/">농림축산식품부</a></li> -->
+								<li><a href="http://www.mafra.go.kr/" target="_blank" title="농림축산식품부(새창 열림)">농림축산식품부</a></li>
+								<li><a href="http://www.naqs.go.kr/" target="_blank" title="국립농산물품질관리원(새창 열림)">국립농산물품질관리원</a></li>
+								<li><a href="http://www.naas.go.kr/" target="_blank" title="농촌진흥청 국립농업과학원(새창 열림)">농촌진흥청 국립농업과학원</a></li>
+								<li><a href="http://www.qia.go.kr/" target="_blank" title="농림축산검역본부(새창 열림)">농림축산검역본부</a></li>
+								<li><a href="http://www.seed.go.kr/" target="_blank" title="국립종자원(새창 열림)">국립종자원</a></li>
+								<li><a href="http://www.kma.go.kr/" target="_blank" title="기상청(새창 열림)">기상청</a></li>
+								<li><a href="http://www.ipet.re.kr/" target="_blank" title="농림수산식품기술기획평가원(새창 열림)">농림수산식품기술기획평가원</a></li>
+								<li><a href="http://www.epis.or.kr/" target="_blank" title="농림수산식품교육문화정보원(새창 열림)">농림수산식품교육문화정보원</a></li>
+								<li><a href="http://www.ati.go.kr/" target="_blank" title="농식품공무원교육원(새창 열림)">농식품공무원교육원</a></li>
+								<!-- <li><a href="http://www.agrihrd.or.kr/">농업인재개발원</a></li> -->
+								<li><a href="http://www.rda.go.kr/" target="_blank" title="농촌진흥청(새창 열림)">농촌진흥청</a></li>
+								<li><a href="http://www.nonghyup.com/" target="_blank" title="농협(새창 열림)">농협</a></li>
+								<li><a href="http://www.forest.go.kr" target="_blank" title="산림청(새창 열림)">산림청</a></li>
+								<li><a href="http://www.suhyup.co.kr/" target="_blank" title="수협(새창 열림)">수협</a></li>
+								<li><a href="http://www.ekr.or.kr" target="_blank" title="한국농어촌공사(새창 열림)">한국농어촌공사</a></li>
+								<li><a href="https://www.af.ac.kr" target="_blank" title="한국농수산대학(새창 열림)">한국농수산대학</a></li>
+								<li><a href="http://www.krei.re.kr/" target="_blank" title="한국농촌경제연구원(새창 열림)">한국농촌경제연구원</a></li>
+								<li><a href="http://www.kfri.re.kr/" target="_blank" title="한국식품연구원(새창 열림)">한국식품연구원</a></li>
+								<li><a href="http://www.sonosa.or.kr/" target="_blank" title="남북교류협력지원협회(새창 열림)">남북교류협력지원협회</a></li>
+								<!-- <li><a href="http://market.affis.net/">도매시장통합홈페이지</a></li> -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="ft_btm">
+        <div class="wrap">
+            <div class="txt">
+                <figure class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="120.011" height="56.495" viewBox="0 0 120.011 56.495" aria-labelledby="title">
+                    	<title id="title">KAMIS</title>
+                        <g transform="translate(3112.985 -7933.997)">
+                            <path d="M119.066,10.636a.587.587,0,0,1-.145.818l-10.384,7.271a.588.588,0,1,1-.674-.963l10.383-7.271a.587.587,0,0,1,.818.145" transform="translate(-3153.16 7935.823)" fill="#3ab7c7"/>
+                            <path d="M96.139,10.636a.587.587,0,0,0,.145.818l10.384,7.271a.588.588,0,1,0,.674-.963L96.957,10.491a.587.587,0,0,0-.818.145" transform="translate(-3155.196 7935.823)" fill="#3ab7c7"/>
+                            <path d="M91.647,36.083H86.558a.774.774,0,0,1-.725-.654l-1.306-5.96H77.078l-1.307,5.96a.778.778,0,0,1-.729.654H69.954a.562.562,0,0,1-.617-.582,1.486,1.486,0,0,0,.038-.182l5.412-22.525c.836-3.487,3.525-4.032,6.031-4.032s5.158.544,6,4.032l5.413,22.525a1.524,1.524,0,0,0,.036.182.562.562,0,0,1-.616.582M81.291,14.465c-.073-.362-.146-.543-.474-.543s-.433.181-.508.543L78.093,24.493h5.415Z" transform="translate(-3159.889 7935.538)" fill="#0b4943"/>
+                            <path d="M70.933,10.025,62.406,22.138,70.97,35a.664.664,0,0,1,.146.4c0,.216-.182.357-.5.357H64.449a.841.841,0,0,1-.788-.5L56.384,23.429v11.61a.717.717,0,0,1-.715.716h-4.7a.718.718,0,0,1-.716-.716V9.81a.687.687,0,0,1,.716-.68h4.695a.686.686,0,0,1,.715.68V21.2L64.271,9.559a.817.817,0,0,1,.788-.429h5.482c.393,0,.575.178.575.393a1.068,1.068,0,0,1-.182.5" transform="translate(-3163.243 7935.603)" fill="#0b4943"/>
+                            <path d="M145.5,36.093a35.245,35.245,0,0,1-8.2-.992,1.017,1.017,0,0,1-.855-1.036V30.418a.829.829,0,0,1,.855-.858h.182c2.434.316,6.219.631,7.66.631,2.162,0,2.66-.587,2.66-1.759,0-.675-.408-1.171-1.667-1.892l-5.858-3.38a7.444,7.444,0,0,1-4.011-6.669c0-4.552,3.017-6.984,9.238-6.984a29.154,29.154,0,0,1,8.019,1.035,1.023,1.023,0,0,1,.858,1.037v3.65a.762.762,0,0,1-.769.856h-.134A72.4,72.4,0,0,0,146,15.5c-1.757,0-2.389.272-2.389,1.309,0,.676.5,1.035,1.4,1.576l5.59,3.2c3.74,2.162,4.551,4.507,4.551,6.94,0,4.238-3.064,7.571-9.643,7.571" transform="translate(-3148.124 7935.669)" fill="#0b4943"/>
+                            <path d="M100.227,31.927a3.852,3.852,0,1,1-7.7,0V12.839a3.852,3.852,0,1,1,7.7,0Z" transform="translate(-3155.813 7935.577)" fill="#1678ba"/>
+                            <path d="M111.171,30.714a3.853,3.853,0,1,1-7.706,0V19.74a3.853,3.853,0,1,1,7.705,0Z" transform="translate(-3153.889 7936.791)" fill="#3ab7c7"/>
+                            <path d="M122.112,31.927a3.853,3.853,0,0,1-7.706,0V12.839a3.853,3.853,0,1,1,7.706,0Z" transform="translate(-3151.966 7935.577)" fill="#58ab34"/>
+                            <path d="M133.055,31.927a3.853,3.853,0,1,1-7.706,0V12.839a3.853,3.853,0,1,1,7.705,0Z" transform="translate(-3150.042 7935.577)" fill="#0b4943"/>
+                            <path d="M133.026,3.825A3.827,3.827,0,1,1,129.2,0a3.827,3.827,0,0,1,3.826,3.825" transform="translate(-3150.038 7933.997)" fill="#db341a"/>
+                            <path d="M104.724,46.724c-18.14,0-34.216-4.332-44.181-9.866,7.212,7.777,24.371,13.249,44.4,13.249,20.477,0,37.953-5.718,44.866-13.767-9.879,5.826-26.385,10.385-45.09,10.385" transform="translate(-3161.435 7940.385)" fill="#0b4943"/>
+                        </g>
+                    </svg>
+                </figure>
+                <p>
+                    58326 전남광주통합특별시 나주시 문화로 227 한국농수산식품유통공사&nbsp;&nbsp;&nbsp;&nbsp;
+<!--                     <span>전화 : 061-931-1114&nbsp;&nbsp;&nbsp;&nbsp;Fax : 061-804-4535&nbsp;&nbsp;&nbsp;&nbsp;E-mail : kamis@at.or.kr</span><br> -->
+                    <span>전화 : 061-931-1114&nbsp;&nbsp;&nbsp;&nbsp;Fax : 061-804-4535</span><br/>
+                    ⓒ 2023 by Korea Agro-Fisheries & Food Trade Corporation.  All rights reserved.
+                </p>
+                <figure class="logo" style="margin-left:20px;">
+                   <a title="새창" href="http://www.wa.or.kr/board/list.asp?BoardID=0006" target="_blank"><img class="wa" alt="(사)한국장애인단체총연합회 한국웹접근성인증평가원 웹 접근성 우수사이트 인증마크(WA인증마크)" 
+                   src="../../../../images/customer/layout/webwa_2026.png" width="160px" height="112px" /></a>
+                </figure>
+            </div>
+            <!-- <figure class="gcs">
+            	<a>
+		            <img src="/images/common/img_logo_gcs.png" onclick="javascript:window.open('/common/img/gcs_good.jpg','굿컨텐츠서비스 인증','width=512px,height=715px,scrollbars=no');return false;">
+            	</a>
+            </figure> -->
+        </div>
+    </div>
+</footer>
+<!-- // footer -->
+
+
+
+
+
+
+
+
+
+
+
+
+            
+<!-- search -->
+<div class="tsch_bg"></div>
+<div class="top_search js-tsch">
+    <div class="wrap">
+        <div class="top">
+            <a href="/customer/main/main.do" class="logo"><img src="/images/common/img_logo_w.svg" alt="kamis logo"/></a>
+            <button type="button" class="js-tschClose" title="통합검색 닫기"><img src="/images/icon/i_tsch_close.svg" alt="통합검색 닫기"/></button>
+        </div>
+        <div class="btm">
+        	<form method="post" id="frm_intr_search_sub" action="/customer/common/search.do" onkeydown="searchEnterkey('frm_intr_search_sub','intr_search_keyword_sub');">
+	            <div class="inp_btn">
+	                <input type="text" id="intr_search_keyword_sub" name="intr_search_keyword" placeHolder="검색어를 입력하세요" title="검색어 입력"/>
+	                <label for="intr_search_keyword_sub" class="blind">검색어 입력</label>
+	                <button type="button" onclick="fncIntegratedSearch('frm_intr_search_sub','intr_search_keyword_sub');" title="통합검색 버튼"><span class="blind">통합검색</span></button>
+	            </div>
+	            <div class="keywords">
+	                <span class="tit">인기검색어</span>
+	                <ul id="ulkeywords">
+	                </ul>
+	            </div>
+        	</form>
+        </div>
+    </div>
+</div>
+<!-- // search -->
+<script>
+$(document).ready(function(){
+	fncGetPopularItems();
+});
+
+function fncGetPopularItems(){
+	try {
+		var l_url = '/customer/common/search.do?action=getPopularitems';
+		
+		$.ajax({
+			type : 'post'
+			, url : l_url
+			, dataType : 'json'
+			, contentType: "application/x-www-form-urlencoded; charset=UTF-8"
+			, success : function(data) {
+				$target = $("#ulkeywords");
+				
+				data.forEach(function(item, index){
+					$target.append("<li><a href='javascript:void(0);' onclick='fncSetSearchKeyword(this);' title='"+item.ITEMNAME +"'>" + item.ITEMNAME + "</a></li>")	
+				});
+				
+			}, error : function(xhr, errmsg, errobj) {
+				console.log(errmsg);
+			} 
+		});
+	} catch(e) {
+		alert("[/customer/common/search.jsp getPopularItems error]" + e.message);
+	}
+}
+
+function fncValidateSearch(inputId){
+	if($("#"+inputId).val())
+		return true;		
+	else 
+		return false;
+}
+function fncSetSearchKeyword(obj){
+	$("#intr_search_keyword_sub").val($(obj).text());
+	fncIntegratedSearch("frm_intr_search_sub","intr_search_keyword_sub");	
+}
+
+function fncIntegratedSearch(formId,inputId){
+	if(fncValidateSearch(inputId)){
+		fncLoadingStart();
+		$("#"+formId).submit();
+	}else{
+		alert('검색어를 입력해주세요.');
+		return false;		
+	} 
+	
+}
+function searchEnterkey(formId, inputId){
+	if (window.event.keyCode == 13) {
+		fncIntegratedSearch(formId, inputId);
+    }
+}
+</script>
+
+
+            
+
+
+
+
+
+<style>
+.sitemap_btns {
+	position: absolute;
+	top: 52px;
+	right: 10px;
+}
+</style>
+
+<!-- sitemap -->
+<div class="sitemap">
+    <div class="wrap" style="position: relative">
+        <div class="btns" style="padding-right: 60px;">
+            <button type="button" id="totalSearchButton" class="js-tschOpen" title="통합검색 열기"><img src="/images/icon/i_search_lg.svg" alt="통합검색 열기"/></button>
+        </div>
+        <div class="top">
+            <div class="info">
+            	
+					
+					
+						<p><strong>로그인</strong>하시면 다양한 정보를 얻을 수 있습니다.</p>
+						<a href="/customer/customer_service/login/sns_login.do" title="로그인">로그인</a>
+					
+				
+            </div>
+            <ul class="utils">
+                <li><a href="/customer/mypage/my_kamis/my_kamis.do" class="i01" title="마이페이지">마이페이지</a></li>
+                <li><a href="/customer/mypage/my_counsel/my_counsel.do" class="i02" title="내상담내역">내상담내역</a></li>
+                <li><a href="/customer/mypage/my_item/my_favorite.do" class="i03" title="관심품목">관심품목</a></li>
+            </ul>
+        </div>
+        <ul class="list">
+            <li>
+                <a href="/customer/info/market/period.do" title="가격정보">가격정보</a>
+                <ul class="dp2">
+                    <li>
+                        <a href="/customer/info/market/period.do" title="간편가격정보">간편가격정보</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/info/retail/period.do" title="소매가격">소매가격</a></li>
+                            <li><a href="/customer/info/market/period.do" title="도매가격(가락시장 경락가격)">도매가격(가락시장 경락가격)</a></li>
+		    				<li><a href="/customer/info/wholesale/period.do" title="중도매인 판매가격">중도매인 판매가격</a></li>
+                            <li><a href="/customer/info/nature/period.do" title="친환경농산물 소매가격">친환경농산물 소매가격</a></li>
+                            <!-- <li><a href="/customer/info/online/period.do">온라인 가격조사</a></li> -->
+                        </ul>
+                    </li>
+
+	                    <li>
+	                        <a href="/customer/price/market/period.do" title="세부가격정보">세부가격정보</a>
+	                        <ul class="dp3">
+	                            <li><a href="/customer/price/agricultureRetail/period.do" title="소매가격">소매가격</a></li>
+	                            <li><a href="/customer/price/market/period.do" title="도매가격(가락시장 경락가격)">도매가격(가락시장 경락가격)</a></li>
+			    				<li><a href="/customer/price/wholesale/period.do" title="중도매인 판매가격">중도매인 판매가격</a></li>
+	                            <li><a href="/customer/price/nature/period.do" title="친환경농산물 소매가격">친환경농산물 소매가격</a></li>
+	                        </ul>
+	                    </li>
+
+                    <!-- <li><a href="">성수품 계산기</a></li> -->
+                    <li>
+                        <a href="/customer/price/knowhow/knowhow.do" title="가격정보 조사요령">가격정보 조사요령</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/price/knowhow/knowhow.do" title="조사개요">조사개요</a></li>
+                            <!-- 
+                            <li><a href="/customer/price/knowhow/knowhow.do?action=policyList" title="조사 및 분산체계">조사 및 분산체계</a></li>
+                             -->
+                            <li><a href="/customer/price/knowhow/knowhow.do?action=itemList" title="조사대상 품목">조사대상 품목</a></li>
+                            <li><a href="/customer/price/knowhow/knowhow.do?action=methodList" title="조사방법">조사방법</a></li>
+                            <li><a href="/customer/price/knowhow/knowhow.do?action=areaList" title="조사주기 및 지역">조사주기 및 지역</a></li>
+                            <li><a href="/customer/price/eco/summary.do" title="친환경농산물 조사개요">친환경농산물 조사개요</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/customer/price/wholesale/garak.do" title="주요 농산물 일일도매가격">주요 농산물 일일도매가격</a></li>
+                    <li>
+                       <a href="/customer/old/online/item.do" title="온라인 가격">온라인 가격</a>
+                       <!-- 
+                       <ul class="dp3">
+                           <li><a href="/customer/old/online/item.do" title="온라인 가격">온라인 가격</a></li>
+                           <li><a href="/customer/old/ssm/period.do" title="ssm,sm 소매가격(종료)">ssm,sm 소매가격(종료)</a></li>
+                           <li><a href="/customer/old/fisheriesRetail/period.do" title="수산물 소매가격(~'22.7.)">수산물 소매가격(~'22.7.)</a></li>
+                           <li><a href="/customer/old/livestockRetail/period.do" title="축산물 소매가격(~'22.3.)">축산물 소매가격(~'22.3.)</a></li>
+                           <li><a href="/customer/old/natural/period.do" title="친환경농산물 소매가격('05.~'20.3.)">친환경농산물 소매가격('05.~'20.3.)</a></li>
+                       </ul>
+                       -->
+                   </li>
+                </ul>
+            </li>
+            
+            <li>
+                <a href="/customer/trend/trade/daily.do" title="동향정보">동향정보</a>
+                <ul class="dp2">
+                    <li>
+                        <a href="/customer/trend/trade/daily.do" title="거래동향">거래동향</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/trend/trade/daily.do" title="일일동향">일일동향</a></li>
+<!--                             <li><a href="/customer/trend/trade/weekly.do" title="주간동향">주간동향</a></li> -->
+<!--                             <li><a href="/customer/trend/trade/monthly.do">월간동향</a></li> -->
+                        </ul>
+                    </li>
+                    <li><a href="/customer/trend/product/product.do" title="제철농수산물">제철농수산물</a></li>
+<!--                     <li><a href="/customer/trend/product/product_trend.do">주요 농축산물 가격동향</a></li> -->
+					<!-- 
+                    <li>
+                        <a href="/customer/wiki/wiki.do" title="식재료 백과(카미위키)">카미WIKI</a>
+                    </li>
+                     -->
+                    
+                    <li>
+<!--                         <a href="/customer/trend/economic/economic.do">알뜰장보기</a> -->
+                        <a href="/customer/trend/economic/economic.do?action=priceInfoNew" title="알뜰장보기">알뜰장보기</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/trend/economic/economic.do?action=priceInfoNew" title="주간알뜰장보기">주간알뜰장보기</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="/customer/trend/foreign_info/foreign_info.do" title="농산물해외수입정보">농산물해외수입정보</a></li>
+                    
+                </ul>
+            </li>
+            <li>
+                <a href="/customer/circulation/domestic/cost.do" title="유통실태">유통실태</a>
+                <ul class="dp2">
+                    <li>
+                        <a href="/customer/circulation/domestic/cost.do" title="국내유통실태">국내유통실태</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/circulation/domestic/cost.do" title="연도별 유통비용">연도별 유통비용</a></li>
+                            <li><a href="/customer/circulation/domestic/product.do" title="품목별 유통비용">품목별 유통비용</a></li>
+                            <li><a href="/customer/circulation/domestic/analysis.do" title="종합분석">종합분석</a></li>
+                            <li><a href="/customer/circulation/domestic/item.do" title="품목별 유통실태">품목별 유통실태</a></li>
+<!--                             <li><a href="/customer/circulation/domestic/eco.do">친환경 유통실태</a></li> -->
+<!--                             <li><a href="/customer/circulation/domestic/other.do">기타 유통실태</a></li> -->
+                        </ul>
+                    </li>
+<!--                     <li><a href="/customer/circulation/overseas/overseas.do">해외유통실태</a></li> -->
+<!--                     <li><a href="/customer/circulation/spend/spend.do">소비실태</a></li> -->
+                    <li>
+                        <a href="/customer/circulation/standard/standard_shipment.do" title="농산물표준규격">농산물표준규격</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/circulation/standard/standard_shipment.do" title="표준규격출하율">표준규격출하율</a></li>
+                            <li><a href="/customer/circulation/standard/packaging_rate.do" title="포장화율">포장화율</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/customer/circulation/distribution/state.do" title="실태조사요령">실태조사요령</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/circulation/distribution/state.do" title="유통실태조사">유통실태조사</a></li>
+                            <li><a href="/customer/circulation/distribution/cost.do" title="물류비산정">물류비산정</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="/customer/circulation/spend/spend.do" title="유통실태 통합 자료실">유통실태 통합 자료실</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="/customer/price/eco/summary.do" title="친환경농산물 유통정보">친환경농산물 유통정보</a>
+                <ul class="dp2">
+                    <li><a href="/customer/price/eco/summary.do" title="친환경농산물 개요">친환경농산물 개요</a>
+<!--                     	<ul class="dp3"> -->
+<!--                     		<li><a href="/customer/price/eco/summary.do">친환경농산물 조사개요</a></li> -->
+<!--                     	</ul> -->
+                    </li>
+                    <li>
+                        <a href="/customer/nature/domestic.do" title="조사보고서">조사보고서</a>
+                        <ul class="dp3">
+<!--                             <li><a href="/customer/nature/domestic.do">조사보고서</a></li> -->
+                            <li><a href="/customer/nature/domestic.do" title="친환경농산물 유통실태조사">친환경농산물 유통실태조사</a></li>
+                            <li><a href="/customer/nature/agriculture.do" title="친환경농업 소득조사">친환경농업 소득조사</a></li>
+                            <li><a href="/customer/nature/schoolfood.do" title="학교급식 현황조사">학교급식 현황조사</a></li>
+                            <li><a href="/customer/nature/market.do" title="판매장 현황조사">판매장 현황조사</a></li>
+                            <li><a href="/customer/nature/customer.do" title="소비자 태도조사">소비자 태도조사</a></li>
+                            <li><a href="/customer/nature/overseas.do" title="해외유통실태조사">해외유통실태조사</a></li>
+<!--                             <li><a href="/customer/info/nature/period.do">친환경농산물 소매가격</a></li> -->
+                        </ul>
+                    </li>
+                    <li><a href="/customer/info/nature/period.do" title="친환경농산물 소매가격">친환경농산물 소매가격</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="/customer/inform/about/about.do" title="고객센터">고객센터</a>
+                <ul class="dp2">
+                	<li><a href="/customer/inform/about/about.do" title="KAMIS 소개">KAMIS 소개</a>
+	                	<ul class="dp3">
+		                    <li><a href="/customer/inform/about/about.do" title="KAMIS 소개">KAMIS 소개</a></li>
+		                    <li><a href="/customer/inform/about/about.do?action=contact" title="찾아오시는 길">찾아오시는 길</a></li>
+		                    <li><a href="/customer/square/counsel/faq.do" title="자주묻는 질문">자주묻는 질문</a></li>
+	                    </ul>
+                    </li>
+                    <li><a href="/customer/inform/notice/notice.do" title="공지 및 보도자료">공지 및 보도자료</a>
+                    	<ul class="dp3">
+	                    	<li><a href="/customer/inform/notice/notice.do" title="공지사항">공지사항</a></li>
+	                    	<li><a href="/customer/trend/peakseason_info/peakseason_info.do" title="보도자료">보도자료</a></li>
+                    	</ul>
+                    
+                    </li>
+                    <li><a href="/customer/inform/tidings/tidings.do" title="KAMIS SNS">KAMIS SNS</a></li>
+<!--                     <li><a href="/customer/square/counsel/counsel.do">묻고답하기</a></li> -->
+                    <!-- <li><a href="/customer/square/participation/survey.do" title="">설문참여</a></li> --> 
+                    
+                    <li>
+                        <a href="/customer/reference/openapi_list.do" title="Open-API">Open-API</a>
+                        <ul class="dp3">
+                            <li><a href="/customer/reference/openapi_list.do" title="Open-API 이용안내">Open-API 이용안내</a></li>
+                            <li><a href="/customer/reference/openapi_write.do" title="Open-API 이용신청">Open-API 이용신청</a></li>
+                        </ul>
+                    </li>
+<!--                     <li><a href="/customer/trend/peakseason_info/peakseason_info.do" title="">보도자료</a></li> -->
+<!--                     <li> -->
+<!--                         <a href="/customer/circulation/other/other.do" title="통합 자료실">통합 자료실</a> -->
+<!--                          <ul class="dp3"> -->
+<!--                             <li><a href="/customer/circulation/other/other.do" title="">일반자료실</a></li> -->
+<!--                             <li><a href="/customer/trend/economic/economic.do?action=priceInfo" title="">구)알뜰장보기</a></li> -->
+<!--                             <li><a href="/customer/inform/news/news.do" title="">유통뉴스</a></li> -->
+<!--                             <li><a href="/customer/price/franchise.do" title="">외식 프랜차이즈 가격 동향</a></li> -->
+<!--                             <li><a href="/customer/trend/economic/interest.do" title="">업종별 관심품목</a></li> -->
+<!--                             <li><a href="/customer/inform/commonsense/eat.do" title="">소비자상식</a></li> -->
+<!--                             <li><a href="/customer/trend/economic/howmuch.do" title="">물가정보 방송인터뷰</a></li> -->
+<!--                         </ul> -->
+<!--                     </li> -->
+                    <li>
+                    	<a href="/customer/information_services/about.do?action=about5" title="이용안내">이용안내</a>
+                    	<!-- <ul class="dp3">
+                    		<li><a href="/customer/information_services/about.do?action=about5">홈페이지 이용안내</a></li>
+                    		<li><a href="/customer/information_services/about.do?action=about1">홈페이지 이용안내</a></li>
+                    		<li><a href="/customer/information_services/email_reject/email_reject.do" title="">홈페이지 이용안내</a></li>
+                    		<li><a href="/customer/information_services/viewer/viewer.do" title="">홈페이지 이용안내</a></li>
+                    		<li><a href="/customer/information_services/kakao_story/kakao_story.do" title="">홈페이지 이용안내</a></li>
+                    	</ul> -->
+                    </li>
+<!--                     <li><a href="/customer/information_services/about.do?action=about5">이용안내</a></li> -->
+                    <li><a href="/customer/inform/event/event.do" title="이벤트">이벤트</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="btns sitemap_btns">
+            <!-- <button type="button" class="js-tschOpen" title="통합검색 열기"><img src="/images/icon/i_search_lg.svg" alt="통합검색 열기"/></button> -->
+            <button type="button" id="closeSitemapButton" class="js-smClose" title="사이트맵 닫기"><img src="/images/icon/i_close.svg" alt="사이트맵 닫기"/></button>
+        </div>
+    </div>
+</div>
+<!-- // sitemap -->
+
+<script>
+const sitemap = document.querySelector(".sitemap");
+const focusable = sitemap.querySelectorAll("a, button");
+const first = focusable[0];
+const last = focusable[focusable.length - 1];
+const lastPrev = focusable[focusable.length -2];
+
+sitemap.addEventListener("keydown", function(e) {
+	if(e.key !== 'Tab') return;
+	if(e.shiftKey) {
+		//Shift + Tab
+		if(document.activeElement === first) {
+			e.preventDefault();
+			last.focus();
+		}
+	} else {
+		//Tab
+		if(document.activeElement === last) {
+			e.preventDefault();
+			first.focus();
+		}
+	}
+});
+
+const openButton = document.getElementById("openSitemapButton"); // 열기 버튼 저장
+openButton.addEventListener("click", function(e) {
+	first.focus();	
+});
+
+const closeButton = document.getElementById("closeSitemapButton"); // 닫기 버튼 저장
+closeButton.addEventListener("click", function(e) {
+	openButton.focus();
+});
+</script>
+		</div>
+		
+		
+	</body>
+</html>
