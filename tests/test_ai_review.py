@@ -51,13 +51,41 @@ class AIReviewTests(unittest.TestCase):
         self.assertEqual(value['model_status'],'validated_draft')
         self.assertFalse((self.root/'public/verified.json').exists())
 
-    def test_rejected_model_is_queued_and_not_automatically_retried(self):
-        with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport),patch('benefit_monitor.ai_review.invoke',return_value={'status':'rejected_draft','run_id':'b'*64}):
-            first=self.run_review();second=self.run_review()
+    def test_rejected_model_is_retried_once_on_a_later_day_only(self):
+        # 2026-11-10: a rejected answer is retried once on a later day (same body), never the same day.
+        with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport),patch('benefit_monitor.ai_review.invoke',return_value={'status':'rejected_draft','run_id':'b'*64}) as model:
+            first=self.run_review();same_day=self.run_review()
+            later=self.run_review(now=NOW+timedelta(days=1));third=self.run_review(now=NOW+timedelta(days=2))
         self.assertEqual(first['rejected'],1)
-        self.assertEqual(second['skipped_unchanged'],1)
+        self.assertEqual(same_day['skipped_unchanged'],1)
+        self.assertEqual(later['rejected'],1)
+        self.assertEqual(third['skipped_unchanged'],1)
+        self.assertEqual(model.call_count,2)
         entry=json.loads(next((self.root/'cache/ai_review/queue').glob('*.json')).read_text())
         self.assertEqual(entry['model_status'],'rejected_draft')
+
+    def test_unchanged_candidates_do_not_use_the_daily_paid_limit(self):
+        from benefit_monitor.ai_review import review_candidates
+        others=[dict(self.candidate,url=f'https://www.seoul.go.kr/news/{n}',title=f'zzqq notice {n}') for n in (2,3)]
+        pages={}
+        def transport(request):
+            self.requests.append(request.full_url)
+            if request.full_url.endswith('/robots.txt'):return Response(b'User-agent: *\nAllow: /')
+            return Response(pages.get(request.full_url,self.page.replace(b'</main>',request.full_url.encode()+b'</main>')))
+        with patch('benefit_monitor.official_reader.network_open',side_effect=transport),patch('benefit_monitor.ai_review.invoke',return_value={'status':'validated_draft','run_id':'a'*64}) as model, \
+             patch('benefit_monitor.ai_review.auto_decide',return_value={'publish':False,'reasons':['test'],'record':None}):
+            review_candidates(self.root,[self.candidate]+others,NOW,3,True)
+            # The other two pages change; the first stays the same and is skipped without using the limit of 2.
+            for n in (2,3):pages[f'https://www.seoul.go.kr/news/{n}']=self.page.replace(b'</main>',f' changed {n}</main>'.encode())
+            result=review_candidates(self.root,[self.candidate]+others,NOW+timedelta(days=1),2,True)
+        self.assertEqual(result['skipped_unchanged'],1)
+        self.assertEqual(result['queued'],2)
+        self.assertEqual(model.call_count,5)
+
+    def test_daily_candidate_limit_is_forty(self):
+        from benefit_monitor.ai_review import review_candidates, MAX_RESEARCH
+        self.assertEqual(MAX_RESEARCH,40)
+        with self.assertRaises(ValueError):review_candidates(self.root,[],NOW,41,False)
 
     def test_no_spend_default_stages_input_then_explicit_execution_works(self):
         with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport),patch('benefit_monitor.ai_review.invoke',side_effect=AssertionError('no spend')):

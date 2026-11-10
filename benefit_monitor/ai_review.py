@@ -131,9 +131,13 @@ def _related_docs(reader,cid,candidate,doc,peers,failures):
     return docs
 
 
+# Daily paid research limit (approved 2026-11-10: 20 -> 40; the monthly USD cap still decides spend).
+MAX_RESEARCH=40
+
+
 def review_candidates(root,candidates,now,max_candidates=2,execute=False):
     root=Path(root).resolve()
-    if type(max_candidates) is not int or not 1<=max_candidates<=20:raise ValueError('candidate limit 1..20')
+    if type(max_candidates) is not int or not 1<=max_candidates<=MAX_RESEARCH:raise ValueError('candidate limit 1..'+str(MAX_RESEARCH))
     project_path(root,'cache/ai_review')
     result=dict(queued=0,rejected=0,awaiting_api=0,skipped_unchanged=0,changed_ids=[],failures=[],rows=[],
                 api_spend_requested=execute,cost_scope='cost_policy는 공식 HTTP 수집만 기록. Claude는 별도 누적 원장에 기록.')
@@ -147,7 +151,13 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
                        if isinstance(r,dict) and r.get('recheck_priority')}
         except (OSError,ValueError,AttributeError):withdrawn=set()
         ordered=sorted(unique.items(),key=lambda pair:(pair[0] not in withdrawn,state['items'].get(pair[0],{}).get('last_checked_at','')))
-        for cid,candidate in ordered[:max_candidates]:
+        # Only model requests count toward max_candidates; unchanged skips and fetch failures do not
+        # (2026-11-10). The run's public HTTP budget still ends the loop.
+        attempted=0
+        today=now.date().isoformat()
+        for cid,candidate in ordered:
+            if attempted>=max_candidates or cost_policy.budget.used>=cost_policy.budget.limit:break
+            previous_checked=state['items'].get(cid,{}).get('last_checked_at','')
             state['items'].setdefault(cid,{})['last_checked_at']=now.isoformat()
             try:doc=reader.read(candidate)
             except Exception as error:
@@ -164,7 +174,10 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             signature=hashlib.sha256((cid+'\n'+hashes+'\n'+prompt).encode()).hexdigest()
             previous=state['items'].get(cid,{})
             if previous.get('body_hash') and previous['body_hash']!=doc['body_hash']:result['changed_ids'].append(cid)
-            if previous.get('signature')==signature and previous.get('model_status') in ('validated_draft','rejected_draft','stopped_before_result'):
+            # A rejected answer gets one more try on a later day (same input); then it waits for a body change.
+            retry=(previous.get('model_status')=='rejected_draft' and previous.get('attempts',1)<2
+                   and previous_checked[:10]<today)
+            if previous.get('signature')==signature and previous.get('model_status') in ('validated_draft','rejected_draft','stopped_before_result') and not retry:
                 result['skipped_unchanged']+=1
                 result['rows'].append({'candidate_id':cid,'status':'unchanged','review_file':previous['review_file']})
                 continue
@@ -182,6 +195,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
                 host=existing
             else:
                 save(input_path,host)
+            attempted+=1
             model=invoke(root,'research',input_path) if execute else {'status':'awaiting_api_authorization','run_id':None}
             if model['status']=='credit_exhausted':
                 # Stop the day's remaining paid research; keep results already received and retry this one later.
@@ -198,7 +212,8 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
                 _store_decision(root,cid,decision,row,now)
                 result['auto_published']=result.get('auto_published',0)+decision['publish']
             save(project_path(root,review_file),row)
-            state['items'][cid]={**row,'review_file':review_file,'last_checked_at':now.isoformat()}
+            attempts=previous.get('attempts',1)+1 if previous.get('signature')==signature else 1
+            state['items'][cid]={**row,'review_file':review_file,'last_checked_at':now.isoformat(),'attempts':attempts}
             result['queued']+=1
             result['rejected']+=model['status']=='rejected_draft'
             result['awaiting_api']+=model['status']=='awaiting_api_authorization'

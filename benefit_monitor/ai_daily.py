@@ -37,7 +37,7 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
                 'public_application_approved':policy.get('public_application_approved') is True}
     if policy.get('enabled') is not True:raise ValueError('daily pipeline is disabled')
     limit=policy.get('max_ai_candidates_per_day',2)
-    if type(limit)is not int or not 1<=limit<=20:raise ValueError('daily candidate limit 1..20')
+    if type(limit)is not int or not 1<=limit<=40:raise ValueError('daily candidate limit 1..40')
     verify_limit=policy.get('max_ai_verifications_per_day',0)
     if type(verify_limit)is not int or not 0<=verify_limit<=40:raise ValueError('daily verification limit 0..40')
     day=now.date().isoformat()
