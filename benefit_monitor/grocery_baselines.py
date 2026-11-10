@@ -1,5 +1,8 @@
 """Basket configuration for the grocery "is this cheap?" quick check (period-average baselines)."""
 import re
+from datetime import date, datetime, timedelta
+from urllib.parse import urlencode
+from zoneinfo import ZoneInfo
 
 from . import groceries
 
@@ -8,6 +11,13 @@ GROUPS = ("고기·알", "채소", "기타")
 ITEM_KEYS = {"id", "name", "aliases", "group", "row"}
 KAMIS_KEYS = ("itemcategorycode", "itemcode", "kindcode", "productrankcode")
 EKAPE_KEYS = ("species", "part", "label")
+MAX_REQUESTS = 30
+KEEP_DAYS = 30
+EKAPE_START = date(2026, 7, 1)  # 축평원 조사 방식 변경일: 이후 기간만 평균에 쓴다
+EKAPE_LOOKBACK_DAYS = 3
+BASELINE_KEYS = {"avg", "months", "from", "to", "unit", "kind", "grade", "checked_at"}
+BUNDLE_KEYS = {"schema_version", "source", "fetched_at", "items"}
+OUT_ITEM_KEYS = ITEM_KEYS | {"baseline"}
 
 
 def _text(value, limit=60):
@@ -134,3 +144,161 @@ def parse_ekape_range(page, label, start, end):
         return None
     return {"avg": row["national"], "months": months, "from": start.strftime("%Y-%m"),
             "to": end.strftime("%Y-%m"), "unit": row["unit"], "kind": None, "grade": None}
+
+
+def _kst_today(now):
+    return (now.astimezone(ZoneInfo("Asia/Seoul")) if now.tzinfo else now).date()
+
+
+def _norm(text):
+    return re.sub(r"\s+", "", text).lower()
+
+
+def _produce_matches(row_id, parsed):
+    """True when the page's 단위/등급/품종 agree with the basket row it is meant to price."""
+    parts = row_id.split("|")
+    if len(parts) != 4 or parsed["unit"] != parts[2]:
+        return False
+    if parsed["grade"] is not None and parsed["grade"] != parts[3]:
+        return False
+    kind = parsed["kind"]
+    return kind is None or kind == parts[1] or _norm(parts[1]) in _norm(kind)
+
+
+class _Requests:
+    """Counts this run's requests and stops at MAX_REQUESTS like an exhausted budget."""
+
+    def __init__(self, domains):
+        self.domains, self.used = domains, 0
+
+    def get(self, url):
+        if self.used >= MAX_REQUESTS:
+            raise RuntimeError("grocery baseline request cap reached")
+        self.used += 1
+        return groceries.fetch(url, self.domains)
+
+
+def _kamis_url(item, today):
+    return groceries.KAMIS_DAILY + "?" + urlencode(dict(action="monthly", yyyy=today.year, period=3,
+                                                         convert_kg_yn="N", **item["kamis"]))
+
+
+def _ekape_url(item, start, end):
+    return groceries.EKAPE_REGION + "?" + urlencode(dict(
+        searchStartDate=start.isoformat(), searchEndDate=end.isoformat(),
+        searchCondition1=item["ekape"]["species"], searchCondition2=item["ekape"]["part"]))
+
+
+def collect(source, now, previous):
+    """Weekly period-average baselines for the basket. Raises only on robots refusal or a malformed basket.
+
+    A fetch/parse failure or exhausted budget keeps that item's previous baseline (and its checked_at);
+    a page whose unit/grade/kind disagrees with the basket row gives None (the config is wrong).
+    """
+    items = basket(source)
+    domains = source["domains"]
+    today = _kst_today(now)
+    checked = today.isoformat()
+    kept = sanitize(previous, now)
+    prev = {i["id"]: i["baseline"] for i in kept["items"]} if kept else {}
+    requests = _Requests(domains)
+    for base, url in ((groceries.KAMIS, groceries.KAMIS_DAILY), (groceries.EKAPE, groceries.EKAPE_REGION)):
+        requests.used += 1
+        groceries._robots(base, url, domains)
+    result = {}
+    start = max(EKAPE_START, today - timedelta(days=365))
+    ekape_end, day_searched = None, False
+
+    def stamp(parsed):
+        return dict(parsed, checked_at=checked)
+
+    for item in items:
+        try:
+            if "kamis" in item:
+                page = requests.get(_kamis_url(item, today)).decode("utf-8", "replace")
+                parsed = parse_kamis_monthly(page, today)
+                if parsed is not None:
+                    result[item["id"]] = stamp(parsed) if _produce_matches(item["row"]["id"], parsed) else None
+                continue
+            label = item["ekape"]["label"]
+            if ekape_end is None:
+                if day_searched:
+                    continue  # no survey day found: keep previous values
+                day_searched = True
+                for back in range(1, EKAPE_LOOKBACK_DAYS + 1):
+                    candidate = today - timedelta(days=back)
+                    try:
+                        page = requests.get(_ekape_url(item, start, candidate)).decode("utf-8", "replace")
+                        parsed = parse_ekape_range(page, label, start, candidate)
+                    except RuntimeError:
+                        raise
+                    except Exception:
+                        parsed = None
+                    if parsed is not None:
+                        ekape_end = candidate
+                        result[item["id"]] = stamp(parsed)
+                        break
+            else:
+                page = requests.get(_ekape_url(item, start, ekape_end)).decode("utf-8", "replace")
+                parsed = parse_ekape_range(page, label, start, ekape_end)
+                if parsed is not None:
+                    result[item["id"]] = stamp(parsed)
+        except RuntimeError:
+            break  # budget or cap exhausted: remaining items keep their previous baseline
+        except Exception:
+            pass
+    out = []
+    for item in items:
+        baseline = result[item["id"]] if item["id"] in result else prev.get(item["id"])
+        out.append({k: item[k] for k in ("id", "name", "aliases", "group", "row")} | {"baseline": baseline})
+    return {"schema_version": 1, "source": "grocery_baselines", "fetched_at": now.isoformat(), "items": out}
+
+
+def _date_text(value):
+    try:
+        return date.fromisoformat(value) if isinstance(value, str) and len(value) == 10 else None
+    except ValueError:
+        return None
+
+
+def _month_text(value):
+    return isinstance(value, str) and re.fullmatch(r"\d{4}-(0[1-9]|1[0-2])", value) is not None
+
+
+def _baseline_ok(b):
+    return (_exact(b, BASELINE_KEYS) and type(b["avg"]) is int and b["avg"] > 0
+            and type(b["months"]) is int and 1 <= b["months"] <= 12
+            and _month_text(b["from"]) and _month_text(b["to"]) and b["from"] <= b["to"]
+            and all(b[k] is None or _text(b[k]) for k in ("unit", "kind", "grade"))
+            and _date_text(b["checked_at"]) is not None)
+
+
+def sanitize(bundle, now):
+    """Validated bundle with baselines older than 30 days set to None, or None for anything malformed."""
+    if not _exact(bundle, BUNDLE_KEYS) or bundle["schema_version"] != 1 or bundle["source"] != "grocery_baselines" \
+            or not isinstance(bundle["fetched_at"], str) or not isinstance(bundle["items"], list) \
+            or len(bundle["items"]) > BASKET_MAX:
+        return None
+    try:
+        datetime.fromisoformat(bundle["fetched_at"])
+    except ValueError:
+        return None
+    today = _kst_today(now)
+    out, seen = [], set()
+    for item in bundle["items"]:
+        if not _exact(item, OUT_ITEM_KEYS) or not isinstance(item["id"], str) \
+                or not re.fullmatch(r"[a-z_]{2,30}", item["id"]) or item["id"] in seen \
+                or not _text(item["name"]) or item["group"] not in GROUPS:
+            return None
+        aliases, row, baseline = item["aliases"], item["row"], item["baseline"]
+        if not isinstance(aliases, list) or not 1 <= len(aliases) <= 5 or not all(_text(a) for a in aliases) \
+                or not _exact(row, ("kind", "id")) or row["kind"] not in ("produce", "meat") \
+                or not _text(row["id"], 120) or (baseline is not None and not _baseline_ok(baseline)):
+            return None
+        seen.add(item["id"])
+        if baseline is not None:
+            age = (today - _date_text(baseline["checked_at"])).days
+            if age > KEEP_DAYS or age < -1:
+                baseline = None
+        out.append(dict(item, baseline=dict(baseline) if baseline else None))
+    return dict(bundle, items=out)
