@@ -180,7 +180,7 @@ function basketBaseline(v:unknown,now:number):BasketBaseline|null{
  if(typeof from!=='string'||!MONTH.test(from)||typeof to!=='string'||!MONTH.test(to)||!text(unit,20))return null;
  if(typeof checked_at!=='string'||!DATE.test(checked_at))return null;
  const age=(Date.parse(kstDate(now))-Date.parse(checked_at))/DAY;
- if(!Number.isFinite(age)||age>MAX_BASELINE_AGE)return null;
+ if(!Number.isFinite(age)||age<0||age>MAX_BASELINE_AGE)return null;
  return {avg:avg as number,months:months as number,from,to,unit};
 }
 /** Basket items with their multi-month average (baseline=null when stale or malformed). */
@@ -227,8 +227,8 @@ export function baselineBadge(row:PriceRow,item:BasketItem):{level:'cheap'|'norm
  const b=item.baseline;
  if(!b||b.months<=0||!(b.avg>0)||!(row.current>0)||row.kind+row.id!==item.rowKey)return null;
  const a=parseUnit(row.unit),c=parseUnit(b.unit);
- if(a&&c?a.base!==c.base||a.amount!==c.amount:!row.unit.includes(b.unit))return null;
- const pct=Math.round((row.current/b.avg-1)*100),span=`${b.months}개월 평균`;
+ if(a&&c?a.base!==c.base||a.amount!==c.amount:row.unit!==b.unit)return null;
+ const pct=Math.round((row.current/b.avg-1)*100),span=`${Math.min(b.months,12)}개월 평균`;
  const level=pct<=-10?'cheap':pct>=10?'pricey':'normal';
  const label=pct===0?`${span}과 같음`:pct<0?`▼ ${span}보다 ${-pct}% 쌈`:`▲ ${span}보다 ${pct}% 비쌈`;
  return {level,pct,label};

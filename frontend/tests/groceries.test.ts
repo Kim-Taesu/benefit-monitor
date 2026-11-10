@@ -171,6 +171,8 @@ test('parseBaselines keeps basket order, rowKey and baseline freshness',()=>{
  assert.equal(stale[0].baseline,null);
  const edge=parseBaselines(baselines({},[bItem('onion','양파',['양파'],'채소',{kind:'produce',id:'양파|양파|1kg|상품'},{...BASE,checked_at:'2026-10-10'})]),NOW);
  assert.equal(edge[0].baseline!.avg,2880);
+ const future=parseBaselines(baselines({},[bItem('onion','양파',['양파'],'채소',{kind:'produce',id:'양파|양파|1kg|상품'},{...BASE,checked_at:'2026-11-10'})]),NOW);
+ assert.equal(future[0].baseline,null);
  assert.deepEqual(parseBaselines(baselines({schema_version:2}),NOW),[]);
  assert.deepEqual(parseBaselines({},NOW),[]);
  assert.deepEqual(parseBaselines(baselines({items:'x'}),NOW),[]);
@@ -201,7 +203,12 @@ test('baselineBadge compares against the multi-month average',()=>{
  assert.equal(pricey.level,'pricey');assert.equal(pricey.label,'▲ 12개월 평균보다 15% 비쌈');
  assert.ok(baselineBadge(prow(),{...onion,baseline:{...BASE,months:4}})!.label.includes('4개월 평균'));
  assert.equal(baselineBadge(prow({current:2880}),onion)!.label,'12개월 평균과 같음');
+ assert.ok(baselineBadge(prow(),{...onion,baseline:{...BASE,months:13}})!.label.includes('12개월 평균'));
  assert.equal(baselineBadge(prow(),{...onion,baseline:{...BASE,months:0}}),null);
+ // unparseable units need strict equality
+ const odd={...onion,baseline:{...BASE,unit:'두부 300g×2'}};
+ assert.ok(baselineBadge(prow({unit:'두부 300g×2'}),odd));
+ assert.equal(baselineBadge(prow({unit:'두부 300g×2 묶음'}),odd),null);
  assert.equal(baselineBadge(prow(),{...onion,baseline:null}),null);
  assert.equal(baselineBadge(prow({unit:'10개'}),onion),null);
  assert.equal(baselineBadge(prow({id:'다른|행|1kg|상품'}),onion),null);
