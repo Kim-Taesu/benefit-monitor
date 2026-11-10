@@ -287,6 +287,8 @@ class CollectTests(unittest.TestCase):
         web = FakeWeb()
         run_collect(web)
         kamis = [u for u in web.items() if 'itemcode=111' in u][0]
+        # The monthly table lives on the 기간별 page; the daily catalogue page ignores action=monthly.
+        self.assertTrue(kamis.startswith('https://www.kamis.or.kr/customer/price/agricultureRetail/period.do?'), kamis)
         for part in ('action=monthly', 'yyyy=2026', 'period=3', 'convert_kg_yn=N', 'itemcategorycode=100',
                      'kindcode=EE', 'productrankcode=0'):
             self.assertIn(part, kamis)
