@@ -40,3 +40,4 @@ frontend/playwright-report/
 
 # 로컬 일일 AI 실행 승인·활성 상태
 /ai-automation.json
+.superpowers/
