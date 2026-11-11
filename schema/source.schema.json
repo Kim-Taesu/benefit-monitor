@@ -180,6 +180,34 @@
             }
           }
         },
+        "health_programs": {
+          "type": "array",
+          "maxItems": 150,
+          "description": "health_notices: 보건소 상시 사업 안내 페이지(대사증후군 검진 등). 사흘에 한 번씩 돌아가며 페이지가 살아 있는지 확인한다.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "district",
+              "name",
+              "url"
+            ],
+            "properties": {
+              "district": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 40
+              },
+              "url": {
+                "$ref": "#/$defs/https_url"
+              }
+            }
+          }
+        },
         "boards": {
           "$ref": "#/$defs/text_list"
         },

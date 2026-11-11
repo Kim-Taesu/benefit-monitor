@@ -607,6 +607,318 @@
           "onclick": "fn_move_form\\('(\\d+)'\\)",
           "detail_template": "https://www.seongnam.go.kr/health/ht-bbs040101/{id}"
         }
+      ],
+      "health_programs": [
+        {
+          "district": "광진구",
+          "name": "대사증후군 검진",
+          "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300047"
+        },
+        {
+          "district": "광진구",
+          "name": "모바일 헬스케어",
+          "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300354"
+        },
+        {
+          "district": "광진구",
+          "name": "금연클리닉",
+          "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300071"
+        },
+        {
+          "district": "광진구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300339"
+        },
+        {
+          "district": "동대문구",
+          "name": "결핵검사",
+          "url": "https://www.ddm.go.kr/health/contents.do?key=1208"
+        },
+        {
+          "district": "동대문구",
+          "name": "청년 1인가구 무료 건강검진",
+          "url": "https://www.ddm.go.kr/health/contents.do?key=3842"
+        },
+        {
+          "district": "동대문구",
+          "name": "대사증후군 관리",
+          "url": "https://www.ddm.go.kr/health/contents.do?key=1249"
+        },
+        {
+          "district": "동대문구",
+          "name": "모바일 헬스케어",
+          "url": "https://www.ddm.go.kr/health/contents.do?key=3339"
+        },
+        {
+          "district": "동대문구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.ddm.go.kr/health/contents.do?key=3785"
+        },
+        {
+          "district": "성북구",
+          "name": "대사증후군 관리",
+          "url": "https://www.sb.go.kr/bogunso/contents.do?key=223"
+        },
+        {
+          "district": "성북구",
+          "name": "금연클리닉",
+          "url": "https://www.sb.go.kr/bogunso/contents.do?key=221"
+        },
+        {
+          "district": "성북구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.sb.go.kr/bogunso/contents.do?key=6742"
+        },
+        {
+          "district": "성북구",
+          "name": "임신준비 프로그램(신혼부부 건강검진)",
+          "url": "https://www.sb.go.kr/bogunso/contents.do?key=230"
+        },
+        {
+          "district": "노원구",
+          "name": "대사증후군 관리",
+          "url": "https://www.nowon.kr/health/healthIncrz/healthIncrz3/healthIncrz3_02.jsp"
+        },
+        {
+          "district": "노원구",
+          "name": "1인 청년가구 건강검진",
+          "url": "https://www.nowon.kr/health/clnic/clnic3/clnic3_05.jsp"
+        },
+        {
+          "district": "서대문구",
+          "name": "내몸사랑 기초건강검진",
+          "url": "https://www.sdm.go.kr/health/contents/healthcheck/love"
+        },
+        {
+          "district": "서대문구",
+          "name": "무료건강검진",
+          "url": "https://www.sdm.go.kr/health/contents/healthcheck/free"
+        },
+        {
+          "district": "서대문구",
+          "name": "대사증후군 관리",
+          "url": "https://www.sdm.go.kr/health/contents/improve/metabolicSyndrome"
+        },
+        {
+          "district": "서대문구",
+          "name": "모바일 헬스케어",
+          "url": "https://www.sdm.go.kr/health/contents/improve/mobileHealthcare"
+        },
+        {
+          "district": "서대문구",
+          "name": "임신준비 지원",
+          "url": "https://www.sdm.go.kr/health/contents/healthbiz/maternal/prebabysup"
+        },
+        {
+          "district": "강서구",
+          "name": "대사증후군 관리",
+          "url": "https://www.gangseo.seoul.kr/health/ht020103"
+        },
+        {
+          "district": "강서구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.gangseo.seoul.kr/health/ht020231"
+        },
+        {
+          "district": "강서구",
+          "name": "마음건강검진 상담지원",
+          "url": "https://www.gangseo.seoul.kr/health/ht020303"
+        },
+        {
+          "district": "구로구",
+          "name": "결핵검사",
+          "url": "https://www.guro.go.kr/health/contents.do?key=1319"
+        },
+        {
+          "district": "구로구",
+          "name": "대사증후군 관리",
+          "url": "https://www.guro.go.kr/health/contents.do?key=1392"
+        },
+        {
+          "district": "구로구",
+          "name": "모바일 헬스케어",
+          "url": "https://www.guro.go.kr/health/contents.do?key=4077"
+        },
+        {
+          "district": "구로구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.guro.go.kr/health/contents.do?key=1320"
+        },
+        {
+          "district": "구로구",
+          "name": "[구로형] 임신 준비 지원",
+          "url": "https://www.guro.go.kr/health/contents.do?key=4527"
+        },
+        {
+          "district": "금천구",
+          "name": "결핵검사",
+          "url": "https://www.geumcheon.go.kr/health/contents.do?key=1455"
+        },
+        {
+          "district": "금천구",
+          "name": "대사증후군 관리",
+          "url": "https://www.geumcheon.go.kr/health/contents.do?key=1481"
+        },
+        {
+          "district": "금천구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.geumcheon.go.kr/health/contents.do?key=4559"
+        },
+        {
+          "district": "금천구",
+          "name": "예비부부 건강검진",
+          "url": "https://www.geumcheon.go.kr/health/contents.do?key=4620"
+        },
+        {
+          "district": "금천구",
+          "name": "마음건강검진 상담지원",
+          "url": "https://www.geumcheon.go.kr/health/contents.do?key=4713"
+        },
+        {
+          "district": "영등포구",
+          "name": "청년 1인가구 건강검진",
+          "url": "https://www.ydp.go.kr/health/contents.do?key=6088"
+        },
+        {
+          "district": "영등포구",
+          "name": "간염검사",
+          "url": "https://www.ydp.go.kr/health/contents.do?key=3476"
+        },
+        {
+          "district": "영등포구",
+          "name": "체성분검사 및 운동상담",
+          "url": "https://www.ydp.go.kr/health/contents.do?key=3474"
+        },
+        {
+          "district": "영등포구",
+          "name": "대사증후군 관리",
+          "url": "https://www.ydp.go.kr/health/contents.do?key=3584"
+        },
+        {
+          "district": "영등포구",
+          "name": "골다공증 검사",
+          "url": "https://www.ydp.go.kr/health/contents.do?key=3611"
+        },
+        {
+          "district": "영등포구",
+          "name": "임신 준비 지원",
+          "url": "https://www.ydp.go.kr/health/contents.do?key=6073"
+        },
+        {
+          "district": "영등포구",
+          "name": "마음건강검진 상담지원",
+          "url": "https://www.ydp.go.kr/health/contents.do?key=5569"
+        },
+        {
+          "district": "관악구",
+          "name": "청년 1인가구 무료 건강검진",
+          "url": "https://www.gwanak.go.kr/site/health/04/10403020000002024040504.jsp"
+        },
+        {
+          "district": "관악구",
+          "name": "대사증후군 관리",
+          "url": "https://www.gwanak.go.kr/site/health/04/10401070000002016051301.jsp"
+        },
+        {
+          "district": "관악구",
+          "name": "모바일 헬스케어",
+          "url": "https://www.gwanak.go.kr/site/health/05/10501120000002025032710.jsp"
+        },
+        {
+          "district": "관악구",
+          "name": "임신준비 지원",
+          "url": "https://www.gwanak.go.kr/site/health/05/10502010600002024101710.jsp"
+        },
+        {
+          "district": "서초구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.seocho.go.kr/site/sh/03/10304010300002024112109.jsp"
+        },
+        {
+          "district": "강남구",
+          "name": "대사증후군 관리(전문 관리센터)",
+          "url": "https://health.gangnam.go.kr/web/business/promotion/sub02.do"
+        },
+        {
+          "district": "강남구",
+          "name": "모바일 헬스케어",
+          "url": "https://health.gangnam.go.kr/web/business/promotion/sub03.do"
+        },
+        {
+          "district": "강남구",
+          "name": "금연클리닉",
+          "url": "https://health.gangnam.go.kr/web/business/promotion/clinic/sub01.do"
+        },
+        {
+          "district": "강남구",
+          "name": "골밀도 검사",
+          "url": "https://health.gangnam.go.kr/web/checkup/checkup/inspection/sub02.do"
+        },
+        {
+          "district": "강남구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://health.gangnam.go.kr/web/business/moja/sub01.do"
+        },
+        {
+          "district": "송파구",
+          "name": "B형간염검사",
+          "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4500"
+        },
+        {
+          "district": "송파구",
+          "name": "C형간염검사",
+          "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4501"
+        },
+        {
+          "district": "송파구",
+          "name": "일반혈액검사",
+          "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4503"
+        },
+        {
+          "district": "송파구",
+          "name": "대사증후군 관리",
+          "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4558"
+        },
+        {
+          "district": "송파구",
+          "name": "금연클리닉",
+          "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4549"
+        },
+        {
+          "district": "송파구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://www.songpa.go.kr/ehealth/contents.do?key=6154"
+        },
+        {
+          "district": "송파구",
+          "name": "마음건강검진 상담지원",
+          "url": "https://www.songpa.go.kr/ehealth/contents.do?key=6082"
+        },
+        {
+          "district": "강동구",
+          "name": "대사증후군 관리",
+          "url": "https://health.gangdong.go.kr/health/site/main/content/GD200800100"
+        },
+        {
+          "district": "강동구",
+          "name": "모바일 헬스케어",
+          "url": "https://health.gangdong.go.kr/health/site/main/content/GD200800200"
+        },
+        {
+          "district": "강동구",
+          "name": "신혼부부 건강검진",
+          "url": "https://health.gangdong.go.kr/health/site/main/content/GD00020080"
+        },
+        {
+          "district": "강동구",
+          "name": "임신 사전건강관리 지원",
+          "url": "https://health.gangdong.go.kr/health/site/main/content/GD20010610"
+        },
+        {
+          "district": "강동구",
+          "name": "마음건강검진 상담지원",
+          "url": "https://health.gangdong.go.kr/health/site/main/content/GD20060200"
+        }
       ]
     },
     {
