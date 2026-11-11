@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "grocery_baselines",
-  "fetched_at": "2026-11-11T08:40:21.231390+09:00",
+  "fetched_at": "2026-11-11T17:26:31.903777+09:00",
   "items": [
     {
       "id": "pork_belly",
@@ -228,7 +228,16 @@
         "kind": "produce",
         "id": "양파|양파|1kg|상품"
       },
-      "baseline": null
+      "baseline": {
+        "avg": 2002,
+        "months": 12,
+        "from": "2025-11",
+        "to": "2026-10",
+        "unit": "1kg",
+        "kind": "양파",
+        "grade": "상품",
+        "checked_at": "2026-11-11"
+      }
     },
     {
       "id": "green_onion",
