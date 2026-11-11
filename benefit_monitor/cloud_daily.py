@@ -87,6 +87,22 @@ def upload_ai_status(root,store):
         return False
 
 
+def upload_grocery_pick(root,store):
+    """Best effort copy of today's grocery pick to briefing-data so collection-only runs keep the AI text."""
+    try:
+        pick=load(safe_path(root,'cache/grocery_pick/pick.json'),None)
+        if not isinstance(pick,dict):return False
+        try:sha=store._api('contents/ai-grocery-pick.json?ref=briefing-data').get('sha')
+        except ValueError:sha=None  # Not created yet.
+        body={'message':'Update AI grocery pick','branch':'briefing-data',
+              'content':base64.b64encode((json.dumps(pick,ensure_ascii=False,indent=2)+'\n').encode()).decode()}
+        if sha:body['sha']=sha
+        store._api('contents/ai-grocery-pick.json',body)
+        return True
+    except Exception:
+        return False
+
+
 def upload_health_notes(root,store):
     """Best effort copy of the public AI health sentences to briefing-data so collection-only runs keep them."""
     try:
@@ -184,7 +200,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     if save_ai(root,REPOSITORY,env=env)!=local:
         # Merged with a concurrent writer: this snapshot no longer matches; the next collection publishes it.
         return {'status':'ai_approval_merged_deferred'}
-    upload_health_notes(root,store)
+    upload_health_notes(root,store);upload_grocery_pick(root,store)
     commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content,expected_sha=expected_sha)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{
@@ -192,7 +208,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     return {'status':'dispatched_not_yet_verified','snapshot_commit':commit,'code_sha':code,'ref':'main'}
 
 
-def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False):
+def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False):
     trusted_environment()
     root=Path(root).resolve();now=now or datetime.now(SEOUL)
     if now.tzinfo is None:raise ValueError('timezone required')
@@ -203,8 +219,12 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     # Trusted runner applies the approved limit revision once with its short-lived token.
     revised=preflight.apply_limit_revision()
     resumed=False
-    if (resume or retry or probe_only) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
-        raise ValueError('halt review, day retry and grammar probe require a manual dispatch')
+    if (resume or retry or probe_only or close_unresolved) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
+        raise ValueError('halt review, day retry, reservation close and grammar probe require a manual dispatch')
+    if close_unresolved and (check_only or retry or probe_only):
+        raise ValueError('closing a reservation runs the day itself; turn off check_only, retry and probe')
+    day=now.date().isoformat()
+    closed_retry=preflight.close_unresolved(day,now) if close_unresolved else False
     if resume:
         resumed=preflight.resume_after_review(now)
     if not check_only or probe_only:
@@ -218,7 +238,6 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     if hashlib.sha256(key.encode()).hexdigest()!=session.control['api_key_sha256']:
         raise ValueError('API Secret differs from approved local key')
     budget=TrialBudget(safe_path(root,BUDGET)).summary()
-    day=now.date().isoformat()
     summary={'requests':len(budget['requests']),'exposure_microdollars':budget['exposure_microdollars'],
              'day_status':session.control['days'].get(day,{}).get('status'),'active':session.control['active'],
              'halt_resumed':resumed}
@@ -241,7 +260,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
                     month_exposure_microdollars=TrialBudget.month_exposure(data['budget'],now))
     if not session.control['active']:return {'status':'handoff_required'}
     # No clock gate: today's completed free collection (todays_refresh) decides when the day runs.
-    if not retry and day in session.control['days']:
+    if not retry and not closed_retry and day in session.control['days']:
         return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
     # Before the day (or its one retry) is used: a state too large to save afterwards never spends.
     full=runtime_room(root,now)
@@ -251,6 +270,9 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         if todays_refresh(store,now)!='ready':return {'status':'waiting_for_existing_refresh'}
         retried=session.retry_rejected_day(day,now)
         # The remote row keeps the original outcome; the inner local mirror must not see today.
+        save(safe_path(root,'cache/ai_daily/days.json'),{'days':{k:v for k,v in session.control['days'].items() if k!=day}})
+    if closed_retry:
+        retried=True
         save(safe_path(root,'cache/ai_daily/days.json'),{'days':{k:v for k,v in session.control['days'].items() if k!=day}})
     refresh=todays_refresh(store,now)
     if refresh=='missing' and now.hour>=FALLBACK_REFRESH_HOUR:

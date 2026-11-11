@@ -93,13 +93,21 @@ class GitHubStateStore:
                         headers={'Authorization':'Bearer '+self.token,'Accept':accept,
                                  'Content-Type':'application/json','User-Agent':'BenefitMonitor-AI-State/1.0'},
                         method='PUT' if body is not None else 'GET')
-        try:
-            with self.opener(request) as response:raw=response.read(MAX_RESPONSE+1)
-            if len(raw)>MAX_RESPONSE:raise ValueError('GitHub state response too large')
-            return json.loads(raw)
-        except HTTPError as error:
-            code=error.code;error.close();raise ValueError('GitHub state request failed: http_'+str(code)) from None
-        except (OSError,URLError,json.JSONDecodeError):raise ValueError('GitHub state request unavailable') from None
+        # One retry on a 5xx or connection failure (2026-11-11: a lost ledger write left a reservation
+        # unresolved). A PUT that did land answers the retry with a sha conflict, which still raises.
+        for attempt in range(2):
+            try:
+                with self.opener(request) as response:raw=response.read(MAX_RESPONSE+1)
+                if len(raw)>MAX_RESPONSE:raise ValueError('GitHub state response too large')
+                return json.loads(raw)
+            except HTTPError as error:
+                code=error.code;error.close()
+                if attempt==0 and code>=500:continue
+                raise ValueError('GitHub state request failed: http_'+str(code)) from None
+            except json.JSONDecodeError:raise ValueError('GitHub state request unavailable') from None
+            except (OSError,URLError):
+                if attempt==0:continue
+                raise ValueError('GitHub state request unavailable') from None
 
     def lease(self,kind):
         """Current blob sha of a state file without downloading it (works past the 1 MB contents limit)."""
@@ -215,6 +223,24 @@ class CloudSession:
         budget['halted']=False
         budget.setdefault('manual_reviews',[]).append(now.astimezone(timezone.utc).isoformat())
         self._commit(data);return True
+
+    def close_unresolved(self,day,now):
+        """Human-dispatched (approved 2026-11-11): close reservations whose outcome was never recorded.
+
+        Each row becomes 'failed' with code manual_closed_unverified and keeps its reserved dollars in the
+        monthly exposure (assumed billed). The halt flag is not touched. When the given day is stuck in
+        'attempted' or ended 'failed', it gets one retry; its original outcome stays under retry_of."""
+        data=deepcopy(self.control);budget=data['budget']
+        closed=[r for r in budget['requests'] if r['status']=='reserved']
+        if not closed:raise ValueError('no unresolved reservation to close')
+        for row in closed:row.update(status='failed',error_code='manual_closed_unverified')
+        budget.setdefault('manual_reviews',[]).append(now.astimezone(timezone.utc).isoformat())
+        row=data['days'].get(day)
+        retry=bool(row) and row['status'] in ('attempted','failed') and 'retry_of' not in row
+        if retry:
+            data['days'][day]={'status':'attempted','retry_of':{'status':row['status'],'request_ids':[r['id'] for r in closed],
+                                                                'retried_at':now.isoformat(),'reason':'manual_closed_unverified'}}
+        self._commit(data);return retry
 
     def retry_rejected_day(self,day,now):
         """One human-dispatched retry of a day whose every request was rejected unbilled (HTTP 4xx).

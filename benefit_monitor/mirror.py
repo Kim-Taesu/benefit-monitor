@@ -60,6 +60,7 @@ def restore(root, repository, now=None, env=None):
     restore_baselines(root,repository,env)
     restore_health_notices(root,repository,env)
     restore_health_notes(root,repository,env)
+    restore_grocery_pick(root,repository,env)
     return envelope.get("sha")
 
 
@@ -95,6 +96,20 @@ def restore_health_notices(root, repository, env=None):
     except Exception:
         pass
     path.unlink(missing_ok=True)
+    return False
+
+
+def restore_grocery_pick(root, repository, env=None):
+    """Last AI run's grocery pick; publication shows it only while the groceries survey date matches."""
+    from .store import save
+    path = Path(root) / "cache/grocery_pick/pick.json"
+    try:
+        pick, _ = _get(repository, "ai-grocery-pick.json", env)
+        if isinstance(pick, dict) and not path.exists():
+            save(path, pick)
+            return True
+    except Exception:
+        pass
     return False
 
 
