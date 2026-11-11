@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "health_notices",
-  "fetched_at": "2026-11-11T10:18:09.491905+09:00",
+  "fetched_at": "2026-11-11T11:00:37.137256+09:00",
   "notice": "각 보건소 공식 공지 게시판 첫 페이지의 제목·날짜를 그대로 옮겼습니다. 사람 검증 전이며 대상·기간·비용은 원문에서 확인하세요.",
   "boards": [
     {
@@ -49,8 +49,8 @@
       "name": "광진구보건소",
       "home_url": "https://www.gwangjin.go.kr/health/main/main.do",
       "list_url": "https://www.gwangjin.go.kr/health/bbs/B0000001/list.do?menuNo=300350",
-      "status": "checked",
-      "reason": null,
+      "status": "failed",
+      "reason": "timeout",
       "checked_at": "2026-11-11T10:18:09.491905+09:00",
       "items": [
         {
@@ -142,7 +142,7 @@
       "list_url": "https://www.ddm.go.kr/health/selectBbsNttList.do?bbsNo=221&key=1335",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "221-nttNo-196461-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
@@ -243,7 +243,7 @@
       "list_url": "https://www.sb.go.kr/bogunso/selectBbsNttList.do?bbsNo=64&key=271",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
@@ -354,7 +354,7 @@
       "list_url": "https://www.nowon.kr/health/user/bbs/BD_selectBbsList.do?q_bbsCode=1001&q_estnColumn1=21",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261109095723119",
@@ -455,7 +455,7 @@
       "list_url": "https://www.sdm.go.kr/health/board/1/list",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "health-board-1-13732",
@@ -564,8 +564,8 @@
       "name": "강서구보건소",
       "home_url": "https://www.gangseo.seoul.kr/health",
       "list_url": "https://www.gangseo.seoul.kr/health/ht060701",
-      "status": "checked",
-      "reason": null,
+      "status": "failed",
+      "reason": "connection",
       "checked_at": "2026-11-11T10:18:09.491905+09:00",
       "items": [
         {
@@ -657,7 +657,7 @@
       "list_url": "https://www.guro.go.kr/health/selectBbsNttList.do?bbsNo=578&key=1304",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-242044-pageUnit-10-key-1304-pageIndex-1",
@@ -748,7 +748,7 @@
       "list_url": "https://www.geumcheon.go.kr/health/selectBbsNttList.do?bbsNo=310&key=2281",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "4-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
@@ -839,8 +839,16 @@
       "list_url": "https://www.ydp.go.kr/health/selectBbsNttList.do?bbsNo=317&key=3723",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421414-pageUnit-10-key-3723-pageIndex-1",
+          "title": "11월 정신건강인식개선 캠페인 실시 안내",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421414&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-11-11",
+          "dept": "건강증진과",
+          "hint": true
+        },
         {
           "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421350-pageUnit-10-key-3723-pageIndex-1",
           "title": "영등포구 ‘만취예방 거리조성 실천업소’를 소개합니다~!",
@@ -912,14 +920,6 @@
           "date": "2026-10-24",
           "dept": "생활건강과",
           "hint": true
-        },
-        {
-          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-420685-pageUnit-10-key-3723-pageIndex-1",
-          "title": "2026년도 공중위생업소 민·관합동 점검계획 사전 안내",
-          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=420685&&pageUnit=10&key=3723&pageIndex=1",
-          "date": "2026-10-20",
-          "dept": "보건위생과",
-          "hint": false
         }
       ]
     },
@@ -940,7 +940,7 @@
       "list_url": "https://www.gwanak.go.kr/site/health/ex/bbs/List.do?cbIdx=275",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-213769",
@@ -1031,7 +1031,7 @@
       "list_url": "https://www.seocho.go.kr/site/sh/ex/bbs/List.do?cbIdx=91",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412590",
@@ -1122,7 +1122,7 @@
       "list_url": "https://health.gangnam.go.kr/web/community/notice.do",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "web-community-notice-1076724-view-do",
@@ -1213,7 +1213,7 @@
       "list_url": "https://www.songpa.go.kr/ehealth/selectBbsNttList.do?bbsNo=179&key=4713",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19280127-pageUnit-10-key-4713-pageIndex-1",
@@ -1304,7 +1304,7 @@
       "list_url": "https://health.gangdong.go.kr/health/site/main/board/healthnews/list",
       "status": "checked",
       "reason": null,
-      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00",
       "items": [
         {
           "id": "health-site-main-board-healthnews-1723",
@@ -1333,6 +1333,504 @@
       "reason": "tls",
       "checked_at": null,
       "items": []
+    }
+  ],
+  "programs": [
+    {
+      "district": "광진구",
+      "center": "광진구보건소",
+      "name": "대사증후군 검진",
+      "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300047",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "광진구",
+      "center": "광진구보건소",
+      "name": "모바일 헬스케어",
+      "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300354",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "광진구",
+      "center": "광진구보건소",
+      "name": "금연클리닉",
+      "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300071",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "광진구",
+      "center": "광진구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.gwangjin.go.kr/health/main/contents.do?menuNo=300339",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "동대문구",
+      "center": "동대문구보건소",
+      "name": "결핵검사",
+      "url": "https://www.ddm.go.kr/health/contents.do?key=1208",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "동대문구",
+      "center": "동대문구보건소",
+      "name": "청년 1인가구 무료 건강검진",
+      "url": "https://www.ddm.go.kr/health/contents.do?key=3842",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "동대문구",
+      "center": "동대문구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.ddm.go.kr/health/contents.do?key=1249",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "동대문구",
+      "center": "동대문구보건소",
+      "name": "모바일 헬스케어",
+      "url": "https://www.ddm.go.kr/health/contents.do?key=3339",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "동대문구",
+      "center": "동대문구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.ddm.go.kr/health/contents.do?key=3785",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "성북구",
+      "center": "성북구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.sb.go.kr/bogunso/contents.do?key=223",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "성북구",
+      "center": "성북구보건소",
+      "name": "금연클리닉",
+      "url": "https://www.sb.go.kr/bogunso/contents.do?key=221",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "성북구",
+      "center": "성북구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.sb.go.kr/bogunso/contents.do?key=6742",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "성북구",
+      "center": "성북구보건소",
+      "name": "임신준비 프로그램(신혼부부 건강검진)",
+      "url": "https://www.sb.go.kr/bogunso/contents.do?key=230",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "노원구",
+      "center": "노원구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.nowon.kr/health/healthIncrz/healthIncrz3/healthIncrz3_02.jsp",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "노원구",
+      "center": "노원구보건소",
+      "name": "1인 청년가구 건강검진",
+      "url": "https://www.nowon.kr/health/clnic/clnic3/clnic3_05.jsp",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "서대문구",
+      "center": "서대문구보건소",
+      "name": "내몸사랑 기초건강검진",
+      "url": "https://www.sdm.go.kr/health/contents/healthcheck/love",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "서대문구",
+      "center": "서대문구보건소",
+      "name": "무료건강검진",
+      "url": "https://www.sdm.go.kr/health/contents/healthcheck/free",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "서대문구",
+      "center": "서대문구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.sdm.go.kr/health/contents/improve/metabolicSyndrome",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "서대문구",
+      "center": "서대문구보건소",
+      "name": "모바일 헬스케어",
+      "url": "https://www.sdm.go.kr/health/contents/improve/mobileHealthcare",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "서대문구",
+      "center": "서대문구보건소",
+      "name": "임신준비 지원",
+      "url": "https://www.sdm.go.kr/health/contents/healthbiz/maternal/prebabysup",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강서구",
+      "center": "강서구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.gangseo.seoul.kr/health/ht020103",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "강서구",
+      "center": "강서구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.gangseo.seoul.kr/health/ht020231",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "강서구",
+      "center": "강서구보건소",
+      "name": "마음건강검진 상담지원",
+      "url": "https://www.gangseo.seoul.kr/health/ht020303",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "구로구",
+      "center": "구로구보건소",
+      "name": "결핵검사",
+      "url": "https://www.guro.go.kr/health/contents.do?key=1319",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "구로구",
+      "center": "구로구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.guro.go.kr/health/contents.do?key=1392",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "구로구",
+      "center": "구로구보건소",
+      "name": "모바일 헬스케어",
+      "url": "https://www.guro.go.kr/health/contents.do?key=4077",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "구로구",
+      "center": "구로구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.guro.go.kr/health/contents.do?key=1320",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "구로구",
+      "center": "구로구보건소",
+      "name": "[구로형] 임신 준비 지원",
+      "url": "https://www.guro.go.kr/health/contents.do?key=4527",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "금천구",
+      "center": "금천구보건소",
+      "name": "결핵검사",
+      "url": "https://www.geumcheon.go.kr/health/contents.do?key=1455",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "금천구",
+      "center": "금천구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.geumcheon.go.kr/health/contents.do?key=1481",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "금천구",
+      "center": "금천구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.geumcheon.go.kr/health/contents.do?key=4559",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "금천구",
+      "center": "금천구보건소",
+      "name": "예비부부 건강검진",
+      "url": "https://www.geumcheon.go.kr/health/contents.do?key=4620",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "금천구",
+      "center": "금천구보건소",
+      "name": "마음건강검진 상담지원",
+      "url": "https://www.geumcheon.go.kr/health/contents.do?key=4713",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "영등포구",
+      "center": "영등포구보건소",
+      "name": "청년 1인가구 건강검진",
+      "url": "https://www.ydp.go.kr/health/contents.do?key=6088",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "영등포구",
+      "center": "영등포구보건소",
+      "name": "간염검사",
+      "url": "https://www.ydp.go.kr/health/contents.do?key=3476",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "영등포구",
+      "center": "영등포구보건소",
+      "name": "체성분검사 및 운동상담",
+      "url": "https://www.ydp.go.kr/health/contents.do?key=3474",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "영등포구",
+      "center": "영등포구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.ydp.go.kr/health/contents.do?key=3584",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "영등포구",
+      "center": "영등포구보건소",
+      "name": "골다공증 검사",
+      "url": "https://www.ydp.go.kr/health/contents.do?key=3611",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "영등포구",
+      "center": "영등포구보건소",
+      "name": "임신 준비 지원",
+      "url": "https://www.ydp.go.kr/health/contents.do?key=6073",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "영등포구",
+      "center": "영등포구보건소",
+      "name": "마음건강검진 상담지원",
+      "url": "https://www.ydp.go.kr/health/contents.do?key=5569",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "관악구",
+      "center": "관악구보건소",
+      "name": "청년 1인가구 무료 건강검진",
+      "url": "https://www.gwanak.go.kr/site/health/04/10403020000002024040504.jsp",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "관악구",
+      "center": "관악구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.gwanak.go.kr/site/health/04/10401070000002016051301.jsp",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "관악구",
+      "center": "관악구보건소",
+      "name": "모바일 헬스케어",
+      "url": "https://www.gwanak.go.kr/site/health/05/10501120000002025032710.jsp",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "관악구",
+      "center": "관악구보건소",
+      "name": "임신준비 지원",
+      "url": "https://www.gwanak.go.kr/site/health/05/10502010600002024101710.jsp",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "서초구",
+      "center": "서초구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.seocho.go.kr/site/sh/03/10304010300002024112109.jsp",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강남구",
+      "center": "강남구보건소",
+      "name": "대사증후군 관리(전문 관리센터)",
+      "url": "https://health.gangnam.go.kr/web/business/promotion/sub02.do",
+      "status": "failed",
+      "checked_at": null
+    },
+    {
+      "district": "강남구",
+      "center": "강남구보건소",
+      "name": "모바일 헬스케어",
+      "url": "https://health.gangnam.go.kr/web/business/promotion/sub03.do",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강남구",
+      "center": "강남구보건소",
+      "name": "금연클리닉",
+      "url": "https://health.gangnam.go.kr/web/business/promotion/clinic/sub01.do",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강남구",
+      "center": "강남구보건소",
+      "name": "골밀도 검사",
+      "url": "https://health.gangnam.go.kr/web/checkup/checkup/inspection/sub02.do",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강남구",
+      "center": "강남구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://health.gangnam.go.kr/web/business/moja/sub01.do",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "송파구",
+      "center": "송파구보건소",
+      "name": "B형간염검사",
+      "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4500",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "송파구",
+      "center": "송파구보건소",
+      "name": "C형간염검사",
+      "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4501",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "송파구",
+      "center": "송파구보건소",
+      "name": "일반혈액검사",
+      "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4503",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "송파구",
+      "center": "송파구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4558",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "송파구",
+      "center": "송파구보건소",
+      "name": "금연클리닉",
+      "url": "https://www.songpa.go.kr/ehealth/contents.do?key=4549",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "송파구",
+      "center": "송파구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://www.songpa.go.kr/ehealth/contents.do?key=6154",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "송파구",
+      "center": "송파구보건소",
+      "name": "마음건강검진 상담지원",
+      "url": "https://www.songpa.go.kr/ehealth/contents.do?key=6082",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강동구",
+      "center": "강동구보건소",
+      "name": "대사증후군 관리",
+      "url": "https://health.gangdong.go.kr/health/site/main/content/GD200800100",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강동구",
+      "center": "강동구보건소",
+      "name": "모바일 헬스케어",
+      "url": "https://health.gangdong.go.kr/health/site/main/content/GD200800200",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강동구",
+      "center": "강동구보건소",
+      "name": "신혼부부 건강검진",
+      "url": "https://health.gangdong.go.kr/health/site/main/content/GD00020080",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강동구",
+      "center": "강동구보건소",
+      "name": "임신 사전건강관리 지원",
+      "url": "https://health.gangdong.go.kr/health/site/main/content/GD20010610",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
+    },
+    {
+      "district": "강동구",
+      "center": "강동구보건소",
+      "name": "마음건강검진 상담지원",
+      "url": "https://health.gangdong.go.kr/health/site/main/content/GD20060200",
+      "status": "checked",
+      "checked_at": "2026-11-11T11:00:37.137256+09:00"
     }
   ]
 }
