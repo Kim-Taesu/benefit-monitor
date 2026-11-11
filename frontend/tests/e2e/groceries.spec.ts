@@ -237,7 +237,10 @@ for(const [width,height] of [[360,800],[390,844]])test(`discount line sits under
  const link=lines.first().getByRole('link',{name:'원문'});
  await expect(link).toHaveAttribute('href','https://www.mof.go.kr/deal-a');
  await expect(link).toHaveAttribute('target','_blank');
- await expect(link).toHaveAttribute('rel','noopener');
+ await expect(link).toHaveAttribute('rel','noopener noreferrer');
+ // The date piece never splits across lines, and the tap targets are 44px tall.
+ for(const nb of await lines.locator('.nb').all())expect(await nb.evaluate(e=>e.getClientRects().length)).toBe(1);
+ expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
  await expect(page.locator('#groceries [role=status]')).toContainText('진행 중인 공식 할인행사 [테스트] 진행 행사 A');
  await page.screenshot({path:`../docs/qa/screenshots/grocery-discount-${width}.png`});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
@@ -256,6 +259,7 @@ test('외 N건 appears for a third link and opens the benefits tab',async({page}
  await page.getByRole('tab',{name:'장보기'}).click();
  await page.locator('#grocery-q').fill('고등어');
  await expect(page.locator('.grocery-quick-deals li')).toHaveCount(3);
+ expect((await page.getByRole('button',{name:'외 1건'}).boundingBox())!.height).toBeGreaterThanOrEqual(44);
  await page.getByRole('button',{name:'외 1건'}).click();
  await expect(page.getByRole('tab',{name:'혜택'})).toHaveAttribute('aria-selected','true');
  await expect(page.locator('#results')).toBeVisible();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { quickMatch, baselineBadge, discountsFor, discountLine, won, type BasketItem, type PriceRow, type DiscountLink } from './groceries';
+import { quickMatch, baselineBadge, discountsFor, discountLine, discountParts, won, type BasketItem, type PriceRow, type DiscountLink } from './groceries';
 const props=defineProps<{q:string;basket:BasketItem[];rows:PriceRow[];produceDate:string|null;meatDate:string|null;discounts?:DiscountLink[]}>();
 const emit=defineEmits<{pick:[name:string];more:[]}>();
 const md=(d:string|null)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
@@ -22,7 +22,7 @@ const view=computed(()=>{
     <p class="grocery-quick-price"><strong>{{ won(view.row.current) }}</strong> /{{ view.row.unit.replace(/^원\//,'') }}</p>
     <span v-if="view.badge" class="grocery-badge" :class="view.badge.level">{{ view.badge.label }}</span>
     <ul v-if="view.disc.shown.length" class="grocery-quick-deals" aria-label="진행 중인 공식 할인행사">
-      <li v-for="l in view.disc.shown" :key="l.url+l.end">{{ discountLine(l) }} <a :href="l.url" target="_blank" rel="noopener">원문</a></li>
+      <li v-for="l in view.disc.shown" :key="l.url+l.end">{{ discountParts(l).head }} · <template v-if="l.stores">{{ l.stores }} · </template><span class="nb">{{ discountParts(l).date }}</span> <a :href="l.url" target="_blank" rel="noopener noreferrer">원문</a></li>
       <li v-if="view.disc.more"><button type="button" @click="emit('more')">외 {{ view.disc.more }}건</button></li>
     </ul>
     <p class="grocery-quick-note"><template v-if="view.avg"><template v-if="view.row.kind==='meat'">조사 방식 변경(7월) 후 </template>{{ Math.min(view.avg.months,12) }}개월 평균 {{ won(view.avg.avg) }}<template v-if="view.date"> · </template></template><template v-if="view.date">{{ view.date }} 조사</template></p>

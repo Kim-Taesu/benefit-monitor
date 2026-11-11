@@ -235,19 +235,27 @@ export function baselineBadge(row:PriceRow,item:BasketItem):{level:'cheap'|'norm
 }
 
 export interface DiscountLink{basketId:string;title:string;discount:string|null;stores:string|null;start:string;end:string;url:string}
-const validDay=(v:unknown):v is string=>typeof v==='string'&&DATE.test(v)&&Number.isFinite(Date.parse(v));
+// Round-trips through toISOString so impossible dates such as 2026-02-30 are rejected.
+const validDay=(v:unknown):v is string=>{
+ if(typeof v!=='string'||!DATE.test(v))return false;
+ const t=Date.parse(v);
+ return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===v;
+};
 /** Official discount links (briefing.json grocery_discounts). A link outside today's KST day, a non-https url or any malformed field is dropped. */
 export function parseDiscounts(raw:unknown,now:number):DiscountLink[]{
  if(!record(raw)||!record(raw.grocery_discounts))return [];
  const g=raw.grocery_discounts;
  if(g.schema_version!==1||g.source!=='grocery_discounts'||!Array.isArray(g.links)||g.links.length>200)return [];
- const today=kstDate(now),out:DiscountLink[]=[];
+ const today=kstDate(now),out:DiscountLink[]=[],seen=new Set<string>();
  for(const x of g.links){
   if(!record(x)||!text(x.basket_id,40)||!text(x.title,120)||!validDay(x.start)||!validDay(x.end))continue;
   if(x.discount!==null&&!text(x.discount,40))continue;
   if(x.stores!==null&&!text(x.stores,60))continue;
   if(typeof x.url!=='string'||x.url.length>500||!/^https:\/\/[^\s<>"']+$/.test(x.url))continue;
   if(today<x.start||today>x.end)continue;
+  const key=[x.basket_id,x.url,x.end].join('|');
+  if(seen.has(key))continue;
+  seen.add(key);
   out.push({basketId:x.basket_id,title:x.title,discount:x.discount as string|null,stores:x.stores as string|null,start:x.start,end:x.end,url:x.url});
  }
  return out;
@@ -257,7 +265,12 @@ export function discountsFor(links:DiscountLink[],basketId:string):{shown:Discou
  const mine=links.filter(l=>l.basketId===basketId).sort((a,b)=>a.end.localeCompare(b.end));
  return {shown:mine.slice(0,2),more:Math.max(0,mine.length-2)};
 }
+/** The line in three pieces so the template can keep the date from splitting across lines. */
+export function discountParts(l:DiscountLink):{head:string;stores:string|null;date:string}{
+ return {head:[l.title,l.discount].filter(Boolean).join(' '),stores:l.stores,date:`${Number(l.end.slice(5,7))}/${Number(l.end.slice(8,10))}까지`};
+}
 /** '{title} {discount} · {stores} · {M/D}까지'; null pieces and their separators are left out. */
 export function discountLine(l:DiscountLink):string{
- return [[l.title,l.discount].filter(Boolean).join(' '),l.stores,`${Number(l.end.slice(5,7))}/${Number(l.end.slice(8,10))}까지`].filter(Boolean).join(' · ');
+ const p=discountParts(l);
+ return [p.head,p.stores,p.date].filter(Boolean).join(' · ');
 }

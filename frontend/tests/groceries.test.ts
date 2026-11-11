@@ -261,3 +261,10 @@ test('discountsFor shows at most 2 by end date and counts the rest',()=>{
  assert.equal(r.more,1);
  assert.deepEqual(discountsFor(links,'none'),{shown:[],more:0});
 });
+test('parseDiscounts rejects impossible calendar dates and drops duplicates',()=>{
+ assert.equal(parseDiscounts(discounts([link({start:'2026-02-30'})]),NOW).length,0);
+ assert.equal(parseDiscounts(discounts([link({end:'2026-13-01'})]),NOW).length,0);
+ assert.equal(parseDiscounts(discounts([link({end:'2026-11-31'})]),NOW).length,0);
+ const dup=parseDiscounts(discounts([link(),link(),link({url:'https://www.mof.go.kr/b'}),link({basket_id:'other'})]),NOW);
+ assert.equal(dup.length,3);
+});
