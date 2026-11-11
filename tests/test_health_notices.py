@@ -184,3 +184,70 @@ class RepositoryTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+PROGRAMS = [dict(district='강서구', name='대사증후군 관리', url=f'https://www.gangseo.seoul.kr/health/ht02010{i}') for i in range(3)]
+PROGRAM_PAGE = '<html><h2>대사증후군 관리사업</h2><p>무료 검진</p></html>'
+
+
+class ProgramTests(unittest.TestCase):
+    def pages(self, **over):
+        pages = CollectTests.pages(CollectTests())
+        pages.update({p['url']: PROGRAM_PAGE for p in PROGRAMS})
+        pages.update(over)
+        return pages
+
+    def run_at(self, now, pages, previous=None, budget=40):
+        cost_policy.reset(budget)
+        fetch, calls = fake_fetch(pages)
+        with patch.object(h, 'fetch', fetch):
+            return h.collect(dict(SOURCE, health_programs=PROGRAMS), now, previous), calls
+
+    def test_first_run_checks_all_then_one_third_per_day(self):
+        first, calls = self.run_at(NOW, self.pages())
+        self.assertEqual([p['status'] for p in first['programs']], ['checked'] * 3)
+        self.assertEqual(sum(c in {p['url'] for p in PROGRAMS} for c in calls), 3)
+        self.assertEqual(first['programs'][0]['center'], '강서구보건소')
+        later = NOW + timedelta(days=1)
+        second, calls = self.run_at(later, self.pages(), first)
+        self.assertEqual(sum(c in {p['url'] for p in PROGRAMS} for c in calls), 1)
+        self.assertEqual(sum(p['checked_at'] == later.isoformat() for p in second['programs']), 1)
+
+    def test_missing_page_fails_and_is_rechecked_next_day(self):
+        first, _ = self.run_at(NOW, self.pages(**{PROGRAMS[0]['url']: '<p>요청하신 페이지를 찾을 수 없습니다</p>'}))
+        self.assertEqual(first['programs'][0]['status'], 'failed')
+        self.assertIsNone(first['programs'][0]['checked_at'])
+        second, calls = self.run_at(NOW + timedelta(days=1), self.pages(), first)
+        self.assertIn(PROGRAMS[0]['url'], calls)
+        self.assertEqual(second['programs'][0]['status'], 'checked')
+
+    def test_page_without_the_programme_name_fails(self):
+        with self.assertRaises(ValueError):
+            h.check_program('<p>금연 클리닉</p>', '대사증후군 관리')
+        h.check_program('<p>대사 증후군</p>', '대사증후군 관리')
+
+    def test_budget_exhaustion_keeps_previous_programme_results(self):
+        first, _ = self.run_at(NOW, self.pages())
+        second, _ = self.run_at(NOW + timedelta(days=3), self.pages(), first, budget=4)
+        self.assertEqual([p['status'] for p in second['programs']], ['checked'] * 3)
+        self.assertEqual({p['checked_at'] for p in second['programs']}, {NOW.isoformat()})
+
+    def test_checked_programmes_become_candidates_and_sanitize_validates_them(self):
+        bundle, _ = self.run_at(NOW, self.pages())
+        titles = {c['title'] for c in h.candidates(bundle, NOW)}
+        self.assertIn('강서구보건소 대사증후군 관리', titles)
+        bundle['programs'][0]['district'] = '없는구'
+        self.assertIsNone(h.sanitize(bundle, NOW))
+
+    def test_old_bundle_without_programmes_is_still_valid(self):
+        bundle, _ = self.run_at(NOW, self.pages())
+        bundle.pop('programs')
+        self.assertEqual(h.sanitize(bundle, NOW)['programs'], [])
+
+    def test_repository_programmes_are_on_the_allowlist_and_collectable_districts(self):
+        source = next(s for s in load(ROOT / 'sources.yaml', None)['sources'] if s['id'] == 'health_notices')
+        programs = h._programs(source)
+        collectable = {b['district'] for b in source['health_boards'] if 'unavailable' not in b}
+        self.assertTrue(programs)
+        self.assertLessEqual({p['district'] for p in programs}, collectable)
+        self.assertIn('https://www.gangseo.seoul.kr/health/ht020103', {p['url'] for p in programs})

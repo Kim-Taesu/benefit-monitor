@@ -11,6 +11,8 @@ const visible=computed(()=>filtered.value.slice(0,shown.value));
 const hints=computed(()=>(bundle.value?.items??[]).filter(i=>i.hint&&(!district.value||i.district===district.value)).length);
 const selectedBoard=computed(()=>bundle.value?.boards.find(b=>b.district===district.value)??null);
 const others=computed(()=>(bundle.value?.boards??[]).filter(b=>b.status!=='checked'));
+const programs=computed(()=>(bundle.value?.programs??[]).filter(p=>(!district.value||p.district===district.value)&&(!query.value.trim()||[p.name,p.center].some(v=>v.includes(query.value.trim())))));
+const programGroups=computed(()=>{const m=new Map<string,typeof programs.value>();for(const p of programs.value){if(!m.has(p.district))m.set(p.district,[]);m.get(p.district)!.push(p);}return [...m.entries()];});
 const md=(d:string)=>`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`;
 </script>
 <template>
@@ -22,6 +24,15 @@ const md=(d:string)=>`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`;
       <div class="quick-filters" aria-label="공지 종류"><button type="button" :aria-pressed="hintOnly" @click="hintOnly=!hintOnly;shown=PAGE">검진·접종·프로그램만 <span>{{ hints }}</span></button></div>
       <div class="filter-field health-search"><label for="health-q">검색</label><input id="health-q" v-model="query" type="search" maxlength="100" placeholder="예: 검진, 독감, 치매" autocomplete="off" @input="shown=PAGE"></div>
     </div>
+    <details v-if="programGroups.length" :key="district||'all'" class="health-programs" :open="!!district||!!query.trim()">
+      <summary><h3 id="health-programs-title">상시 운영 검진·건강관리 <span>{{ programs.length }}곳</span></h3><small v-if="!district">지역을 고르면 바로 펼쳐집니다</small></summary>
+      <p class="fine-print">공지가 아니라 보건소 사업 안내 페이지라서 연중 운영하는 무료 검진(대사증후군 등)이 여기 있습니다. 페이지가 살아 있는지만 확인했고, 대상·비용·예약 방법은 원문에서 확인하세요.</p>
+      <div v-for="[name,rows] in programGroups" :key="name" class="health-program-group">
+        <strong>{{ name }}</strong>
+        <ul><li v-for="p in rows" :key="p.url"><a :href="p.url" target="_blank" rel="noopener noreferrer">{{ p.name }}<span class="sr-only"> (새 창, {{ p.center }})</span></a><small v-if="p.stale" class="health-stale"> 확인 지연</small><small v-else-if="p.checkedAt"> · 확인 {{ md(p.checkedAt.slice(0,10)) }}</small></li></ul>
+      </div>
+    </details>
+    <h3 class="health-notices-title">최근 공지</h3>
     <p class="fine-print">"검진·접종·프로그램" 표시는 제목 단어만 본 것입니다. 무료 여부·대상·기간은 원문에서 확인하세요. 확인된 건은 혜택 탭에 카드로 올라갑니다.</p>
     <div v-if="selectedBoard&&selectedBoard.status!=='checked'" class="notice warning health-board-note" role="status"><span aria-hidden="true">!</span><div><strong>{{ selectedBoard.name }}: {{ boardStatus[selectedBoard.status] }}</strong><p>{{ selectedBoard.reason }}<template v-if="selectedBoard.count"> · 마지막으로 받은 공지 {{ selectedBoard.count }}건을 보여줍니다.</template></p><a class="official-link" :href="selectedBoard.homeUrl" target="_blank" rel="noopener noreferrer">{{ selectedBoard.name }} 바로가기 <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a></div></div>
     <ul v-if="visible.length" class="health-list">

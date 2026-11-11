@@ -25,3 +25,13 @@ test('stale, foreign-host or malformed bundles are rejected',()=>{
  assert.equal(parseHealth(raw([board(),board()]),NOW),null);
  assert.equal(parseHealth({},NOW),null);
 });
+
+test('programmes: kept per known district, stale after 10 days, malformed rejected',()=>{
+ const prog=(over:Record<string,unknown>={})=>({district:'강서구',center:'강서구보건소',name:'대사증후군 관리',url:'https://www.gangseo.seoul.kr/health/ht020103',status:'checked',checked_at:'2026-11-11T00:07:00+09:00',...over});
+ const r=parseHealth(raw([board()],{programs:[prog(),prog({name:'임신 사전건강관리 지원',url:'https://www.gangseo.seoul.kr/health/ht020231',checked_at:'2026-10-20T00:07:00+09:00'})]}),NOW)!;
+ assert.deepEqual(r.programs.map(p=>[p.name,p.stale]),[['대사증후군 관리',false],['임신 사전건강관리 지원',true]]);
+ assert.equal(parseHealth(raw([board()]),NOW)!.programs.length,0);
+ assert.equal(parseHealth(raw([board()],{programs:[prog({district:'없는구'})]}),NOW),null);
+ assert.equal(parseHealth(raw([board()],{programs:[prog({checked_at:null})]}),NOW),null);
+ assert.equal(parseHealth(raw([board()],{programs:[prog({url:'javascript:x'})]}),NOW),null);
+});

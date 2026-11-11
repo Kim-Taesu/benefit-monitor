@@ -24,7 +24,12 @@ from .validation import official
 SOURCE = "health_notices"
 NOTICE = ("각 보건소 공식 공지 게시판 첫 페이지의 제목·날짜를 그대로 옮겼습니다. 사람 검증 전이며 "
           "대상·기간·비용은 원문에서 확인하세요.")
-MAX_REQUESTS = 40
+MAX_REQUESTS = 100  # 공지 약 29 + 상시 사업 페이지 하루 약 21(첫 실행은 전부 약 62)
+PROGRAM_EVERY_DAYS = 3  # 상시 사업 페이지는 거의 안 바뀌어 사흘에 한 번씩 돌아가며 확인
+PROGRAM_STALE_DAYS = 10  # 이보다 오래 확인 못 한 페이지는 화면에서 '확인 지연'으로 보인다
+PROGRAM_KEYS = {"district", "center", "name", "url", "status", "checked_at"}
+PROGRAM_STATUSES = ("checked", "failed", "pending")
+GONE = re.compile(r"찾을 수 없습니다|존재하지 않는 페이지|삭제된 페이지|페이지가 없습니다")
 KEEP_DAYS = 60       # 공지 날짜가 이보다 오래되면 보이지 않는다
 CANDIDATE_DAYS = 45  # AI 조사 후보로 넣는 공지 날짜 범위
 STALE_HOURS = 30
@@ -149,6 +154,34 @@ def _boards(source):
     return boards
 
 
+def _programs(source):
+    programs = source.get("health_programs", [])
+    if not isinstance(programs, list):
+        raise ValueError("health_programs must be a list")
+    seen = set()
+    for program in programs:
+        if not isinstance(program, dict) or set(program) != {"district", "name", "url"} or program["url"] in seen:
+            raise ValueError("invalid health program entry")
+        if not official(program["url"], source["domains"]):
+            raise ValueError("health program URL outside allowlist: " + program["url"])
+        seen.add(program["url"])
+    return programs
+
+
+def _words(name):
+    return [w for w in re.split(r"[\s\[\]()·]+", name) if len(w) >= 2 and w not in ("관리", "지원", "사업", "구로형")]
+
+
+def check_program(body, name):
+    """The page still describes the programme: one of its name words is there and it is no error page."""
+    text = htmlmod.unescape(re.sub(r"<[^>]+>", " ", body))
+    if GONE.search(text):
+        raise ValueError("programme page reports missing content")
+    compact = re.sub(r"\s+", "", text)
+    if not any(re.sub(r"\s+", "", w) in compact for w in _words(name)):
+        raise ValueError("programme name not on page")
+
+
 def collect(source, now, previous=None):
     """Bundle of all boards. A board's fetch failure keeps its previous items (marked failed)."""
     from .operations import error_info
@@ -156,6 +189,20 @@ def collect(source, now, previous=None):
     kept = sanitize(previous, now, allow_stale=True)
     prev = {b["district"]: b for b in kept["boards"]} if kept else {}
     robots = {}
+
+    def robots_for(url):
+        host = "https://" + urlsplit(url).netloc
+        if host not in robots:
+            try:
+                robots[host] = fetch(host + "/robots.txt", source["domains"]).decode("utf-8", "replace")
+            except RuntimeError:
+                raise
+            except Exception as error:
+                robots[host] = error
+        if isinstance(robots[host], Exception):
+            raise robots[host]
+        return robots[host]
+
     out = []
     for board in boards:
         base = {k: board.get(k) for k in ("district", "name", "home_url")} | {"list_url": board.get("list_url") or board["home_url"]}
@@ -163,16 +210,8 @@ def collect(source, now, previous=None):
             out.append(base | {"status": "unavailable", "reason": board["unavailable"], "checked_at": None, "items": []})
             continue
         url = board["list_url"]
-        host = "https://" + urlsplit(url).netloc
         try:
-            if host not in robots:
-                try:
-                    robots[host] = fetch(host + "/robots.txt", source["domains"]).decode("utf-8", "replace")
-                except Exception as error:
-                    robots[host] = error
-            if isinstance(robots[host], Exception):
-                raise robots[host]
-            if not allowed(robots[host], url, AGENT):
+            if not allowed(robots_for(url), url, AGENT):
                 raise PermissionError("robots disallows health notice list")
             body = fetch(url, source["domains"]).decode("utf-8", "replace")
             items = [_item(*row) for row in parse(body, board)]
@@ -186,7 +225,29 @@ def collect(source, now, previous=None):
             out.append(base | {"status": "failed", "reason": info.get("category") or type(error).__name__,
                                "checked_at": old["checked_at"] if old else None,
                                "items": old["items"] if old else []})
-    return {"schema_version": 1, "source": SOURCE, "fetched_at": now.isoformat(), "notice": NOTICE, "boards": out}
+    centers = {b["district"]: b["name"] for b in boards}
+    old_programs = {p["url"]: p for p in (kept or {}).get("programs", [])}
+    slot = now.astimezone(ZoneInfo("Asia/Seoul")).date().toordinal() % PROGRAM_EVERY_DAYS
+    programs, exhausted = [], False
+    for index, program in enumerate(_programs(source)):
+        old = old_programs.get(program["url"])
+        row = {"district": program["district"], "center": centers.get(program["district"], program["district"] + " 보건소"),
+               "name": program["name"], "url": program["url"],
+               "status": old["status"] if old else "pending", "checked_at": old["checked_at"] if old else None}
+        due = old is None or old["status"] != "checked" or index % PROGRAM_EVERY_DAYS == slot
+        if due and not exhausted:
+            try:
+                if not allowed(robots_for(program["url"]), program["url"], AGENT):
+                    raise PermissionError("robots disallows programme page")
+                check_program(fetch(program["url"], source["domains"]).decode("utf-8", "replace"), program["name"])
+                row.update(status="checked", checked_at=now.isoformat())
+            except RuntimeError:
+                exhausted = True  # 예산 소진: 남은 페이지는 이전 확인 결과를 유지한다
+            except Exception:
+                row.update(status="failed")
+        programs.append(row)
+    return {"schema_version": 1, "source": SOURCE, "fetched_at": now.isoformat(), "notice": NOTICE, "boards": out,
+            "programs": programs}
 
 
 def _https(url):
@@ -237,7 +298,25 @@ def sanitize(bundle, now, allow_stale=False):
                 if item["date"] >= oldest:
                     items.append(dict(item, hint=hint(item["title"])))
             boards.append(dict(board, items=items))
-        return {"schema_version": 1, "source": SOURCE, "fetched_at": fetched.isoformat(), "notice": NOTICE, "boards": boards}
+        programs, urls = [], set()
+        raw_programs = bundle.get("programs", [])
+        if not isinstance(raw_programs, list) or len(raw_programs) > 150:
+            return None
+        for program in raw_programs:
+            if not isinstance(program, dict) or set(program) != PROGRAM_KEYS or program["status"] not in PROGRAM_STATUSES:
+                return None
+            if (not _https(program["url"]) or program["url"] in urls or program["district"] not in seen
+                    or not isinstance(program["name"], str) or not 0 < len(program["name"]) <= 40
+                    or not isinstance(program["center"], str) or not 0 < len(program["center"]) <= 30):
+                return None
+            if program["checked_at"] is not None:
+                datetime.fromisoformat(program["checked_at"])
+            elif program["status"] == "checked":
+                return None
+            urls.add(program["url"])
+            programs.append(dict(program))
+        return {"schema_version": 1, "source": SOURCE, "fetched_at": fetched.isoformat(), "notice": NOTICE, "boards": boards,
+                "programs": programs}
     except (KeyError, TypeError, ValueError):
         return None
 
@@ -255,6 +334,11 @@ def candidates(bundle, now):
                 out.append(dict(source=SOURCE, url=item["url"], title=item["title"],
                                 summary=f"{board['name']} 공지({item['date']}) 후보. 대상·기간·비용은 원문 확인 필요.",
                                 districts=[board["district"]], needs_recheck=True))
+    for program in clean["programs"]:
+        if program["status"] == "checked":
+            out.append(dict(source=SOURCE, url=program["url"], title=f"{program['center']} {program['name']}",
+                            summary=f"{program['center']} 상시 사업 안내 페이지 후보. 대상·비용·운영 시간은 원문 확인 필요.",
+                            districts=[program["district"]], needs_recheck=True))
     return out
 
 
@@ -286,7 +370,9 @@ def main(argv=None, now=None):
             save(args.root / FILE, bundle)
             checked = [b for b in bundle["boards"] if b["status"] == "checked"]
             print("Health notices saved;", len(checked), "of", len(bundle["boards"]), "boards checked;",
-                  sum(len(b["items"]) for b in bundle["boards"]), "notices; requests", cost_policy.budget.used)
+                  sum(len(b["items"]) for b in bundle["boards"]), "notices;",
+                  sum(p["status"] == "checked" for p in bundle["programs"]), "of", len(bundle["programs"]), "programmes checked;",
+                  "requests", cost_policy.budget.used)
             return 0 if checked else 1
         if attempt == 0:
             _, sha = mirror._get(args.repository, NAME)
