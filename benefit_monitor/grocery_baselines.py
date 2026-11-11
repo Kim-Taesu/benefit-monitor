@@ -66,7 +66,7 @@ def basket(source):
     return items
 
 
-_KAMIS_HEAD = re.compile(r"/\s*[^/,]+/\s*([^,]+?)\s*,\s*등급\s*:\s*(\S+)\s*,\s*단위\s*:\s*(\S+)\s*기준")
+_KAMIS_HEAD = re.compile(r"/\s*[^/,]+/\s*([^,]+?)\s*,\s*등급\s*:\s*(\S+)\s*,\s*단위\s*:\s*(\S+)(?:\s[^,]{0,60}?)?\s*기준")
 
 
 def _complete_months(today):

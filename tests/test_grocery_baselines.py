@@ -128,6 +128,13 @@ class KamisMonthlyTests(unittest.TestCase):
         self.assertEqual((got['unit'], got['kind'], got['grade'], got['months']), ('1마리', '국산(신선 냉장)', '大', 12))
         self.assertEqual(got['avg'], round(sum([4554, 4478, 4477, 4657, 4541, 4505, 4824, 4604, 4488, 4396, 4254, 4283]) / 12))
 
+    def test_kamis_monthly_onion_reads_unit(self):
+        # 양파 제목은 단위 뒤에 "`25년 햇양파 가격임" 주석이 끼어 "단위 : 1kg 기준" 형태가 아니다.
+        got = grocery_baselines.parse_kamis_monthly(fixture('kamis_monthly_onion.html'), self.TODAY)
+        self.assertEqual((got['unit'], got['kind'], got['grade'], got['months']), ('1kg', '양파', '상품', 12))
+        self.assertTrue(grocery_baselines._produce_matches('양파|양파|1kg|상품', got))
+        self.assertFalse(grocery_baselines._produce_matches('양파|양파|100g|상품', got))
+
     def test_kamis_monthly_skips_dash_months(self):
         page = blank(self.rice(), '62,387', '62,384')  # 2026-06 and 2025-12
         got = grocery_baselines.parse_kamis_monthly(page, self.TODAY)
