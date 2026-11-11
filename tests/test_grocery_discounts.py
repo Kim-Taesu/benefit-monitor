@@ -231,18 +231,87 @@ class ClauseTests(unittest.TestCase):
         self.assertEqual(gd.link([event("양파 할인", display_until="bad")], basket(), TODAY), [])
 
 
-class KeepPresentTests(unittest.TestCase):
-    def bundle(self, *urls):
-        return dict(schema_version=1, source="grocery_discounts", generated_at="2026-11-11T09:00:00+09:00",
-                    links=[dict(basket_id="onion", title="t", discount=None, stores=None, start="2026-11-07",
-                                end="2026-11-27", url=u) for u in urls])
+def real_basket():
+    import json
+    from pathlib import Path
+    from benefit_monitor.grocery_baselines import basket as load_basket
+    source = json.loads((Path(__file__).resolve().parents[1] / "sources/groceries.json").read_text(encoding="utf-8"))
+    return [{k: b[k] for k in ("id", "name", "aliases", "group", "row")} for b in load_basket(source["collect"])]
 
-    def test_keeps_only_links_of_present_government_items(self):
-        items = [dict(source="mof_press", url="https://a"), dict(source="test", url="https://c")]
-        kept = gd.keep_present(self.bundle("https://a", "https://b", "https://c"), items)
-        self.assertEqual([x["url"] for x in kept["links"]], ["https://a"])
-        self.assertIsNone(gd.keep_present(self.bundle("https://b"), items))
-        self.assertIsNone(gd.keep_present("x", items))
+
+class ReviewFixTests(unittest.TestCase):
+    """2026-11-11 /code-review findings (ledger .ax/review-ledger-grocery-discount.md)."""
+
+    def test_1_farm_and_fishery_compound_is_broad_not_seafood(self):
+        for title in ("농축수산물 전 품목 20% 할인 11월 7일~20일", "농수산물 20% 할인 11월 7일~20일",
+                      "농축수산식품 20% 할인 11월 7일~20일"):
+            with self.subTest(title=title):
+                self.assertEqual(gd.link([event(title, end="2026-11-20", dated=False)], real_basket(), TODAY), [])
+        self.assertEqual(ids(gd.link([event("수산물 20% 할인 11월 7일~20일", end="2026-11-20", dated=False)],
+                                     real_basket(), TODAY)), ["mackerel", "squid"])
+
+    def test_2_names_need_a_left_boundary_and_pork_clause_is_not_beef(self):
+        cases = {"돼지 등심 30% 할인": {"hanwoo_sirloin", "us_short_rib"},
+                 "양배추·단호박 20% 할인": {"napa_cabbage", "zucchini"},
+                 "돼지갈비살 20% 할인": {"us_short_rib"},
+                 "한돈 등심 20% 할인": {"hanwoo_sirloin"},
+                 "한돈 갈비살 20% 할인": {"us_short_rib"}}
+        for title, wrong in cases.items():
+            with self.subTest(title=title):
+                found = set(ids(gd.link([event(title)], real_basket(), TODAY)))
+                self.assertFalse(found & wrong, found)
+        # Still linked: own words with a boundary, and a clause naming beef next to pork.
+        self.assertEqual(ids(gd.link([event("배추 20% 할인")], real_basket(), TODAY)), ["napa_cabbage"])
+        self.assertIn("hanwoo_sirloin", ids(gd.link([event("한우·한돈 등심 20% 할인")], real_basket(), TODAY)))
+
+    def test_3_bad_title_is_skipped_not_the_whole_bundle(self):
+        items = [event("<대한민국 수산대전> 고등어 20% 할인", url="https://www.mof.go.kr/bad"),
+                 event("오징어 20% 할인", url="https://www.mof.go.kr/good")]
+        links = gd.link(items, real_basket(), TODAY)
+        self.assertEqual([(x["basket_id"], x["url"]) for x in links], [("squid", "https://www.mof.go.kr/good")])
+        self.assertEqual(gd.link([event("고등어 할인 " + "가" * 200)], real_basket(), TODAY), [])
+        self.assertEqual(gd.link([event("고등어\x07 할인")], real_basket(), TODAY), [])
+        good = dict(basket_id="squid", title="오징어 20% 할인", discount=None, stores=None, start="2026-11-07",
+                    end="2026-11-27", url="https://www.mof.go.kr/good")
+        bundle = dict(schema_version=1, source="grocery_discounts", generated_at="2026-11-11T09:00:00+09:00",
+                      links=[dict(good, basket_id="mackerel", title="<대한민국 수산대전> 고등어"), good,
+                             dict(good, url="http://www.mof.go.kr/x"), dict(good, extra=1)])
+        self.assertEqual(gd.sanitize(bundle, NOW)["links"], [good])
+        self.assertIsNone(gd.sanitize(dict(bundle, links=bundle["links"][:1]), NOW))
+
+    def test_4_varying_period_check_uses_the_items_own_end(self):
+        item = event("가을 수산물 할인", "고등어 11월 7일~20일 30% 할인", "품목별 기간이 다르며 확인 필요.",
+                     end="2026-11-20", display_until="2026-11-15T23:59:00+09:00")
+        links = gd.link([item], real_basket(), TODAY)
+        self.assertEqual([(x["basket_id"], x["end"]) for x in links], [("mackerel", "2026-11-15")])
+
+    def test_6_dotted_full_dates_and_decimals(self):
+        links = gd.link([event("2026.11.07~2026.11.20 고등어 20% 할인", end="2026-11-20", dated=False)],
+                        real_basket(), TODAY)
+        self.assertEqual([(x["basket_id"], x["discount"]) for x in links], [("mackerel", "20% 할인")])
+        self.assertEqual(ids(gd.link([event("2026. 11. 7.~2026. 11. 20. 고등어 할인", end="2026-11-20", dated=False)],
+                                     real_basket(), TODAY)), ["mackerel"])
+        self.assertEqual(gd._days("2026.11.07~2026.11.20"), {(11, 7), (11, 20)})
+        for text in ("고등어 1.5kg", "고등어 2.5배", "11.7% 할인", "1.5 kg", "2.5L", "1.2만원"):
+            with self.subTest(text=text):
+                self.assertEqual(gd._days(text), set())
+        self.assertEqual(ids(gd.link([event("고등어 할인", "고등어 1.5kg 20% 할인")], real_basket(), TODAY)), ["mackerel"])
+        self.assertEqual(gd._days("11.7.~11.27."), {(11, 7), (11, 27)})
+
+    def test_5_8_recompute_uses_current_item_text(self):
+        baselines = dict(schema_version=1, source="grocery_baselines", fetched_at="2026-11-10T08:00:00+09:00",
+                         items=[dict(b, baseline=None) for b in real_basket()])
+        item = event("고등어 20% 할인", end="2026-11-20")
+        data = dict(items=[item], grocery_baselines=baselines, grocery_discounts=dict(
+            schema_version=1, source="grocery_discounts", generated_at="2026-11-10T09:00:00+09:00",
+            links=[dict(basket_id="mackerel", title=item["title"], discount="20% 할인", stores=None,
+                        start="2026-11-07", end="2026-11-20", url=item["url"])]))
+        moved = dict(item, valid_until="2026-11-12", conditions="행사 기간 11월 7일~11월 12일.")
+        bundle = gd.recompute(dict(data, items=[moved]), NOW)
+        self.assertEqual([(x["basket_id"], x["end"]) for x in bundle["links"]], [("mackerel", "2026-11-12")])
+        self.assertIsNone(gd.recompute(dict(data, items=[dict(item, labels={"region": "서울"})]), NOW))
+        self.assertIsNone(gd.recompute(dict(data, grocery_baselines=None), NOW))
+        self.assertIsNone(gd.recompute({k: v for k, v in data.items() if k != "grocery_baselines"}, NOW))
 
 
 if __name__ == "__main__":

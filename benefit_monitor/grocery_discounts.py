@@ -13,7 +13,12 @@ start or end date, the item has its own period there and is not linked. Two or m
 expressions in them give no discount (the link still shows title and dates). The start month/day must
 appear somewhere in the item text, so an unstated start is never trusted. When the text says periods
 differ by item (기간이 다르며, 기간 상이, 기간 별도), an item links only if its own sentence states both
-the link's start and end month/day.
+the link's start and end month/day (the item's own end, not the display_until-capped one).
+
+Review fixes (2026-11-11): item names/aliases need a left word boundary (배추 is not in 양배추); 수산물
+after 농/축 is broad wording; a clause naming pork never links a beef item unless it names beef too;
+2026.11.07 is a date but 1.5kg / 11.7% are not; recompute() rebuilds links after a takedown or snapshot
+redeploy instead of keeping stored lines.
 """
 import re
 from datetime import date, datetime
@@ -45,9 +50,19 @@ _CLAUSE_SPLIT = re.compile(r"(?<=[가-힣%)])[.!?](?=\s|$)|[;\n]")
 # 11월 7일 / 11월2~15일 (day-only end) / 11.7 / 11. 7. / 11/7
 _MONTH_DAY = re.compile(r"(?<!\d)(\d{1,2})\s*월\s*(\d{1,2})\s*일?(?:\s*~\s*(\d{1,2})\s*일)?")
 _VARYING_PERIOD = re.compile(r"기간[이은]?\s*(?:다르|다름|상이|별도)")
-_NUMERIC_DAY = re.compile(r"(?<![\d.,/])(\d{1,2})\s*[./]\s*(\d{1,2})(?![\d,])")
+# 2026.11.07 / 2026. 11. 7. (year first); read before the short forms and then removed from the text.
+_FULL_DAY = re.compile(r"(?<!\d)\d{4}\s*\.\s*(\d{1,2})\s*\.\s*(\d{1,2})(?!\d)\.?")
+# A number followed by a unit or % is a decimal (1.5kg, 2.5배, 11.7%), never a date.
+_NUMERIC_DAY = re.compile(r"(?<![\d.,/])(\d{1,2})\s*[./]\s*(\d{1,2})(?![\d,]|\s*(?:kg|g|배|%|원|만|개|마리|리터|L))", re.I)
 # Words that also start unrelated words: 닭갈비, 한우리 are not the chicken or hanwoo items.
-_WORD_PATTERNS = {"닭": r"닭(?:고기)?(?![가-힣])", "닭고기": r"닭고기", "한우": r"한우(?!리)"}
+# 수산물 inside 농수산물/농축수산물 is broad wording (every food), not seafood.
+_WORD_PATTERNS = {"닭": r"닭(?:고기)?(?![가-힣])", "닭고기": r"닭고기", "한우": r"한우(?!리)",
+                  "수산물": r"(?<![농축])수산물", "수산식품": r"(?<![농축])수산식품"}
+# Item names and aliases must start a word: 배추 in 양배추, 호박 in 단호박, 갈비살 in 돼지갈비살 are other items.
+_LEFT = r"(?<![가-힣])"
+_PORK = re.compile(r"돼지|한돈|돈육")
+_BEEF = re.compile(r"한우(?!리)|소고기|쇠고기")
+BEEF_IDS = frozenset({"hanwoo_sirloin", "us_short_rib"})
 _STORES = re.compile(r"대형마트|SSM|슈퍼|하나로마트|전통시장|온라인몰|온라인")
 # "국산" inside 미국산/중국산/외국산 is not a domestic marker.
 _DOMESTIC = re.compile(r"(?<![미중외])국산|국내산|우리(?= |$)|한우(?!리)|한돈")
@@ -78,6 +93,9 @@ def _clauses(item):
 def _days(text):
     """(month, day) pairs written in text; impossible ones are kept so they still count as 'other'."""
     found = set()
+    for m in _FULL_DAY.finditer(text):
+        found.add((int(m.group(1)), int(m.group(2))))
+    text = _FULL_DAY.sub(" ", text)
     for m in _MONTH_DAY.finditer(text):
         month = int(m.group(1))
         found.add((month, int(m.group(2))))
@@ -115,7 +133,8 @@ def _targets(text, basket):
     for item in basket:
         words = [item["name"]] + [a for a in item["aliases"]]
         # One-character aliases (무, 파, 쌀) match inside unrelated words, so they never link directly.
-        if any(len(w) >= 2 and w not in ORIGIN_ONLY_WORDS and _has(w, text) for w in words):
+        if any(len(w) >= 2 and w not in ORIGIN_ONLY_WORDS
+               and re.search(_LEFT + _WORD_PATTERNS.get(w, re.escape(w)), text) for w in words):
             found.add(item["id"])
     for words, wanted in GROUP_WORDS:
         if any(_has(w, text) for w in words):
@@ -125,6 +144,8 @@ def _targets(text, basket):
                 found |= set(wanted) & ids
     if _DOMESTIC.search(text):
         found -= IMPORT_IDS
+    if _PORK.search(text) and not _BEEF.search(text):
+        found -= BEEF_IDS  # '돼지 등심', '한돈 갈비살' are pork cuts
     return found
 
 
@@ -146,6 +167,7 @@ def link(items, basket, today):
         if not isinstance(item, dict) or item.get("validity_kind") != "fixed" or not _public(item):
             continue
         start, end = _date(item.get("valid_from")), _date(item.get("valid_until"))
+        own_end = end
         url, title = item.get("url"), item.get("title")
         try:
             until = _until(item)
@@ -154,16 +176,16 @@ def link(items, basket, today):
         if until is not None and end is not None:
             end = min(end, until)
         if start is None or end is None or not start <= today <= end \
-                or not isinstance(url, str) or not isinstance(title, str):
-            continue
+                or not isinstance(url, str) or not _short(title, 200):
+            continue  # a title sanitize would reject is skipped here, never rewritten
         text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "conditions"))
         if not any(w in text for w in DISCOUNT_WORDS) or (start.month, start.day) not in _days(text):
             continue
-        own_days = {(start.month, start.day), (end.month, end.day),
-                    (_date(item["valid_until"]).month, _date(item["valid_until"]).day)}
+        own_days = {(start.month, start.day), (end.month, end.day), (own_end.month, own_end.day)}
         domestic = _DOMESTIC.search(text) is not None
         varying = _VARYING_PERIOD.search(text) is not None
-        link_days = {(start.month, start.day), (end.month, end.day)}
+        # The item's own period, not the display_until-capped end shown on the card.
+        link_days = {(start.month, start.day), (own_end.month, own_end.day)}
         clauses = _clauses(item)
         naming = {}
         for clause in clauses:
@@ -185,14 +207,19 @@ def link(items, basket, today):
     return out[:MAX_LINKS]
 
 
-def keep_present(bundle, items):
-    """Bundle with only links of government items still in items (after takedown/withdrawal), or None."""
-    if not isinstance(bundle, dict) or not isinstance(bundle.get("links"), list):
+def recompute(data, now):
+    """Links recomputed from the payload's current public items, or None when nothing links.
+
+    Used when a payload is filtered after publishing (admin takedown, approved-snapshot redeploy): a kept
+    link must reflect the item as it is now (moved end date, edited region), so links are never carried
+    over from the old bundle. Without baselines there is no basket, so nothing links."""
+    baselines = data.get("grocery_baselines")
+    basket = baselines.get("items") if isinstance(baselines, dict) else None
+    if not isinstance(basket, list):
         return None
-    urls = {i.get("url") for i in items if isinstance(i, dict) and i.get("source") in GOVERNMENT_SOURCES} \
-        if isinstance(items, list) else set()
-    links = [x for x in bundle["links"] if isinstance(x, dict) and x.get("url") in urls]
-    return dict(bundle, links=links) if links else None
+    bundle = sanitize(dict(schema_version=1, source="grocery_discounts", generated_at=now.isoformat(),
+                           links=link(data.get("items") or [], basket, _kst_today(now))), now)
+    return bundle if bundle is not None and bundle["links"] else None
 
 
 def _short(value, limit):
@@ -200,7 +227,9 @@ def _short(value, limit):
 
 
 def sanitize(bundle, now):
-    """Bundle without links that are over or not yet started (KST), or None for anything malformed."""
+    """Bundle without malformed links and links that are over or not yet started (KST).
+
+    None when the bundle itself is malformed or every link in it is malformed."""
     if not isinstance(bundle, dict) or set(bundle) != BUNDLE_KEYS or bundle["schema_version"] != 1 \
             or bundle["source"] != "grocery_discounts" or not isinstance(bundle["generated_at"], str) \
             or not isinstance(bundle["links"], list) or len(bundle["links"]) > MAX_LINKS:
@@ -210,16 +239,19 @@ def sanitize(bundle, now):
     except ValueError:
         return None
     today = _kst_today(now)
-    out = []
+    out, valid = [], 0
     for item in bundle["links"]:
         if not isinstance(item, dict) or set(item) != LINK_KEYS:
-            return None
+            continue
         start, end = _date(item["start"]), _date(item["end"])
         if not isinstance(item["basket_id"], str) or not re.fullmatch(r"[a-z_]{2,30}", item["basket_id"]) \
                 or not _short(item["title"], 200) or start is None or end is None or start > end \
                 or any(item[k] is not None and not _short(item[k], 60) for k in ("discount", "stores")) \
                 or not _short(item["url"], 500) or not item["url"].startswith("https://"):
-            return None
+            continue
+        valid += 1
         if start <= today <= end:
             out.append(dict(item))
+    if bundle["links"] and not valid:
+        return None
     return dict(bundle, links=out)

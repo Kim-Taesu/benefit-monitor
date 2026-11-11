@@ -261,8 +261,9 @@ def apply_takedowns_remote(root, repository, env=None, now=None):
     approved = approved if isinstance(approved, dict) else {}
     config = load(Path(root) / "sources.yaml", None)
     sources = {s["id"]: s for s in config["sources"]}
-    current = current_releases(approved, takedowns, sources, (now or datetime.now(SEOUL)).astimezone(SEOUL))[1]
-    clean = apply_takedowns(data, takedowns, current=current)
+    moment = (now or datetime.now(SEOUL)).astimezone(SEOUL)
+    current = current_releases(approved, takedowns, sources, moment)[1]
+    clean = apply_takedowns(data, takedowns, current=current, now=moment)
     write_export(root, clean)
     if clean != data:
         run(root, repository, env=env, expected_sha=sha)

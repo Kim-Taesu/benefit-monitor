@@ -150,11 +150,11 @@ def validate(root,data,now,auto=None):
                 except Exception:baseline_bundle=None
                 if baseline_bundle is not None:clean['grocery_baselines']=baseline_bundle
             if data.get('grocery_discounts'):
-                from .grocery_discounts import sanitize as discounts,keep_present
-                # Only links of government items still public after the recheck above.
-                try:discount_bundle=keep_present(discounts(data['grocery_discounts'],now),clean['items'])
+                from .grocery_discounts import recompute
+                # Recomputed from the items still public after the recheck above (never the stored lines).
+                try:discount_bundle=recompute(clean,now)
                 except Exception:discount_bundle=None
-                if discount_bundle is not None and discount_bundle['links']:clean['grocery_discounts']=discount_bundle
+                if discount_bundle is not None:clean['grocery_discounts']=discount_bundle
     return clean
 
 
