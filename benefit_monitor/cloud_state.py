@@ -4,6 +4,7 @@ from copy import deepcopy
 from datetime import datetime,timezone
 import hashlib
 import json
+import time
 import os
 from pathlib import Path
 import re
@@ -149,14 +150,31 @@ class GitHubStateStore:
         if len(cipher)>MAX_CIPHER:raise ValueError('encrypted state exceeds 8 MiB')
         body={'message':'Update encrypted AI '+kind,'branch':BRANCH,'content':base64.b64encode(cipher).decode()}
         if expected_sha is not None:body['sha']=expected_sha
-        result=self._api('contents/'+FILES[kind],body)
+        try:
+            result=self._api('contents/'+FILES[kind],body)
+        except ValueError:
+            # 2026-11-11: a PUT can land while its response is lost (the retry then sees 409). Our exact
+            # ciphertext on the remote means our write is the current state; anything else still raises.
+            landed=self._landed(kind,cipher)
+            if landed:return landed
+            raise
         try:
             sha=result['content']['sha']
             if sha!=_blob_sha(cipher):raise ValueError
         except (KeyError,TypeError,ValueError):raise ValueError('cloud state write not confirmed') from None
-        confirmed,actual=self._cipher(kind)
-        if actual!=sha or confirmed!=cipher:raise ValueError('cloud state lease changed after write')
+        if self._landed(kind,cipher)!=sha:raise ValueError('cloud state lease changed after write')
         return sha
+
+    def _landed(self,kind,cipher,tries=4):
+        """Blob sha when the remote file is exactly this ciphertext; reads may lag a just-made commit."""
+        for attempt in range(tries):
+            try:
+                current,sha=self._cipher(kind)
+                if current==cipher:return sha
+            except ValueError:
+                pass
+            if attempt<tries-1:time.sleep(attempt+1)
+        return None
 
 
 class CloudSession:

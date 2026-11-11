@@ -263,3 +263,33 @@ class SafeReasonTests(unittest.TestCase):
         self.assertEqual(safe_reason(ValueError('GitHub state request failed: http_403')),'ValueError: GitHub state request failed: http_403')
         self.assertEqual(safe_reason(ValueError('x sk-ant-abc')),'ValueError: redacted')
         self.assertEqual(safe_reason(ValueError('{"a":"<b>"}')),'ValueError: a:b')
+
+
+class WriteConfirmTests(unittest.TestCase):
+    setUp=CloudStateTests.setUp;module=CloudStateTests.module;store=CloudStateTests.store
+
+    def test_lost_put_response_is_accepted_when_our_ciphertext_landed(self):
+        store=self.store();sha=store.write('control',b'v1',None);original=self.remote;calls=[]
+        def lost(request):
+            calls.append(request.get_method())
+            response=original(request)
+            if request.get_method()=='PUT' and len([c for c in calls if c=='PUT'])==1:
+                raise HTTPError(request.full_url,502,'lost',{},io.BytesIO())  # landed, answer lost
+            return response
+        store.opener=lost
+        with patch('time.sleep'):new=store.write('control',b'v2',sha)
+        self.assertEqual(store.read('control'),(b'v2',new))
+        with patch('time.sleep'),self.assertRaises(ValueError):store.write('control',b'v3',sha)  # truly stale lease
+
+    def test_stale_read_after_write_is_waited_out(self):
+        store=self.store();sha=store.write('control',b'v1',None);original=self.remote;state={'stale':1}
+        old=dict(self.remote.files)
+        def lagging(request):
+            if request.get_method()=='GET' and state['stale']:
+                state['stale']-=1;saved=self.remote.files;self.remote.files=old
+                try:return original(request)
+                finally:self.remote.files=saved
+            return original(request)
+        store.opener=lagging
+        with patch('time.sleep'):new=store.write('control',b'v2',sha)
+        self.assertEqual(store.read('control'),(b'v2',new))
