@@ -58,6 +58,7 @@ def restore(root, repository, now=None, env=None):
             state['items'][key]=row
     save(root/"cache/operational_state.json",state)
     restore_baselines(root,repository,env)
+    restore_health_notices(root,repository,env)
     return envelope.get("sha")
 
 
@@ -72,6 +73,22 @@ def restore_baselines(root, repository, env=None):
     try:
         bundle, _ = _get(repository, BASELINES_NAME, env)
         if isinstance(bundle, dict) and bundle.get("schema_version") == 1 and bundle.get("source") == "grocery_baselines":
+            save(path, bundle)
+            return True
+    except Exception:
+        pass
+    path.unlink(missing_ok=True)
+    return False
+
+
+def restore_health_notices(root, repository, env=None):
+    """Download the daily health-centre notice bundle. Never raises: failure leaves no local copy."""
+    from .store import save
+    from .health_notices import NAME, FILE, SOURCE
+    path = Path(root) / FILE
+    try:
+        bundle, _ = _get(repository, NAME, env)
+        if isinstance(bundle, dict) and bundle.get("schema_version") == 1 and bundle.get("source") == SOURCE:
             save(path, bundle)
             return True
     except Exception:

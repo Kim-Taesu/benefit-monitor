@@ -72,6 +72,17 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                         except Exception as e:
                             failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
                         continue
+                    if online and s.get("collector") == "health_notices":
+                        # Collected by its own daily workflow (health-notices.yml) and restored before
+                        # this run; here only health-looking titles become ordinary review candidates.
+                        from . import health_notices
+                        bundle = load(root/health_notices.FILE, None)
+                        if health_notices.sanitize(bundle, now) is not None:
+                            incoming.extend(health_notices.candidates(bundle, now))
+                            successful_sources.append(s["id"])
+                        else:
+                            failures.append(dict(source=s["id"], reason="HealthNoticesUnavailable", detail="No fresh health notice bundle"))
+                        continue
                     if online and s.get("collector") == "kfes_festivals":
                         # Separate display channel: never review candidates, AI research or topic cards.
                         try:

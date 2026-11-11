@@ -134,6 +134,13 @@ def probe(root, source_id, budget=10):
         from .festivals import collect as collect_festivals
         bundle = collect_festivals(source, datetime.now(ZoneInfo(config["timezone"])))
         items = [dict(title=f"{i['name']} ({i['start']}~{i['end']}, {i['region']})", url=i["url"]) for i in bundle["items"]]
+    elif source.get("collector") == "health_notices":
+        from .health_notices import collect as collect_health
+        bundle = collect_health(source, datetime.now(ZoneInfo(config["timezone"])))
+        items = [dict(title=f"[{b['district']} {b['status']}] {i['date']} {'★ ' if i['hint'] else ''}{i['title']}", url=i["url"])
+                 for b in bundle["boards"] for i in b["items"]]
+        items += [dict(title=f"[{b['district']} {b['status']}] {b['reason']}", url=b["home_url"])
+                  for b in bundle["boards"] if b["status"] != "checked"]
     elif source.get("collector") == "grocery_prices":
         from .groceries import collect as collect_groceries, KAMIS_DAILY, EKAPE_REGION
         bundle = collect_groceries(source, datetime.now(ZoneInfo(config["timezone"])))

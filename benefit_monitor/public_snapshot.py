@@ -126,6 +126,10 @@ def validate(root,data,now,auto=None):
         from .festivals import sanitize
         festivals=sanitize(data['festivals'],now)
         if festivals is not None:clean['festivals']=festivals
+    if data.get('health_notices') and clean['status']!='collection_failed':
+        from .health_notices import sanitize as health
+        bundle=health(data['health_notices'],now)
+        if bundle is not None:clean['health_notices']=bundle
     if data.get('groceries') and clean['status']!='collection_failed':
         from .groceries import sanitize as groceries
         bundle=groceries(data['groceries'],now)
