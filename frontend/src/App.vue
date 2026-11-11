@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from
 import BenefitCard from './BenefitCard.vue';
 import BetaPanel from './BetaPanel.vue';
 import FestivalSection from './FestivalSection.vue';
+import HealthSection from './HealthSection.vue';
 import GrocerySection from './GrocerySection.vue';
 import GradeHelp from './GradeHelp.vue';
 import {won} from './groceries';
@@ -14,10 +15,10 @@ function selectTopic(topic:Topic|null){selectedTopic.value=topic;}
 const gradeHelp=ref<InstanceType<typeof GradeHelp>|null>(null);
 // 'YYYY-MM-DD' -> 'M/D' (조사일 표시, 2026-11-10: 농산물·육류 조사일이 다를 수 있어 둘 다 보여준다).
 const md=(d:string|null|undefined)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
-// 탭(2026-11-10): 혜택·장보기·축제. 주소의 #groceries·#festivals로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
-type Tab='benefits'|'groceries'|'festivals';
-const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'}];
-const tabFromHash=(hash:string):Tab=>hash==='#groceries'?'groceries':hash==='#festivals'?'festivals':'benefits';
+// 탭(2026-11-10): 혜택·장보기·축제, 2026-11-11 보건소 추가. 주소의 #groceries·#festivals·#health로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
+type Tab='benefits'|'groceries'|'festivals'|'health';
+const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'},{id:'health',label:'보건소'}];
+const tabFromHash=(hash:string):Tab=>hash==='#groceries'?'groceries':hash==='#festivals'?'festivals':hash==='#health'?'health':'benefits';
 const tab=ref<Tab>(tabFromHash(location.hash));
 function setTab(next:Tab,scroll=false){
  tab.value=next;
@@ -150,6 +151,9 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     </div>
     <div id="panel-festivals" v-show="tab==='festivals'" role="tabpanel" aria-labelledby="tab-festivals">
       <FestivalSection :raw="raw" :now="now" :query="''" />
+    </div>
+    <div id="panel-health" v-show="tab==='health'" role="tabpanel" aria-labelledby="tab-health">
+      <HealthSection v-if="!loading" :raw="raw" :now="groceryMinute" />
     </div>
     <GradeHelp ref="gradeHelp" />
     <section class="trust-section" aria-labelledby="trust-title"><div class="trust-intro"><p class="eyebrow">확인 가능한 정보, 명확한 한계</p><h2 id="trust-title">혜택의 근거까지 살펴보세요.</h2><p>공식 확인과 신청 자격은 별개입니다.<br>비용·최소 지출·결제 조건은 각 항목의 상세 조건과 원문을 확인하세요.</p></div><div class="collection-details"><details><summary>수집·검증 현황 <span>{{ data?.sources.length||0 }}개 출처</span></summary><div class="coverage-body"><p v-if="data">생성 {{ formatDate(data.generatedAt) }}<br>수집 기준 {{ formatDate(data.sourceReportAt) }}<br>파일 표시기한 {{ formatDate(data.validThrough) }}<br>{{ data.runLabel }}</p><p>재검증 대기 {{ data?.pending||0 }}건 · 화면 검증에서 제외 {{ data?.withheldCount||0 }}건</p><p v-if="data">AI 원문 대조: 최근 실행 {{ data.aiQuality.checked ?? '–' }}건 확인 · 불일치로 보류 {{ data.aiQuality.held }}건 · 끝남·혜택 아님으로 대기 제외 {{ data.aiQuality.dismissed }}건 · 진행 중 우선 확인 {{ data.aiQuality.prioritized }}건</p><ul v-if="data?.aiQuality.findings.length" class="ai-findings"><li v-for="f in data.aiQuality.findings" :key="f.title+f.url"><strong><a v-if="f.url" :href="f.url" target="_blank" rel="noopener noreferrer">{{ f.title }}</a><template v-else>{{ f.title }}</template></strong><small v-for="c in f.claims" :key="c.claim">저장된 조건 “{{ c.claim }}” · 공식 원문 “{{ c.quotes.join(' / ') }}”</small></li></ul><p>표시기한 경과는 행사 종료나 잔여석 소진과 다릅니다. 0건은 실제 혜택이 없다는 뜻이 아닙니다.</p><ul><li v-for="row in data?.sources||[]" :key="row.source"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span><small v-if="row.scope">{{ row.scope }}</small></li></ul><h3 v-if="data?.districts.length">서울 자치구 수집 범위</h3><p>{{ data?.scope||'수집 범위 확인 필요' }}</p><ul><li v-for="row in data?.districts||[]" :key="row.name"><strong>{{ row.name }}</strong><span>{{ coverageLabels[row.status]||'상태 미확인' }}</span></li></ul></div></details><details class="interest-settings"><summary>관심 지역 기억하기</summary><div class="coverage-body"><p>이 브라우저에만 저장합니다. 로그인이나 개인정보 입력이 필요하지 않습니다. 공유 링크의 필터가 우선하며, 저장값 삭제는 현재 검색 필터를 바꾸지 않습니다.</p><p>현재 선택: {{ filters.region || '서울시 전체' }}</p><p v-if="remembered">저장한 관심 설정: {{ regions.includes(remembered.region) ? remembered.region : '서울시 전체' }}</p><p v-else>저장한 관심 설정이 없습니다.</p><div class="preference-actions"><button type="button" @click="clearSaved">즐겨찾기 모두 해제</button><button type="button" @click="remember">현재 지역 저장</button><button type="button" @click="forget">저장값 삭제</button></div><p role="status" aria-live="polite">{{ preferenceNotice }}</p></div></details><p class="fine-print">검증 시각은 수집 시각과 다릅니다. 구 선택 시 전국·서울 공통 안내는 함께 포함하지 않습니다. 전체 지역·모든 혜택을 수집한 서비스가 아닙니다.</p></div></section>

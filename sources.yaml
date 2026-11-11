@@ -391,6 +391,225 @@
       "collection_scope": "국가유산청 월별 행사 공개 목록(이번 달·다음 달, 서울) · 행사별 예약·잔여석 미확인"
     },
     {
+      "id": "health_notices",
+      "name": "보건소 공지",
+      "tier": "A",
+      "domains": [
+        "www.gangseo.seoul.kr",
+        "www.gwangjin.go.kr",
+        "www.ddm.go.kr",
+        "www.sb.go.kr",
+        "www.nowon.kr",
+        "www.sdm.go.kr",
+        "www.guro.go.kr",
+        "www.geumcheon.go.kr",
+        "www.ydp.go.kr",
+        "www.gwanak.go.kr",
+        "www.seocho.go.kr",
+        "health.gangnam.go.kr",
+        "www.songpa.go.kr",
+        "health.gangdong.go.kr",
+        "www.seongnam.go.kr",
+        "www.jongno.go.kr",
+        "www.junggu.seoul.kr",
+        "www.yongsan.go.kr",
+        "www.sd.go.kr",
+        "www.jungnang.go.kr",
+        "www.gangbuk.go.kr",
+        "health.dobong.go.kr",
+        "www.ep.go.kr",
+        "www.mapo.go.kr",
+        "www.yangcheon.go.kr",
+        "www.dongjak.go.kr"
+      ],
+      "routes": [
+        "https://www.gangseo.seoul.kr/health/ht060701"
+      ],
+      "feed_url": null,
+      "collector": "health_notices",
+      "ai_review": true,
+      "collection_scope": "구별 보건소 공지 게시판 첫 페이지(최근 60일) · 별도 보건소 탭 · 사람 검증 전 · 검진·접종 등 제목은 AI 조사 후보",
+      "health_boards": [
+        {
+          "district": "종로구",
+          "name": "종로구보건소",
+          "home_url": "https://www.jongno.go.kr/healthMain.do",
+          "unavailable": "robots가 공지 게시판 수집을 막음"
+        },
+        {
+          "district": "중구",
+          "name": "중구보건소",
+          "home_url": "https://www.junggu.seoul.kr/main.do",
+          "unavailable": "TLS 인증서 체인 검증 실패(검증을 끄지 않음)"
+        },
+        {
+          "district": "용산구",
+          "name": "용산구보건소",
+          "home_url": "https://www.yongsan.go.kr/health/main/main.do",
+          "unavailable": "robots가 공지 게시판 수집을 막음"
+        },
+        {
+          "district": "성동구",
+          "name": "성동구보건소",
+          "home_url": "https://www.sd.go.kr/health/index.do",
+          "unavailable": "TLS 인증서 체인 검증 실패(검증을 끄지 않음)"
+        },
+        {
+          "district": "광진구",
+          "name": "광진구보건소",
+          "home_url": "https://www.gwangjin.go.kr/health/main/main.do",
+          "list_url": "https://www.gwangjin.go.kr/health/bbs/B0000001/list.do?menuNo=300350",
+          "detail": "/health/bbs/B0000001/view\\.do\\?nttId=\\d+"
+        },
+        {
+          "district": "동대문구",
+          "name": "동대문구보건소",
+          "home_url": "https://www.ddm.go.kr/health/index.do",
+          "list_url": "https://www.ddm.go.kr/health/selectBbsNttList.do?bbsNo=221&key=1335",
+          "detail": "/health/selectBbsNttView\\.do\\?.*nttNo=\\d+"
+        },
+        {
+          "district": "중랑구",
+          "name": "중랑구보건소",
+          "home_url": "https://www.jungnang.go.kr/health/main.do",
+          "unavailable": "robots가 공지 게시판 수집을 막음"
+        },
+        {
+          "district": "성북구",
+          "name": "성북구보건소",
+          "home_url": "https://www.sb.go.kr/bogunso/index.do",
+          "list_url": "https://www.sb.go.kr/bogunso/selectBbsNttList.do?bbsNo=64&key=271",
+          "detail": "/bogunso/selectBbsNttView\\.do\\?.*nttNo=\\d+"
+        },
+        {
+          "district": "강북구",
+          "name": "강북구보건소",
+          "home_url": "https://www.gangbuk.go.kr/www/index.do",
+          "unavailable": "자동 접속 확인(쿠키·스크립트) 화면이라 우회하지 않음"
+        },
+        {
+          "district": "도봉구",
+          "name": "도봉구보건소",
+          "home_url": "https://health.dobong.go.kr/",
+          "unavailable": "robots가 공지 게시판(bbs.asp) 수집을 막음"
+        },
+        {
+          "district": "노원구",
+          "name": "노원구보건소",
+          "home_url": "https://www.nowon.kr/health/index.do",
+          "list_url": "https://www.nowon.kr/health/user/bbs/BD_selectBbsList.do?q_bbsCode=1001&q_estnColumn1=21",
+          "detail": "/health/user/bbs/BD_selectBbs\\.do\\?q_bbsCode=1001&q_bbscttSn=\\d+"
+        },
+        {
+          "district": "은평구",
+          "name": "은평구보건소",
+          "home_url": "https://www.ep.go.kr/health/index.do",
+          "unavailable": "robots가 사이트 전체 수집을 막음"
+        },
+        {
+          "district": "서대문구",
+          "name": "서대문구보건소",
+          "home_url": "https://www.sdm.go.kr/health/",
+          "list_url": "https://www.sdm.go.kr/health/board/1/list",
+          "detail": "/health/board/1/\\d+$",
+          "onclick": "goView\\('(\\d+)'\\)",
+          "detail_template": "https://www.sdm.go.kr/health/board/1/{id}"
+        },
+        {
+          "district": "마포구",
+          "name": "마포구보건소",
+          "home_url": "https://www.mapo.go.kr/site/health/home",
+          "unavailable": "robots가 공지 게시판 수집을 막음"
+        },
+        {
+          "district": "양천구",
+          "name": "양천구보건소",
+          "home_url": "https://www.yangcheon.go.kr/health/health/main.do",
+          "unavailable": "robots가 공지 게시판 수집을 막음"
+        },
+        {
+          "district": "강서구",
+          "name": "강서구보건소",
+          "home_url": "https://www.gangseo.seoul.kr/health",
+          "list_url": "https://www.gangseo.seoul.kr/health/ht060701",
+          "detail": "/health/ht060701/\\d+"
+        },
+        {
+          "district": "구로구",
+          "name": "구로구보건소",
+          "home_url": "https://www.guro.go.kr/health/index.do",
+          "list_url": "https://www.guro.go.kr/health/selectBbsNttList.do?bbsNo=578&key=1304",
+          "detail": "/health/selectBbsNttView\\.do\\?.*nttNo=\\d+"
+        },
+        {
+          "district": "금천구",
+          "name": "금천구보건소",
+          "home_url": "https://www.geumcheon.go.kr/health/index.do",
+          "list_url": "https://www.geumcheon.go.kr/health/selectBbsNttList.do?bbsNo=310&key=2281",
+          "detail": "/health/selectBbsNttView\\.do\\?.*nttNo=\\d+"
+        },
+        {
+          "district": "영등포구",
+          "name": "영등포구보건소",
+          "home_url": "https://www.ydp.go.kr/health/index.do",
+          "list_url": "https://www.ydp.go.kr/health/selectBbsNttList.do?bbsNo=317&key=3723",
+          "detail": "/health/selectBbsNttView\\.do\\?.*nttNo=\\d+"
+        },
+        {
+          "district": "동작구",
+          "name": "동작구보건소",
+          "home_url": "https://www.dongjak.go.kr/healthcare/main/main.do",
+          "unavailable": "robots가 공지 게시판 수집을 막음"
+        },
+        {
+          "district": "관악구",
+          "name": "관악구보건소",
+          "home_url": "https://www.gwanak.go.kr/site/health/main.do",
+          "list_url": "https://www.gwanak.go.kr/site/health/ex/bbs/List.do?cbIdx=275",
+          "detail": "/site/health/ex/bbs/View\\.do\\?cbIdx=275&bcIdx=\\d+",
+          "onclick": "doBbsFView\\('275','(\\d+)'",
+          "detail_template": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx={id}"
+        },
+        {
+          "district": "서초구",
+          "name": "서초구보건소",
+          "home_url": "https://www.seocho.go.kr/site/sh/main.do",
+          "list_url": "https://www.seocho.go.kr/site/sh/ex/bbs/List.do?cbIdx=91",
+          "detail": "/site/sh/ex/bbs/View\\.do\\?cbIdx=91&bcIdx=\\d+"
+        },
+        {
+          "district": "강남구",
+          "name": "강남구보건소",
+          "home_url": "https://health.gangnam.go.kr/web/index.do",
+          "list_url": "https://health.gangnam.go.kr/web/community/notice.do",
+          "detail": "/web/community/notice/\\d+/view\\.do"
+        },
+        {
+          "district": "송파구",
+          "name": "송파구보건소",
+          "home_url": "https://www.songpa.go.kr/ehealth/index.do",
+          "list_url": "https://www.songpa.go.kr/ehealth/selectBbsNttList.do?bbsNo=179&key=4713",
+          "detail": "/ehealth/selectBbsNttView\\.do\\?.*nttNo=\\d+"
+        },
+        {
+          "district": "강동구",
+          "name": "강동구보건소",
+          "home_url": "https://health.gangdong.go.kr/health/site/main/home",
+          "list_url": "https://health.gangdong.go.kr/health/site/main/board/healthnews/list",
+          "detail": "/health/site/main/board/healthnews/\\d+$"
+        },
+        {
+          "district": "성남시",
+          "name": "성남시보건소",
+          "home_url": "https://www.seongnam.go.kr/health/index",
+          "list_url": "https://www.seongnam.go.kr/health/ht-bbs040101",
+          "detail": "/health/ht-bbs040101/\\d+$",
+          "onclick": "fn_move_form\\('(\\d+)'\\)",
+          "detail_template": "https://www.seongnam.go.kr/health/ht-bbs040101/{id}"
+        }
+      ]
+    },
+    {
       "id": "kfes",
       "name": "전국 축제(한국관광공사)",
       "tier": "A",

@@ -374,7 +374,15 @@ def run(root, now=None, failure=False):
         bundle = sanitize(load(root/'cache/festivals.json', None), now)
         if bundle is not None:data['festivals'] = bundle
         attach_groceries(root,data,now)
+        attach_health_notices(root,data,now)
     return write_export(root,data)
+
+
+def attach_health_notices(root,data,now):
+    """Separate health-centre notice tab (approved 2026-11-11); dropped when stale or malformed."""
+    from .health_notices import sanitize, FILE
+    bundle = sanitize(load(Path(root)/FILE, None), now)
+    if bundle is not None:data['health_notices'] = bundle
 
 
 def attach_groceries(root,data,now):

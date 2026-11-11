@@ -122,6 +122,37 @@
         "www.kh.or.kr"
       ]
     },
+    "health_notices": {
+      "name": "보건소 공지",
+      "domains": [
+        "www.gangseo.seoul.kr",
+        "www.gwangjin.go.kr",
+        "www.ddm.go.kr",
+        "www.sb.go.kr",
+        "www.nowon.kr",
+        "www.sdm.go.kr",
+        "www.guro.go.kr",
+        "www.geumcheon.go.kr",
+        "www.ydp.go.kr",
+        "www.gwanak.go.kr",
+        "www.seocho.go.kr",
+        "health.gangnam.go.kr",
+        "www.songpa.go.kr",
+        "health.gangdong.go.kr",
+        "www.seongnam.go.kr",
+        "www.jongno.go.kr",
+        "www.junggu.seoul.kr",
+        "www.yongsan.go.kr",
+        "www.sd.go.kr",
+        "www.jungnang.go.kr",
+        "www.gangbuk.go.kr",
+        "health.dobong.go.kr",
+        "www.ep.go.kr",
+        "www.mapo.go.kr",
+        "www.yangcheon.go.kr",
+        "www.dongjak.go.kr"
+      ]
+    },
     "kfes": {
       "name": "전국 축제(한국관광공사)",
       "domains": [

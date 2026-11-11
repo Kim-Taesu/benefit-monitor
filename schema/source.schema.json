@@ -126,8 +126,59 @@
             "eshare",
             "heritage_events",
             "kfes_festivals",
-            "grocery_prices"
+            "grocery_prices",
+            "health_notices"
           ]
+        },
+        "health_boards": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 40,
+          "description": "health_notices: 구별 보건소 공지 게시판. unavailable이 있으면 요청하지 않고 사유와 보건소 바로가기만 보인다.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "district",
+              "name",
+              "home_url"
+            ],
+            "properties": {
+              "district": {
+                "type": "string",
+                "minLength": 1
+              },
+              "name": {
+                "type": "string",
+                "minLength": 1
+              },
+              "home_url": {
+                "$ref": "#/$defs/https_url"
+              },
+              "list_url": {
+                "$ref": "#/$defs/https_url"
+              },
+              "detail": {
+                "type": "string",
+                "minLength": 1,
+                "description": "상세 글 주소 정규식"
+              },
+              "onclick": {
+                "type": "string",
+                "minLength": 1,
+                "description": "onclick에서 글 번호 하나를 꺼내는 정규식"
+              },
+              "detail_template": {
+                "$ref": "#/$defs/https_url",
+                "description": "{id} 자리에 글 번호를 넣는 상세 주소"
+              },
+              "unavailable": {
+                "type": "string",
+                "minLength": 1,
+                "description": "수집하지 않는 이유(robots·TLS·접속 확인 화면)"
+              }
+            }
+          }
         },
         "boards": {
           "$ref": "#/$defs/text_list"
