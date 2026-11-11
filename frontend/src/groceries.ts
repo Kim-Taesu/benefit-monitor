@@ -265,9 +265,13 @@ export function discountsFor(links:DiscountLink[],basketId:string):{shown:Discou
  const mine=links.filter(l=>l.basketId===basketId).sort((a,b)=>a.end.localeCompare(b.end));
  return {shown:mine.slice(0,2),more:Math.max(0,mine.length-2)};
 }
+/** 'M/D' of an ISO date ('2026-11-07' -> '11/7'); '' when there is no date. */
+export function monthDay(iso:string|null):string{
+ return iso?`${Number(iso.slice(5,7))}/${Number(iso.slice(8,10))}`:'';
+}
 /** The line in three pieces so the template can keep the date from splitting across lines. */
 export function discountParts(l:DiscountLink):{head:string;stores:string|null;date:string}{
- return {head:[l.title,l.discount].filter(Boolean).join(' '),stores:l.stores,date:`${Number(l.end.slice(5,7))}/${Number(l.end.slice(8,10))}까지`};
+ return {head:[l.title,l.discount].filter(Boolean).join(' '),stores:l.stores,date:`${monthDay(l.end)}까지`};
 }
 /** '{title} {discount} · {stores} · {M/D}까지'; null pieces and their separators are left out. */
 export function discountLine(l:DiscountLink):string{

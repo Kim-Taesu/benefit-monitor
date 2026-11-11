@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { quickMatch, baselineBadge, discountsFor, discountStatus, discountParts, won, type BasketItem, type PriceRow, type DiscountLink } from './groceries';
+import { quickMatch, baselineBadge, discountsFor, discountStatus, discountParts, monthDay, won, type BasketItem, type PriceRow, type DiscountLink } from './groceries';
 const props=defineProps<{q:string;basket:BasketItem[];rows:PriceRow[];produceDate:string|null;meatDate:string|null;discounts?:DiscountLink[]}>();
 const emit=defineEmits<{pick:[name:string];more:[]}>();
-const md=(d:string|null)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
 // A basket item without today's row shows no card at all (never a stale or guessed price).
 const view=computed(()=>{
  const hit=quickMatch(props.q,props.basket);
@@ -11,7 +10,7 @@ const view=computed(()=>{
  if(!hit||!row)return null;
  const badge=baselineBadge(row,hit.best);
  const live=new Set(props.rows.map(r=>r.kind+r.id));
- return {item:hit.best,row,others:hit.others.filter(o=>live.has(o.rowKey)),badge,avg:badge?hit.best.baseline:null,disc:discountsFor(props.discounts??[],hit.best.id),date:md(row.kind==='meat'?props.meatDate:props.produceDate)};
+ return {item:hit.best,row,others:hit.others.filter(o=>live.has(o.rowKey)),badge,avg:badge?hit.best.baseline:null,disc:discountsFor(props.discounts??[],hit.best.id),date:monthDay(row.kind==='meat'?props.meatDate:props.produceDate)};
 });
 </script>
 <template>

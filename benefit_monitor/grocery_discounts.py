@@ -21,8 +21,10 @@ after 농/축 is broad wording; a clause naming pork never links a beef item unl
 redeploy instead of keeping stored lines.
 """
 import re
-from datetime import date, datetime
-from zoneinfo import ZoneInfo
+from datetime import datetime
+
+from .grocery_baselines import _date_text, _kst_today
+from .groceries import _text_ok
 
 DISCOUNT_WORDS = ("할인", "세일", "수산대전", "농할", "반값", "특별판매")
 GROUP_WORDS = (
@@ -116,22 +118,11 @@ def _discount(clauses):
     return next(iter(found.values())) if len(found) == 1 else None
 
 
-def _kst_today(now):
-    return (now.astimezone(ZoneInfo("Asia/Seoul")) if now.tzinfo else now).date()
-
-
-def _date(value):
-    try:
-        return date.fromisoformat(value) if isinstance(value, str) and len(value) == 10 else None
-    except ValueError:
-        return None
-
-
 def _targets(text, basket):
     ids = {b["id"] for b in basket}
     found = set()
     for item in basket:
-        words = [item["name"]] + [a for a in item["aliases"]]
+        words = [item["name"], *item["aliases"]]
         # One-character aliases (무, 파, 쌀) match inside unrelated words, so they never link directly.
         if any(len(w) >= 2 and w not in ORIGIN_ONLY_WORDS
                and re.search(_LEFT + _WORD_PATTERNS.get(w, re.escape(w)), text) for w in words):
@@ -166,7 +157,7 @@ def link(items, basket, today):
     for item in items if isinstance(items, list) else []:
         if not isinstance(item, dict) or item.get("validity_kind") != "fixed" or not _public(item):
             continue
-        start, end = _date(item.get("valid_from")), _date(item.get("valid_until"))
+        start, end = _date_text(item.get("valid_from")), _date_text(item.get("valid_until"))
         own_end = end
         url, title = item.get("url"), item.get("title")
         try:
@@ -176,16 +167,17 @@ def link(items, basket, today):
         if until is not None and end is not None:
             end = min(end, until)
         if start is None or end is None or not start <= today <= end \
-                or not isinstance(url, str) or not _short(title, 200):
+                or not isinstance(url, str) or not _text_ok(title, 200):
             continue  # a title sanitize would reject is skipped here, never rewritten
         text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "conditions"))
         if not any(w in text for w in DISCOUNT_WORDS) or (start.month, start.day) not in _days(text):
             continue
-        own_days = {(start.month, start.day), (end.month, end.day), (own_end.month, own_end.day)}
+        start_day, end_day, own_end_day = (start.month, start.day), (end.month, end.day), (own_end.month, own_end.day)
+        own_days = {start_day, end_day, own_end_day}
         domestic = _DOMESTIC.search(text) is not None
         varying = _VARYING_PERIOD.search(text) is not None
         # The item's own period, not the display_until-capped end shown on the card.
-        link_days = {(start.month, start.day), (own_end.month, own_end.day)}
+        link_days = {start_day, own_end_day}
         clauses = _clauses(item)
         naming = {}
         for clause in clauses:
@@ -222,10 +214,6 @@ def recompute(data, now):
     return bundle if bundle is not None and bundle["links"] else None
 
 
-def _short(value, limit):
-    return isinstance(value, str) and 0 < len(value) <= limit and not re.search(r"[<>\x00-\x1f]", value)
-
-
 def sanitize(bundle, now):
     """Bundle without malformed links and links that are over or not yet started (KST).
 
@@ -243,11 +231,11 @@ def sanitize(bundle, now):
     for item in bundle["links"]:
         if not isinstance(item, dict) or set(item) != LINK_KEYS:
             continue
-        start, end = _date(item["start"]), _date(item["end"])
+        start, end = _date_text(item["start"]), _date_text(item["end"])
         if not isinstance(item["basket_id"], str) or not re.fullmatch(r"[a-z_]{2,30}", item["basket_id"]) \
-                or not _short(item["title"], 200) or start is None or end is None or start > end \
-                or any(item[k] is not None and not _short(item[k], 60) for k in ("discount", "stores")) \
-                or not _short(item["url"], 500) or not item["url"].startswith("https://"):
+                or not _text_ok(item["title"], 200) or start is None or end is None or start > end \
+                or any(item[k] is not None and not _text_ok(item[k], 60) for k in ("discount", "stores")) \
+                or not _text_ok(item["url"], 500) or not item["url"].startswith("https://"):
             continue
         valid += 1
         if start <= today <= end:

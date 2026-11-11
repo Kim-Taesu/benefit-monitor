@@ -6,7 +6,7 @@ import FestivalSection from './FestivalSection.vue';
 import HealthSection from './HealthSection.vue';
 import GrocerySection from './GrocerySection.vue';
 import GradeHelp from './GradeHelp.vue';
-import {won} from './groceries';
+import {won,monthDay} from './groceries';
 import {parseGroceries,parsePick,parseBaselines,parseDiscounts} from './groceries';
 import {DISTRICTS,isSeoulCandidate} from './beta';
 import type {Topic} from './beta';
@@ -14,7 +14,7 @@ const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=re
 function selectTopic(topic:Topic|null){selectedTopic.value=topic;}
 const gradeHelp=ref<InstanceType<typeof GradeHelp>|null>(null);
 // 'YYYY-MM-DD' -> 'M/D' (조사일 표시, 2026-11-10: 농산물·육류 조사일이 다를 수 있어 둘 다 보여준다).
-const md=(d:string|null|undefined)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
+const md=(d:string|null|undefined)=>monthDay(d??null);
 // 탭(2026-11-10): 혜택·장보기·축제, 2026-11-11 보건소 추가. 주소의 #groceries·#festivals·#health로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
 type Tab='benefits'|'groceries'|'festivals'|'health';
 const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'},{id:'health',label:'보건소'}];

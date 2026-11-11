@@ -413,12 +413,11 @@ def attach_grocery_discounts(root,data,now):
     """Official discount events linked to basket items (approved 2026-11-11); computed at publish time, never able to fail publishing."""
     if 'groceries' not in data or 'grocery_baselines' not in data:return
     try:
-        from .grocery_discounts import link,sanitize,_kst_today
-        links = link(data.get('items') or [], data['grocery_baselines']['items'], _kst_today(now))
-        bundle = sanitize(dict(schema_version=1, source='grocery_discounts', generated_at=now.isoformat(), links=links), now)
+        from .grocery_discounts import recompute
+        bundle = recompute(data, now)
     except Exception:
         return
-    if bundle is not None and bundle['links']:data['grocery_discounts'] = bundle
+    if bundle is not None:data['grocery_discounts'] = bundle
 
 
 def attach_grocery_baselines(root,data,now):

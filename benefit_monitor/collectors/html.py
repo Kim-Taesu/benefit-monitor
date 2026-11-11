@@ -18,9 +18,9 @@ class ArticleLinks(HTMLParser):
     def __init__(self, route, domains, pattern, keywords, require_any=None, exclude_any=None):
         super().__init__()
         # Optional second title filter: at least one word must appear in addition to a keyword.
-        self.require_any = require_any
+        self.require_any = tuple(require_any or ())
         # Optional exclusion: a title containing any of these is dropped (세일 inside 세일즈).
-        self.exclude_any = exclude_any
+        self.exclude_any = tuple(exclude_any or ())
         self.seen = 0
         self.route, self.domains = route, domains
         self.pattern, self.keywords = re.compile(pattern), keywords
@@ -50,8 +50,9 @@ class ArticleLinks(HTMLParser):
             return
         # The Ministry of Oceans and Fisheries list opens details by JS (href="#none"); translate
         # the observed fn_selectDoc(n) call to its public detail URL without executing anything.
+        route = urlsplit(self.route)
         mof = MOF_VIEW.fullmatch(self.onclick.strip())
-        if self.href.startswith("#") and mof and urlsplit(self.route).hostname == MOF_HOST and urlsplit(self.route).path == MOF_LIST:
+        if self.href.startswith("#") and mof and route.hostname == MOF_HOST and route.path == MOF_LIST:
             self.href = f"/doc/ko/selectDoc.do?docSeq={mof.group(1)}&menuSeq=971&bbsSeq=10"
             # The visible text is truncated with "..."; the title attribute holds the full name.
             if self.link_title.startswith(MOF_TITLE_PREFIX) and self.link_title[len(MOF_TITLE_PREFIX):].strip():
@@ -61,12 +62,12 @@ class ArticleLinks(HTMLParser):
             return
         # Translate only the observed public card-tab links; never execute JS.
         tab = re.fullmatch(r"javascript:\s*fncTab\('([23])'\);?", self.href)
-        if tab and urlsplit(self.route).hostname == "www.7-eleven.co.kr" and urlsplit(self.route).path == "/product/cardInfo.asp":
+        if tab and route.hostname == "www.7-eleven.co.kr" and route.path == "/product/cardInfo.asp":
             self.href = "/product/cardInfo.asp?gbn=" + tab.group(1)
         # Seven-Eleven event details open only by form POST, so each event keeps the list URL
         # with its sequence number as a fragment. The page is never fetched by that fragment.
         view = SEVEN_VIEW.fullmatch(self.href)
-        if view and urlsplit(self.route).hostname == "www.7-eleven.co.kr" and urlsplit(self.route).path == SEVEN_EVENTS:
+        if view and route.hostname == "www.7-eleven.co.kr" and route.path == SEVEN_EVENTS:
             self.href = SEVEN_EVENTS + "#seqNo=" + view.group(1)
         url = urljoin(self.route, self.href)
         parts = urlsplit(url)
@@ -89,13 +90,14 @@ class ArticleLinks(HTMLParser):
         period = PERIOD_FIRST.fullmatch(title) if parts.hostname in ("emart24.co.kr", "www.emart24.co.kr") else None
         if period:
             title = f"{period.group(2)} ({period.group(1)})"
-        if title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path):
+        candidate = bool(title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path))
+        if candidate:
             self.seen += 1
         # "*" is used only by pages that list nothing but ongoing events.
-        if (title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path)
+        if (candidate
                 and (("*" in self.keywords and url != self.route) or any(word in title for word in self.keywords))
                 and (not self.require_any or any(word in title for word in self.require_any))
-                and not any(word in title for word in self.exclude_any or ())):
+                and not any(word in title for word in self.exclude_any)):
             self.items.setdefault(url, title[:240])
         self.href = None
 
