@@ -1,0 +1,1338 @@
+{
+  "schema_version": 1,
+  "source": "health_notices",
+  "fetched_at": "2026-11-11T10:18:09.491905+09:00",
+  "notice": "각 보건소 공식 공지 게시판 첫 페이지의 제목·날짜를 그대로 옮겼습니다. 사람 검증 전이며 대상·기간·비용은 원문에서 확인하세요.",
+  "boards": [
+    {
+      "district": "종로구",
+      "name": "종로구보건소",
+      "home_url": "https://www.jongno.go.kr/healthMain.do",
+      "list_url": "https://www.jongno.go.kr/healthMain.do",
+      "status": "unavailable",
+      "reason": "robots가 공지 게시판 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "중구",
+      "name": "중구보건소",
+      "home_url": "https://www.junggu.seoul.kr/main.do",
+      "list_url": "https://www.junggu.seoul.kr/main.do",
+      "status": "unavailable",
+      "reason": "TLS 인증서 체인 검증 실패(검증을 끄지 않음)",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "용산구",
+      "name": "용산구보건소",
+      "home_url": "https://www.yongsan.go.kr/health/main/main.do",
+      "list_url": "https://www.yongsan.go.kr/health/main/main.do",
+      "status": "unavailable",
+      "reason": "robots가 공지 게시판 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "성동구",
+      "name": "성동구보건소",
+      "home_url": "https://www.sd.go.kr/health/index.do",
+      "list_url": "https://www.sd.go.kr/health/index.do",
+      "status": "unavailable",
+      "reason": "TLS 인증서 체인 검증 실패(검증을 끄지 않음)",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "광진구",
+      "name": "광진구보건소",
+      "home_url": "https://www.gwangjin.go.kr/health/main/main.do",
+      "list_url": "https://www.gwangjin.go.kr/health/bbs/B0000001/list.do?menuNo=300350",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6567835-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "광진구 방문진료서비스 안내(일차의료 방문진료수가 시범사업, 장기요양 재택의료센터 시범사업)",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6567835&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-11-10",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6632582-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "▶ 내 입 속 충치균을 찾아라! ◀ 치아세균체크기 대여(11월) 안내",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6632582&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-11-02",
+          "dept": "보건의료과",
+          "hint": true
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6632450-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "<2026. 11월 제철 식재료 원데이 쿠킹클래스 참여자 모집>",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6632450&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-29",
+          "dept": "보건정책과",
+          "hint": true
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6631867-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "<2026. 중장년 1인 가구 베이킹 클래스 특강 모집> - 모집완료-",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6631867&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-27",
+          "dept": "보건정책과",
+          "hint": false
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6631810-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "[2026. 식생활 배움터 5기] 참여자 모집",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6631810&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-16",
+          "dept": "보건정책과",
+          "hint": true
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6631804-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "광진구 공공심야약국 운영 안내",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6631804&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-16",
+          "dept": "보건의료과",
+          "hint": false
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6631756-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "<2026. 중장년 1인 가구를 위한 행복한 밥상 4기 참여자 모집>",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6631756&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-15",
+          "dept": "보건정책과",
+          "hint": true
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6625665-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "코로나19 예방접종 피해보상 특례 이의신청 안내",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6625665&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-13",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6616122-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "[마감] 10월 임신부 운동교실 신청 안내",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6616122&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-08",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "alth-bbs-B0000001-view-do-nttId-6626815-menuNo-300350-pSiteId-health-pageIndex-1",
+          "title": "당뇨병 건강교실(2026년 보건소 건강교실 7기) 수강자 모집",
+          "url": "https://www.gwangjin.go.kr/health/bbs/B0000001/view.do?nttId=6626815&menuNo=300350&pSiteId=health&pageIndex=1",
+          "date": "2026-10-02",
+          "dept": "보건의료과",
+          "hint": true
+        }
+      ]
+    },
+    {
+      "district": "동대문구",
+      "name": "동대문구보건소",
+      "home_url": "https://www.ddm.go.kr/health/index.do",
+      "list_url": "https://www.ddm.go.kr/health/selectBbsNttList.do?bbsNo=221&key=1335",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "221-nttNo-196461-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "2026년 11월 14일 세계 뇌졸중의 날 기념 <2차 퀴즈 챌린지> ★모바일 편의점 상품권 지급",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=196461&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-11-06",
+          "dept": "",
+          "hint": true
+        },
+        {
+          "id": "221-nttNo-196327-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "11월\"가족 걷기\" 참여자 모집",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=196327&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-11-03",
+          "dept": "",
+          "hint": true
+        },
+        {
+          "id": "221-nttNo-196219-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "(선착순 마감 되었습니다) 11월 찾아가는 건강 in 식생활 교육 참여자 모집 안내",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=196219&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-11-02",
+          "dept": "",
+          "hint": false
+        },
+        {
+          "id": "221-nttNo-195922-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "2026년 11월 어르신 [더 건강한 밥상 식사체험] 교육 신청 안내",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=195922&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-10-28",
+          "dept": "",
+          "hint": true
+        },
+        {
+          "id": "221-nttNo-195824-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "2026년 11월 동대문구 영양톡톡 건강식단 안내(아동·청소년, 어르신 건강식단)",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=195824&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-10-27",
+          "dept": "",
+          "hint": false
+        },
+        {
+          "id": "221-nttNo-195799-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "1인가구 건강식생활 실천 캠페인",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=195799&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-10-26",
+          "dept": "",
+          "hint": true
+        },
+        {
+          "id": "221-nttNo-195650-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "신증후군출혈열 예방접종 실시기준 변경 안내",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=195650&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-10-21",
+          "dept": "",
+          "hint": true
+        },
+        {
+          "id": "221-nttNo-195625-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "2026년 한방건강증진사업 「약선요리 원데이 클래스」신청자 모집 안내",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=195625&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-10-20",
+          "dept": "",
+          "hint": true
+        },
+        {
+          "id": "221-nttNo-195622-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "2026년 세계 뇌졸중의 날 기념 <퀴즈 챌린지> 모바일상품권 지급★",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=195622&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-10-20",
+          "dept": "",
+          "hint": true
+        },
+        {
+          "id": "221-nttNo-195609-searchCtgry-searchCnd-all-searchKrwd-integrDeptCode-pageIndex-1",
+          "title": "10월 유아 보호자 특강 안내",
+          "url": "https://www.ddm.go.kr/health/selectBbsNttView.do?key=1335&bbsNo=221&nttNo=195609&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&pageIndex=1",
+          "date": "2026-10-19",
+          "dept": "",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "중랑구",
+      "name": "중랑구보건소",
+      "home_url": "https://www.jungnang.go.kr/health/main.do",
+      "list_url": "https://www.jungnang.go.kr/health/main.do",
+      "status": "unavailable",
+      "reason": "robots가 공지 게시판 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "성북구",
+      "name": "성북구보건소",
+      "home_url": "https://www.sb.go.kr/bogunso/index.do",
+      "list_url": "https://www.sb.go.kr/bogunso/selectBbsNttList.do?bbsNo=64&key=271",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "청년마음건강센터 기간제근로자 채용시험 공고",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585395&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-11-10",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "AI IoT기반 어르신 건강관리사업 기간제 근로자 채용 공고",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585382&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-11-09",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "성북구보건소 \"나를위한 챙김식사 프로그램\"(어르신대상)",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585326&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-11-04",
+          "dept": "건강정책과",
+          "hint": true
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "2026-2027절기 성북구 취약계층 인플루엔자(독감) 무료 예방접종 안내",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585038&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-10-22",
+          "dept": "건강관리과",
+          "hint": true
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "성북구보건소 바른식생활교육 및 영양플러스사업 기간제 근로자(영양사) 채용 최종합격자 공고",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9584476&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-10-02",
+          "dept": "건강정책과",
+          "hint": false
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "바른식생활교육 및 영양플러스사업 기간제근로자(영양사) 1차 서류심사 합격자 명단 및 2차 면접안내",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9584434&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-09-30",
+          "dept": "건강정책과",
+          "hint": false
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "2026-2027절기 코로나19 예방접종 실시안내",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9584422&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-09-30",
+          "dept": "건강관리과",
+          "hint": true
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "서울형 「어르신 방문진료 본인부담금 지원 사업」 선정 의료기관 발표",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9584387&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-09-28",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "성북구보건소 기간제근로자(금연상담사) 최종합격자 공고",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9584278&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-09-21",
+          "dept": "건강정책과",
+          "hint": false
+        },
+        {
+          "id": "earchCtgry-searchCnd-all-searchKrwd-integrDeptCode-startDate-endDate-pageIndex-1",
+          "title": "성북구보건소 서울형 입원 생활비 지원사업 기간제근로자 최종 합격자 공고",
+          "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9584271&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+          "date": "2026-09-18",
+          "dept": "건강관리과",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "강북구",
+      "name": "강북구보건소",
+      "home_url": "https://www.gangbuk.go.kr/www/index.do",
+      "list_url": "https://www.gangbuk.go.kr/www/index.do",
+      "status": "unavailable",
+      "reason": "자동 접속 확인(쿠키·스크립트) 화면이라 우회하지 않음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "도봉구",
+      "name": "도봉구보건소",
+      "home_url": "https://health.dobong.go.kr/",
+      "list_url": "https://health.dobong.go.kr/",
+      "status": "unavailable",
+      "reason": "robots가 공지 게시판(bbs.asp) 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "노원구",
+      "name": "노원구보건소",
+      "home_url": "https://www.nowon.kr/health/index.do",
+      "list_url": "https://www.nowon.kr/health/user/bbs/BD_selectBbsList.do?q_bbsCode=1001&q_estnColumn1=21",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261109095723119",
+          "title": "2027년 의료·요양 통합돌봄 지역계획 수립을 위한 설문조사 안내",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261109095723119",
+          "date": "2026-11-09",
+          "dept": "통합돌봄과",
+          "hint": false
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261105162941844",
+          "title": "생애주기별 정신건강강좌 노년기편_기억과 마음의 건강: 노년기 스트레스, 불안, 우울",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261105162941844",
+          "date": "2026-11-05",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261105132810812",
+          "title": "[노원구치매안심센터] 2026년 12월 찾아가는 치매 선별 검진 안내",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261105132810812",
+          "date": "2026-11-05",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261105112916045",
+          "title": "서울가족학교 '아버지 교실'안내",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261105112916045",
+          "date": "2026-11-05",
+          "dept": "보육가족과",
+          "hint": true
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261104094744938",
+          "title": "- 2026년 11월 - 식품접객업소 위생 및 원산지 지도서비스 시행 안내",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261104094744938",
+          "date": "2026-11-04",
+          "dept": "보건위생과",
+          "hint": false
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261023171730674",
+          "title": "어린이 기호식품 품질인증을 알아보아요",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261023171730674",
+          "date": "2026-10-23",
+          "dept": "보건위생과",
+          "hint": false
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261023094716168",
+          "title": "2026년 김장 채소 쓰레기 특별 분리 배출 안내 (2026.11.01.~2026.12.3...",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261023094716168",
+          "date": "2026-10-23",
+          "dept": "자원순환과",
+          "hint": false
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261022142903226",
+          "title": "2026년 노원구 11월 건강식단",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261022142903226",
+          "date": "2026-10-22",
+          "dept": "건강증진과",
+          "hint": false
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261022141915200",
+          "title": "세마글루티드 성분제제(위고비프리필드펜 등）안전사용 관련 안내",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261022141915200",
+          "date": "2026-10-22",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "health-user-bbs-BD-selectBbs-do-q-bbsCode-1001-q-bbscttSn-20261021173610376",
+          "title": "육아종합지원센터 11월 프로그램 안내",
+          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261021173610376",
+          "date": "2026-10-21",
+          "dept": "보육가족과",
+          "hint": true
+        }
+      ]
+    },
+    {
+      "district": "은평구",
+      "name": "은평구보건소",
+      "home_url": "https://www.ep.go.kr/health/index.do",
+      "list_url": "https://www.ep.go.kr/health/index.do",
+      "status": "unavailable",
+      "reason": "robots가 사이트 전체 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "서대문구",
+      "name": "서대문구보건소",
+      "home_url": "https://www.sdm.go.kr/health/",
+      "list_url": "https://www.sdm.go.kr/health/board/1/list",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "health-board-1-13732",
+          "title": "에볼라바이러스병(분디부교형) 바로 알기!",
+          "url": "https://www.sdm.go.kr/health/board/1/13732",
+          "date": "2026-11-03",
+          "dept": "감염병대응팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13728",
+          "title": "[카드뉴스] 음주폐해예방_음주 예방 가이드라인",
+          "url": "https://www.sdm.go.kr/health/board/1/13728",
+          "date": "2026-10-30",
+          "dept": "건강증진팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13715",
+          "title": "뎅기열 바이러스는 어떻게 확산될까요?",
+          "url": "https://www.sdm.go.kr/health/board/1/13715",
+          "date": "2026-10-21",
+          "dept": "감염병대응팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13736",
+          "title": "서대문구 보건소 체력인증센터 「가족 체력측정」 참여 안내",
+          "url": "https://www.sdm.go.kr/health/board/1/13736",
+          "date": "2026-11-05",
+          "dept": "건강증진팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13731",
+          "title": "2026년 11월 음식점 위생 및 원산지 지도서비스 추진안내",
+          "url": "https://www.sdm.go.kr/health/board/1/13731",
+          "date": "2026-11-02",
+          "dept": "위생지도팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13730",
+          "title": "[움직임이 즐거운 서대문구 11월호] 건강 운동 챌린지",
+          "url": "https://www.sdm.go.kr/health/board/1/13730",
+          "date": "2026-11-02",
+          "dept": "건강증진팀",
+          "hint": true
+        },
+        {
+          "id": "health-board-1-13712",
+          "title": "어린이기호식품 품질인증 홍보영상",
+          "url": "https://www.sdm.go.kr/health/board/1/13712",
+          "date": "2026-10-20",
+          "dept": "공중안전팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13710",
+          "title": "[어린이 기호식품 품질인증기준] 고시 개정 안내",
+          "url": "https://www.sdm.go.kr/health/board/1/13710",
+          "date": "2026-10-20",
+          "dept": "공중안전팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13696",
+          "title": "빈대 예방 수칙",
+          "url": "https://www.sdm.go.kr/health/board/1/13696",
+          "date": "2026-10-08",
+          "dept": "감염병대응팀",
+          "hint": false
+        },
+        {
+          "id": "health-board-1-13695",
+          "title": "2026년 즉석판매제조가공업소 점검 사전예고문",
+          "url": "https://www.sdm.go.kr/health/board/1/13695",
+          "date": "2026-10-08",
+          "dept": "공중안전팀",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "마포구",
+      "name": "마포구보건소",
+      "home_url": "https://www.mapo.go.kr/site/health/home",
+      "list_url": "https://www.mapo.go.kr/site/health/home",
+      "status": "unavailable",
+      "reason": "robots가 공지 게시판 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "양천구",
+      "name": "양천구보건소",
+      "home_url": "https://www.yangcheon.go.kr/health/health/main.do",
+      "list_url": "https://www.yangcheon.go.kr/health/health/main.do",
+      "status": "unavailable",
+      "reason": "robots가 공지 게시판 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "강서구",
+      "name": "강서구보건소",
+      "home_url": "https://www.gangseo.seoul.kr/health",
+      "list_url": "https://www.gangseo.seoul.kr/health/ht060701",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "t060701-325459-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "에볼라 바이러스병 중점검역관리지역 변경 안내",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/325459?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-11-09",
+          "dept": "보건관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-325342-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "2026-2027절기 건강취약계층 인플루엔자(독감) 무료 접종 안내",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/325342?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-11-05",
+          "dept": "보건관리과",
+          "hint": true
+        },
+        {
+          "id": "t060701-325160-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "2026년 11월 식품접객업소 위생 및 원산지 지도서비스 안내",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/325160?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-11-02",
+          "dept": "위생관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-324987-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "감염병 예방뉴스 10호 (2026년 11월)",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/324987?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-10-28",
+          "dept": "보건관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-324982-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "2026년 11월 식중독 주의정보 알림",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/324982?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-10-27",
+          "dept": "위생관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-324844-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "2026년(9차) 어린이집 급식 식재료 방사능 안전검사 결과 알림",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/324844?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-10-22",
+          "dept": "위생관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-324772-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "성범죄 경력자 취업 점검․확인 결과 공개",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/324772?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-10-21",
+          "dept": "보건관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-324737-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "공중위생업소 민관합동 점검 사전예고(숙박업, 목욕장업, 이용업)",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/324737?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-10-20",
+          "dept": "위생관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-324694-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "2026년(8차) 어린이집 급식 식재료 방사능 안전검사 결과 알림",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/324694?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-10-19",
+          "dept": "위생관리과",
+          "hint": false
+        },
+        {
+          "id": "t060701-324469-srchCtgry-srchStdg-curPage-srchKey-srchText-srchBeginDt-srchEndDt",
+          "title": "2026년 하반기 마약류취급자 교육 공지",
+          "url": "https://www.gangseo.seoul.kr/health/ht060701/324469?srchCtgry=&srchStdg=&curPage=&srchKey=&srchText=&srchBeginDt=&srchEndDt=",
+          "date": "2026-10-07",
+          "dept": "의약과",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "구로구",
+      "name": "구로구보건소",
+      "home_url": "https://www.guro.go.kr/health/index.do",
+      "list_url": "https://www.guro.go.kr/health/selectBbsNttList.do?bbsNo=578&key=1304",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-242044-pageUnit-10-key-1304-pageIndex-1",
+          "title": "구로구 모자건강센터 주차 안내",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=242044&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-11-10",
+          "dept": "모자보건팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-242020-pageUnit-10-key-1304-pageIndex-1",
+          "title": "구로구 월간 감염병 소식지(11월호) 안내",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=242020&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-11-09",
+          "dept": "감염병대응팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-241702-pageUnit-10-key-1304-pageIndex-1",
+          "title": "2026년 아동 청소년 관련기관 성범죄 경력자 점검결과 공개",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=241702&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-10-29",
+          "dept": "의무팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-241385-pageUnit-10-key-1304-pageIndex-1",
+          "title": "2026년도 3~4분기 공중위생업소 민·관합동 점검 사전예고",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=241385&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-10-19",
+          "dept": "공중위생팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-241213-pageUnit-10-key-1304-pageIndex-1",
+          "title": "구로구 월간 감염병 소식지(10월호)안내",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=241213&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-10-12",
+          "dept": "감염병대응팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-241105-pageUnit-10-key-1304-pageIndex-1",
+          "title": "서울특별시 구로구 보건소 시간선택제임기제공무원[금연상담사, 대사증후군관리 상담사(영양사)]채용 공고",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=241105&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-10-07",
+          "dept": "생활보건팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-241058-pageUnit-10-key-1304-pageIndex-1",
+          "title": "방충·방서를 통해 더욱 안전하고 청결한 시설 만들기 [바퀴벌레 편]",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=241058&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-10-06",
+          "dept": "감염병예방팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-240904-pageUnit-10-key-1304-pageIndex-1",
+          "title": "거짓청구 요양기관 명단 공표(공고기간 2026. 10. 1. ~ 2027. 3. 31.)",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=240904&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-10-01",
+          "dept": "약무팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-240843-pageUnit-10-key-1304-pageIndex-1",
+          "title": "식품 등 취급종사자 건강진단 시기 사전 알림서비스 안내",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=240843&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-09-29",
+          "dept": "민원서비스팀",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-578-nttNo-240700-pageUnit-10-key-1304-pageIndex-1",
+          "title": "2026-2027절기 인플루엔자(독감) 및 코로나19 예방접종 실시 안내",
+          "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=240700&&pageUnit=10&key=1304&pageIndex=1",
+          "date": "2026-09-23",
+          "dept": "예방접종팀",
+          "hint": true
+        }
+      ]
+    },
+    {
+      "district": "금천구",
+      "name": "금천구보건소",
+      "home_url": "https://www.geumcheon.go.kr/health/index.do",
+      "list_url": "https://www.geumcheon.go.kr/health/selectBbsNttList.do?bbsNo=310&key=2281",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "4-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "2026년 의료기관 성범죄 경력자 취업 점검.확인 결과 공개",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271544&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-29",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "0-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "보건소 B형간염(1ml) 예방접종 수수료 변경 안내(26.11.02.적용)",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271540&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-29",
+          "dept": "건강증진과",
+          "hint": true
+        },
+        {
+          "id": "9-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "2026년 「영유아모성프로그램(미술태교-글라스아트 2기)」 참여자 모집",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271519&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-28",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "4-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "박미보건지소 <장수라이프 체조교실> 참여자 모집 안내",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271504&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-26",
+          "dept": "건강증진과",
+          "hint": true
+        },
+        {
+          "id": "7-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "[2026년 11월 상설 심폐소생술 교육 신청 안내]",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271447&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-22",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "6-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "2026년 「영유아모성프로그램(바느질 교실 6기)」 참여자 모집(비대면운영)",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271396&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-16",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "5-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "2026년 「영유아모성프로그램(아기마사지 3기)」 참여자 모집",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271395&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-16",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "3-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "「임신부터 출산까지 - 노동법의 모든 것」 참여자 모집",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271273&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-07",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "2-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "2026년 「영유아모성프로그램(미술태교 - 라탄만들기 2기)」 참여자 모집",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271272&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-07",
+          "dept": "의약과",
+          "hint": true
+        },
+        {
+          "id": "1-searchCtgry-searchCnd-all-searchKrwd-pageIndex-1-integrDeptCode-searchDeptCode",
+          "title": "2026년 「영유아모성프로그램(부부태교교실 3기)」 참여자 모집",
+          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271271&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
+          "date": "2026-10-07",
+          "dept": "의약과",
+          "hint": true
+        }
+      ]
+    },
+    {
+      "district": "영등포구",
+      "name": "영등포구보건소",
+      "home_url": "https://www.ydp.go.kr/health/index.do",
+      "list_url": "https://www.ydp.go.kr/health/selectBbsNttList.do?bbsNo=317&key=3723",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421350-pageUnit-10-key-3723-pageIndex-1",
+          "title": "영등포구 ‘만취예방 거리조성 실천업소’를 소개합니다~!",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421350&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-11-09",
+          "dept": "생활건강과",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421276-pageUnit-10-key-3723-pageIndex-1",
+          "title": "안심식당지정업소현황(2026.11.1 기준)",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421276&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-11-05",
+          "dept": "보건위생과",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421231-pageUnit-10-key-3723-pageIndex-1",
+          "title": "생명을 살리는 따뜻한 나눔, 헌혈에 동참해 주세요!",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421231&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-11-04",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421228-pageUnit-10-key-3723-pageIndex-1",
+          "title": "2026년 하반기 소비자식품위생감시원 등 직무교육 실시 안내",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421228&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-11-04",
+          "dept": "보건위생과",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421227-pageUnit-10-key-3723-pageIndex-1",
+          "title": "11월 음주폐해 예방의 달, 「만취 없이 즐겁게!」 건전한 음주문화 만들기에 동참해 주세요!",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421227&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-11-04",
+          "dept": "생활건강과",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-421080-pageUnit-10-key-3723-pageIndex-1",
+          "title": "2026년 하반기 식품자동판매기 위생점검 안내",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421080&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-10-31",
+          "dept": "보건위생과",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-420955-pageUnit-10-key-3723-pageIndex-1",
+          "title": "11월 식중독 주의 정보 알림",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=420955&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-10-28",
+          "dept": "보건위생과",
+          "hint": false
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-420869-pageUnit-10-key-3723-pageIndex-1",
+          "title": "[충분히 좋은 부모] 양육자 스트레스 관리 집단상담 참여자 모집",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=420869&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-10-26",
+          "dept": "건강증진과",
+          "hint": true
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-420838-pageUnit-10-key-3723-pageIndex-1",
+          "title": "11/11(수) ＇다같이 돌자, 영등포 한 바퀴＇ 모집 안내",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=420838&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-10-24",
+          "dept": "생활건강과",
+          "hint": true
+        },
+        {
+          "id": "alth-selectBbsNttView-do-bbsNo-317-nttNo-420685-pageUnit-10-key-3723-pageIndex-1",
+          "title": "2026년도 공중위생업소 민·관합동 점검계획 사전 안내",
+          "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=420685&&pageUnit=10&key=3723&pageIndex=1",
+          "date": "2026-10-20",
+          "dept": "보건위생과",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "동작구",
+      "name": "동작구보건소",
+      "home_url": "https://www.dongjak.go.kr/healthcare/main/main.do",
+      "list_url": "https://www.dongjak.go.kr/healthcare/main/main.do",
+      "status": "unavailable",
+      "reason": "robots가 공지 게시판 수집을 막음",
+      "checked_at": null,
+      "items": []
+    },
+    {
+      "district": "관악구",
+      "name": "관악구보건소",
+      "home_url": "https://www.gwanak.go.kr/site/health/main.do",
+      "list_url": "https://www.gwanak.go.kr/site/health/ex/bbs/List.do?cbIdx=275",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-213769",
+          "title": "문신사법 시행 대비 문신업소 설문조사 실시 안내",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=213769",
+          "date": "2026-11-10",
+          "dept": "위생과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-212972",
+          "title": "서울특별시 관악구 정신건강복지센터 기간제근로자 채용공고",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212972",
+          "date": "2026-11-06",
+          "dept": "지역보건과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-212861",
+          "title": "서울특별시 관악보건지소 기간제근로자(영양사) 채용 공고",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212861",
+          "date": "2026-11-04",
+          "dept": "보건지소",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-212852",
+          "title": "위생용품 소비자리필판매업·소분업 영업 신설('26.12.31.) 대비 민원 설명회 개최",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212852",
+          "date": "2026-11-04",
+          "dept": "위생과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-212691",
+          "title": "서울특별시 관악구보건소 감염병예방사업 기간제근로자(임상병리사) 채용 공고",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212691",
+          "date": "2026-11-03",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-212475",
+          "title": "2026년 11월 식품접객업소 위생 및 원산지 지도서비스 시행 사전예고문",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212475",
+          "date": "2026-10-30",
+          "dept": "위생과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-212331",
+          "title": "2026년 모자보건사업 기간제근로자 공개채용 최종합격자 공고",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212331",
+          "date": "2026-10-28",
+          "dept": "지역보건과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-212299",
+          "title": "2026년 하반기 소비자식품위생감시원 정기교육 실시 안내",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212299",
+          "date": "2026-10-27",
+          "dept": "위생과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-210434",
+          "title": "관악구보건소 건강관리센터 기간제근로자(단시간 간호사) 채용 공고",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=210434",
+          "date": "2026-10-15",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "site-health-ex-bbs-View-do-cbIdx-275-bcIdx-210291",
+          "title": "서울특별시 관악구 정신건강복지센터 기간제근로자 채용공고",
+          "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=210291",
+          "date": "2026-10-13",
+          "dept": "지역보건과",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "서초구",
+      "name": "서초구보건소",
+      "home_url": "https://www.seocho.go.kr/site/sh/main.do",
+      "list_url": "https://www.seocho.go.kr/site/sh/ex/bbs/List.do?cbIdx=91",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412590",
+          "title": "2026년 서초구보건소 정신건강사업 기간제근로자 채용 공고",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412590",
+          "date": "2026-11-10",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412564",
+          "title": "결핵관리사업 기간제근로자 채용 최종 합격자 공고",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412564",
+          "date": "2026-11-09",
+          "dept": "건강정책과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412522",
+          "title": "보건소 방역일정 안내",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412522",
+          "date": "2026-11-05",
+          "dept": "건강정책과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412484",
+          "title": "2026년 서초구 정신보건사업 시간선택제임기제(라,마급) 서류합격자 및 면접일정 공고",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412484",
+          "date": "2026-11-04",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412437",
+          "title": "2026년 서초구 보건소, 보건지소 내 성범죄 경력자 취업 점검 및 확인 결과 공개",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412437",
+          "date": "2026-11-03",
+          "dept": "의료지원과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412429",
+          "title": "「결핵관리사업」 기간제근로자 채용 서류심사 합격자 발표 및 면접시험 안내",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412429",
+          "date": "2026-11-03",
+          "dept": "건강정책과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412426",
+          "title": "2026년 의원급 의료기관 감염관리 실태조사 실시 안내",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412426",
+          "date": "2026-11-03",
+          "dept": "건강정책과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412362",
+          "title": "건강증진팀 기간제근로자(운동사) 채용 공고",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412362",
+          "date": "2026-11-02",
+          "dept": "건강관리과",
+          "hint": false
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412293",
+          "title": "만성질환관리팀 기간제근로자 (간호사, 영양사, 운동사, 행정요원) 모집",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412293",
+          "date": "2026-10-28",
+          "dept": "의료지원과",
+          "hint": true
+        },
+        {
+          "id": "site-sh-ex-bbs-View-do-cbIdx-91-bcIdx-412290",
+          "title": "2026년 11월 식중독 주의 정보 알림",
+          "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412290",
+          "date": "2026-10-28",
+          "dept": "위생과",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "강남구",
+      "name": "강남구보건소",
+      "home_url": "https://health.gangnam.go.kr/web/index.do",
+      "list_url": "https://health.gangnam.go.kr/web/community/notice.do",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "web-community-notice-1076724-view-do",
+          "title": "에볼라바이러스병 예방 강화 안내",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076724/view.do",
+          "date": "2026-11-10",
+          "dept": "질병관리과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076720-view-do",
+          "title": "의료기관 내 C형 간염 예방 수칙 안내",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076720/view.do",
+          "date": "2026-11-06",
+          "dept": "질병관리과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076708-view-do",
+          "title": "서울체력장 강남센터 무료 체력측정 및 맞춤형 운동처방 안내",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076708/view.do",
+          "date": "2026-11-02",
+          "dept": "보건행정과",
+          "hint": true
+        },
+        {
+          "id": "web-community-notice-1076706-view-do",
+          "title": "2026년 의원급 의료기관(의원,치과의원,한의원) 감염관리 실태조사 실시 안내",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076706/view.do",
+          "date": "2026-10-27",
+          "dept": "질병관리과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076702-view-do",
+          "title": "AI활용 불법 마약류 근절·예방 홍보 콘텐츠 공모전 수상작: 카드뉴스 (2)",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076702/view.do",
+          "date": "2026-10-22",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076701-view-do",
+          "title": "AI활용 불법 마약류 근절·예방 홍보 콘텐츠 공모전 수상작: 카드뉴스",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076701/view.do",
+          "date": "2026-10-22",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076697-view-do",
+          "title": "빈대 예방수칙 - 빈대없는 건강한 생활환경을 만들어요!",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076697/view.do",
+          "date": "2026-10-20",
+          "dept": "질병관리과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076696-view-do",
+          "title": "비 온 뒤 모기 습격! 우리 가족을 지키는 개인 방어 완벽 가이드",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076696/view.do",
+          "date": "2026-10-20",
+          "dept": "질병관리과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076689-view-do",
+          "title": "★진드기 매개 감염병 다발생 시기, 예방 수칙 바로 알기!!",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076689/view.do",
+          "date": "2026-10-15",
+          "dept": "질병관리과",
+          "hint": false
+        },
+        {
+          "id": "web-community-notice-1076688-view-do",
+          "title": "(종합병원, 요양병원 해당) 2026년 신고의무자(아동·장애인·노인학대 및 긴급복지지원) 교육 안내",
+          "url": "https://health.gangnam.go.kr/web/community/notice/1076688/view.do",
+          "date": "2026-10-14",
+          "dept": "의약과",
+          "hint": true
+        }
+      ]
+    },
+    {
+      "district": "송파구",
+      "name": "송파구보건소",
+      "home_url": "https://www.songpa.go.kr/ehealth/index.do",
+      "list_url": "https://www.songpa.go.kr/ehealth/selectBbsNttList.do?bbsNo=179&key=4713",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19280127-pageUnit-10-key-4713-pageIndex-1",
+          "title": "(11월)아이랑 부모랑 함께하는 신체활동 프로그램 참여자 모집",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19280127&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-11-06",
+          "dept": "생애건강과",
+          "hint": true
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19280056-pageUnit-10-key-4713-pageIndex-1",
+          "title": "11월 음주폐해예방의 달 온라인 홍보 이벤트",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19280056&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-11-04",
+          "dept": "건강증진과",
+          "hint": true
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279852-pageUnit-10-key-4713-pageIndex-1",
+          "title": "2026년 하반기 의료업소 자율점검(자체점검) 실시 요청",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279852&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-10-23",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279664-pageUnit-10-key-4713-pageIndex-1",
+          "title": "바르게 걷기 교육 강좌 안내(※ 내 발 족압 측정, 노르딕 워킹※)",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279664&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-10-15",
+          "dept": "건강증진과",
+          "hint": true
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279587-pageUnit-10-key-4713-pageIndex-1",
+          "title": "요양병원·시설 및 노숙인 입소시설 결핵 예방 및 환자 발생 시 관리 안내",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279587&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-10-12",
+          "dept": "건강증진과",
+          "hint": false
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279531-pageUnit-10-key-4713-pageIndex-1",
+          "title": "보건지소 배쏙쏙 운동교실 6기 모집(접수:10/19~선착순)",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279531&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-10-07",
+          "dept": "돌봄건강지원센터보건지소",
+          "hint": true
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279477-pageUnit-10-key-4713-pageIndex-1",
+          "title": "「식품의 기준 및 규격(고시)」 개정관련 안내(식탁 위 소스류 제공 관련)",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279477&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-10-02",
+          "dept": "보건위생과",
+          "hint": false
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279432-pageUnit-10-key-4713-pageIndex-1",
+          "title": "임신준비&출산부 힐링걷기 챌린지 안내",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279432&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-10-01",
+          "dept": "생애건강과",
+          "hint": true
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279307-pageUnit-10-key-4713-pageIndex-1",
+          "title": "2026년 의료기관 대상 법정 신고의무자 교육 실시 및 결과 제출 안내(병·의원급)",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279307&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-09-23",
+          "dept": "의약과",
+          "hint": false
+        },
+        {
+          "id": "th-selectBbsNttView-do-bbsNo-179-nttNo-19279266-pageUnit-10-key-4713-pageIndex-1",
+          "title": "2026년 하반기 소비자식품위생감시원 직무교육",
+          "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19279266&&pageUnit=10&key=4713&pageIndex=1",
+          "date": "2026-09-22",
+          "dept": "보건위생과",
+          "hint": false
+        }
+      ]
+    },
+    {
+      "district": "강동구",
+      "name": "강동구보건소",
+      "home_url": "https://health.gangdong.go.kr/health/site/main/home",
+      "list_url": "https://health.gangdong.go.kr/health/site/main/board/healthnews/list",
+      "status": "checked",
+      "reason": null,
+      "checked_at": "2026-11-11T10:18:09.491905+09:00",
+      "items": [
+        {
+          "id": "health-site-main-board-healthnews-1723",
+          "title": "[당뇨병 예방수칙] 정기적인 검진·진찰 받기",
+          "url": "https://health.gangdong.go.kr/health/site/main/board/healthnews/1723",
+          "date": "2026-09-22",
+          "dept": "보건의료과",
+          "hint": true
+        },
+        {
+          "id": "health-site-main-board-healthnews-1721",
+          "title": "2026-2027절기 인플루엔자(독감)·코로나19 무료 예방접종 실시",
+          "url": "https://health.gangdong.go.kr/health/site/main/board/healthnews/1721",
+          "date": "2026-09-17",
+          "dept": "",
+          "hint": true
+        }
+      ]
+    },
+    {
+      "district": "성남시",
+      "name": "성남시보건소",
+      "home_url": "https://www.seongnam.go.kr/health/index",
+      "list_url": "https://www.seongnam.go.kr/health/ht-bbs040101",
+      "status": "failed",
+      "reason": "tls",
+      "checked_at": null,
+      "items": []
+    }
+  ]
+}
