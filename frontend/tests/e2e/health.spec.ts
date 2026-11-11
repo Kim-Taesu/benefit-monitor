@@ -11,6 +11,7 @@ for(const width of [390,1440])test(`health notice tab shows hint notices first a
   board({items:[item(1,{date:'2026-11-04'}),item(2,{title:'[테스트] 독감 무료 접종 안내',hint:true})]}),
   board({district:'은평구',name:'은평구보건소',list_url:'https://www.ep.go.kr/health/index.do',home_url:'https://www.ep.go.kr/health/index.do',status:'unavailable',reason:'robots가 사이트 전체 수집을 막음',checked_at:null}),
  ]}});
+ (raw as Record<string,unknown>).health_notes=[{url:'https://www.gangseo.seoul.kr/health/ht020103',district:'강서구',sentence:'[테스트] 강서구 20~69세라면 대사증후군 검진을 무료로 받을 수 있어요. 전화로 예약하고 받아보세요.',generated_at:'2026-11-04T01:00:00+09:00'}];
  const origin=new URL(String(test.info().project.use.baseURL)).origin,requests:string[]=[];
  await page.route('**/*',route=>{
   const u=new URL(route.request().url());requests.push(u.origin);
@@ -29,6 +30,8 @@ for(const width of [390,1440])test(`health notice tab shows hint notices first a
  await expect(section.getByRole('link',{name:/대사증후군 관리/})).toBeHidden();
  await section.locator('#health-district').selectOption('강서구');
  await expect(section.getByRole('link',{name:/대사증후군 관리/})).toHaveAttribute('href','https://www.gangseo.seoul.kr/health/ht020103');
+ await expect(section.locator('.health-note')).toContainText('AI 작성');
+ await expect(section.locator('.health-note')).toContainText('무료로 받을 수 있어요');
  await section.locator('#health-district').selectOption('은평구');
  await expect(section.getByRole('link',{name:/은평구보건소 바로가기/}).first()).toHaveAttribute('href','https://www.ep.go.kr/health/index.do');
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

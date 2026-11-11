@@ -3,7 +3,7 @@
 // word match; free/eligibility facts come from the official notice or a reviewed benefit card.
 export interface HealthNotice{id:string;title:string;url:string;date:string;dept:string;hint:boolean;district:string;center:string}
 export interface HealthBoard{district:string;name:string;listUrl:string;homeUrl:string;status:'checked'|'failed'|'unavailable';reason:string|null;checkedAt:string|null;count:number}
-export interface HealthProgram{district:string;center:string;name:string;url:string;status:'checked'|'failed'|'pending';checkedAt:string|null;stale:boolean}
+export interface HealthProgram{district:string;center:string;name:string;url:string;status:'checked'|'failed'|'pending';checkedAt:string|null;stale:boolean;note:string|null}
 export interface HealthBundle{fetchedAt:string;notice:string;boards:HealthBoard[];items:HealthNotice[];programs:HealthProgram[]}
 
 const DATE=/^\d{4}-\d{2}-\d{2}$/;
@@ -43,7 +43,7 @@ export function parseHealth(raw:unknown,now:number):HealthBundle|null{
   }
   boards.push({district:b.district,name:b.name,listUrl:list.href,homeUrl:home.href,status:b.status as HealthBoard['status'],reason:b.reason as string|null,checkedAt:b.checked_at as string|null,count});
  }
- const programs:HealthProgram[]=[],urls=new Set<string>();
+ const programs:HealthProgram[]=[],urls=new Set<string>(),notes=parseNotes(raw.health_notes,now);
  const rawPrograms=h.programs??[];
  if(!Array.isArray(rawPrograms)||rawPrograms.length>150)return null;
  for(const p of rawPrograms){
@@ -52,13 +52,29 @@ export function parseHealth(raw:unknown,now:number):HealthBundle|null{
   const checked=p.checked_at===null?null:typeof p.checked_at==='string'&&Number.isFinite(Date.parse(p.checked_at))?p.checked_at:undefined;
   if(checked===undefined||(p.status==='checked'&&checked===null))return null;
   urls.add(u.href);
-  programs.push({district:p.district,center:p.center as string,name:p.name,url:u.href,status:p.status as HealthProgram['status'],checkedAt:checked,stale:!checked||now-Date.parse(checked)>PROGRAM_STALE_MS});
+  const stale=!checked||now-Date.parse(checked)>PROGRAM_STALE_MS;
+  programs.push({district:p.district,center:p.center as string,name:p.name,url:u.href,status:p.status as HealthProgram['status'],checkedAt:checked,stale,note:p.status==='checked'&&!stale?notes.get(u.href+'\n'+p.district)??null:null});
  }
- programs.sort((a,b)=>a.district.localeCompare(b.district,'ko')||a.name.localeCompare(b.name,'ko'));
+ // AI 문구가 있는 사업을 먼저 보여준다.
+ programs.sort((a,b)=>a.district.localeCompare(b.district,'ko')||Number(!!b.note)-Number(!!a.note)||a.name.localeCompare(b.name,'ko'));
  // 건강 혜택처럼 보이는 공지를 먼저, 그 안에서는 최근 날짜순.
  items.sort((a,b)=>Number(b.hint)-Number(a.hint)||b.date.localeCompare(a.date)||a.district.localeCompare(b.district,'ko'));
  boards.sort((a,b)=>a.district.localeCompare(b.district,'ko'));
  return {fetchedAt:h.fetched_at,notice:h.notice,boards,items,programs};
+}
+
+// AI sentences (health_notes), already re-checked by the publisher against the stored page text.
+const NOTE_KEYS=['url','district','sentence','generated_at'];
+function parseNotes(raw:unknown,now:number):Map<string,string>{
+ const out=new Map<string,string>();
+ if(!Array.isArray(raw)||raw.length>150)return out;
+ for(const n of raw){
+  if(!record(n)||!exact(n,NOTE_KEYS)||!text(n.sentence,180)||(n.sentence as string).length<25||/[<>\n\r]|https?:/.test(n.sentence as string)||typeof n.district!=='string'||typeof n.generated_at!=='string')continue;
+  const g=Date.parse(n.generated_at),u=https(n.url);
+  if(!u||!Number.isFinite(g)||g>now+5*60000||now-g>21*86400000)continue;
+  out.set(u.href+'\n'+n.district,n.sentence as string);
+ }
+ return out;
 }
 
 export const boardStatus:Record<HealthBoard['status'],string>={checked:'수집됨',failed:'이번 수집 실패',unavailable:'자동 수집 안 함'};

@@ -10,6 +10,7 @@ from .publish import run as publish_briefing, prepare_import
 from .store import load,save,lock
 from .topic_refresh import refresh
 from .grocery_pick import refresh as grocery_refresh
+from .health_notes import refresh as health_refresh
 from .remote_delivery import deliver,preceding_refresh
 
 
@@ -65,9 +66,15 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
             except Exception as error:  # Optional card: never blocks publishing the day's paid results.
                 grocery={'status':'failed','error_type':type(error).__name__,'model':None}
             exhausted=exhausted or (grocery.get('model') or {}).get('status')=='credit_exhausted'
+            # Up to 10 paid health-programme sentences a day, only for new or changed page text.
+            try:
+                health=health_refresh(root,now,execute=allow_spend and not exhausted)
+            except Exception as error:  # Optional text: never blocks publishing the day's paid results.
+                health={'status':'failed','error_type':type(error).__name__,'model':None}
+            exhausted=exhausted or health.get('status')=='credit_exhausted'
             public=publish_briefing(root,now=now) if publish else None
             remote=deliver(root,policy,now=now) if publish and policy.get('remote_delivery_approved') is True else None
-            result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'grocery':grocery,'public_exported':public is not None,
+            result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'grocery':grocery,'health':health,'public_exported':public is not None,
                     'remote_delivery':remote,'recurring_spend_requested':allow_spend,'public_status':public.get('status') if public else None}
             state['days'][day].update(status='failed' if exhausted else 'completed',finished_at=now.isoformat())
             save(project_path(root,'cache/ai_daily/days.json'),state)

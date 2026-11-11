@@ -122,11 +122,27 @@ test('grocery text mute adds a dated entry, keeps other entries and redeploys; u
  assert.deepEqual(await readGroceryMutes(TOKEN,{fetch:fn}),['2026-11-06']);
  const {readAdminState}=await import('../src/admin/github.ts');
  ({fn,calls}=fake([json(200,{encoding:'base64',sha:'sha2',content:encode([existing,mute])})]));
- assert.deepEqual(await readAdminState(TOKEN,{fetch:fn}),{list:[existing],mutes:['2026-11-06']});
+ assert.deepEqual(await readAdminState(TOKEN,{fetch:fn}),{list:[existing],mutes:['2026-11-06'],healthMutes:[]});
  assert.equal(calls.length,1);
  ({fn,calls}=fake([json(200,{encoding:'base64',sha:'sha2',content:encode([existing,mute])}),json(200,{}),new Response(null,{status:204})]));
  await unmuteGroceryText(TOKEN,'2026-11-06',{fetch:fn});
  assert.deepEqual(decode((calls[1].body as {content:string}).content),[existing]);
  await assert.rejects(()=>muteGroceryText(TOKEN,'11/06','',{fetch:fn}),/조사일/);
  await assert.rejects(()=>muteGroceryText(TOKEN,'2026-11-06','x'.repeat(NOTE_MAX+1),{fetch:fn}),/메모/);
+});
+
+test('health note mute adds a url entry and redeploys; unmute removes it; bad urls refused',async()=>{
+ const {muteHealthNote,unmuteHealthNote,readAdminState}=await import('../src/admin/github.ts');
+ const url='https://www.gangseo.seoul.kr/health/ht020103';
+ const mute={kind:'health_note_text',url,taken_down_at:NOW.toISOString(),note:'어색함'};
+ let {fn,calls}=fake([json(200,{encoding:'base64',sha:'sha1',content:encode([existing])}),json(200,{}),new Response(null,{status:204})]);
+ await muteHealthNote(TOKEN,url,' 어색함 ',{fetch:fn,now:()=>NOW});
+ assert.deepEqual(calls.map(c=>c.method),['GET','PUT','POST']);
+ assert.deepEqual(decode((calls[1].body as {content:string}).content),[existing,mute]);
+ ({fn,calls}=fake([json(200,{encoding:'base64',sha:'sha2',content:encode([existing,mute])})]));
+ assert.deepEqual((await readAdminState(TOKEN,{fetch:fn})).healthMutes,[url]);
+ ({fn,calls}=fake([json(200,{encoding:'base64',sha:'sha2',content:encode([existing,mute])}),json(200,{}),new Response(null,{status:204})]));
+ await unmuteHealthNote(TOKEN,url,{fetch:fn});
+ assert.deepEqual(decode((calls[1].body as {content:string}).content),[existing]);
+ await assert.rejects(()=>muteHealthNote(TOKEN,'http://x.kr','',{fetch:fn}),/주소/);
 });

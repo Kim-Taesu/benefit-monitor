@@ -59,6 +59,7 @@ def restore(root, repository, now=None, env=None):
     save(root/"cache/operational_state.json",state)
     restore_baselines(root,repository,env)
     restore_health_notices(root,repository,env)
+    restore_health_notes(root,repository,env)
     return envelope.get("sha")
 
 
@@ -94,6 +95,22 @@ def restore_health_notices(root, repository, env=None):
     except Exception:
         pass
     path.unlink(missing_ok=True)
+    return False
+
+
+def restore_health_notes(root, repository, env=None):
+    """Public AI health sentences from the last AI run; publication re-checks each against the page text."""
+    from .store import save
+    from .health_notes import PUBLIC
+    path = Path(root) / PUBLIC
+    try:
+        notes, _ = _get(repository, "ai-health-notes.json", env)
+        if isinstance(notes, list):
+            if not path.exists():  # the AI run's own copy (restored runtime) is never replaced by an older one
+                save(path, notes)
+            return True
+    except Exception:
+        pass
     return False
 
 

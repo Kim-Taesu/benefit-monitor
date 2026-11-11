@@ -33,6 +33,7 @@ PROJECT = Path(__file__).resolve().parents[1]
 RESEARCH_WIRE = 'research-wire-v1'
 TOPIC_WIRE = 'topic-wire-v1'
 GROCERY_WIRE = 'grocery-wire-v1'
+HEALTH_WIRE = 'health-note-wire-v1'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
 GRAMMAR_UNION_LIMIT = 0
@@ -330,7 +331,25 @@ def grocery_from_wire(wire, host):
     return {'summary': wire['summary'], 'picks': wire['picks']}
 
 
+def health_wire_schema(host):
+    """One sentence and its page quotes; the same schema every day (one grammar probe)."""
+    from .health_notes import STATUSES
+    schema = _object({'wire_version': {'enum': [HEALTH_WIRE]}, 'status': {'enum': list(STATUSES)},
+                      'sentence': _string(), 'quotes': {'type': 'array', 'items': _string()}})
+    check_limits(schema)
+    return schema
+
+
+def health_from_wire(wire, host):
+    if not isinstance(wire, dict) or wire.get('wire_version') != HEALTH_WIRE \
+            or set(wire) != {'wire_version', 'status', 'sentence', 'quotes'}:
+        raise ValueError('health wire contract mismatch')
+    return {'status': wire['status'], 'sentence': wire['sentence'], 'quotes': wire['quotes']}
+
+
 def schema_for(kind, host):
+    if kind == 'health':
+        return health_wire_schema(host)
     if kind == 'grocery':
         return grocery_wire_schema(host)
     if kind == 'verify':
@@ -340,6 +359,8 @@ def schema_for(kind, host):
 
 
 def from_wire(kind, wire, host):
+    if kind == 'health':
+        return health_from_wire(wire, host)
     if kind == 'grocery':
         return grocery_from_wire(wire, host)
     if kind == 'verify':

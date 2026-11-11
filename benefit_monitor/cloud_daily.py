@@ -56,7 +56,8 @@ def disable_workflow(store):
 # GitHub delayed the 01:00 KST briefing schedule 5.8-10.7h and dropped it on 2026-11-04.
 FALLBACK_REFRESH_HOUR=10
 ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
-# Per-day paid request limits: verification 40, research 40 (2026-11-10), topic 1, grocery pick 1, grammar probes (one per new schema).
+# Per-day paid request limits: verification 40, research 40 (2026-11-10), topic 1, grocery pick 1,
+# health-programme sentences 10 (2026-11-11), grammar probes (one per new schema).
 MAX_DAILY_RESEARCH=40
 MAX_DAILY_VERIFY=40
 STATUS_FILE='cache/ai_daily/status.json'
@@ -81,6 +82,23 @@ def upload_ai_status(root,store):
               'content':base64.b64encode((json.dumps(status,ensure_ascii=False)+'\n').encode()).decode()}
         if sha:body['sha']=sha
         store._api('contents/ai-status.json',body)
+        return True
+    except Exception:
+        return False
+
+
+def upload_health_notes(root,store):
+    """Best effort copy of the public AI health sentences to briefing-data so collection-only runs keep them."""
+    try:
+        from .health_notes import PUBLIC
+        notes=load(safe_path(root,PUBLIC),None)
+        if not isinstance(notes,list):return False
+        try:sha=store._api('contents/ai-health-notes.json?ref=briefing-data').get('sha')
+        except ValueError:sha=None  # Not created yet.
+        body={'message':'Update AI health notes','branch':'briefing-data',
+              'content':base64.b64encode((json.dumps(notes,ensure_ascii=False,indent=2)+'\n').encode()).decode()}
+        if sha:body['sha']=sha
+        store._api('contents/ai-health-notes.json',body)
         return True
     except Exception:
         return False
@@ -166,6 +184,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     if save_ai(root,REPOSITORY,env=env)!=local:
         # Merged with a concurrent writer: this snapshot no longer matches; the next collection publishes it.
         return {'status':'ai_approval_merged_deferred'}
+    upload_health_notes(root,store)
     commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content,expected_sha=expected_sha)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{
