@@ -175,13 +175,21 @@ class SanitizeTests(unittest.TestCase):
 
 class ClauseTests(unittest.TestCase):
     def test_real_korea_grand_festival_never_links_hanwoo_or_its_50_percent(self):
-        links = gd.link([KOREA_GRAND_FESTIVAL], basket(), TODAY)
-        self.assertNotIn("hanwoo_sirloin", ids(links))
-        self.assertNotIn("us_short_rib", ids(links))
-        self.assertTrue(set(ids(links)) <= {"mackerel", "squid"})
-        for x in links:
-            self.assertNotIn("50", x["discount"] or "")
-            self.assertEqual((x["start"], x["end"]), ("2026-10-29", "2026-11-15"))
+        # "품목별·매장별 ... 기간이 다르며": no clause names 수산물 with both dates, so nothing links.
+        self.assertEqual(gd.link([KOREA_GRAND_FESTIVAL], basket(), TODAY), [])
+
+    def test_varying_period_phrase_needs_both_dates_in_the_item_clause(self):
+        note = "품목별·매장별 가격과 기간이 다르며 모든 상품에 최대 할인율이 적용되지 않음."
+        links = gd.link([event("가을 수산물 할인", "고등어는 11월 7일~11월 27일 최대 30%. 오징어도 할인", note)],
+                        basket(), TODAY)
+        self.assertEqual([(x["basket_id"], x["discount"]) for x in links], [("mackerel", "최대 30%")])
+        for phrase in ("기간은 상이", "기간 별도", "기간 다름"):
+            with self.subTest(phrase=phrase):
+                self.assertEqual(gd.link([event("양파 할인", conditions=phrase)], basket(), TODAY), [])
+
+    def test_without_varying_period_phrase_behavior_unchanged(self):
+        links = gd.link([event("가을 수산물 할인", "고등어는 11월 7일~11월 27일 최대 30%. 오징어도 할인")], basket(), TODAY)
+        self.assertEqual([(x["basket_id"], x["discount"]) for x in links], [("mackerel", "최대 30%"), ("squid", None)])
 
     def test_clause_with_other_period_is_not_linked(self):
         links = gd.link([event("가을 먹거리 할인", "고등어는 11월 7일~11월 20일 30% 할인. 양파 20% 할인")], basket(), TODAY)

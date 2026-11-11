@@ -5,13 +5,15 @@ date, is running today (KST) and names the basket item or a clear item group. An
 linked; the event stays in the benefits tab only.
 
 Clause rule (2026-11-11 review): title, summary and conditions are each split into sentences at a
-period/?/! that follows a Hangul character, at ';' and at line breaks. '·' is NOT a boundary because it
+period/?/! that follows a Hangul character, '%' or ')', at ';' and at line breaks. '·' is NOT a boundary because it
 joins lists (한우·수산물, 대형마트·SSM). A basket item links only from the sentences that name it, and the
 discount and stores are read from those sentences only (no whole-text fallback: another sentence may
 describe another item's stores). If any of those sentences states a month/day other than the item's
 start or end date, the item has its own period there and is not linked. Two or more different discount
 expressions in them give no discount (the link still shows title and dates). The start month/day must
-appear somewhere in the item text, so an unstated start is never trusted.
+appear somewhere in the item text, so an unstated start is never trusted. When the text says periods
+differ by item (기간이 다르며, 기간 상이, 기간 별도), an item links only if its own sentence states both
+the link's start and end month/day.
 """
 import re
 from datetime import date, datetime
@@ -39,9 +41,10 @@ BUNDLE_KEYS = {"schema_version", "source", "generated_at", "links"}
 _DISCOUNT_PERCENT = re.compile(r"(?<![\d~])(?:최대\s*\d{1,2}(?:\s*~\s*\d{1,2})?\s*%|\d{1,2}(?:\s*~\s*\d{1,2})?\s*%\s*할인)")
 _DISCOUNT_WON = re.compile(r"(?<![\d,])(?:\d{1,3}(?:,\d{3})+|\d+)(?:만)?\s*원\s*(?:할인|환급)")
 _LIMIT_WON = re.compile(r"(?<![\d,])(?:\d{1,3}(?:,\d{3})+|\d+)(?:만)?\s*원\s*한도")  # a cap, shown only when no discount
-_CLAUSE_SPLIT = re.compile(r"(?<=[가-힣])[.!?](?=\s|$)|[;\n]")
+_CLAUSE_SPLIT = re.compile(r"(?<=[가-힣%)])[.!?](?=\s|$)|[;\n]")
 # 11월 7일 / 11월2~15일 (day-only end) / 11.7 / 11. 7. / 11/7
 _MONTH_DAY = re.compile(r"(?<!\d)(\d{1,2})\s*월\s*(\d{1,2})\s*일?(?:\s*~\s*(\d{1,2})\s*일)?")
+_VARYING_PERIOD = re.compile(r"기간[이은]?\s*(?:다르|다름|상이|별도)")
 _NUMERIC_DAY = re.compile(r"(?<![\d.,/])(\d{1,2})\s*[./]\s*(\d{1,2})(?![\d,])")
 # Words that also start unrelated words: 닭갈비, 한우리 are not the chicken or hanwoo items.
 _WORD_PATTERNS = {"닭": r"닭(?:고기)?(?![가-힣])", "닭고기": r"닭고기", "한우": r"한우(?!리)"}
@@ -159,6 +162,8 @@ def link(items, basket, today):
         own_days = {(start.month, start.day), (end.month, end.day),
                     (_date(item["valid_until"]).month, _date(item["valid_until"]).day)}
         domestic = _DOMESTIC.search(text) is not None
+        varying = _VARYING_PERIOD.search(text) is not None
+        link_days = {(start.month, start.day), (end.month, end.day)}
         clauses = _clauses(item)
         naming = {}
         for clause in clauses:
@@ -169,6 +174,8 @@ def link(items, basket, today):
                 continue
             if any(_days(c) - own_days for c in mine):
                 continue  # this item has its own period in the text: ambiguous
+            if varying and not any(link_days <= _days(c) for c in mine):
+                continue  # periods differ by item and this item's sentence does not state both dates
             seen.add((basket_id, url))
             stores = list(dict.fromkeys(s_ for c in mine for s_ in _STORES.findall(c)))[:3]
             out.append({"basket_id": basket_id, "title": title, "discount": _discount(mine),
