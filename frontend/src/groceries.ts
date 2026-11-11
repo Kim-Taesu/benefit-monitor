@@ -241,15 +241,15 @@ const validDay=(v:unknown):v is string=>{
  const t=Date.parse(v);
  return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===v;
 };
-/** Official discount links (briefing.json grocery_discounts). A link outside today's KST day, a non-https url or any malformed field is dropped. */
+/** Official discount links (briefing.json grocery_discounts); field caps match the backend sanitize (title 200, discount/stores 60). A link outside today's KST day, a non-https url or any malformed field is dropped. */
 export function parseDiscounts(raw:unknown,now:number):DiscountLink[]{
  if(!record(raw)||!record(raw.grocery_discounts))return [];
  const g=raw.grocery_discounts;
  if(g.schema_version!==1||g.source!=='grocery_discounts'||!Array.isArray(g.links)||g.links.length>200)return [];
  const today=kstDate(now),out:DiscountLink[]=[],seen=new Set<string>();
  for(const x of g.links){
-  if(!record(x)||!text(x.basket_id,40)||!text(x.title,120)||!validDay(x.start)||!validDay(x.end))continue;
-  if(x.discount!==null&&!text(x.discount,40))continue;
+  if(!record(x)||!text(x.basket_id,40)||!text(x.title,200)||!validDay(x.start)||!validDay(x.end))continue;
+  if(x.discount!==null&&!text(x.discount,60))continue;
   if(x.stores!==null&&!text(x.stores,60))continue;
   if(typeof x.url!=='string'||x.url.length>500||!/^https:\/\/[^\s<>"']+$/.test(x.url))continue;
   if(today<x.start||today>x.end)continue;

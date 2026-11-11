@@ -254,6 +254,13 @@ test('parseDiscounts drops links outside today (KST) and non-https urls, and bad
  assert.deepEqual(parseDiscounts({grocery_discounts:{schema_version:1,source:'grocery_discounts',links:'x'}},NOW),[]);
  assert.equal(parseDiscounts(discounts([link({title:'<b>x</b>'}),link({discount:5}),link({start:'11/05'}),'x']),NOW).length,0);
 });
+test('parseDiscounts accepts the same field lengths the backend sanitize allows (title 200, discount 60)',()=>{
+ assert.equal(parseDiscounts(discounts([link({title:'가'.repeat(150)})]),NOW).length,1,'150-char title survives');
+ assert.equal(parseDiscounts(discounts([link({title:'가'.repeat(200)})]),NOW).length,1);
+ assert.equal(parseDiscounts(discounts([link({title:'가'.repeat(201)})]),NOW).length,0);
+ assert.equal(parseDiscounts(discounts([link({discount:'가'.repeat(60)})]),NOW).length,1);
+ assert.equal(parseDiscounts(discounts([link({discount:'가'.repeat(61)})]),NOW).length,0);
+});
 test('discountsFor shows at most 2 by end date and counts the rest',()=>{
  const links=parseDiscounts(discounts([link({title:'C',end:'2026-12-01'}),link({title:'A',end:'2026-11-20'}),link({title:'B',end:'2026-11-25'}),link({basket_id:'x',title:'Z'})]),NOW);
  const r=discountsFor(links,'godeungeo');
