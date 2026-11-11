@@ -25,9 +25,9 @@ def basket():
     return [dict(id=i, name=n, aliases=a, group=g, row=dict(kind="produce", id=i)) for i, n, a, g in rows]
 
 
-def event(title, summary="", conditions="", start="2026-11-07", end="2026-11-27", kind="fixed", url="https://www.mof.go.kr/a"):
-    return dict(title=title, summary=summary, conditions=conditions, valid_from=start, valid_until=end,
-                validity_kind=kind, url=url, source="mof_press", review={})
+def event(title, summary="", conditions="", start="2026-11-07", end="2026-11-27", kind="fixed", url="https://www.mof.go.kr/a", **extra):
+    return dict(dict(title=title, summary=summary, conditions=conditions, valid_from=start, valid_until=end,
+                     validity_kind=kind, url=url, source="mof_press", review={}), **extra)
 
 
 def ids(links):
@@ -81,6 +81,34 @@ class LinkTests(unittest.TestCase):
     def test_link_tolerates_missing_segments(self):
         links = gd.link([event("고등어 할인", summary=None, conditions=None)], basket(), TODAY)
         self.assertEqual((links[0]["discount"], links[0]["stores"]), (None, None))
+
+
+class FixRoundTests(unittest.TestCase):
+    def test_only_national_government_sources_link(self):
+        base = "양파 할인"
+        self.assertEqual(gd.link([event(base, source="retail")], basket(), TODAY), [])
+        self.assertEqual(gd.link([event(base, districts=["금천구"])], basket(), TODAY), [])
+        self.assertEqual(gd.link([event(base, labels={"region": "서울"})], basket(), TODAY), [])
+        self.assertEqual(ids(gd.link([event(base, labels={"region": "전국"}, districts=[])], basket(), TODAY)), ["onion"])
+        self.assertEqual(ids(gd.link([event(base, source="government")], basket(), TODAY)), ["onion"])
+
+    def test_substring_false_positives(self):
+        self.assertEqual(gd.link([event("닭갈비 축제 할인")], basket(), TODAY), [])
+        self.assertEqual(gd.link([event("한우리 마을 체험 할인")], basket(), TODAY), [])
+        self.assertEqual(gd.link([event("미국산 오렌지 할인")], basket(), TODAY), [])
+        self.assertEqual(ids(gd.link([event("닭고기 할인")], basket(), TODAY)), ["chicken"])
+        self.assertEqual(ids(gd.link([event("계란 할인")], basket(), TODAY)), ["egg_tray"])
+        self.assertEqual(ids(gd.link([event("닭·계란 할인")], basket(), TODAY)), ["chicken", "egg_tray"])
+
+    def test_percent_preferred_over_won(self):
+        links = gd.link([event("고등어 할인", "1인 최대 2만원 한도, 최대 50% 할인")], basket(), TODAY)
+        self.assertEqual(links[0]["discount"], "최대 50%")
+        links = gd.link([event("고등어 할인", "1인 최대 2만원 한도")], basket(), TODAY)
+        self.assertEqual(links[0]["discount"], "2만원 한도")
+
+    def test_domestic_woori_needs_word_boundary(self):
+        self.assertIn("banana", ids(gd.link([event("우리나라 바나나 할인")], basket(), TODAY)))
+        self.assertNotIn("banana", ids(gd.link([event("우리 과일 바나나 할인")], basket(), TODAY)))
 
 
 class SanitizeTests(unittest.TestCase):
