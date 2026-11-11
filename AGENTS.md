@@ -187,3 +187,11 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 - 공개 문장은 AI 실행이 `briefing-data/ai-health-notes.json`에 올리고, 수집 실행은 이를 복원해 같은 검사를 다시 한다.
 - 어드민(`/admin.html`) "AI 보건소 문구"에서 페이지별로 끌 수 있다(`ai-takedowns.json`에 `{"kind":"health_note_text","url":...}`). 모든 공개 경로가 이를 적용한다.
 - `publish.py`·`public_snapshot.py`·`auto_release.py`가 바뀌어 `public/topic-publication.json`의 `policy_sha256`을 다시 기록했다. 주제 카드 게이트 로직은 바뀌지 않았다.
+
+## 승인된 미정산 예약 수동 닫기 — 2026-11-11
+
+2026-11-11 06:31 KST AI 실행에서 요청 1건의 비용 예약(11,673 마이크로달러)이 결과 기록 없이 남아(원장 원격 저장 실패로 추정, 응답 파일 없음) 이후 실행이 모두 "cloud_stopped_requires_review"로 멈췄다. 장보기·보건소 AI 문장도 나오지 않았다. 사용자가 처리 방법을 묻는 질문에 "크레딧 많이 남아있다. 그냥 사용해"로 승인했다.
+
+- `ai-daily.yml`의 수동 입력 `close_unresolved_reservation`(check_only 끔)은 사람이 수동 실행할 때만 쓴다. `reserved` 행을 `failed`, `error_code='manual_closed_unverified'`로 닫고 예약 금액은 월 사용액에 그대로 남긴다(과금된 것으로 본다). 중단 플래그는 바꾸지 않고 `manual_reviews`에 시각을 더한다. 그날이 `attempted`·`failed`로 끝났으면 한 번 다시 실행하며 원래 결과는 `retry_of`에 남긴다. 행 삭제·원장 초기화는 계속 금지다.
+- GitHub 상태 저장은 5xx·연결 실패에 한 번 재시도한다.
+- AI 실행이 장보기 추천(`ai-grocery-pick.json`)과 보건소 문장(`ai-health-notes.json`)을 briefing-data에 올리고, 수집만 하는 실행도 이를 복원해 같은 검사로 다시 공개한다. 이전에는 수집만 하는 실행이 AI 장보기 문장을 지웠다.

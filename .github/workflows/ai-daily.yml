@@ -24,6 +24,10 @@ on:
         description: '조사 스키마 문법 컴파일만 시험 (유료 1건 미만 $0.001, 날짜 기록 없음, check_only 무시)'
         type: boolean
         default: false
+      close_unresolved_reservation:
+        description: '결과가 기록되지 않은 비용 예약을 예약 금액만큼 쓴 것으로 닫고 오늘을 한 번 다시 실행 (check_only 꺼야 함)'
+        type: boolean
+        default: false
       retry_rejected_day:
         description: '오늘 요청이 모두 무과금 4xx 거절이었으면 오늘을 한 번 재시도 (check_only 꺼야 함)'
         type: boolean
@@ -63,6 +67,7 @@ jobs:
           BENEFIT_AI_CLOUD: '1'
           CHECK_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.check_only && 'true' || 'false' }}
           RESUME_REVIEWED_HALT: ${{ github.event_name == 'workflow_dispatch' && inputs.resume_reviewed_halt && 'true' || 'false' }}
+          CLOSE_UNRESOLVED_RESERVATION: ${{ github.event_name == 'workflow_dispatch' && inputs.close_unresolved_reservation && 'true' || 'false' }}
           RETRY_REJECTED_DAY: ${{ github.event_name == 'workflow_dispatch' && inputs.retry_rejected_day && 'true' || 'false' }}
           GRAMMAR_PROBE_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.grammar_probe_only && 'true' || 'false' }}
         run: |

@@ -208,3 +208,44 @@ class CloudStateTests(unittest.TestCase):
 
 
 if __name__=='__main__':unittest.main()
+
+
+class CloseUnresolvedTests(unittest.TestCase):
+    setUp=CloudStateTests.setUp;module=CloudStateTests.module;store=CloudStateTests.store
+
+    def stuck(self):
+        from datetime import datetime
+        budget=self.control['budget']
+        budget['requests'].append({'id':'e'*64,'status':'reserved','reserved_microdollars':11673,'charged_microdollars':0,
+                                   'started_at':'2026-11-10T21:31:13+00:00'})
+        self.control['days']['2026-11-11']={'status':'attempted'}
+        from benefit_monitor.age_state import pack_runtime
+        store=self.store();self.control['runtime_sha']=store.write('runtime',pack_runtime(self.root),None)
+        store.write('control',json.dumps(self.control).encode(),None)
+        return self.module().CloudSession.read_control(self.root,store),datetime.fromisoformat('2026-11-11T12:00:00+09:00')
+
+    def test_close_keeps_the_reserved_dollars_and_gives_the_stuck_day_one_retry(self):
+        session,now=self.stuck()
+        before=TrialBudget._exposure(session.control['budget'])
+        self.assertTrue(session.close_unresolved('2026-11-11',now))
+        remote=json.loads(self.store().read('control')[0])
+        row=remote['budget']['requests'][-1]
+        self.assertEqual((row['status'],row['error_code'],row['reserved_microdollars']),('failed','manual_closed_unverified',11673))
+        self.assertEqual(TrialBudget._exposure(remote['budget']),before)  # still counted as spent
+        self.assertFalse(remote['budget']['halted'])
+        self.assertEqual(remote['days']['2026-11-11']['retry_of']['status'],'attempted')
+        self.assertEqual(len(remote['budget']['manual_reviews']),1)
+        restored=self.module().CloudSession.restore(self.root,self.store())  # no longer blocked
+        self.assertEqual(restored.control['days']['2026-11-11']['status'],'attempted')
+        with self.assertRaises(ValueError):restored.close_unresolved('2026-11-11',now)  # nothing left to close
+
+    def test_one_transient_github_failure_is_retried(self):
+        store=self.store();calls=[]
+        original=self.remote
+        def flaky(request):
+            calls.append(1)
+            if len(calls)==1:raise HTTPError(request.full_url,502,'bad gateway',{},io.BytesIO())
+            return original(request)
+        store.opener=flaky
+        sha=store.write('control',b'ledger',None)
+        self.assertEqual(store.read('control'),(b'ledger',sha))
