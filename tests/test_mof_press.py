@@ -88,3 +88,30 @@ class MofPressTests(unittest.TestCase):
         with patch("benefit_monitor.collectors.html.fetch", side_effect=[b"User-agent: *\nAllow: /", (FIXTURES / "list.html").read_bytes()]):
             with self.assertRaises(ValueError):
                 collect(source)
+
+    def test_allow_empty_fails_when_every_matching_title_is_robots_blocked(self):
+        source = mof_source()
+        robots = b"User-agent: *\nDisallow: /doc/ko/selectDoc.do"
+        event = (FIXTURES / "list_with_event.html").read_bytes()
+        with patch("benefit_monitor.collectors.html.fetch", side_effect=[robots, event]):
+            with self.assertRaises(ValueError):
+                collect(source)
+        # Article links present but none matching: still an empty success.
+        with patch("benefit_monitor.collectors.html.fetch", side_effect=[robots, (FIXTURES / "list.html").read_bytes()]):
+            self.assertEqual(collect(source), [])
+
+    def test_exclude_any_drops_titles(self):
+        parser = ArticleLinks("https://www.korea.kr/news/policyNewsList.do", ["www.korea.kr"], "/news/policyNewsView.do",
+                              ["세일", "할인"], exclude_any=["세일즈"])
+        parser.feed('<a href="/news/policyNewsView.do?newsId=1">K-방산 세일즈 외교 성과</a>'
+                    '<a href="/news/policyNewsView.do?newsId=2">한우 세일 시작</a>')
+        self.assertEqual(list(parser.items.values()), ["한우 세일 시작"])
+
+    def test_government_source_excludes_sales_diplomacy(self):
+        definition = json.loads((ROOT / "sources/government.json").read_text(encoding="utf-8"))
+        self.assertEqual(definition["collect"]["exclude_any"], ["세일즈"])
+        source = dict(id="government", **definition["collect"])
+        page = ('<a href="/news/policyNewsView.do?newsId=1">K-방산 세일즈 외교 성과</a>'
+                '<a href="/news/policyNewsView.do?newsId=2">코리아 그랜드 세일 할인 일정</a>').encode()
+        with patch("benefit_monitor.collectors.html.fetch", side_effect=[b"User-agent: *\nAllow: /", page]):
+            self.assertEqual([i["title"] for i in collect(source)], ["코리아 그랜드 세일 할인 일정"])

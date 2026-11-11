@@ -15,10 +15,12 @@ MOF_TITLE_PREFIX = "[게시글 바로가기] "
 PERIOD_FIRST = re.compile(r"(\d{4}-\d\d-\d\d ~ \d{4}-\d\d-\d\d)\s+(.+)")
 
 class ArticleLinks(HTMLParser):
-    def __init__(self, route, domains, pattern, keywords, require_any=None):
+    def __init__(self, route, domains, pattern, keywords, require_any=None, exclude_any=None):
         super().__init__()
         # Optional second title filter: at least one word must appear in addition to a keyword.
         self.require_any = require_any
+        # Optional exclusion: a title containing any of these is dropped (세일 inside 세일즈).
+        self.exclude_any = exclude_any
         self.seen = 0
         self.route, self.domains = route, domains
         self.pattern, self.keywords = re.compile(pattern), keywords
@@ -92,7 +94,8 @@ class ArticleLinks(HTMLParser):
         # "*" is used only by pages that list nothing but ongoing events.
         if (title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path)
                 and (("*" in self.keywords and url != self.route) or any(word in title for word in self.keywords))
-                and (not self.require_any or any(word in title for word in self.require_any))):
+                and (not self.require_any or any(word in title for word in self.require_any))
+                and not any(word in title for word in self.exclude_any or ())):
             self.items.setdefault(url, title[:240])
         self.href = None
 
@@ -108,7 +111,8 @@ def collect(source):
         robot = ""
     if not allowed(robot, route, AGENT):
         raise ValueError("robots disallows HTML collection")
-    parser = ArticleLinks(route, source["domains"], source["article_path_pattern"], source["keywords"], source.get("require_any"))
+    parser = ArticleLinks(route, source["domains"], source["article_path_pattern"], source["keywords"], source.get("require_any"),
+                          source.get("exclude_any"))
     parser.feed(fetch(route, source["domains"]).decode("utf-8"))
     result = []
     for url, title in parser.items.items():
@@ -116,8 +120,9 @@ def collect(source):
             result.append(dict(source=source["id"], url=url, title=title,
                                summary="공식 페이지에서 발견한 후보. 상세 조건 검증 필요.", needs_recheck=True))
     # allow_empty: a day without matching titles is normal, but a page with no article links
-    # at all means the structure changed and must still fail.
-    if not result and source.get("allow_empty") and parser.seen:
+    # at all means the structure changed and must still fail, and so do matching titles that
+    # robots blocks (nothing was collected although there was something to collect).
+    if not result and source.get("allow_empty") and parser.seen and not parser.items:
         return result
     if not result:
         raise ValueError("No matching official articles; manual review required")
