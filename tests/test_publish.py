@@ -52,7 +52,7 @@ class GroceryBaselinePublishTests(unittest.TestCase):
 
 
     def discount_items(self):
-        return [dict(title='양파 할인 공급', summary='최대 30% 할인', conditions='대형마트', valid_from='2026-10-20',
+        return [dict(title='양파 할인 공급', summary='양파 최대 30% 할인, 대형마트', conditions='행사 기간 10월 20일~11월 5일.', valid_from='2026-10-20',
                      valid_until='2026-11-05', validity_kind='fixed', url='https://www.mof.go.kr/a', source='mof_press',
                      review={})]
 

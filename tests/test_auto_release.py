@@ -167,6 +167,19 @@ class TakedownTests(Base):
         self.assertEqual(auto_release.apply_takedowns(before, [{'title_key': 'anything'}])['items'], before['items'])
 
 
+    def test_apply_takedowns_drops_discount_links_of_removed_items(self):
+        raw = publish.payload(self.root, now=NOW)
+        human, auto = raw['items']
+        raw['items'] = [dict(human, source='government'), dict(auto, source='mof_press')]
+        link = dict(basket_id='onion', title='t', discount=None, stores=None, start='2026-11-01', end='2026-11-30')
+        raw['grocery_discounts'] = dict(schema_version=1, source='grocery_discounts', generated_at=NOW.isoformat(),
+                                        links=[dict(link, url=auto['url']), dict(link, url=human['url'])])
+        cleaned = auto_release.apply_takedowns(raw, [{'candidate_id': CID}])
+        self.assertEqual([x['url'] for x in cleaned['grocery_discounts']['links']], [human['url']])
+        raw['grocery_discounts']['links'] = raw['grocery_discounts']['links'][:1]
+        self.assertNotIn('grocery_discounts', auto_release.apply_takedowns(raw, [{'candidate_id': CID}]))
+
+
 class SnapshotTests(Base):
     def validate(self, data, now=NOW):
         from benefit_monitor.public_snapshot import validate

@@ -241,6 +241,14 @@ def apply_takedowns(data, takedowns, current=None):
             data['health_notes'] = notes
         else:
             data.pop('health_notes')
+    if 'grocery_discounts' in data:
+        # A discount line must never outlive the public item it points at.
+        from .grocery_discounts import keep_present
+        bundle = keep_present(data['grocery_discounts'], kept)
+        if bundle is None:
+            data.pop('grocery_discounts')
+        else:
+            data['grocery_discounts'] = bundle
     if 'grocery_pick' in data:
         # Admin mute: the same rule card the collection path would publish (no model text).
         from .grocery_pick import apply_mute

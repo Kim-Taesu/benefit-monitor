@@ -136,13 +136,14 @@ class PublicSnapshotTests(unittest.TestCase):
 
     def discount_bundle(self,end='2026-12-31'):
         return dict(schema_version=1,source='grocery_discounts',generated_at=NOW.isoformat(),links=[dict(
-            basket_id='onion',title='양파 할인',discount=None,stores=None,start='2026-01-01',end=end,url='https://www.mof.go.kr/a')])
+            basket_id='onion',title='양파 할인',discount=None,stores=None,start='2026-01-01',end=end,url=self.item['url'])])
 
     def test_public_snapshot_passes_discounts_through_sanitize(self):
         from unittest.mock import patch
         raw=publish.payload(self.root,now=NOW)
         raw['groceries']={'x':1};raw['grocery_discounts']=self.discount_bundle()
-        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}), \
+                patch('benefit_monitor.grocery_discounts.GOVERNMENT_SOURCES',frozenset({'test'})):
             clean=self.stage(raw)
         self.assertEqual(clean['grocery_discounts']['links'][0]['basket_id'],'onion')
         raw['grocery_discounts']=self.discount_bundle(end='2026-01-02')
@@ -151,6 +152,18 @@ class PublicSnapshotTests(unittest.TestCase):
         raw['grocery_discounts']=dict(self.discount_bundle(),source='x')
         with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
             self.assertNotIn('grocery_discounts',self.stage(raw))
+
+    def test_public_snapshot_drops_discount_links_of_items_no_longer_public(self):
+        from unittest.mock import patch
+        raw=publish.payload(self.root,now=NOW)
+        raw['groceries']={'x':1};raw['grocery_discounts']=self.discount_bundle()
+        save(self.root/'cache/operational_state.json',{'schema_version':1,'items':{
+            benefit().id:{'source':'test','hold_at':NOW.isoformat(),'hold_reason':'body_changed'}},'sources':{}})
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}), \
+                patch('benefit_monitor.grocery_discounts.GOVERNMENT_SOURCES',frozenset({'test'})):
+            clean=self.stage(raw)
+        self.assertEqual(clean['items'],[])
+        self.assertNotIn('grocery_discounts',clean)
 
     def test_public_snapshot_drops_discounts_on_collection_failed(self):
         from unittest.mock import patch

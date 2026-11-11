@@ -3,6 +3,15 @@
 Approved 2026-11-11: a card shows an event only when the event has a confirmed fixed start and end
 date, is running today (KST) and names the basket item or a clear item group. Anything vague is not
 linked; the event stays in the benefits tab only.
+
+Clause rule (2026-11-11 review): title, summary and conditions are each split into sentences at a
+period/?/! that follows a Hangul character, at ';' and at line breaks. '·' is NOT a boundary because it
+joins lists (한우·수산물, 대형마트·SSM). A basket item links only from the sentences that name it, and the
+discount and stores are read from those sentences only (no whole-text fallback: another sentence may
+describe another item's stores). If any of those sentences states a month/day other than the item's
+start or end date, the item has its own period there and is not linked. Two or more different discount
+expressions in them give no discount (the link still shows title and dates). The start month/day must
+appear somewhere in the item text, so an unstated start is never trusted.
 """
 import re
 from datetime import date, datetime
@@ -26,8 +35,14 @@ MAX_LINKS = 100
 LINK_KEYS = {"basket_id", "title", "discount", "stores", "start", "end", "url"}
 BUNDLE_KEYS = {"schema_version", "source", "generated_at", "links"}
 
-_DISCOUNT_PERCENT = re.compile(r"최대\s*\d{1,2}\s*%|\d{1,2}\s*%\s*할인")
-_DISCOUNT_WON = re.compile(r"\d+(?:만)?\s*원\s*(?:할인|환급|한도)")
+# Ranges stay verbatim (20~30% 할인); a leading digit or comma never starts a match (no '000원 할인').
+_DISCOUNT_PERCENT = re.compile(r"(?<![\d~])(?:최대\s*\d{1,2}(?:\s*~\s*\d{1,2})?\s*%|\d{1,2}(?:\s*~\s*\d{1,2})?\s*%\s*할인)")
+_DISCOUNT_WON = re.compile(r"(?<![\d,])(?:\d{1,3}(?:,\d{3})+|\d+)(?:만)?\s*원\s*(?:할인|환급)")
+_LIMIT_WON = re.compile(r"(?<![\d,])(?:\d{1,3}(?:,\d{3})+|\d+)(?:만)?\s*원\s*한도")  # a cap, shown only when no discount
+_CLAUSE_SPLIT = re.compile(r"(?<=[가-힣])[.!?](?=\s|$)|[;\n]")
+# 11월 7일 / 11월2~15일 (day-only end) / 11.7 / 11. 7. / 11/7
+_MONTH_DAY = re.compile(r"(?<!\d)(\d{1,2})\s*월\s*(\d{1,2})\s*일?(?:\s*~\s*(\d{1,2})\s*일)?")
+_NUMERIC_DAY = re.compile(r"(?<![\d.,/])(\d{1,2})\s*[./]\s*(\d{1,2})(?![\d,])")
 # Words that also start unrelated words: 닭갈비, 한우리 are not the chicken or hanwoo items.
 _WORD_PATTERNS = {"닭": r"닭(?:고기)?(?![가-힣])", "닭고기": r"닭고기", "한우": r"한우(?!리)"}
 _STORES = re.compile(r"대형마트|SSM|슈퍼|하나로마트|전통시장|온라인몰|온라인")
@@ -43,7 +58,41 @@ def _public(item):
     """Nationwide government/ministry events only: never retail, district or regional items."""
     labels = item.get("labels")
     region = labels.get("region") if isinstance(labels, dict) else None
-    return item.get("source") in GOVERNMENT_SOURCES and not item.get("districts") and region in (None, "전국")
+    if region is not None and not (isinstance(region, str) and region.startswith("전국")):
+        return False  # human items use free text such as '전국 참여 유통업체'
+    return item.get("source") in GOVERNMENT_SOURCES and not item.get("districts")
+
+
+def _clauses(item):
+    out = []
+    for key in ("title", "summary", "conditions"):
+        value = item.get(key)
+        if isinstance(value, str):
+            out += [c.strip() for c in _CLAUSE_SPLIT.split(value) if c.strip()]
+    return out
+
+
+def _days(text):
+    """(month, day) pairs written in text; impossible ones are kept so they still count as 'other'."""
+    found = set()
+    for m in _MONTH_DAY.finditer(text):
+        month = int(m.group(1))
+        found.add((month, int(m.group(2))))
+        if m.group(3):
+            found.add((month, int(m.group(3))))
+    for m in _NUMERIC_DAY.finditer(text):
+        found.add((int(m.group(1)), int(m.group(2))))
+    return found
+
+
+def _discount(clauses):
+    """The one discount the clauses state, None when there is none or more than one."""
+    joined = " ".join(clauses)
+    found = {re.sub(r"\s+", "", m.group(0)): m.group(0)
+             for rx in (_DISCOUNT_PERCENT, _DISCOUNT_WON) for m in rx.finditer(joined)}
+    if not found:
+        found = {re.sub(r"\s+", "", m.group(0)): m.group(0) for m in _LIMIT_WON.finditer(joined)}
+    return next(iter(found.values())) if len(found) == 1 else None
 
 
 def _kst_today(now):
@@ -76,6 +125,17 @@ def _targets(text, basket):
     return found
 
 
+def _until(item):
+    """KST date of display_until, None when absent; raises ValueError when it is malformed."""
+    value = item.get("display_until")
+    if value is None:
+        return None
+    moment = datetime.fromisoformat(value)
+    if moment.tzinfo is None:
+        raise ValueError("naive display_until")
+    return _kst_today(moment)
+
+
 def link(items, basket, today):
     """Links for events running on `today`, sorted by basket_id then end date."""
     out, seen = [], set()
@@ -84,23 +144,48 @@ def link(items, basket, today):
             continue
         start, end = _date(item.get("valid_from")), _date(item.get("valid_until"))
         url, title = item.get("url"), item.get("title")
+        try:
+            until = _until(item)
+        except (TypeError, ValueError):
+            continue
+        if until is not None and end is not None:
+            end = min(end, until)
         if start is None or end is None or not start <= today <= end \
                 or not isinstance(url, str) or not isinstance(title, str):
             continue
         text = " ".join(str(item.get(k) or "") for k in ("title", "summary", "conditions"))
-        if not any(w in text for w in DISCOUNT_WORDS):
+        if not any(w in text for w in DISCOUNT_WORDS) or (start.month, start.day) not in _days(text):
             continue
-        match = _DISCOUNT_PERCENT.search(text) or _DISCOUNT_WON.search(text)
-        stores = list(dict.fromkeys(_STORES.findall(text)))[:3]
-        for basket_id in _targets(text, basket):
-            if (basket_id, url) in seen:
+        own_days = {(start.month, start.day), (end.month, end.day),
+                    (_date(item["valid_until"]).month, _date(item["valid_until"]).day)}
+        domestic = _DOMESTIC.search(text) is not None
+        clauses = _clauses(item)
+        naming = {}
+        for clause in clauses:
+            for basket_id in _targets(clause, basket):
+                naming.setdefault(basket_id, []).append(clause)
+        for basket_id, mine in naming.items():
+            if (domestic and basket_id in IMPORT_IDS) or (basket_id, url) in seen:
                 continue
+            if any(_days(c) - own_days for c in mine):
+                continue  # this item has its own period in the text: ambiguous
             seen.add((basket_id, url))
-            out.append({"basket_id": basket_id, "title": title, "discount": match.group(0) if match else None,
+            stores = list(dict.fromkeys(s_ for c in mine for s_ in _STORES.findall(c)))[:3]
+            out.append({"basket_id": basket_id, "title": title, "discount": _discount(mine),
                         "stores": "·".join(stores) or None, "start": start.isoformat(), "end": end.isoformat(),
                         "url": url})
     out.sort(key=lambda link_: (link_["basket_id"], link_["end"]))
     return out[:MAX_LINKS]
+
+
+def keep_present(bundle, items):
+    """Bundle with only links of government items still in items (after takedown/withdrawal), or None."""
+    if not isinstance(bundle, dict) or not isinstance(bundle.get("links"), list):
+        return None
+    urls = {i.get("url") for i in items if isinstance(i, dict) and i.get("source") in GOVERNMENT_SOURCES} \
+        if isinstance(items, list) else set()
+    links = [x for x in bundle["links"] if isinstance(x, dict) and x.get("url") in urls]
+    return dict(bundle, links=links) if links else None
 
 
 def _short(value, limit):
