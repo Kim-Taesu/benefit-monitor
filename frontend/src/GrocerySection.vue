@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
 import GroceryQuickCheck from './GroceryQuickCheck.vue';
-import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type BasketItem, quickMatch, type FeaturedRow, type GroceryBundle, type WeeklyPick } from './groceries';
+import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type BasketItem, quickMatch, type FeaturedRow, type GroceryBundle, type WeeklyPick, type DiscountLink } from './groceries';
 import GroceryCalc from './GroceryCalc.vue';
 import { formatDate } from './benefits';
-const props=defineProps<{bundle:GroceryBundle;weekly:WeeklyPick|null;basket?:BasketItem[]}>();
+const props=defineProps<{bundle:GroceryBundle;weekly:WeeklyPick|null;basket?:BasketItem[];discounts?:DiscountLink[]}>();
+const emit=defineEmits<{more:[]}>();
 const basketItems=computed(()=>props.basket??[]);
 const PAGE=12,FEATURED='자주 사는 품목';
 const bundle=computed(()=>props.bundle);
@@ -59,7 +60,7 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
       <div class="filter-field grocery-search"><label for="grocery-q">품목 찾기</label><input id="grocery-q" v-model="q" type="search" placeholder="예: 양파, 삼겹살, 고등어" autocomplete="off" @input="shown=PAGE"></div>
       <div class="quick-filters"><button type="button" :aria-pressed="cheapOnly" @click="cheapOnly=!cheapOnly;shown=PAGE">평년보다 싼 것만</button></div>
     </div>
-    <GroceryQuickCheck :q="q" :basket="basketItems" :rows="bundle.rows" :produce-date="bundle.produceDate" :meat-date="bundle.meatDate" @pick="pickName" />
+    <GroceryQuickCheck :q="q" :basket="basketItems" :rows="bundle.rows" :produce-date="bundle.produceDate" :meat-date="bundle.meatDate" :discounts="discounts" @pick="pickName" @more="emit('more')" />
     <article v-if="weekly" class="grocery-pick" aria-labelledby="grocery-pick-title">
       <div class="card-meta"><h3 id="grocery-pick-title">이번 주 장보기 추천</h3><span class="grocery-badge" :class="weekly.source==='ai'?'ai':'normal'">{{ weekly.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
       <p v-if="weekly.summary" class="grocery-pick-summary">{{ weekly.summary }}</p>

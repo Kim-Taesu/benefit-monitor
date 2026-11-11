@@ -206,3 +206,67 @@ test('an empty basket never claims the item is missing from it',async({page})=>{
  await expect(page.locator('#groceries .empty-state')).toBeVisible();
  await expect(page.locator('#groceries .empty-state')).not.toContainText('아직 자주 사는 품목에 없어요');
 });
+
+// 할인 줄: 고등어는 오늘 진행 중 2건 + 어제 끝난 1건, 삼겹살은 0건.
+const fishGroceries={...quickGroceries,produce:{...quickGroceries.produce,items:[...quickGroceries.produce.items,produce('고등어','고등어','1마리',3000,3000)]}};
+const fishBaselines={...grocery_baselines,items:[...grocery_baselines.items,
+ {id:'godeungeo',name:'고등어',aliases:[],group:'기타',row:{kind:'produce',id:'고등어|고등어|1마리|상품'},baseline:{...bl(3000),unit:'1마리',months:6}}]};
+const deal=(over:Record<string,unknown>)=>({basket_id:'godeungeo',title:'[테스트] 수산 할인',discount:'최대 50%',stores:'대형마트·온라인몰',start:kst(3),end:kst(-10),url:'https://www.mof.go.kr/deal-a',...over});
+const grocery_discounts={schema_version:1,source:'grocery_discounts',generated_at:new Date(NOW-1800000).toISOString(),links:[
+ deal({title:'[테스트] 어제 끝난 행사',end:kst(1),url:'https://www.mof.go.kr/ended'}),
+ deal({title:'[테스트] 진행 행사 A',end:kst(-5),url:'https://www.mof.go.kr/deal-a'}),
+ deal({title:'[테스트] 진행 행사 B',discount:null,stores:null,end:kst(-9),url:'https://www.mof.go.kr/deal-b'})]};
+
+for(const [width,height] of [[360,800],[390,844]])test(`discount line sits under the badge and stays on the first screen ${width}`,async({page})=>{
+ await page.setViewportSize({width,height});
+ await page.clock.install({time:new Date(NOW)});
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:fishGroceries,grocery_pick:weekly,grocery_baselines:fishBaselines,grocery_discounts})}));
+ await page.goto('./');
+ await page.getByRole('tab',{name:'장보기'}).click();
+ await page.locator('#grocery-q').fill('고등어');
+ const card=page.locator('.grocery-quick');
+ const lines=card.locator('.grocery-quick-deals li');
+ await expect(lines).toHaveCount(2);
+ await expect(card).not.toContainText('어제 끝난 행사');
+ await expect(card.locator('.grocery-quick-price')).toBeInViewport({ratio:1});
+ await expect(card.locator('.grocery-badge')).toBeInViewport({ratio:1});
+ await expect(lines.first()).toBeInViewport({ratio:1});
+ const [e1,e2]=kst(-5).slice(5).split('-').map(Number),[f1,f2]=kst(-9).slice(5).split('-').map(Number);
+ await expect(lines.nth(0)).toHaveText(`[테스트] 진행 행사 A 최대 50% · 대형마트·온라인몰 · ${e1}/${e2}까지 원문`);
+ await expect(lines.nth(1)).toHaveText(`[테스트] 진행 행사 B · ${f1}/${f2}까지 원문`);
+ const link=lines.first().getByRole('link',{name:'원문'});
+ await expect(link).toHaveAttribute('href','https://www.mof.go.kr/deal-a');
+ await expect(link).toHaveAttribute('target','_blank');
+ await expect(link).toHaveAttribute('rel','noopener');
+ await expect(page.locator('#groceries [role=status]')).toContainText('진행 중인 공식 할인행사 [테스트] 진행 행사 A');
+ await page.screenshot({path:`../docs/qa/screenshots/grocery-discount-${width}.png`});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ // No discounts for 삼겹살: no line, and a missing key behaves the same.
+ await page.locator('#grocery-q').fill('삼겹');
+ await expect(card.locator('h3')).toHaveText('돼지 삼겹살 · 전국 평균 소매가');
+ await expect(card.locator('.grocery-quick-deals')).toHaveCount(0);
+});
+
+test('외 N건 appears for a third link and opens the benefits tab',async({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ await page.clock.install({time:new Date(NOW)});
+ const more={...grocery_discounts,links:[...grocery_discounts.links,deal({title:'[테스트] 진행 행사 C',end:kst(-12),url:'https://www.mof.go.kr/deal-c'})]};
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:fishGroceries,grocery_baselines:fishBaselines,grocery_discounts:more})}));
+ await page.goto('./');
+ await page.getByRole('tab',{name:'장보기'}).click();
+ await page.locator('#grocery-q').fill('고등어');
+ await expect(page.locator('.grocery-quick-deals li')).toHaveCount(3);
+ await page.getByRole('button',{name:'외 1건'}).click();
+ await expect(page.getByRole('tab',{name:'혜택'})).toHaveAttribute('aria-selected','true');
+ await expect(page.locator('#results')).toBeVisible();
+});
+
+test('without a grocery_discounts key the card has no discount line',async({page})=>{
+ await page.clock.install({time:new Date(NOW)});
+ await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries:fishGroceries,grocery_baselines:fishBaselines})}));
+ await page.goto('./');
+ await page.getByRole('tab',{name:'장보기'}).click();
+ await page.locator('#grocery-q').fill('고등어');
+ await expect(page.locator('.grocery-quick h3')).toContainText('고등어');
+ await expect(page.locator('.grocery-quick-deals')).toHaveCount(0);
+});
