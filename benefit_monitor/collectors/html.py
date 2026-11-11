@@ -9,20 +9,27 @@ from ..robots import allowed
 
 SEVEN_EVENTS = "/event/eventList.asp"
 SEVEN_VIEW = re.compile(r"javascript:\s*fncGoView\('(\d+)',\s*'\d+'\);?")
+MOF_HOST, MOF_LIST = "www.mof.go.kr", "/doc/ko/selectDocList.do"
+MOF_VIEW = re.compile(r"fn_selectDoc\('(\d+)'\)\s*;?")
+MOF_TITLE_PREFIX = "[게시글 바로가기] "
 PERIOD_FIRST = re.compile(r"(\d{4}-\d\d-\d\d ~ \d{4}-\d\d-\d\d)\s+(.+)")
 
 class ArticleLinks(HTMLParser):
-    def __init__(self, route, domains, pattern, keywords):
+    def __init__(self, route, domains, pattern, keywords, require_any=None):
         super().__init__()
+        # Optional second title filter: at least one word must appear in addition to a keyword.
+        self.require_any = require_any
+        self.seen = 0
         self.route, self.domains = route, domains
         self.pattern, self.keywords = re.compile(pattern), keywords
         self.href, self.parts, self.items = None, [], {}
         self.title_parts, self.title_tag = [], None
-        self.link_title = ""
+        self.link_title, self.onclick = "", ""
     def handle_starttag(self, tag, attrs):
         if tag == "a":
             self.href, self.parts = dict(attrs).get("href"), []
             self.link_title = dict(attrs).get("title", "")
+            self.onclick = dict(attrs).get("onclick") or ""
             self.title_parts, self.title_tag = [], None
         # Seven-Eleven's event list puts the event name only in the thumbnail's alt text.
         if tag == "img" and self.href and SEVEN_VIEW.fullmatch(self.href):
@@ -39,6 +46,14 @@ class ArticleLinks(HTMLParser):
             self.title_tag = None
         if tag != "a" or not self.href:
             return
+        # The Ministry of Oceans and Fisheries list opens details by JS (href="#none"); translate
+        # the observed fn_selectDoc(n) call to its public detail URL without executing anything.
+        mof = MOF_VIEW.fullmatch(self.onclick.strip())
+        if self.href.startswith("#") and mof and urlsplit(self.route).hostname == MOF_HOST and urlsplit(self.route).path == MOF_LIST:
+            self.href = f"/doc/ko/selectDoc.do?docSeq={mof.group(1)}&menuSeq=971&bbsSeq=10"
+            # The visible text is truncated with "..."; the title attribute holds the full name.
+            if self.link_title.startswith(MOF_TITLE_PREFIX) and self.link_title[len(MOF_TITLE_PREFIX):].strip():
+                self.title_parts = [self.link_title[len(MOF_TITLE_PREFIX):]]
         if self.href.startswith("#"):
             self.href = None
             return
@@ -72,9 +87,12 @@ class ArticleLinks(HTMLParser):
         period = PERIOD_FIRST.fullmatch(title) if parts.hostname in ("emart24.co.kr", "www.emart24.co.kr") else None
         if period:
             title = f"{period.group(2)} ({period.group(1)})"
+        if title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path):
+            self.seen += 1
         # "*" is used only by pages that list nothing but ongoing events.
         if (title and official(url, self.domains) and self.pattern.fullmatch(urlsplit(url).path)
-                and (("*" in self.keywords and url != self.route) or any(word in title for word in self.keywords))):
+                and (("*" in self.keywords and url != self.route) or any(word in title for word in self.keywords))
+                and (not self.require_any or any(word in title for word in self.require_any))):
             self.items.setdefault(url, title[:240])
         self.href = None
 
@@ -90,13 +108,17 @@ def collect(source):
         robot = ""
     if not allowed(robot, route, AGENT):
         raise ValueError("robots disallows HTML collection")
-    parser = ArticleLinks(route, source["domains"], source["article_path_pattern"], source["keywords"])
+    parser = ArticleLinks(route, source["domains"], source["article_path_pattern"], source["keywords"], source.get("require_any"))
     parser.feed(fetch(route, source["domains"]).decode("utf-8"))
     result = []
     for url, title in parser.items.items():
         if allowed(robot, url, AGENT):
             result.append(dict(source=source["id"], url=url, title=title,
                                summary="공식 페이지에서 발견한 후보. 상세 조건 검증 필요.", needs_recheck=True))
+    # allow_empty: a day without matching titles is normal, but a page with no article links
+    # at all means the structure changed and must still fail.
+    if not result and source.get("allow_empty") and parser.seen:
+        return result
     if not result:
         raise ValueError("No matching official articles; manual review required")
     return result

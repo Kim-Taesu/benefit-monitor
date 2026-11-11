@@ -120,7 +120,11 @@
         "접수",
         "신청",
         "환급",
-        "적립"
+        "적립",
+        "세일",
+        "수산대전",
+        "농할",
+        "반값"
       ]
     },
     {
@@ -937,6 +941,42 @@
       "window_days": 90,
       "ai_review": false,
       "collection_scope": "대한민국 구석구석 전국축제 목록의 개최중·개최예정 전체(필터별 최대 5페이지) 중 90일 안 시작 · 별도 축제 섹션 · 사람 검증 전"
+    },
+    {
+      "id": "mof_press",
+      "name": "해양수산부 보도자료",
+      "tier": "A",
+      "domains": [
+        "www.mof.go.kr"
+      ],
+      "routes": [
+        "https://www.mof.go.kr/"
+      ],
+      "feed_url": null,
+      "html_url": "https://www.mof.go.kr/doc/ko/selectDocList.do?menuSeq=971&bbsSeq=10",
+      "article_path_pattern": "/doc/ko/selectDoc.do",
+      "keywords": [
+        "할인",
+        "세일",
+        "수산대전",
+        "농할",
+        "할인지원",
+        "소비촉진",
+        "반값",
+        "특별판매"
+      ],
+      "require_any": [
+        "농축산물",
+        "농산물",
+        "축산물",
+        "한우",
+        "한돈",
+        "수산물",
+        "수산식품",
+        "김장",
+        "성수품"
+      ],
+      "allow_empty": true
     },
     {
       "id": "groceries",
