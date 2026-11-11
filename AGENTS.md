@@ -195,3 +195,5 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 - `ai-daily.yml`의 수동 입력 `close_unresolved_reservation`(check_only 끔)은 사람이 수동 실행할 때만 쓴다. `reserved` 행을 `failed`, `error_code='manual_closed_unverified'`로 닫고 예약 금액은 월 사용액에 그대로 남긴다(과금된 것으로 본다). 중단 플래그는 바꾸지 않고 `manual_reviews`에 시각을 더한다. 그날이 `attempted`·`failed`로 끝났으면 한 번 다시 실행하며 원래 결과는 `retry_of`에 남긴다. 행 삭제·원장 초기화는 계속 금지다.
 - GitHub 상태 저장은 5xx·연결 실패에 한 번 재시도한다.
 - AI 실행이 장보기 추천(`ai-grocery-pick.json`)과 보건소 문장(`ai-health-notes.json`)을 briefing-data에 올리고, 수집만 하는 실행도 이를 복원해 같은 검사로 다시 공개한다. 이전에는 수집만 하는 실행이 AI 장보기 문장을 지웠다.
+- 같은 수동 입력은 결제 작업 뒤 실행이 죽어 그날이 `attempted`로 멈춘 경우에도(예약 없음) 한 번 더 연다. 이전 결과는 `retry_of.previous`에 그대로 남긴다(2026-11-11, 사용자 "지금 실행해봐").
+- 실패 원인을 알 수 있게 `cloud_stopped_requires_review`와 유료 호출 중단에 오류 종류와 짧은 이유만 남긴다(`cloud_state.safe_reason`: 일반 글자만, 키처럼 보이면 `redacted`).

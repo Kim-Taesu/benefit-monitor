@@ -237,7 +237,13 @@ class CloseUnresolvedTests(unittest.TestCase):
         self.assertEqual(len(remote['budget']['manual_reviews']),1)
         restored=self.module().CloudSession.restore(self.root,self.store())  # no longer blocked
         self.assertEqual(restored.control['days']['2026-11-11']['status'],'attempted')
-        with self.assertRaises(ValueError):restored.close_unresolved('2026-11-11',now)  # nothing left to close
+        # A crash after the paid work leaves the day 'attempted': the same input reopens it, keeping history.
+        self.assertTrue(restored.close_unresolved('2026-11-11',now))
+        again=json.loads(self.store().read('control')[0])['days']['2026-11-11']['retry_of']
+        self.assertEqual((again['reason'],again['previous']['reason']),('manual_reopened_stuck_day','manual_closed_unverified'))
+        restored=self.module().CloudSession.restore(self.root,self.store())
+        data=deepcopy(restored.control);data['days']['2026-11-11']['status']='completed';restored._commit(data)
+        with self.assertRaises(ValueError):restored.close_unresolved('2026-11-11',now)  # finished day: nothing to close
 
     def test_one_transient_github_failure_is_retried(self):
         store=self.store();calls=[]
@@ -249,3 +255,11 @@ class CloseUnresolvedTests(unittest.TestCase):
         store.opener=flaky
         sha=store.write('control',b'ledger',None)
         self.assertEqual(store.read('control'),(b'ledger',sha))
+
+
+class SafeReasonTests(unittest.TestCase):
+    def test_reason_keeps_plain_text_and_drops_tokens(self):
+        from benefit_monitor.cloud_state import safe_reason
+        self.assertEqual(safe_reason(ValueError('GitHub state request failed: http_403')),'ValueError: GitHub state request failed: http_403')
+        self.assertEqual(safe_reason(ValueError('x sk-ant-abc')),'ValueError: redacted')
+        self.assertEqual(safe_reason(ValueError('{"a":"<b>"}')),'ValueError: a:b')

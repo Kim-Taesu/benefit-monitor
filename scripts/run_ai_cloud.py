@@ -25,8 +25,9 @@ def main():
                          probe_only=os.environ.get('GRAMMAR_PROBE_ONLY')=='true',
                          close_unresolved=os.environ.get('CLOSE_UNRESOLVED_RESERVATION')=='true')
         print(json.dumps(result,sort_keys=True));return exit_code(result)
-    except Exception:
-        print('cloud_stopped_requires_review');return 1
+    except Exception as error:
+        from benefit_monitor.cloud_state import safe_reason
+        print('cloud_stopped_requires_review');print('reason: '+safe_reason(error));return 1
     finally:
         if created and identity.is_file() and not identity.is_symlink():identity.unlink()
 
