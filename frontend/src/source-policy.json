@@ -159,6 +159,12 @@
         "korean.visitkorea.or.kr"
       ]
     },
+    "mof_press": {
+      "name": "해양수산부 보도자료",
+      "domains": [
+        "www.mof.go.kr"
+      ]
+    },
     "groceries": {
       "name": "장보기 시세(KAMIS·축산물품질평가원)",
       "domains": [

@@ -149,6 +149,12 @@ def validate(root,data,now,auto=None):
                 try:baseline_bundle=baselines(data['grocery_baselines'],now)
                 except Exception:baseline_bundle=None
                 if baseline_bundle is not None:clean['grocery_baselines']=baseline_bundle
+            if data.get('grocery_discounts'):
+                from .grocery_discounts import recompute
+                # Recomputed from the items still public after the recheck above (never the stored lines).
+                try:discount_bundle=recompute(clean,now)
+                except Exception:discount_bundle=None
+                if discount_bundle is not None:clean['grocery_discounts']=discount_bundle
     return clean
 
 

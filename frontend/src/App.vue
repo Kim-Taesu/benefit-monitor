@@ -6,15 +6,15 @@ import FestivalSection from './FestivalSection.vue';
 import HealthSection from './HealthSection.vue';
 import GrocerySection from './GrocerySection.vue';
 import GradeHelp from './GradeHelp.vue';
-import {won} from './groceries';
-import {parseGroceries,parsePick,parseBaselines} from './groceries';
+import {won,monthDay} from './groceries';
+import {parseGroceries,parsePick,parseBaselines,parseDiscounts} from './groceries';
 import {DISTRICTS,isSeoulCandidate} from './beta';
 import type {Topic} from './beta';
 const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=ref<Topic|null>(null);
 function selectTopic(topic:Topic|null){selectedTopic.value=topic;}
 const gradeHelp=ref<InstanceType<typeof GradeHelp>|null>(null);
 // 'YYYY-MM-DD' -> 'M/D' (조사일 표시, 2026-11-10: 농산물·육류 조사일이 다를 수 있어 둘 다 보여준다).
-const md=(d:string|null|undefined)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
+const md=(d:string|null|undefined)=>monthDay(d??null);
 // 탭(2026-11-10): 혜택·장보기·축제, 2026-11-11 보건소 추가. 주소의 #groceries·#festivals·#health로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
 type Tab='benefits'|'groceries'|'festivals'|'health';
 const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'},{id:'health',label:'보건소'}];
@@ -41,6 +41,7 @@ const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.n
 const groceryMinute=computed(()=>Math.floor(now.value/60000)*60000);
 const groceries=computed(()=>parseGroceries(raw.value,groceryMinute.value));
 const basket=computed(()=>parseBaselines(raw.value,groceryMinute.value));
+const discounts=computed(()=>parseDiscounts(raw.value,groceryMinute.value));
 const groceryPick=computed(()=>groceries.value?parsePick(raw.value,groceries.value):null);
 function pageFilters(search:string){const value=readFilters(search);return {...value,category:'',region:DISTRICTS.includes(value.region)?value.region:''};}
 const filters=reactive(pageFilters(location.search));
@@ -146,7 +147,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     </section>
     </div>
     <div id="panel-groceries" v-show="tab==='groceries'" role="tabpanel" aria-labelledby="tab-groceries">
-      <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" :basket="basket" />
+      <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" :basket="basket" :discounts="discounts" @more="setTab('benefits',true)" />
       <p v-else-if="!loading" class="empty-state">이번 실행에서 장보기 시세를 가져오지 못했어요.</p>
     </div>
     <div id="panel-festivals" v-show="tab==='festivals'" role="tabpanel" aria-labelledby="tab-festivals">

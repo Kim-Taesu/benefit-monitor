@@ -1,0 +1,79 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "mof_press",
+  "name": "해양수산부 보도자료",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.mof.go.kr"
+    ],
+    "routes": [
+      "https://www.mof.go.kr/"
+    ],
+    "feed_url": null,
+    "html_url": "https://www.mof.go.kr/doc/ko/selectDocList.do?menuSeq=971&bbsSeq=10",
+    "article_path_pattern": "/doc/ko/selectDoc.do",
+    "keywords": [
+      "할인",
+      "세일",
+      "수산대전",
+      "농할",
+      "할인지원",
+      "소비촉진",
+      "반값",
+      "특별판매"
+    ],
+    "require_any": [
+      "농축산물",
+      "농산물",
+      "축산물",
+      "한우",
+      "한돈",
+      "수산물",
+      "수산식품",
+      "김장",
+      "성수품",
+      "수산대전",
+      "농할"
+    ],
+    "allow_empty": true
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-11",
+    "entry_urls": [
+      "https://www.mof.go.kr/doc/ko/selectDocList.do?menuSeq=971&bbsSeq=10"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "server_html",
+      "detail_access": "get",
+      "conditions_in": "unknown"
+    },
+    "extraction": [
+      "보도자료 목록의 링크는 href=\"#none\"과 onclick fn_selectDoc('번호')뿐이다. html.py가 /doc/ko/selectDoc.do?docSeq=번호&menuSeq=971&bbsSeq=10 으로 옮긴다(JS 실행 없음).",
+      "화면 글자는 \"...\"로 잘리므로 링크의 title 속성(\"[게시글 바로가기] \" 뒤)을 제목으로 쓴다.",
+      "제목에 keywords 하나와 require_any(농축산물·수산물·한우·김장·성수품 등 대상 단어) 하나가 모두 있어야 후보가 된다."
+    ],
+    "pitfalls": [
+      "행사 보도자료가 없는 날이 많다. allow_empty로 목록에 글은 있으나 맞는 제목이 없으면 실패로 세지 않는다(목록에 글 링크가 아예 없으면 실패).",
+      "수산대전·농할은 그 자체가 식품 행사 이름이라 require_any에 넣어 단독으로도 후보가 된다. 그 밖의 행사 단어는 대상 단어가 함께 있어야 한다. 놓치면 require_any를 고친다.",
+      "상세 보도자료에 행사 기간·대상·할인율이 없을 수 있다. 후보일 뿐 확정 사실이 아니다."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.source_registry probe mof_press",
+      "2026-11-11 정찰 기록: robots Allow: /, 목록 서버 HTML, 상세 GET 가능."
+    ],
+    "on_failure": [
+      "robots 403·서버 오류·TLS 오류는 실패로 기록하고 우회하지 않는다(robots 404만 허용).",
+      "\"No matching official articles\"면 목록에 글 링크가 없다는 뜻이니 fn_selectDoc 링크 구조나 목록 URL이 바뀐 것이다. 원문 HTML을 저장해 확인한다."
+    ],
+    "code": [
+      "benefit_monitor/collectors/html.py"
+    ]
+  }
+}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows,parsePick,parseBaselines,quickMatch,baselineBadge,type BasketItem,type PriceRow} from '../src/groceries.ts';
+import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows,parsePick,parseBaselines,quickMatch,baselineBadge,parseDiscounts,discountsFor,discountLine,discountStatus,type DiscountLink,type BasketItem,type PriceRow} from '../src/groceries.ts';
 
 const NOW=Date.parse('2026-11-09T09:00:00+09:00');
 function produce(over:Record<string,unknown>={}){
@@ -222,4 +222,63 @@ test('baselineBadge unit check passes for real produce and meat rows',()=>{
  const pork=baselineBadge(prow({id:'4304-27-삼겹살',kind:'meat',name:'돼지 삼겹살',unit:'원/100g',current:2768}),byName('삼겹살'))!;
  assert.equal(pork.pct,3);
  assert.equal(baselineBadge(prow({id:'4304-27-삼겹살',kind:'meat',unit:'원/kg',current:2768}),byName('삼겹살')),null);
+});
+
+// Task 4: official discount links on the quick-check card. NOW is 2026-11-09 09:00 KST.
+function link(over:Record<string,unknown>={}){
+ return {basket_id:'godeungeo',title:'한국 수산식품 홍보주간',discount:'최대 50%',stores:'대형마트·온라인몰',start:'2026-11-05',end:'2026-11-27',url:'https://www.mof.go.kr/a',...over};
+}
+function discounts(links:unknown[]){return {grocery_discounts:{schema_version:1,source:'grocery_discounts',generated_at:'2026-11-09T09:00:00+09:00',links}};}
+test('discountLine joins title, discount, stores and end date, dropping null pieces',()=>{
+ const l=parseDiscounts(discounts([link()]),NOW)[0];
+ assert.equal(discountLine(l),'한국 수산식품 홍보주간 최대 50% · 대형마트·온라인몰 · 11/27까지');
+ assert.equal(discountLine({...l,discount:null}),'한국 수산식품 홍보주간 · 대형마트·온라인몰 · 11/27까지');
+ assert.equal(discountLine({...l,stores:null}),'한국 수산식품 홍보주간 최대 50% · 11/27까지');
+ assert.equal(discountLine({...l,discount:null,stores:null}),'한국 수산식품 홍보주간 · 11/27까지');
+});
+test('parseDiscounts drops links outside today (KST) and non-https urls, and bad shapes give []',()=>{
+ const last=parseDiscounts(discounts([link({end:'2026-11-09'})]),NOW);
+ assert.equal(last.length,1,'ends today is still shown');
+ assert.equal(parseDiscounts(discounts([link({end:'2026-11-08'})]),NOW).length,0,'ended yesterday');
+ assert.equal(parseDiscounts(discounts([link({start:'2026-11-10'})]),NOW).length,0,'starts tomorrow');
+ assert.equal(parseDiscounts(discounts([link({start:'2026-11-09'})]),NOW).length,1,'starts today');
+ // 00:30 KST on 11/10 is still 11/09 in UTC: the KST day must decide.
+ const early=Date.parse('2026-11-10T00:30:00+09:00');
+ assert.equal(parseDiscounts(discounts([link({end:'2026-11-09'})]),early).length,0);
+ assert.equal(parseDiscounts(discounts([link({start:'2026-11-10'})]),early).length,1);
+ assert.equal(parseDiscounts(discounts([link({url:'http://www.mof.go.kr/a'})]),NOW).length,0);
+ assert.equal(parseDiscounts(discounts([link({url:'javascript:alert(1)'})]),NOW).length,0);
+ assert.deepEqual(parseDiscounts({},NOW),[]);
+ assert.deepEqual(parseDiscounts({grocery_discounts:{schema_version:2,source:'grocery_discounts',links:[link()]}},NOW),[]);
+ assert.deepEqual(parseDiscounts({grocery_discounts:{schema_version:1,source:'x',links:[link()]}},NOW),[]);
+ assert.deepEqual(parseDiscounts({grocery_discounts:{schema_version:1,source:'grocery_discounts',links:'x'}},NOW),[]);
+ assert.equal(parseDiscounts(discounts([link({title:'<b>x</b>'}),link({discount:5}),link({start:'11/05'}),'x']),NOW).length,0);
+});
+test('parseDiscounts accepts the same field lengths the backend sanitize allows (title 200, discount 60)',()=>{
+ assert.equal(parseDiscounts(discounts([link({title:'가'.repeat(150)})]),NOW).length,1,'150-char title survives');
+ assert.equal(parseDiscounts(discounts([link({title:'가'.repeat(200)})]),NOW).length,1);
+ assert.equal(parseDiscounts(discounts([link({title:'가'.repeat(201)})]),NOW).length,0);
+ assert.equal(parseDiscounts(discounts([link({discount:'가'.repeat(60)})]),NOW).length,1);
+ assert.equal(parseDiscounts(discounts([link({discount:'가'.repeat(61)})]),NOW).length,0);
+});
+test('discountsFor shows at most 2 by end date and counts the rest',()=>{
+ const links=parseDiscounts(discounts([link({title:'C',end:'2026-12-01'}),link({title:'A',end:'2026-11-20'}),link({title:'B',end:'2026-11-25'}),link({basket_id:'x',title:'Z'})]),NOW);
+ const r=discountsFor(links,'godeungeo');
+ assert.deepEqual(r.shown.map(l=>l.title),['A','B']);
+ assert.equal(r.more,1);
+ assert.deepEqual(discountsFor(links,'none'),{shown:[],more:0});
+});
+test('parseDiscounts rejects impossible calendar dates and drops duplicates',()=>{
+ assert.equal(parseDiscounts(discounts([link({start:'2026-02-30'})]),NOW).length,0);
+ assert.equal(parseDiscounts(discounts([link({end:'2026-13-01'})]),NOW).length,0);
+ assert.equal(parseDiscounts(discounts([link({end:'2026-11-31'})]),NOW).length,0);
+ const dup=parseDiscounts(discounts([link(),link(),link({url:'https://www.mof.go.kr/b'}),link({basket_id:'other'})]),NOW);
+ assert.equal(dup.length,3);
+});
+test('discountStatus reads every shown line, then the remaining count (screen-reader status)',()=>{
+ const ls=parseDiscounts(discounts([link({end:'2026-11-20'}),link({title:'김장 수산물 특별전',discount:null,stores:null,end:'2026-11-25'}),link({title:'세 번째 행사'})]),NOW);
+ const d=discountsFor(ls,'godeungeo');
+ assert.equal(discountStatus(d),'진행 중인 공식 할인행사 한국 수산식품 홍보주간 최대 50% · 대형마트·온라인몰 · 11/20까지; 김장 수산물 특별전 · 11/25까지 외 1건');
+ assert.equal(discountStatus(discountsFor(ls.slice(0,1),'godeungeo')),'진행 중인 공식 할인행사 한국 수산식품 홍보주간 최대 50% · 대형마트·온라인몰 · 11/20까지');
+ assert.equal(discountStatus({shown:[],more:0}),'');
 });

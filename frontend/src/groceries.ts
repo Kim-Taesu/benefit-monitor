@@ -233,3 +233,53 @@ export function baselineBadge(row:PriceRow,item:BasketItem):{level:'cheap'|'norm
  const label=pct===0?`${span}과 같음`:pct<0?`▼ ${span}보다 ${-pct}% 쌈`:`▲ ${span}보다 ${pct}% 비쌈`;
  return {level,pct,label};
 }
+
+export interface DiscountLink{basketId:string;title:string;discount:string|null;stores:string|null;start:string;end:string;url:string}
+// Round-trips through toISOString so impossible dates such as 2026-02-30 are rejected.
+const validDay=(v:unknown):v is string=>{
+ if(typeof v!=='string'||!DATE.test(v))return false;
+ const t=Date.parse(v);
+ return Number.isFinite(t)&&new Date(t).toISOString().slice(0,10)===v;
+};
+/** Official discount links (briefing.json grocery_discounts); field caps match the backend sanitize (title 200, discount/stores 60). A link outside today's KST day, a non-https url or any malformed field is dropped. */
+export function parseDiscounts(raw:unknown,now:number):DiscountLink[]{
+ if(!record(raw)||!record(raw.grocery_discounts))return [];
+ const g=raw.grocery_discounts;
+ if(g.schema_version!==1||g.source!=='grocery_discounts'||!Array.isArray(g.links)||g.links.length>200)return [];
+ const today=kstDate(now),out:DiscountLink[]=[],seen=new Set<string>();
+ for(const x of g.links){
+  if(!record(x)||!text(x.basket_id,40)||!text(x.title,200)||!validDay(x.start)||!validDay(x.end))continue;
+  if(x.discount!==null&&!text(x.discount,60))continue;
+  if(x.stores!==null&&!text(x.stores,60))continue;
+  if(typeof x.url!=='string'||x.url.length>500||!/^https:\/\/[^\s<>"']+$/.test(x.url))continue;
+  if(today<x.start||today>x.end)continue;
+  const key=[x.basket_id,x.url,x.end].join('|');
+  if(seen.has(key))continue;
+  seen.add(key);
+  out.push({basketId:x.basket_id,title:x.title,discount:x.discount as string|null,stores:x.stores as string|null,start:x.start,end:x.end,url:x.url});
+ }
+ return out;
+}
+/** At most 2 links of the item, soonest end first; more = how many were left out. */
+export function discountsFor(links:DiscountLink[],basketId:string):{shown:DiscountLink[];more:number}{
+ const mine=links.filter(l=>l.basketId===basketId).sort((a,b)=>a.end.localeCompare(b.end));
+ return {shown:mine.slice(0,2),more:Math.max(0,mine.length-2)};
+}
+/** 'M/D' of an ISO date ('2026-11-07' -> '11/7'); '' when there is no date. */
+export function monthDay(iso:string|null):string{
+ return iso?`${Number(iso.slice(5,7))}/${Number(iso.slice(8,10))}`:'';
+}
+/** The line in three pieces so the template can keep the date from splitting across lines. */
+export function discountParts(l:DiscountLink):{head:string;stores:string|null;date:string}{
+ return {head:[l.title,l.discount].filter(Boolean).join(' '),stores:l.stores,date:`${monthDay(l.end)}까지`};
+}
+/** '{title} {discount} · {stores} · {M/D}까지'; null pieces and their separators are left out. */
+export function discountLine(l:DiscountLink):string{
+ const p=discountParts(l);
+ return [p.head,p.stores,p.date].filter(Boolean).join(' · ');
+}
+/** Screen-reader status: every shown line, then '외 N건'; '' when nothing is shown. */
+export function discountStatus(d:{shown:DiscountLink[];more:number}):string{
+ if(!d.shown.length)return '';
+ return '진행 중인 공식 할인행사 '+d.shown.map(discountLine).join('; ')+(d.more?` 외 ${d.more}건`:'');
+}

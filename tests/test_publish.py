@@ -17,7 +17,7 @@ def baseline_bundle(checked='2026-10-25'):
 
 
 class GroceryBaselinePublishTests(unittest.TestCase):
-    def attach(self, files, groceries=True):
+    def attach(self, files, groceries=True, items=None):
         from unittest.mock import patch
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -27,7 +27,7 @@ class GroceryBaselinePublishTests(unittest.TestCase):
                     (root / name).write_text(value)
                 else:
                     save(root / name, value)
-            data = {}
+            data = {'items': items} if items else {}
             with patch('benefit_monitor.groceries.sanitize', return_value={'notice': 'x'} if groceries else None):
                 publish.attach_groceries(root, data, NOW)
             return data
@@ -49,6 +49,25 @@ class GroceryBaselinePublishTests(unittest.TestCase):
             data = self.attach(files)
             self.assertIn('groceries', data)
             self.assertNotIn('grocery_baselines', data)
+
+
+    def discount_items(self):
+        return [dict(title='양파 할인 공급', summary='양파 최대 30% 할인, 대형마트', conditions='행사 기간 10월 20일~11월 5일.', valid_from='2026-10-20',
+                     valid_until='2026-11-05', validity_kind='fixed', url='https://www.mof.go.kr/a', source='mof_press',
+                     review={})]
+
+    def test_publish_attaches_discounts_when_baselines_present(self):
+        data = self.attach({'cache/groceries.json': {}, 'cache/grocery_baselines.json': baseline_bundle()},
+                           items=self.discount_items())
+        links = data['grocery_discounts']['links']
+        self.assertEqual([(x['basket_id'], x['discount'], x['stores']) for x in links], [('onion', '최대 30%', '대형마트')])
+
+    def test_publish_omits_discounts_without_baselines(self):
+        data = self.attach({'cache/groceries.json': {}}, items=self.discount_items())
+        self.assertNotIn('grocery_discounts', data)
+        data = self.attach({'cache/groceries.json': {}, 'cache/grocery_baselines.json': baseline_bundle()}, groceries=False,
+                           items=self.discount_items())
+        self.assertNotIn('grocery_discounts', data)
 
 
 class PublishTests(unittest.TestCase):

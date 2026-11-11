@@ -206,7 +206,7 @@ def _still_current(row, current):
     return dict(row, display_until=until.astimezone(KST).isoformat())
 
 
-def apply_takedowns(data, takedowns, current=None):
+def apply_takedowns(data, takedowns, current=None, now=None):
     """Remove taken-down AI items (and their topic links) from an existing public payload; never adds.
 
     current (the public set from current_releases) also removes every AI item that is not that exact
@@ -241,6 +241,14 @@ def apply_takedowns(data, takedowns, current=None):
             data['health_notes'] = notes
         else:
             data.pop('health_notes')
+    if 'grocery_discounts' in data:
+        # Recomputed from the items kept now: a line never outlives its item nor shows its old end/region.
+        from .grocery_discounts import recompute
+        bundle = recompute(data, now or datetime.now(KST))
+        if bundle is None:
+            data.pop('grocery_discounts')
+        else:
+            data['grocery_discounts'] = bundle
     if 'grocery_pick' in data:
         # Admin mute: the same rule card the collection path would publish (no model text).
         from .grocery_pick import apply_mute

@@ -406,6 +406,18 @@ def attach_groceries(root,data,now):
     pick = public(load(Path(root)/'cache/grocery_pick/pick.json', None), bundle, auto_release.load(root)[1], now)
     if pick is not None:data['grocery_pick'] = pick
     attach_grocery_baselines(root,data,now)
+    attach_grocery_discounts(root,data,now)
+
+
+def attach_grocery_discounts(root,data,now):
+    """Official discount events linked to basket items (approved 2026-11-11); computed at publish time, never able to fail publishing."""
+    if 'groceries' not in data or 'grocery_baselines' not in data:return
+    try:
+        from .grocery_discounts import recompute
+        bundle = recompute(data, now)
+    except Exception:
+        return
+    if bundle is not None:data['grocery_discounts'] = bundle
 
 
 def attach_grocery_baselines(root,data,now):

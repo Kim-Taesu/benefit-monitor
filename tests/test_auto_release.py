@@ -167,6 +167,47 @@ class TakedownTests(Base):
         self.assertEqual(auto_release.apply_takedowns(before, [{'title_key': 'anything'}])['items'], before['items'])
 
 
+    def discount_payload(self):
+        from test_grocery_discounts import real_basket
+        raw = publish.payload(self.root, now=NOW)
+        human, auto = raw['items']
+        period = dict(valid_from='2026-10-20', valid_until='2026-11-20', validity_kind='fixed',
+                      conditions='행사 기간 10월 20일~11월 20일.', labels={}, display_until='2026-11-30T00:00:00+09:00')
+        raw['items'] = [dict(human, source='government', title='양파 20% 할인', summary='', **period),
+                        dict(auto, source='mof_press', title='고등어 20% 할인', summary='', **period)]
+        raw['grocery_baselines'] = dict(schema_version=1, source='grocery_baselines', fetched_at=NOW.isoformat(),
+                                        items=[dict(b, baseline=None) for b in real_basket()])
+        link = dict(title='t', discount=None, stores=None, start='2026-10-20', end='2026-11-20')
+        raw['grocery_discounts'] = dict(schema_version=1, source='grocery_discounts', generated_at=NOW.isoformat(),
+                                        links=[dict(link, basket_id='mackerel', url=auto['url']),
+                                               dict(link, basket_id='onion', url=human['url'])])
+        return raw
+
+    def test_apply_takedowns_drops_discount_links_of_removed_items(self):
+        raw = self.discount_payload()
+        cleaned = auto_release.apply_takedowns(raw, [{'candidate_id': CID}], now=NOW)
+        self.assertEqual([(x['basket_id'], x['url']) for x in cleaned['grocery_discounts']['links']],
+                         [('onion', raw['items'][0]['url'])])
+        raw['items'] = raw['items'][1:]
+        self.assertNotIn('grocery_discounts', auto_release.apply_takedowns(raw, [{'candidate_id': CID}], now=NOW))
+
+    def test_apply_takedowns_recomputes_discount_links_from_current_items(self):
+        raw = self.discount_payload()
+        raw['items'][0].update(valid_until='2026-11-12', conditions='행사 기간 10월 20일~11월 12일.')
+        cleaned = auto_release.apply_takedowns(raw, [{'candidate_id': CID}], now=NOW)
+        self.assertEqual([(x['basket_id'], x['end'], x['discount']) for x in cleaned['grocery_discounts']['links']],
+                         [('onion', '2026-11-12', '20% 할인')])
+        raw['items'][0]['labels'] = {'region': '서울'}
+        self.assertNotIn('grocery_discounts', auto_release.apply_takedowns(raw, [{'candidate_id': CID}], now=NOW))
+        raw = self.discount_payload()
+        raw.pop('grocery_baselines')
+        self.assertNotIn('grocery_discounts', auto_release.apply_takedowns(raw, [], now=NOW))
+        # Never added when the payload had no discount bundle.
+        raw = self.discount_payload()
+        raw.pop('grocery_discounts')
+        self.assertNotIn('grocery_discounts', auto_release.apply_takedowns(raw, [], now=NOW))
+
+
 class SnapshotTests(Base):
     def validate(self, data, now=NOW):
         from benefit_monitor.public_snapshot import validate
