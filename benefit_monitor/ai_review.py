@@ -35,6 +35,8 @@ def invoke(root,kind,input_path):
         if value.get('status')=='credit_exhausted':return {'status':'credit_exhausted','run_id':None}
         if value.get('status') in ('validated_draft','rejected_draft'):
             return {k:value[k] for k in ('status','run_id')}
+        if value.get('status')=='stopped' and isinstance(value.get('reason'),str):
+            return {'status':'stopped_before_result','run_id':None,'reason':value['reason'][:200]}
     except (ValueError,KeyError,TypeError):
         pass
     return {'status':'stopped_before_result','run_id':None}

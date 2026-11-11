@@ -626,5 +626,6 @@ if __name__ == '__main__':
         if getattr(error, 'credit_exhausted', False):
             print(json.dumps({'status':'credit_exhausted'}))
             raise SystemExit(1)
-        print('Claude trial stopped; inspect the redacted ledger. No automatic retry.')
+        from .cloud_state import safe_reason
+        print(json.dumps({'status':'stopped','reason':safe_reason(error)}, ensure_ascii=False))
         raise SystemExit(1)

@@ -232,14 +232,19 @@ class CloudSession:
         'attempted' or ended 'failed', it gets one retry; its original outcome stays under retry_of."""
         data=deepcopy(self.control);budget=data['budget']
         closed=[r for r in budget['requests'] if r['status']=='reserved']
-        if not closed:raise ValueError('no unresolved reservation to close')
-        for row in closed:row.update(status='failed',error_code='manual_closed_unverified')
-        budget.setdefault('manual_reviews',[]).append(now.astimezone(timezone.utc).isoformat())
         row=data['days'].get(day)
-        retry=bool(row) and row['status'] in ('attempted','failed') and 'retry_of' not in row
+        # A run that crashed after its paid work leaves the day 'attempted' with nothing reserved; the same
+        # manual input reopens it once more. Earlier outcomes stay nested under retry_of.previous.
+        stuck=bool(row) and row['status']=='attempted'
+        if not closed and not stuck:raise ValueError('no unresolved reservation or stuck day to close')
+        for request in closed:request.update(status='failed',error_code='manual_closed_unverified')
+        budget.setdefault('manual_reviews',[]).append(now.astimezone(timezone.utc).isoformat())
+        retry=bool(row) and row['status'] in ('attempted','failed') and ('retry_of' not in row or stuck)
         if retry:
-            data['days'][day]={'status':'attempted','retry_of':{'status':row['status'],'request_ids':[r['id'] for r in closed],
-                                                                'retried_at':now.isoformat(),'reason':'manual_closed_unverified'}}
+            record={'status':row['status'],'request_ids':[r['id'] for r in closed],'retried_at':now.isoformat(),
+                    'reason':'manual_closed_unverified' if closed else 'manual_reopened_stuck_day'}
+            if 'retry_of' in row:record['previous']=row['retry_of']
+            data['days'][day]={'status':'attempted','retry_of':record}
         self._commit(data);return retry
 
     def retry_rejected_day(self,day,now):
@@ -286,6 +291,13 @@ class CloudSession:
         lease,_=self.store.lease('runtime')
         sha=self.store.write('runtime',pack_runtime(self.root),lease)
         data=deepcopy(self.control);data['runtime_sha']=sha;self._commit(data)
+
+
+def safe_reason(error):
+    """Exception class and a short message with only plain characters; never a credential-like token."""
+    text=re.sub(r'[^0-9A-Za-z가-힣 _:./()-]','',str(error))[:160]
+    if re.search(r'sk-|ghp_|github_pat_|AGE-SECRET|Bearer',text,re.I):text='redacted'
+    return type(error).__name__+(': '+text if text else '')
 
 
 def budget_checkpoint_from_environment(root):
