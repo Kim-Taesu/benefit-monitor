@@ -134,6 +134,32 @@ class PublicSnapshotTests(unittest.TestCase):
         with patch('benefit_monitor.groceries.sanitize',return_value=None):
             self.assertNotIn('grocery_baselines',self.stage(raw))
 
+    def discount_bundle(self,end='2026-12-31'):
+        return dict(schema_version=1,source='grocery_discounts',generated_at=NOW.isoformat(),links=[dict(
+            basket_id='onion',title='양파 할인',discount=None,stores=None,start='2026-01-01',end=end,url='https://www.mof.go.kr/a')])
+
+    def test_public_snapshot_passes_discounts_through_sanitize(self):
+        from unittest.mock import patch
+        raw=publish.payload(self.root,now=NOW)
+        raw['groceries']={'x':1};raw['grocery_discounts']=self.discount_bundle()
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+            clean=self.stage(raw)
+        self.assertEqual(clean['grocery_discounts']['links'][0]['basket_id'],'onion')
+        raw['grocery_discounts']=self.discount_bundle(end='2026-01-02')
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+            self.assertNotIn('grocery_discounts',self.stage(raw))
+        raw['grocery_discounts']=dict(self.discount_bundle(),source='x')
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+            self.assertNotIn('grocery_discounts',self.stage(raw))
+
+    def test_public_snapshot_drops_discounts_on_collection_failed(self):
+        from unittest.mock import patch
+        failed=publish.payload(self.root,now=NOW,failure=True)
+        failed['groceries']={'x':1};failed['grocery_discounts']=self.discount_bundle()
+        with patch('benefit_monitor.groceries.sanitize',return_value={'notice':'x'}):
+            clean=self.stage(failed)
+        self.assertNotIn('grocery_discounts',clean)
+
     def test_public_snapshot_drops_baselines_on_collection_failed(self):
         from unittest.mock import patch
         from test_publish import baseline_bundle

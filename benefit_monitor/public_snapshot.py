@@ -149,6 +149,11 @@ def validate(root,data,now,auto=None):
                 try:baseline_bundle=baselines(data['grocery_baselines'],now)
                 except Exception:baseline_bundle=None
                 if baseline_bundle is not None:clean['grocery_baselines']=baseline_bundle
+            if data.get('grocery_discounts'):
+                from .grocery_discounts import sanitize as discounts
+                try:discount_bundle=discounts(data['grocery_discounts'],now)
+                except Exception:discount_bundle=None
+                if discount_bundle is not None and discount_bundle['links']:clean['grocery_discounts']=discount_bundle
     return clean
 
 
