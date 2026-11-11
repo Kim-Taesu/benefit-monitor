@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows,parsePick,parseBaselines,quickMatch,baselineBadge,parseDiscounts,discountsFor,discountLine,type DiscountLink,type BasketItem,type PriceRow} from '../src/groceries.ts';
+import {parseGroceries,verdict,parseUnit,compareShelf,guideFor,wikiLink,featuredRows,parsePick,parseBaselines,quickMatch,baselineBadge,parseDiscounts,discountsFor,discountLine,discountStatus,type DiscountLink,type BasketItem,type PriceRow} from '../src/groceries.ts';
 
 const NOW=Date.parse('2026-11-09T09:00:00+09:00');
 function produce(over:Record<string,unknown>={}){
@@ -274,4 +274,11 @@ test('parseDiscounts rejects impossible calendar dates and drops duplicates',()=
  assert.equal(parseDiscounts(discounts([link({end:'2026-11-31'})]),NOW).length,0);
  const dup=parseDiscounts(discounts([link(),link(),link({url:'https://www.mof.go.kr/b'}),link({basket_id:'other'})]),NOW);
  assert.equal(dup.length,3);
+});
+test('discountStatus reads every shown line, then the remaining count (screen-reader status)',()=>{
+ const ls=parseDiscounts(discounts([link({end:'2026-11-20'}),link({title:'김장 수산물 특별전',discount:null,stores:null,end:'2026-11-25'}),link({title:'세 번째 행사'})]),NOW);
+ const d=discountsFor(ls,'godeungeo');
+ assert.equal(discountStatus(d),'진행 중인 공식 할인행사 한국 수산식품 홍보주간 최대 50% · 대형마트·온라인몰 · 11/20까지; 김장 수산물 특별전 · 11/25까지 외 1건');
+ assert.equal(discountStatus(discountsFor(ls.slice(0,1),'godeungeo')),'진행 중인 공식 할인행사 한국 수산식품 홍보주간 최대 50% · 대형마트·온라인몰 · 11/20까지');
+ assert.equal(discountStatus({shown:[],more:0}),'');
 });

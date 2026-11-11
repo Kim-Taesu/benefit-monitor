@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { quickMatch, baselineBadge, discountsFor, discountLine, discountParts, won, type BasketItem, type PriceRow, type DiscountLink } from './groceries';
+import { quickMatch, baselineBadge, discountsFor, discountStatus, discountParts, won, type BasketItem, type PriceRow, type DiscountLink } from './groceries';
 const props=defineProps<{q:string;basket:BasketItem[];rows:PriceRow[];produceDate:string|null;meatDate:string|null;discounts?:DiscountLink[]}>();
 const emit=defineEmits<{pick:[name:string];more:[]}>();
 const md=(d:string|null)=>d?`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`:'';
@@ -16,7 +16,7 @@ const view=computed(()=>{
 </script>
 <template>
   <div>
-  <div class="sr-only" role="status" aria-live="polite"><template v-if="view">{{ view.item.name }} 전국 평균 소매가 {{ won(view.row.current) }} /{{ view.row.unit.replace(/^원\//,'') }}<template v-if="view.badge"> {{ view.badge.label }}</template><template v-if="view.disc.shown.length"> 진행 중인 공식 할인행사 {{ discountLine(view.disc.shown[0]) }}<template v-if="view.disc.more"> 외 {{ view.disc.more }}건</template></template></template></div>
+  <div class="sr-only" role="status" aria-live="polite"><template v-if="view">{{ view.item.name }} 전국 평균 소매가 {{ won(view.row.current) }} /{{ view.row.unit.replace(/^원\//,'') }}<template v-if="view.badge"> {{ view.badge.label }}</template><template v-if="view.disc.shown.length"> {{ discountStatus(view.disc) }}</template></template></div>
   <div v-if="view" class="grocery-quick">
     <h3>{{ view.item.name }} · 전국 평균 소매가</h3>
     <p class="grocery-quick-price"><strong>{{ won(view.row.current) }}</strong> /{{ view.row.unit.replace(/^원\//,'') }}</p>

@@ -274,3 +274,8 @@ export function discountLine(l:DiscountLink):string{
  const p=discountParts(l);
  return [p.head,p.stores,p.date].filter(Boolean).join(' · ');
 }
+/** Screen-reader status: every shown line, then '외 N건'; '' when nothing is shown. */
+export function discountStatus(d:{shown:DiscountLink[];more:number}):string{
+ if(!d.shown.length)return '';
+ return '진행 중인 공식 할인행사 '+d.shown.map(discountLine).join('; ')+(d.more?` 외 ${d.more}건`:'');
+}
