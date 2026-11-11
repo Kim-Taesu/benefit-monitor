@@ -9,7 +9,7 @@ FIXTURES = ROOT / "tests/fixtures/mof_press"
 LIST_URL = "https://www.mof.go.kr/doc/ko/selectDocList.do?menuSeq=971&bbsSeq=10"
 DETAIL = "https://www.mof.go.kr/doc/ko/selectDoc.do?docSeq=%s&menuSeq=971&bbsSeq=10"
 WORDS = ["할인", "세일", "수산대전", "농할", "할인지원", "소비촉진", "반값", "특별판매"]
-TARGETS = ["농축산물", "농산물", "축산물", "한우", "한돈", "수산물", "수산식품", "김장", "성수품"]
+TARGETS = ["농축산물", "농산물", "축산물", "한우", "한돈", "수산물", "수산식품", "김장", "성수품", "수산대전", "농할"]
 
 
 def mof_source():
@@ -42,6 +42,12 @@ class MofPressTests(unittest.TestCase):
         parser = ArticleLinks(LIST_URL, ["www.mof.go.kr"], "/doc/ko/selectDoc.do", WORDS, require_any=TARGETS)
         parser.feed("<a href=\"#none\" onclick=\"fn_selectDoc('1')\" title=\"[게시글 바로가기] 선박 할인 제도 안내\">x</a>")
         self.assertEqual(parser.items, {})
+
+    def test_food_event_names_alone_become_candidates(self):
+        parser = ArticleLinks(LIST_URL, ["www.mof.go.kr"], "/doc/ko/selectDoc.do", WORDS, require_any=mof_source()["require_any"])
+        parser.feed("<a href=\"#none\" onclick=\"fn_selectDoc('1')\" title=\"[게시글 바로가기] 2026 대한민국 수산대전 개막\">x</a>"
+                    "<a href=\"#none\" onclick=\"fn_selectDoc('2')\" title=\"[게시글 바로가기] 농할상품권 판매\">x</a>")
+        self.assertEqual(list(parser.items.values()), ["2026 대한민국 수산대전 개막", "농할상품권 판매"])
 
     def test_require_any_absent_keeps_old_behavior(self):
         parser = ArticleLinks("https://official.example/", ["official.example"], r"/archives/\d+", ["할인"])
