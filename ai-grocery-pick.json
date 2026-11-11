@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-11T12:54:54.132851+09:00",
+  "survey_date": "2026-11-10",
+  "source": "rule",
+  "summary": null,
+  "picks": [
+    {
+      "id": "포도|샤인머스켓|2kg|L과",
+      "menu": null
+    },
+    {
+      "id": "토마토|토마토|1kg|상품",
+      "menu": null
+    },
+    {
+      "id": "얼갈이배추|얼갈이배추|1kg|상품",
+      "menu": null
+    },
+    {
+      "id": "열무|열무|1kg|상품",
+      "menu": null
+    },
+    {
+      "id": "알배기배추|알배기배추|1포기|상품",
+      "menu": null
+    }
+  ]
+}
