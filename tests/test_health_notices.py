@@ -187,7 +187,7 @@ if __name__ == '__main__':
 
 
 PROGRAMS = [dict(district='강서구', name='대사증후군 관리', url=f'https://www.gangseo.seoul.kr/health/ht02010{i}') for i in range(3)]
-PROGRAM_PAGE = '<html><h2>대사증후군 관리사업</h2><p>무료 검진</p></html>'
+PROGRAM_PAGE = '<html><nav>메뉴</nav><main><h2>대사증후군 관리사업</h2><p>무료 검진</p></main></html>'
 
 
 class ProgramTests(unittest.TestCase):
@@ -251,3 +251,12 @@ class ProgramTests(unittest.TestCase):
         self.assertTrue(programs)
         self.assertLessEqual({p['district'] for p in programs}, collectable)
         self.assertIn('https://www.gangseo.seoul.kr/health/ht020103', {p['url'] for p in programs})
+
+
+class PageTextTests(unittest.TestCase):
+    def test_main_text_only_and_known_content_boxes(self):
+        self.assertEqual(h.page_text(PROGRAM_PAGE, PROGRAMS[0]['url']), '대사증후군 관리사업 무료 검진')
+        self.assertEqual(h.page_text('<div>메뉴 무료</div>', PROGRAMS[0]['url']), '')  # no content area: no text
+        page = '<div id="menu">무료 메뉴</div><div class="contents_body"><p>대사증후군 검진</p><script>x</script></div>'
+        self.assertEqual(h.page_text(page, 'https://www.sdm.go.kr/health/contents/improve/x'), '대사증후군 검진')
+        self.assertNotIn('010', h.page_text('<main>문의 010-1234-5678</main>', PROGRAMS[0]['url']))

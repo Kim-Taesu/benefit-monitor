@@ -129,7 +129,12 @@ def validate(root,data,now,auto=None):
     if data.get('health_notices') and clean['status']!='collection_failed':
         from .health_notices import sanitize as health
         bundle=health(data['health_notices'],now)
-        if bundle is not None:clean['health_notices']=bundle
+        if bundle is not None:
+            clean['health_notices']=bundle
+            if data.get('health_notes'):
+                from .health_notes import public_light
+                notes=public_light(data['health_notes'],bundle,(auto if auto is not None else auto_release.load(root))[1],now)
+                if notes:clean['health_notes']=notes
     if data.get('groceries') and clean['status']!='collection_failed':
         from .groceries import sanitize as groceries
         bundle=groceries(data['groceries'],now)

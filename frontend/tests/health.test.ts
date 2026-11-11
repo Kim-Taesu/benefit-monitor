@@ -35,3 +35,14 @@ test('programmes: kept per known district, stale after 10 days, malformed reject
  assert.equal(parseHealth(raw([board()],{programs:[prog({checked_at:null})]}),NOW),null);
  assert.equal(parseHealth(raw([board()],{programs:[prog({url:'javascript:x'})]}),NOW),null);
 });
+
+test('AI notes attach to fresh checked programmes only',()=>{
+ const prog=(over:Record<string,unknown>={})=>({district:'강서구',center:'강서구보건소',name:'대사증후군 관리',url:'https://www.gangseo.seoul.kr/health/ht020103',status:'checked',checked_at:'2026-11-11T00:07:00+09:00',...over});
+ const note=(over:Record<string,unknown>={})=>({url:'https://www.gangseo.seoul.kr/health/ht020103',district:'강서구',sentence:'강서구에 살거나 일하는 20~69세라면 대사증후군 검진을 무료로 받아보세요.',generated_at:'2026-11-11T05:00:00+09:00',...over});
+ const parse=(notes:unknown[],p=prog())=>{const r=raw([board()],{programs:[p]}) as Record<string,unknown>;r.health_notes=notes;return parseHealth(r,NOW)!.programs[0].note;};
+ assert.match(parse([note()])!,/무료로 받아보세요/);
+ assert.equal(parse([note({district:'양천구'})]),null);
+ assert.equal(parse([note({sentence:'<b>x</b> 짧음 아님 아주 긴 문장 이십오자 넘기기 위한 문장입니다'})]),null);
+ assert.equal(parse([note()],prog({checked_at:'2026-10-20T00:07:00+09:00'})),null);
+ assert.equal(parse([note({generated_at:'2026-10-01T00:00:00+09:00'})]),null);
+});

@@ -54,8 +54,8 @@ export async function readTakedowns(token:string,options:Options={}):Promise<Lis
 }
 
 // One read for the admin page: item takedowns and grocery text mutes come from the same file.
-export async function readAdminState(token:string,options:Options={}):Promise<{list:Takedown[];mutes:string[]}>{
- checkToken(token);const {list,raw}=await read(token,options);return {list,mutes:mutesIn(raw)};
+export async function readAdminState(token:string,options:Options={}):Promise<{list:Takedown[];mutes:string[];healthMutes:string[]}>{
+ checkToken(token);const {list,raw}=await read(token,options);return {list,mutes:mutesIn(raw),healthMutes:healthMutesIn(raw)};
 }
 
 // Read, change, write with the sha precondition; on 409/422 re-read once and re-apply the change.
@@ -129,5 +129,31 @@ export async function unmuteGroceryText(token:string,surveyDay:string,options:Op
  checkToken(token);
  if(!DAY.test(surveyDay))throw new Error('조사일 형식이 올바르지 않습니다');
  await update(token,options,raw=>raw.some(sameMute(surveyDay))?raw.filter(t=>!sameMute(surveyDay)(t)):null,'Unmute grocery pick text '+surveyDay);
+ await redeploy(token,options);
+}
+
+// Health-programme AI sentence: mute one programme page (its link stays; only the AI sentence is hidden).
+const HEALTH_KIND='health_note_text';
+const httpsUrl=(u:unknown)=>{if(typeof u!=='string'||u.length>500)return false;try{const v=new URL(u);return v.protocol==='https:'&&!v.username&&!v.password;}catch{return false;}};
+const sameHealth=(url:string)=>(t:unknown)=>!!t&&typeof t==='object'&&(t as Record<string,unknown>).kind===HEALTH_KIND&&(t as Record<string,unknown>).url===url;
+
+function healthMutesIn(raw:unknown[]):string[]{
+ return raw.flatMap(t=>{const v=t as Record<string,unknown>;return v&&typeof v==='object'&&v.kind===HEALTH_KIND&&httpsUrl(v.url)?[v.url as string]:[];});
+}
+
+export async function muteHealthNote(token:string,url:string,note:string,options:Options={}):Promise<void>{
+ checkToken(token);
+ const memo=note.trim();
+ if(!httpsUrl(url))throw new Error('페이지 주소가 올바르지 않습니다');
+ if(memo.length>NOTE_MAX)throw new Error(`메모는 ${NOTE_MAX}자 이하로 적으세요`);
+ const entry={kind:HEALTH_KIND,url,taken_down_at:(options.now?.()||new Date()).toISOString(),note:memo};
+ await update(token,options,raw=>raw.some(sameHealth(url))?null:[...raw,entry],'Mute health note '+url);
+ await redeploy(token,options);
+}
+
+export async function unmuteHealthNote(token:string,url:string,options:Options={}):Promise<void>{
+ checkToken(token);
+ if(!httpsUrl(url))throw new Error('페이지 주소가 올바르지 않습니다');
+ await update(token,options,raw=>raw.some(sameHealth(url))?raw.filter(t=>!sameHealth(url)(t)):null,'Unmute health note '+url);
  await redeploy(token,options);
 }

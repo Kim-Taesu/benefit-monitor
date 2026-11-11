@@ -11,6 +11,7 @@ Collection runs in its own daily workflow (about 30 requests) because the daily 
 is already near its HTTP cap; the daily run only restores the stored bundle.
 """
 from datetime import date, datetime, timedelta
+import hashlib
 from html.parser import HTMLParser
 import html as htmlmod
 import re
@@ -28,6 +29,11 @@ MAX_REQUESTS = 100  # 공지 약 29 + 상시 사업 페이지 하루 약 21(첫 
 PROGRAM_EVERY_DAYS = 3  # 상시 사업 페이지는 거의 안 바뀌어 사흘에 한 번씩 돌아가며 확인
 PROGRAM_STALE_DAYS = 10  # 이보다 오래 확인 못 한 페이지는 화면에서 '확인 지연'으로 보인다
 PROGRAM_KEYS = {"district", "center", "name", "url", "status", "checked_at"}
+PRIVATE_KEYS = {"text", "text_sha"}  # 본문은 briefing-data 묶음에만 두고 공개 briefing.json에는 싣지 않는다
+TEXT_MAX = 6000
+# <main>/<article>이 없는 사이트의 본문 상자(2026-11-11 실사). 없으면 본문을 저장하지 않아 AI 문구도 만들지 않는다.
+CONTENT_SCOPES = {"www.sdm.go.kr": ("class", "contents_body"), "www.gwanak.go.kr": ("id", "contents"),
+                  "www.seocho.go.kr": ("id", "contents"), "health.gangnam.go.kr": ("id", "contentArea")}
 PROGRAM_STATUSES = ("checked", "failed", "pending")
 GONE = re.compile(r"찾을 수 없습니다|존재하지 않는 페이지|삭제된 페이지|페이지가 없습니다")
 KEEP_DAYS = 60       # 공지 날짜가 이보다 오래되면 보이지 않는다
@@ -172,6 +178,55 @@ def _words(name):
     return [w for w in re.split(r"[\s\[\]()·]+", name) if len(w) >= 2 and w not in ("관리", "지원", "사업", "구로형")]
 
 
+class _Scoped(HTMLParser):
+    """Text inside the first element whose attribute contains the given token; scripts and menus skipped."""
+    VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
+    SKIP = {"script", "style", "nav", "footer", "noscript"}
+
+    def __init__(self, attr, value):
+        super().__init__(convert_charrefs=True)
+        self.attr, self.value = attr, value
+        self.depth, self.level, self.skip, self.done, self.parts = None, 0, 0, False, []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in self.VOID:
+            return
+        self.level += 1
+        if self.depth is None and not self.done and self.value in (dict(attrs).get(self.attr) or "").split():
+            self.depth = self.level
+        if self.depth is not None and tag in self.SKIP:
+            self.skip += 1
+
+    def handle_endtag(self, tag):
+        if tag in self.VOID:
+            return
+        if self.depth is not None and tag in self.SKIP and self.skip:
+            self.skip -= 1
+        if self.depth is not None and self.level == self.depth:
+            self.depth, self.done = None, True
+        self.level -= 1
+
+    def handle_data(self, data):
+        if self.depth is not None and not self.skip:
+            self.parts.append(data)
+
+
+def page_text(body, url):
+    """Main content text of a programme page, or '' when the content area cannot be told from site menus."""
+    scope = CONTENT_SCOPES.get(urlsplit(url).hostname)
+    if scope:
+        parser = _Scoped(*scope)
+        parser.feed(body)
+        text = " ".join(" ".join(parser.parts).split()) if parser.done else ""
+    else:
+        from .collectors.body import extract_body
+        text, region = extract_body(body, url)
+        if region not in ("main", "article"):
+            text = ""
+    text = EMAIL.sub("", MOBILE.sub("", text)).strip()
+    return text[:TEXT_MAX]
+
+
 def check_program(body, name):
     """The page still describes the programme: one of its name words is there and it is no error page."""
     text = htmlmod.unescape(re.sub(r"<[^>]+>", " ", body))
@@ -186,7 +241,7 @@ def collect(source, now, previous=None):
     """Bundle of all boards. A board's fetch failure keeps its previous items (marked failed)."""
     from .operations import error_info
     boards = _boards(source)
-    kept = sanitize(previous, now, allow_stale=True)
+    kept = sanitize(previous, now, allow_stale=True, private=True)
     prev = {b["district"]: b for b in kept["boards"]} if kept else {}
     robots = {}
 
@@ -233,14 +288,19 @@ def collect(source, now, previous=None):
         old = old_programs.get(program["url"])
         row = {"district": program["district"], "center": centers.get(program["district"], program["district"] + " 보건소"),
                "name": program["name"], "url": program["url"],
-               "status": old["status"] if old else "pending", "checked_at": old["checked_at"] if old else None}
-        due = old is None or old["status"] != "checked" or index % PROGRAM_EVERY_DAYS == slot
+               "status": old["status"] if old else "pending", "checked_at": old["checked_at"] if old else None,
+               "text": old["text"] if old else "", "text_sha": old["text_sha"] if old else None}
+        # 본문이 아직 없는 페이지(이 기능 이전 기록 포함)는 AI 문구를 위해 바로 다시 읽는다.
+        due = old is None or old["status"] != "checked" or not old.get("text_sha") or index % PROGRAM_EVERY_DAYS == slot
         if due and not exhausted:
             try:
                 if not allowed(robots_for(program["url"]), program["url"], AGENT):
                     raise PermissionError("robots disallows programme page")
-                check_program(fetch(program["url"], source["domains"]).decode("utf-8", "replace"), program["name"])
-                row.update(status="checked", checked_at=now.isoformat())
+                body = fetch(program["url"], source["domains"]).decode("utf-8", "replace")
+                check_program(body, program["name"])
+                text = page_text(body, program["url"])
+                row.update(status="checked", checked_at=now.isoformat(), text=text,
+                           text_sha=hashlib.sha256(text.encode()).hexdigest() if text else None)
             except RuntimeError:
                 exhausted = True  # 예산 소진: 남은 페이지는 이전 확인 결과를 유지한다
             except Exception:
@@ -255,8 +315,11 @@ def _https(url):
     return bool(parts and parts.scheme == "https" and parts.hostname and not parts.username and not parts.password)
 
 
-def sanitize(bundle, now, allow_stale=False):
-    """Field-by-field re-check; drops notices older than KEEP_DAYS. None when unusable."""
+def sanitize(bundle, now, allow_stale=False, private=False):
+    """Field-by-field re-check; drops notices older than KEEP_DAYS. None when unusable.
+
+    private=True keeps each programme's stored main text and its hash (briefing-data copy, AI input);
+    the default public form has neither."""
     try:
         if (not isinstance(bundle, dict) or bundle.get("schema_version") != 1 or bundle.get("source") != SOURCE
                 or not isinstance(bundle.get("boards"), list) or len(bundle["boards"]) > 40):
@@ -303,7 +366,12 @@ def sanitize(bundle, now, allow_stale=False):
         if not isinstance(raw_programs, list) or len(raw_programs) > 150:
             return None
         for program in raw_programs:
-            if not isinstance(program, dict) or set(program) != PROGRAM_KEYS or program["status"] not in PROGRAM_STATUSES:
+            if not isinstance(program, dict) or set(program) not in (PROGRAM_KEYS, PROGRAM_KEYS | PRIVATE_KEYS) \
+                    or program["status"] not in PROGRAM_STATUSES:
+                return None
+            text, text_sha = program.get("text", ""), program.get("text_sha")
+            if (not isinstance(text, str) or len(text) > TEXT_MAX or MOBILE.search(text) or EMAIL.search(text)
+                    or text_sha != (hashlib.sha256(text.encode()).hexdigest() if text else None)):
                 return None
             if (not _https(program["url"]) or program["url"] in urls or program["district"] not in seen
                     or not isinstance(program["name"], str) or not 0 < len(program["name"]) <= 40
@@ -314,7 +382,10 @@ def sanitize(bundle, now, allow_stale=False):
             elif program["status"] == "checked":
                 return None
             urls.add(program["url"])
-            programs.append(dict(program))
+            row = {k: program[k] for k in PROGRAM_KEYS}
+            if private:
+                row.update(text=text, text_sha=text_sha)
+            programs.append(row)
         return {"schema_version": 1, "source": SOURCE, "fetched_at": fetched.isoformat(), "notice": NOTICE, "boards": boards,
                 "programs": programs}
     except (KeyError, TypeError, ValueError):
@@ -361,7 +432,7 @@ def main(argv=None, now=None):
     source = next(s for s in config["sources"] if s["id"] == SOURCE)
     cost_policy.reset(MAX_REQUESTS)
     previous, sha = mirror._get(args.repository, NAME)
-    bundle = sanitize(collect(source, now, previous), now)
+    bundle = sanitize(collect(source, now, previous), now, private=True)
     if bundle is None:
         print("Health notice bundle failed validation; nothing saved")
         return 1

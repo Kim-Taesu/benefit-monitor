@@ -26,10 +26,11 @@ const md=(d:string)=>`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`;
     </div>
     <details v-if="programGroups.length" :key="district||'all'" class="health-programs" :open="!!district||!!query.trim()">
       <summary><h3 id="health-programs-title">상시 운영 검진·건강관리 <span>{{ programs.length }}곳</span></h3><small v-if="!district">지역을 고르면 바로 펼쳐집니다</small></summary>
+      <p class="fine-print">"AI 작성" 문장은 AI가 보건소 원문을 읽고 쓴 안내입니다. 숫자·무료 표현은 원문 구절과 대조했지만, 예약 전 원문이나 전화로 확인하세요. 남은 예산이나 자리 수는 알 수 없습니다.</p>
       <p class="fine-print">공지가 아니라 보건소 사업 안내 페이지라서 연중 운영하는 무료 검진(대사증후군 등)이 여기 있습니다. 페이지가 살아 있는지만 확인했고, 대상·비용·예약 방법은 원문에서 확인하세요.</p>
       <div v-for="[name,rows] in programGroups" :key="name" class="health-program-group">
         <strong>{{ name }}</strong>
-        <ul><li v-for="p in rows" :key="p.url"><a :href="p.url" target="_blank" rel="noopener noreferrer">{{ p.name }}<span class="sr-only"> (새 창, {{ p.center }})</span></a><small v-if="p.stale" class="health-stale"> 확인 지연</small><small v-else-if="p.checkedAt"> · 확인 {{ md(p.checkedAt.slice(0,10)) }}</small></li></ul>
+        <ul><li v-for="p in rows" :key="p.url" :class="{noted:p.note}"><a :href="p.url" target="_blank" rel="noopener noreferrer">{{ p.name }}<span class="sr-only"> (새 창, {{ p.center }})</span></a><small v-if="p.stale" class="health-stale"> 확인 지연</small><small v-else-if="p.checkedAt"> · 확인 {{ md(p.checkedAt.slice(0,10)) }}</small><p v-if="p.note" class="health-note"><span class="health-ai">AI 작성</span>{{ p.note }}</p></li></ul>
       </div>
     </details>
     <h3 class="health-notices-title">최근 공지</h3>

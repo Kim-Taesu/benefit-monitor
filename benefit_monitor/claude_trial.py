@@ -297,6 +297,21 @@ def validate_host(host, kind, root):
         from .verify_contract import validate_host as validate_verify
         validate_verify(host, root)
         return
+    if kind == 'health':
+        # Only the input the code rebuilds from the stored health bundle (official page text) may be sent.
+        from .health_notes import host as health_host
+        from .health_notices import FILE, sanitize
+        from .store import load
+        if set(host) != {'schema_version','mode','synthetic','now','district','center','program','url','text_sha','page_text'}:
+            raise ValueError('unexpected host fields; private data must not be sent')
+        now = datetime.fromisoformat(host['now'])
+        if now.tzinfo is None:
+            raise ValueError('host timestamp requires timezone')
+        bundle = sanitize(load(Path(root)/FILE, None), now, private=True)
+        program = next((p for p in (bundle or {}).get('programs', []) if p['url'] == host['url']), None)
+        if program is None or health_host(program, now) != host:
+            raise ValueError('health input differs from the stored health bundle')
+        return
     if kind == 'grocery':
         # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
         from .grocery_pick import host as grocery_host
@@ -418,6 +433,10 @@ def evaluate_draft(draft, host, kind, required_version=None):
     if kind == 'verify':
         # from_wire already rejected unknown segments and claim mismatches; decide() applies the rules.
         return draft, {'valid': True, 'errors': []}
+    if kind == 'health':
+        from .health_notes import review as health_review
+        errors = health_review(draft, host)
+        return draft, {'valid': not errors, 'errors': errors}
     if kind == 'grocery':
         # Bundle-wide item names are checked again in grocery_pick.refresh and at publication.
         from .grocery_pick import review as grocery_review
@@ -441,7 +460,7 @@ def evaluate_draft(draft, host, kind, required_version=None):
 
 
 SYSTEM_PROMPTS = {'research':'research-system.md', 'topic':'topic-system.md', 'verify':'verify-system.md',
-                  'grocery':'grocery-system.md'}
+                  'grocery':'grocery-system.md', 'health':'health-system.md'}
 
 
 def system_prompt(root, kind):
@@ -468,7 +487,7 @@ def main():
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
     parser.add_argument('--repair-from')
-    parser.add_argument('--kind', choices=('research','topic','verify','grocery'))
+    parser.add_argument('--kind', choices=('research','topic','verify','grocery','health'))
     parser.add_argument('--input', type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
@@ -523,6 +542,8 @@ def main():
         model_input = verify_model_input(host)
     elif args.kind == 'grocery':
         model_input = {'survey_date': host['survey_date'], 'candidates': host['candidates']}
+    elif args.kind == 'health':
+        model_input = {k: host[k] for k in ('district','center','program','page_text')} | {'today': host['now'][:10]}
     else:
         model_input = wire_format.research_model_input(host) if args.kind == 'research' else topic_model_input(host)
     user_input = model_input
@@ -564,7 +585,7 @@ def main():
                 'preflight':client.last_preflight,
                 'schema_sha256':hashlib.sha256(json.dumps(schema,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
                 'model_output_contract':{'research':wire_format.RESEARCH_WIRE,'topic':wire_format.TOPIC_WIRE,'verify':'verify-wire-v1',
-                                         'grocery':wire_format.GROCERY_WIRE}[args.kind]}
+                                         'grocery':wire_format.GROCERY_WIRE,'health':wire_format.HEALTH_WIRE}[args.kind]}
     (destination/'metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n')
     (destination/'input.json').write_text(json.dumps(host,ensure_ascii=False,indent=2)+'\n')
     (destination/'prompt.txt').write_text(system)

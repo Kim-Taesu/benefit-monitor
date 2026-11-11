@@ -234,6 +234,13 @@ def apply_takedowns(data, takedowns, current=None):
             if refs:
                 topics.append(dict(topic, items=refs))
         cards['topics'] = topics
+    if 'health_notes' in data:
+        from .health_notes import muted
+        notes = [n for n in data['health_notes'] if not muted(takedowns, n.get('url') if isinstance(n, dict) else None)]
+        if notes:
+            data['health_notes'] = notes
+        else:
+            data.pop('health_notes')
     if 'grocery_pick' in data:
         # Admin mute: the same rule card the collection path would publish (no model text).
         from .grocery_pick import apply_mute

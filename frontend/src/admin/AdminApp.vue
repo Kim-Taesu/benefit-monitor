@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {computed,onMounted,ref} from 'vue';
-import {DeployError,NOTE_MAX,REPO,readAdminState,restore,takeDown,validToken,muteGroceryText,unmuteGroceryText,type Takedown} from './github';
+import {DeployError,NOTE_MAX,REPO,readAdminState,restore,takeDown,validToken,muteGroceryText,unmuteGroceryText,muteHealthNote,unmuteHealthNote,type Takedown} from './github';
 import {clearToken,loadToken,saveToken as storeToken} from './token-store';
 
 type Doc={url:string;title:string};
@@ -8,6 +8,7 @@ type AutoItem={candidateId:string;titleKey:string;title:string;source:string;url
  validFrom:string;validUntil:string;deadlineAt:string;documentCount:number;documents:Doc[];checkedAt:string};
 type AiStatus={state:string;lastSuccessDay:string|null}|null;
 type GroceryPick={source:string;surveyDate:string;summary:string}|null;
+type HealthNote={url:string;district:string;sentence:string};
 
 const text=(v:unknown)=>typeof v==='string'?v:'';
 const record=(v:unknown)=>v&&typeof v==='object'&&!Array.isArray(v)?v as Record<string,unknown>:{};
@@ -27,6 +28,11 @@ function parseItems(raw:unknown):AutoItem[]{
    documents,checkedAt:text(review.checked_at)}];
  });
 }
+function parseHealthNotes(raw:unknown):HealthNote[]{
+ const notes=record(raw).health_notes;
+ if(!Array.isArray(notes))return [];
+ return notes.map(record).filter(n=>https(text(n.url))&&text(n.sentence)).map(n=>({url:text(n.url),district:text(n.district),sentence:text(n.sentence)}));
+}
 function parsePick(raw:unknown):GroceryPick{
  const p=record(record(raw).grocery_pick);
  return /^\d{4}-\d{2}-\d{2}$/.test(text(p.survey_date))?{source:text(p.source),surveyDate:text(p.survey_date),summary:text(p.summary)}:null;
@@ -41,6 +47,7 @@ const token=ref(''),draft=ref(''),remember=ref(false),items=ref<AutoItem[]>([]),
 const takedowns=ref<Takedown[]|null>(null),takedownError=ref(''),message=ref(''),busy=ref(false);
 const notes=ref<Record<string,string>>({});
 const groceryPick=ref<GroceryPick>(null),groceryMutes=ref<string[]>([]),groceryNote=ref('');
+const healthNotes=ref<HealthNote[]>([]),healthMutes=ref<string[]>([]),healthMemo=ref<Record<string,string>>({});
 
 const statusLine=computed(()=>{
  const s=aiStatus.value;
@@ -61,12 +68,12 @@ async function loadBriefing(){
   const response=await fetch(import.meta.env.BASE_URL+'briefing.json',{cache:'no-store',credentials:'omit'});
   if(!response.ok)throw new Error('HTTP');
   const raw:unknown=await response.json();
-  items.value=parseItems(raw);aiStatus.value=parseStatus(raw);groceryPick.value=parsePick(raw);
+  items.value=parseItems(raw);aiStatus.value=parseStatus(raw);groceryPick.value=parsePick(raw);healthNotes.value=parseHealthNotes(raw);
  }catch{briefingError.value=true;}
 }
 async function loadTakedowns(){
- if(!token.value){takedowns.value=null;groceryMutes.value=[];return;}
- try{const state=await readAdminState(token.value);takedowns.value=state.list;groceryMutes.value=state.mutes;takedownError.value='';}
+ if(!token.value){takedowns.value=null;groceryMutes.value=[];healthMutes.value=[];return;}
+ try{const state=await readAdminState(token.value);takedowns.value=state.list;groceryMutes.value=state.mutes;healthMutes.value=state.healthMutes;takedownError.value='';}
  catch(e){takedowns.value=null;takedownError.value=e instanceof Error?e.message:'내림 목록을 읽지 못했습니다';}
 }
 async function saveToken(){
@@ -98,6 +105,11 @@ const muteGrocery=()=>groceryPick.value&&run(()=>muteGroceryText(token.value,gro
  'AI 장보기 문구를 껐습니다. 2~3분 뒤 카드가 평년보다 많이 싼 품목·가격만 보이는 자동 선정으로 바뀝니다.');
 const unmuteGrocery=()=>groceryPick.value&&run(()=>unmuteGroceryText(token.value,groceryPick.value!.surveyDate),
  '다시 켰습니다. 이미 내린 오늘 문구는 돌아오지 않고, 다음 AI 실행(보통 다음 날 새벽)부터 새 AI 문구가 공개됩니다.');
+
+const muteHealth=(n:HealthNote)=>run(()=>muteHealthNote(token.value,n.url,healthMemo.value[n.url]||''),
+ '이 AI 보건소 문구를 껐습니다. 2~3분 뒤 사업 링크만 남습니다.');
+const unmuteHealth=(url:string)=>run(()=>unmuteHealthNote(token.value,url),
+ '다시 켰습니다. 다음 공개 실행에서 기준을 다시 통과하면 문구가 보입니다.');
 
 onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),loadTakedowns()]);});
 </script>
@@ -144,6 +156,24 @@ onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),lo
      <button v-if="!groceryMuted" type="button" :disabled="!token||busy" @click="muteGrocery">AI 장보기 문구 끄기</button>
      <button v-else type="button" :disabled="!token||busy" @click="unmuteGrocery">다시 켜기</button>
     </div>
+   </template>
+  </section>
+
+  <section aria-labelledby="health-heading">
+   <h2 id="health-heading">AI 보건소 문구</h2>
+   <p v-if="!healthNotes.length">지금 공개된 AI 보건소 문구가 없습니다.</p>
+   <article v-for="n in healthNotes" :key="n.url" class="card" :data-health="n.url">
+    <p><strong>{{n.district}}</strong> · <a :href="n.url" target="_blank" rel="noopener noreferrer">원문</a></p>
+    <blockquote>{{n.sentence}}</blockquote>
+    <div class="row">
+     <label :for="'health-note-'+n.url">메모 (공개 저장소에 기록됩니다)</label>
+     <input :id="'health-note-'+n.url" v-model="healthMemo[n.url]" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">
+     <button type="button" :disabled="!token||busy" @click="muteHealth(n)">이 문구 끄기</button>
+    </div>
+   </article>
+   <template v-if="healthMutes.length">
+    <h3>꺼 둔 문구</h3>
+    <ul><li v-for="u in healthMutes" :key="u"><a :href="u" target="_blank" rel="noopener noreferrer">{{u}}</a> <button type="button" :disabled="!token||busy" @click="unmuteHealth(u)">다시 켜기</button></li></ul>
    </template>
   </section>
 

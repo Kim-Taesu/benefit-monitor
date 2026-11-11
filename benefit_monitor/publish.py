@@ -381,8 +381,17 @@ def run(root, now=None, failure=False):
 def attach_health_notices(root,data,now):
     """Separate health-centre notice tab (approved 2026-11-11); dropped when stale or malformed."""
     from .health_notices import sanitize, FILE
-    bundle = sanitize(load(Path(root)/FILE, None), now)
-    if bundle is not None:data['health_notices'] = bundle
+    private = sanitize(load(Path(root)/FILE, None), now, private=True)
+    if private is None:return
+    data['health_notices'] = sanitize(private, now)
+    # AI sentences for year-round programmes: tied to the same stored page text, never failing publication.
+    try:
+        from . import auto_release
+        from .health_notes import PUBLIC, public
+        notes = public(load(Path(root)/PUBLIC, None), private, auto_release.load(root)[1], now)
+    except Exception:
+        notes = []
+    if notes:data['health_notes'] = notes
 
 
 def attach_groceries(root,data,now):
