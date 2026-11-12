@@ -187,6 +187,7 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 - 공개 문장은 AI 실행이 `briefing-data/ai-health-notes.json`에 올리고, 수집 실행은 이를 복원해 같은 검사를 다시 한다.
 - 어드민(`/admin.html`) "AI 보건소 문구"에서 페이지별로 끌 수 있다(`ai-takedowns.json`에 `{"kind":"health_note_text","url":...}`). 모든 공개 경로가 이를 적용한다.
 - `publish.py`·`public_snapshot.py`·`auto_release.py`가 바뀌어 `public/topic-publication.json`의 `policy_sha256`을 다시 기록했다. 주제 카드 게이트 로직은 바뀌지 않았다.
+- 이번 주 보건소 추천 카드(2026-11-12, 사용자 "서울 전체와 각 지역구들의 요약을 짧게", 서울 전체는 "묶는 형태"): 보건소 탭 맨 위에 프런트(`frontend/src/health.ts` `weeklyPicks`, `HealthWeekly.vue`)가 이미 공개된 `health_notices.programs`·`items`·`health_notes`만 묶어 보인다. 새 유료 호출·공개 데이터 변경은 없다. 서울 전체 줄은 사업 이름 단어로 나눈 종류별 운영 구 수(확인 10일 이내 사업만)이며 종류 이름에 "무료"를 쓰지 않는다. 구별 줄은 사업 최대 3개와 AI 문장의 첫 문장이고, 문장이 없는 구·사업도 이름과 링크로 보인다. "AI 작성" 표시는 문장이 하나라도 있을 때만 붙는다. 최근 7일 검진·접종 공지(`hint`)가 있는 구를 위로 올린다.
 
 ## 승인된 미정산 예약 수동 닫기 — 2026-11-11
 
