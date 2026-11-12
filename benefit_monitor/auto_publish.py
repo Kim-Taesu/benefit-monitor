@@ -91,6 +91,15 @@ PUBLIC_FEE = {'free': 'free', 'paid': 'paid', 'mixed': 'mixed', 'conditional': '
 ONGOING_DAYS = 90
 PUBLISHED_MAX_DAYS = 365
 FRESH_HOURS = 30
+# Approved 2026-11-12: a year-less date takes the year that puts it nearest the official page's
+# posting date (read by code), only when that is within this many days; otherwise unreadable.
+POSTING_WINDOW_DAYS = 120
+# Approved 2026-11-12: official reservation listings whose own detail page is the live record.
+# Site-wide notices printed on every page are not an ending of the listed program.
+LIVE_LISTINGS = {
+    'eshare': ('※야영데크는 성수기(7월~8월)에만 9시~익일9시까지 이용이 가능하며, 비성수기에는 9시~당일18시까지만 이용이 가능합니다.',
+               '※ 평상데크는 5/1 ~ 10/31까지, 9시~당일19시까지만 이용 가능합니다.'),
+}
 BRACKETS = re.compile(r'[()\[\]{}<>（）［］｛｝〈〉《》「」『』【】〔〕]')
 YEAR = re.compile(r'(?<!\d)(?:19|20)\d{2}(?!\d)\s*년?')
 
@@ -155,6 +164,82 @@ def _year_from_same_document(phrase, phrases):
         return date(years.pop(), *wanted)
     except ValueError:
         return None
+
+
+def year_from_posting(month, day, posted):
+    """Date of a year-less month-day nearest the posting date (previous, same or next year).
+
+    "1월 5일" posted 2026-12-20 is 2027-01-05; "9월 19일" posted 2026-11-09 is 2026-09-19 (already past).
+    Farther than POSTING_WINDOW_DAYS from the posting date, or not a real day, is unreadable (None).
+    """
+    try:
+        options = [date(year, month, day) for year in (posted.year - 1, posted.year, posted.year + 1)]
+    except ValueError:
+        return None
+    best = min(options, key=lambda option: abs((option - posted).days))
+    return best if abs((best - posted).days) <= POSTING_WINDOW_DAYS else None
+
+
+def _month_days(text):
+    """(month, day) pairs written in text; the month carries forward ("11월 12일부터 18일까지")."""
+    pairs, month = [], None
+    for token in DATE_TOKEN.finditer(text):
+        month = int(token['m']) if token['m'] else month
+        day = token['d'] or token['dd']
+        if month is not None and day not in (None, '말'):
+            pairs.append((month, int(day)))
+    return pairs
+
+
+def _posted(document, today):
+    """Official page posting date read by code (never by the model); None if missing or in the future."""
+    try:
+        posted = date.fromisoformat(str(document.get('published_at'))[:10])
+    except ValueError:
+        return None
+    return posted if posted <= today else None
+
+
+MONTH_GAP = 15
+
+
+def _with_month(body, match):
+    """The phrase, extended back to the date just before it when the phrase writes only a day
+    ("11월 12일(목)부터 18일(수)까지" -> "18일(수)까지" reads as 11-18). That date must end within
+    MONTH_GAP characters with no line break or sentence end between; otherwise the phrase alone."""
+    phrase = match.group()
+    if any(t['m'] for t in DATE_TOKEN.finditer(phrase)):
+        return phrase
+    start = max(0, match.start() - 60)
+    before = [t for t in DATE_TOKEN.finditer(body, start, match.start()) if t['m']]
+    if not before or match.start() - before[-1].end() > MONTH_GAP:
+        return phrase
+    gap = body[before[-1].end():match.start()]
+    if '\n' in gap or re.search(r'[.!?]\s', gap):
+        return phrase
+    return body[before[-1].start():match.end()]
+
+
+def _from_posting(text, posted):
+    """Last date of a year-less ending phrase, its year taken from the page posting date.
+    A year written in the extended text itself is read as written."""
+    if FOUR_DIGIT_YEAR.search(text):
+        return phrase_end(text)
+    pairs = _month_days(text)
+    if posted is None or not pairs:
+        return None
+    return year_from_posting(*pairs[-1], posted)
+
+
+def _reference_range(phrase, today):
+    """A year-dated range ending two or more years back ("1962. 1. 1. ~ 1976. 12. 31. 출생자") describes
+    who qualifies, not when this item ends. Last year's ranges still count as possible endings."""
+    end = phrase_end(phrase) if FOUR_DIGIT_YEAR.search(phrase) else None
+    return end is not None and end.year <= today.year - 2
+
+
+def _endings(body, today):
+    return [m.group() for m in ENDING_DATE.finditer(body) if not _reference_range(m.group(), today)]
 
 
 def _period_end_without_year(phrase, ends):
@@ -227,7 +312,11 @@ def decide(draft, host, now, takedowns):
     for end in ends:
         current = end['moment'] > now if end['moment'] else end['day'] >= today
         # The year itself must be written in the cited official text, not only in the model value.
-        stated = any(str(end['day'].year) in q for q in end['quotes'])
+        stated = any(str(end['day'].year) in q for q in end['quotes']) or any(
+            (end['day'].month, end['day'].day) in _month_days(e['quote'])
+            and year_from_posting(end['day'].month, end['day'].day,
+                                  _posted(docs[e['source_ref']], today) or date.min) == end['day']
+            for e in facts[end['field']]['evidence'] if _posted(docs[e['source_ref']], today))
         period_ok = period_ok and current and stated
         # Grade A (approved 2026-11-10): one official document suffices for a fixed period because the
         # year-dated end must itself be quoted from that text and still be current (period_ok above).
@@ -254,22 +343,40 @@ def decide(draft, host, now, takedowns):
         # one is kept so the item is hidden after the earliest of them (and after its time, if any).
         if supported('application_period') is None:
             for d in host['documents']:
-                matches = [m.group() for m in ENDING_DATE.finditer(d['body'])]
-                for phrase in matches:
+                found = [m for m in ENDING_DATE.finditer(d['body']) if not _reference_range(m.group(), today)]
+                matches = [m.group() for m in found]
+                for match in found:
+                    phrase = match.group()
                     if FOUR_DIGIT_YEAR.search(phrase):
                         stated_end, moment = phrase_deadline(phrase)
                     else:
                         stated_end, moment = _year_from_same_document(phrase, matches), None
                         if stated_end is None:
                             stated_end = _period_end_without_year(phrase, ends)
+                        if stated_end is None:
+                            stated_end = _from_posting(_with_month(d['body'], match), _posted(d, today))
                     if stated_end is None or stated_end < today or (moment is not None and moment <= now):
                         period_ok = False
                     else:
                         body_ends.append((stated_end, moment))
+    elif candidate['source_id'] in LIVE_LISTINGS:
+        # Approved 2026-11-12: the listing's own official page, fetched within FRESH_HOURS, is the live
+        # record. Every cited fact must come from that page (the bundle holds other listings too), and
+        # any ending date left on it after the site-wide notices holds as before.
+        kind = 'ongoing'
+        own = docs[candidate['document_ids'][0]]
+        body = own['body']
+        for notice in LIVE_LISTINGS[candidate['source_id']]:
+            body = body.replace(notice, '')
+        cited_refs = {e['source_ref'] for f in facts.values() if f['status'] == 'supported' for e in f['evidence']}
+        single_ok = bool(operating) and cited_refs == {own['id']}
+        period_ok = single_ok and not _endings(body, today)
+        # The day code confirmed the listing stands in for the posting date (90-day display limit).
+        published = published or today.isoformat()
     else:
         kind = 'ongoing'
         two_docs = len(hashes(operating)) >= 2
-        hidden_end = any(ENDING_DATE.search(d['body']) for d in host['documents'])
+        hidden_end = any(_endings(d['body'], today) for d in host['documents'])
         window = lambda day: today - timedelta(days=ONGOING_DAYS) <= day <= today
         # The official page header date (read by code, never by the model) of a cited document counts too.
         page_days = [date.fromisoformat(str(docs[e['source_ref']]['published_at'])[:10])
