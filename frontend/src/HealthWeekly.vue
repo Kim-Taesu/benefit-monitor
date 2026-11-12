@@ -12,7 +12,8 @@ const shown=computed(()=>expanded.value?rows.value:rows.value.slice(0,SHOW));
 <template>
   <section v-if="picks.districts.length" class="health-weekly" aria-labelledby="health-weekly-title">
     <h3 id="health-weekly-title">이번 주 보건소 추천</h3>
-    <p class="fine-print"><span class="health-ai">AI 작성</span>AI가 공식 페이지를 요약했습니다. 대상·기간·비용은 원문에서 확인하세요.</p>
+    <p v-if="picks.hasSummary" class="fine-print"><span class="health-ai">AI 작성</span>AI가 공식 페이지를 요약했습니다. 대상·기간·비용은 원문에서 확인하세요.</p>
+    <p v-else class="fine-print">공식 페이지 링크입니다. 대상·기간·비용은 원문에서 확인하세요.</p>
     <div v-if="picks.kinds.length" class="quick-filters health-weekly-kinds" aria-label="사업 종류">
       <button v-for="k in picks.kinds" :key="k.key" type="button" :aria-pressed="kind===k.key" @click="kind=kind===k.key?'':k.key">{{ k.label }} {{ k.districts }}개 구</button>
     </div>

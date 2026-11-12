@@ -84,3 +84,22 @@ for(const width of [390,1440])test(`health weekly card filters by kind and distr
  }
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
 });
+
+test('health weekly card hides AI badge when no summaries exist',async({page})=>{
+ await page.clock.install({time:new Date(NOW)});
+ const raw=snapshot(undefined,{health_notices:{schema_version:1,source:'health_notices',fetched_at:'2026-11-04T00:07:00+09:00',notice:'[테스트] 보건소 공지',programs:[prog('강서구','대사증후군 관리','gs1')],boards:[board({items:[]})]}});
+ const origin=new URL(String(test.info().project.use.baseURL)).origin;
+ await page.route('**/*',route=>{
+  const u=new URL(route.request().url());
+  if(u.origin!==origin)return route.abort();
+  if(u.pathname.endsWith('/briefing.json'))return route.fulfill({json:raw});
+  return route.continue();
+ });
+ await page.goto('./');
+ await page.getByRole('tab',{name:'보건소'}).click();
+ const card=page.locator('section[aria-labelledby="health-weekly-title"]');
+ await expect(card).toContainText('이번 주 보건소 추천');
+ await expect(card).toContainText('공식 페이지 링크입니다. 대상·기간·비용은 원문에서 확인하세요.');
+ await expect(card).not.toContainText('AI 작성');
+ await expect(card).not.toContainText('AI가 공식 페이지를 요약했습니다');
+});
