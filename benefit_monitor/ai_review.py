@@ -156,7 +156,16 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
         try:withdrawn={k for k,r in load(project_path(root,'cache/ai_publish/approved.json'),{}).items()
                        if isinstance(r,dict) and r.get('recheck_priority')}
         except (OSError,ValueError,AttributeError):withdrawn=set()
-        ordered=sorted(unique.items(),key=lambda pair:(pair[0] not in withdrawn,state['items'].get(pair[0],{}).get('last_checked_at','')))
+        # Approved 2026-11-13: a held draft that the current gate would publish once its pages are
+        # read again unchanged goes next (local check only, no model call), so gate fixes are not
+        # stuck behind the oldest-checked rotation.
+        def _ready(cid):
+            row=state['items'].get(cid,{})
+            return (row.get('model_status')=='validated_draft' and bool(row.get('run_id'))
+                    and not (row.get('auto_publish') or {}).get('publish')
+                    and auto_decide(root,row['run_id'],now,reread=True)['publish'])
+        ready={cid for cid in unique if cid not in withdrawn and _ready(cid)}
+        ordered=sorted(unique.items(),key=lambda pair:(pair[0] not in withdrawn,pair[0] not in ready,state['items'].get(pair[0],{}).get('last_checked_at','')))
         # Only model requests count toward max_candidates; unchanged skips and fetch failures do not
         # (2026-11-10). The run's public HTTP budget still ends the loop.
         attempted=0
