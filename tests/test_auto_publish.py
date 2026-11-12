@@ -456,6 +456,50 @@ class AutoPublishIntegrationTests(unittest.TestCase):
         self.assertFalse(decisions[cid]['publish'])
         self.assertIn('taken_down', decisions[cid]['reasons'])
 
+    def test_unchanged_held_draft_is_redecided_without_a_model_call(self):
+        # Approved 2026-11-12: a held draft whose pages are byte-identical is decided again by the
+        # current gate (free, deterministic). The pages were just re-read, so the freshness clock restarts.
+        from benefit_monitor import ai_review
+        candidate = {'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1', 'title': '서울 미술 전시', 'summary': '검토 대기'}
+        cid = ai_review.Benefit(**candidate).id
+        base = json.loads(json.dumps(self.base)); base['candidates'][0]['candidate_id'] = cid
+        docs = base['documents']
+
+        def run(facts, now, model):
+            draft = draft_for(base, **facts)
+            for record in draft['records']:
+                record['candidate_id'] = cid
+            with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: dict(docs[0], links=[])), \
+                    patch('benefit_monitor.ai_review._related_docs', return_value=[dict(d, links=[]) for d in docs[1:]]), \
+                    patch('benefit_monitor.ai_review.invoke', return_value={'status': 'validated_draft', 'run_id': 'e' * 64}) as invoke, \
+                    patch('benefit_monitor.ai_review.load_run', return_value=(draft, base)):
+                result = ai_review.review_candidates(self.root, [candidate], now, 1, True)
+            self.assertEqual(invoke.called, model)
+            return result
+
+        held = period_facts(conditions={'unknown_reason': '원문에 없음'})
+        run(held, NOW, True)
+        # A stored run that can no longer be read changes nothing.
+        with patch('benefit_monitor.ai_review.auto_decide', return_value={'publish': False, 'reasons': ['contract'], 'record': None}):
+            with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: dict(docs[0], links=[])), \
+                    patch('benefit_monitor.ai_review._related_docs', return_value=[dict(d, links=[]) for d in docs[1:]]), \
+                    patch('benefit_monitor.ai_review.invoke') as invoke:
+                ai_review.review_candidates(self.root, [candidate], NOW + timedelta(days=1), 1, True)
+            self.assertFalse(invoke.called)
+        self.assertEqual(json.loads((self.root/'cache/ai_publish/decisions.json').read_text())[cid]['reasons'], ['core_missing'])
+        self.assertEqual(json.loads((self.root/'cache/ai_publish/approved.json').read_text()), {})
+        later = NOW + timedelta(days=2)
+        result = run(period_facts(), later, False)
+        approved = json.loads((self.root/'cache/ai_publish/approved.json').read_text())
+        self.assertEqual(list(approved), [cid])
+        self.assertEqual(approved[cid]['review']['checked_at'], later.isoformat())
+        self.assertEqual(result['auto_published'], 1)
+        decisions = json.loads((self.root/'cache/ai_publish/decisions.json').read_text())
+        self.assertTrue(decisions[cid]['publish'])
+        # Already published and unchanged: left alone, no second decision.
+        run(held, later + timedelta(hours=1), False)
+        self.assertEqual(list(json.loads((self.root/'cache/ai_publish/approved.json').read_text())), [cid])
+
     def test_corrupt_takedowns_or_decide_crash_hold_without_crashing(self):
         from benefit_monitor import ai_review
         path = self.root/'cache/ai_publish/takedowns.json'; path.parent.mkdir(parents=True, exist_ok=True)
@@ -513,6 +557,136 @@ class AutoPublishIntegrationTests(unittest.TestCase):
         from benefit_monitor import ai_review
         with patch('benefit_monitor.ai_review.load_run', side_effect=FileNotFoundError):
             self.assertEqual(ai_review.auto_decide(self.root, 'f' * 64, NOW)['reasons'], ['contract'])
+
+
+# Approved 2026-11-12 ("123 진행해"): birth-date ranges, year-less dates read from the official
+# page's posting date, and live official reservation listings (eshare).
+BIRTH = '대상: 기초생활수급자(1962. 1. 1. ~ 1976. 12. 31. 출생자)'
+ESHARE_BOILER = ('※ 평상데크는 5/1 ~ 10/31까지, 9시~당일19시까지만 이용 가능합니다.')
+E1 = ('자원 명칭 요가(오전반)\n' + ESHARE_BOILER + '\n예약 방법 온라인 직접 예약\n'
+      '종암동 자치회관 프로그램 요가 월,수,금 11:00~12:00\n이용 요금 수강료 75,000원 (분기)\n이용 대상 제한 없음')
+E_OTHER = '자원 명칭 노래교실(수요반)\n' + ESHARE_BOILER + '\n노래교실 수 14:00~16:00'
+
+
+def eshare_host(*bodies, posted=None):
+    docs = [doc(i, b, url=f'https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=E{i}')
+            for i, b in enumerate(bodies, 1)]
+    for d in docs:
+        d['source_id'] = 'eshare'
+        d['published_at'] = posted
+    base = host(docs=docs, title='[공유누리] 요가(오전반)', cid='e' * 24)
+    base['candidates'][0]['source_id'] = 'eshare'
+    return base
+
+
+def eshare_facts(**over):
+    facts = dict(summary=sup('자치회관 요가 강좌', 'd1s4'), conditions=sup('온라인 직접 예약', 'd1s3'),
+                 fee_status=sup('paid', 'd1s5'), cost_details=sup('수강료 75,000원(분기)', 'd1s5'),
+                 eligibility=sup(ANYONE, 'd1s6'))
+    facts.update(over)
+    return facts
+
+
+class DateReadingTests(unittest.TestCase):
+    def decide(self, base, facts, now=NOW):
+        from benefit_monitor.auto_publish import decide
+        return decide(draft_for(base, **facts), base, now, [])
+
+    # 1. Eligibility ranges such as birth dates are not deadlines of the item.
+    def test_birth_date_range_does_not_hold_period_item(self):
+        result = self.decide(host(D1 + '\n' + BIRTH, D2), period_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual(result['record']['valid_until'], '2026-11-30')
+
+    def test_birth_date_range_does_not_hold_ongoing_item(self):
+        result = self.decide(host(O1 + '\n' + BIRTH, O2, title='도서 대출'), ongoing_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+
+    def test_range_ending_last_year_still_holds(self):
+        # Only ranges ending two or more years back are reference ranges; last year's could be this item's.
+        for phrase in ('접수는 2025. 11. 1. ~ 2025. 11. 30. 입니다.', '신청 2025년 12월 31일까지'):
+            with self.subTest(phrase=phrase):
+                result = self.decide(host(D1 + '\n' + phrase, D2), period_facts())
+                self.assertIn('no_current_evidence', result['reasons'])
+
+    # 2. Year-less dates take their year from the official page posting date read by code.
+    def year_less(self, posted, end='2026-11-18', body_extra=''):
+        d1 = '이마트 와인장터 안내.\n와인장터는 오는 11월 12일(목)부터 18일(수)까지 열립니다.\n관람료는 무료입니다.\n누구나 참여할 수 있습니다.' + body_extra
+        docs = [doc(1, d1), doc(2, D2)]
+        docs[0]['published_at'] = posted
+        facts = period_facts(event_period=sup({'start': '2026-11-12', 'end': end}, 'd1s2'))
+        return self.decide(host(docs=docs), facts)
+
+    def test_year_less_period_uses_page_posting_date(self):
+        result = self.year_less('2026-11-05')
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual(result['record']['valid_until'], '2026-11-18')
+
+    def test_year_less_period_without_posting_date_holds(self):
+        self.assertIn('no_current_evidence', self.year_less(None)['reasons'])
+
+    def test_year_less_period_with_other_year_holds(self):
+        # The model's year must equal the year the posting date gives.
+        self.assertIn('no_current_evidence', self.year_less('2026-11-05', end='2027-11-18')['reasons'])
+
+    def test_year_less_period_from_old_posting_holds(self):
+        # Posted 2025-11-05: "11월 18일" is 2025-11-18, so the model's 2026 claim is not supported.
+        result = self.year_less('2025-11-05')
+        self.assertFalse(result['publish'])
+        self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_year_less_body_deadline_uses_posting_date(self):
+        # Current: kept and narrows the display; already past: holds.
+        result = self.year_less('2026-11-05', body_extra='\n사전 신청은 11월 15일까지 받습니다.')
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual(result['record']['valid_until'], '2026-11-15')
+        result = self.year_less('2026-11-05', body_extra='\n사전 신청은 11월 5일까지 받았습니다.')
+        self.assertIn('no_current_evidence', result['reasons'])
+
+    def test_day_only_phrase_without_nearby_month_holds(self):
+        # The month is borrowed only from a date written just before, in the same sentence.
+        for extra in ('\n신청은 17일까지 받습니다.', '\n11월 12일 개막. 신청은 17일까지 받습니다.'):
+            with self.subTest(extra=extra):
+                self.assertIn('no_current_evidence', self.year_less('2026-11-05', body_extra=extra)['reasons'])
+
+    def test_year_less_date_near_new_year_reads_next_year(self):
+        from benefit_monitor.auto_publish import year_from_posting
+        from datetime import date
+        self.assertEqual(year_from_posting(1, 5, date(2026, 12, 20)), date(2027, 1, 5))
+        self.assertEqual(year_from_posting(12, 28, date(2027, 1, 5)), date(2026, 12, 28))
+        self.assertEqual(year_from_posting(9, 19, date(2026, 11, 9)), date(2026, 9, 19))
+        self.assertIsNone(year_from_posting(5, 20, date(2026, 11, 9)))  # half a year away: unreadable
+        self.assertIsNone(year_from_posting(2, 30, date(2026, 11, 9)))
+
+    # 3. Live official reservation listings (eshare) need only their own page.
+    def test_eshare_listing_publishes_from_its_own_page(self):
+        result = self.decide(eshare_host(E1, E_OTHER), eshare_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+        record = result['record']
+        self.assertEqual(record['validity_kind'], 'ongoing')
+        self.assertEqual(record['review']['published_at'], NOW.date().isoformat())
+        self.assertEqual(record['review']['document_count'], 1)
+        from benefit_monitor.auto_release import candidate, display_until
+        sources = {s['id']: s for s in json.loads((ROOT/'sources.yaml').read_text())['sources']}
+        item = candidate(record, sources)
+        self.assertIsNotNone(item)
+        self.assertTrue(display_until(record, item, NOW))
+
+    def test_eshare_listing_with_course_period_holds(self):
+        body = E1 + '\n수강 기간 2026. 9. 1. ~ 2026. 11. 30.'
+        self.assertIn('no_current_evidence', self.decide(eshare_host(body), eshare_facts())['reasons'])
+
+    def test_eshare_evidence_from_another_resource_holds(self):
+        facts = eshare_facts(summary=sup('노래교실', 'd2s3'), conditions=sup('노래교실', 'd2s3'))
+        self.assertFalse(self.decide(eshare_host(E1, E_OTHER), facts)['publish'])
+
+    def test_eshare_still_needs_core_facts(self):
+        facts = eshare_facts(eligibility={'unknown_reason': '이용 대상 비어 있음'})
+        self.assertIn('core_missing', self.decide(eshare_host(E1), facts)['reasons'])
+
+    def test_other_sources_keep_two_documents_for_ongoing(self):
+        one = self.decide(host(O1, O2), ongoing_facts(conditions=sup('상시 대출', 'd1s3')))
+        self.assertIn('single_source', one['reasons'])
 
 
 if __name__ == '__main__':

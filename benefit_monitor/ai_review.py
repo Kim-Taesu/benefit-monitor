@@ -53,13 +53,17 @@ def load_run(run_id):
     return (json.loads((folder/'normalized-output.json').read_text()),json.loads((folder/'input.json').read_text()))
 
 
-def auto_decide(root,run_id,now):
-    """Deterministic gate; any unreadable run, bad takedown file or gate error is held as a contract failure."""
+def auto_decide(root,run_id,now,reread=False):
+    """Deterministic gate; any unreadable run, bad takedown file or gate error is held as a contract failure.
+
+    reread=True: every page of the run was just read again with identical bytes (same signature),
+    so its documents count as retrieved now."""
     hold={'publish':False,'reasons':['contract'],'record':None}
     try:
         takedowns=load(project_path(root,'cache/ai_publish/takedowns.json'),[])
         if not isinstance(takedowns,list):return hold
         draft,host=load_run(run_id)
+        if reread:host={**host,'documents':[{**d,'retrieved_at':now.isoformat()} for d in host['documents']]}
         return auto_publish.decide(draft,host,now,[t for t in takedowns if isinstance(t,dict)])
     except Exception:
         # Never crash after a paid request; the private review row still exists.
@@ -180,6 +184,17 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             retry=(previous.get('model_status')=='rejected_draft' and previous.get('attempts',1)<2
                    and previous_checked[:10]<today)
             if previous.get('signature')==signature and previous.get('model_status') in ('validated_draft','rejected_draft','stopped_before_result') and not retry:
+                # Approved 2026-11-12: a held draft with byte-identical pages is decided again by the
+                # current gate without a model call, so gate fixes reach items already researched.
+                if (previous.get('model_status')=='validated_draft' and previous.get('run_id')
+                        and not (previous.get('auto_publish') or {}).get('publish')):
+                    decision=auto_decide(root,previous['run_id'],now,reread=True)
+                    # A missing or unreadable stored run (contract) keeps the earlier decision as it was.
+                    if decision['reasons']!=['contract'] and (
+                            decision['publish'] or decision['reasons']!=(previous.get('auto_publish') or {}).get('reasons')):
+                        _store_decision(root,cid,decision,previous,now)
+                        state['items'][cid]['auto_publish']={'publish':decision['publish'],'reasons':decision['reasons']}
+                        result['auto_published']=result.get('auto_published',0)+decision['publish']
                 result['skipped_unchanged']+=1
                 result['rows'].append({'candidate_id':cid,'status':'unchanged','review_file':previous['review_file']})
                 continue
