@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseHealth,filterHealth} from '../src/health.ts';
+import {parseHealth,filterHealth,healthKind,firstSentence,weeklyPicks} from '../src/health.ts';
 
 const NOW=Date.parse('2026-11-11T09:00:00+09:00');
 const item=(over:Record<string,unknown>={})=>({id:'health-ht060701-1',title:'독감 무료 접종 안내',url:'https://www.gangseo.seoul.kr/health/ht060701/1',date:'2026-11-05',dept:'보건관리과',hint:true,...over});
@@ -45,4 +45,101 @@ test('AI notes attach to fresh checked programmes only',()=>{
  assert.equal(parse([note({sentence:'<b>x</b> 짧음 아님 아주 긴 문장 이십오자 넘기기 위한 문장입니다'})]),null);
  assert.equal(parse([note()],prog({checked_at:'2026-10-20T00:07:00+09:00'})),null);
  assert.equal(parse([note({generated_at:'2026-10-01T00:00:00+09:00'})]),null);
+});
+
+const gj=()=>board({district:'광진구',name:'광진구보건소',list_url:'https://www.gwangjin.go.kr/health/list',home_url:'https://www.gwangjin.go.kr/health',items:[]});
+const gjItem=(over:Record<string,unknown>={})=>item({url:'https://www.gwangjin.go.kr/health/n/1',...over});
+const wprog=(name:string,n:number,over:Record<string,unknown>={})=>({district:'강서구',center:'강서구보건소',name,url:'https://www.gangseo.seoul.kr/health/p'+n,status:'checked',checked_at:'2026-11-11T00:07:00+09:00',...over});
+const gjProg=(name:string,n:number,over:Record<string,unknown>={})=>wprog(name,100+n,{district:'광진구',center:'광진구보건소',url:'https://www.gwangjin.go.kr/health/p'+n,...over});
+const wnote=(p:{url:string;district:string},sentence:string)=>({url:p.url,district:p.district,sentence,generated_at:'2026-11-11T05:00:00+09:00'});
+const sent=(t:string)=>t+' 이 문장은 스물다섯 자를 넘기기 위한 문장입니다.';
+const bundleOf=(boards:unknown[],programs:Record<string,unknown>[],notes:ReturnType<typeof wnote>[]=[])=>{
+ const r=raw(boards,{programs}) as Record<string,unknown>;r.health_notes=notes;return parseHealth(r,NOW)!;
+};
+
+test('healthKind classifies by name words, first match wins',()=>{
+ const cases:[string,string|null][]=[['대사증후군 관리','metabolic'],['[구로형] 임신 준비 지원','pregnancy'],['예비부부 건강검진','pregnancy'],['1인 청년가구 건강검진','youth'],['마음건강검진 상담지원','mind'],['모바일 헬스케어','mobile'],['금연클리닉','smoking'],['결핵검사','tb'],['B형간염검사','hepatitis'],['골밀도 검사','basic'],['내몸사랑 기초건강검진','basic'],['무료건강검진','basic'],['치매 조기검진',null]];
+ for(const [n,k] of cases)assert.equal(healthKind(n),k,n);
+});
+
+test('firstSentence cuts at first terminal mark, keeps decimals, falls back when short',()=>{
+ assert.equal(firstSentence('만 20세~69세 광진구민이라면 무료로 받아보세요. 평일 09:00~17:00에 예약하세요.'),'만 20세~69세 광진구민이라면 무료로 받아보세요.');
+ assert.equal(firstSentence('1.5kg 이하 체중 변화를 확인해요. 전화 02-2600-5933.'),'1.5kg 이하 체중 변화를 확인해요.');
+ assert.equal(firstSentence('짧아요. 두 번째 문장이 깁니다.'),'짧아요. 두 번째 문장이 깁니다.');
+ assert.equal(firstSentence('마침표 없는 문장입니다 그대로 둡니다'),'마침표 없는 문장입니다 그대로 둡니다');
+});
+
+test('weeklyPicks aggregates kinds by district count, skipping failed',()=>{
+ const m=wprog('대사증후군 관리',1),h1=wprog('B형간염검사',2),h2=wprog('C형간염검사',3),g=gjProg('대사증후군 관리',1,{status:'failed'});
+ const r=weeklyPicks(bundleOf([board(),gj()],[m,h1,h2,g],[wnote({url:m.url,district:'강서구'},sent('대사증후군 검진을 무료로 받아보세요.'))]),'2026-11-11');
+ assert.deepEqual(r.kinds,[{key:'metabolic',label:'대사증후군 검진·관리',districts:1},{key:'hepatitis',label:'간염검사',districts:1}]);
+ assert.equal(r.hasSummary,true);
+});
+
+test('weeklyPicks sorts kinds by district count desc',()=>{
+ const r=weeklyPicks(bundleOf([board(),gj()],[wprog('B형간염검사',1),gjProg('B형간염검사',1),gjProg('대사증후군 관리',2)]),'2026-11-11');
+ assert.deepEqual(r.kinds.map(k=>[k.key,k.districts]),[['hepatitis',2],['metabolic',1]]);
+});
+
+test('weeklyPicks drops stale programmes',()=>{
+ const r=weeklyPicks(bundleOf([board()],[wprog('대사증후군 관리',1,{checked_at:'2026-10-31T00:07:00+09:00'})]),'2026-11-11');
+ assert.deepEqual(r.districts,[]);
+ assert.deepEqual(r.kinds,[]);
+});
+
+test('weeklyPicks orders in district: summary first, caps at 3 with more',()=>{
+ const ps=[wprog('가 결핵검사',1),wprog('나 대사증후군 관리',2),wprog('다 금연클리닉',3),wprog('라 간염검사',4)];
+ const notes=[wnote({url:ps[3].url as string,district:'강서구'},sent('간염검사를 받아보세요.'))];
+ const r=weeklyPicks(bundleOf([board()],ps,notes),'2026-11-11');
+ const d=r.districts[0];
+ assert.deepEqual(d.programs.map(p=>p.name),['라 간염검사','나 대사증후군 관리','다 금연클리닉']);
+ assert.equal(d.more,1);
+ assert.equal(d.programs[0].summary,'간염검사를 받아보세요.');
+ assert.equal(d.programs[1].summary,null);
+ assert.deepEqual(d.kinds.sort(),['hepatitis','metabolic','smoking','tb']);
+});
+
+test('weeklyPicks keeps districts without sentences, hasSummary false',()=>{
+ const r=weeklyPicks(bundleOf([board()],[wprog('치매 조기검진',1)]),'2026-11-11');
+ assert.equal(r.districts.length,1);
+ assert.equal(r.districts[0].programs[0].summary,null);
+ assert.equal(r.districts[0].programs[0].kind,null);
+ assert.equal(r.hasSummary,false);
+});
+
+test('weeklyPicks counts new hint notices within last 7 days and ranks them first',()=>{
+ const gp=gjProg('결핵검사',1),sp=wprog('대사증후군 관리',1);
+ const notes=[wnote({url:sp.url as string,district:'강서구'},sent('대사증후군 검진을 받아보세요.'))];
+ const gjBoard=board({district:'광진구',name:'광진구보건소',list_url:'https://www.gwangjin.go.kr/health/list',home_url:'https://www.gwangjin.go.kr/health',items:[
+  gjItem({id:'a',date:'2026-11-05'}),gjItem({id:'b',date:'2026-11-04'}),gjItem({id:'c',date:'2026-11-12'}),gjItem({id:'d',date:'2026-11-08',hint:false})]});
+ const r=weeklyPicks(bundleOf([board({items:[]}),gjBoard],[sp,gp],notes),'2026-11-11');
+ assert.deepEqual(r.districts.map(d=>[d.district,d.newNotices]),[['광진구',1],['강서구',0]]);
+});
+
+test('firstSentence keeps full text when the remainder carries caveats (I1)',()=>{
+ const t='20~69세 구민은 대사증후군 검진을 무료로 받을 수 있어요. 예산 소진 시 조기 마감될 수 있으니 확인하세요.';
+ assert.equal(firstSentence(t),t);
+ for(const w of ['확인','마감','선착순','예산','중단','소진']){const x=`대사증후군 검진을 받을 수 있어요. ${w}하세요.`;assert.equal(firstSentence(x),x,w);}
+});
+
+test('firstSentence cuts at ! and ? and at the 11/12 char boundary',()=>{
+ assert.equal(firstSentence('대사증후군 검진을 받아보세요! 둘째 문장입니다.'),'대사증후군 검진을 받아보세요!');
+ assert.equal(firstSentence('대사증후군 검진을 받을 수 있나요? 둘째 문장입니다.'),'대사증후군 검진을 받을 수 있나요?');
+ const eleven='가'.repeat(10)+'.',twelve='가'.repeat(11)+'.';
+ assert.equal(eleven.length,11);assert.equal(twelve.length,12);
+ assert.equal(firstSentence(eleven+' 둘째 문장.'),eleven+' 둘째 문장.');
+ assert.equal(firstSentence(twelve+' 둘째 문장.'),twelve);
+});
+
+test('firstSentence does not cut inside dotted dates (M5)',()=>{
+ assert.equal(firstSentence('강서구 거주 1987. 1. 1. 이후 출생자는 검진을 받을 수 있어요. 둘째 문장.'),'강서구 거주 1987. 1. 1. 이후 출생자는 검진을 받을 수 있어요.');
+});
+
+test('weeklyPicks kind param sorts that kind first within district (I2)',()=>{
+ const ps=[wprog('가 결핵검사',1),wprog('나 대사증후군 관리',2),wprog('다 금연클리닉',3),wprog('라 간염검사',4)];
+ const notes=[wnote({url:ps[3].url as string,district:'강서구'},sent('간염검사를 받아보세요.'))];
+ const b=bundleOf([board()],ps,notes);
+ assert.equal(weeklyPicks(b,'2026-11-11','tb').districts[0].programs[0].name,'가 결핵검사');
+ assert.equal(weeklyPicks(b,'2026-11-11','').districts[0].programs[0].name,'라 간염검사');
+ assert.equal(weeklyPicks(b,'2026-11-11').districts[0].programs[0].name,'라 간염검사');
 });

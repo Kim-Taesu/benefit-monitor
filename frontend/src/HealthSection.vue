@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue';
 import { parseHealth, filterHealth, boardStatus } from './health';
 import { formatDate } from './benefits';
+import { kstDate } from './festivals';
+import HealthWeekly from './HealthWeekly.vue';
 const props=defineProps<{raw:unknown;now:number}>();
 const PAGE=20;
 const bundle=computed(()=>parseHealth(props.raw,props.now));
@@ -24,6 +26,7 @@ const md=(d:string)=>`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`;
       <div class="quick-filters" aria-label="공지 종류"><button type="button" :aria-pressed="hintOnly" @click="hintOnly=!hintOnly;shown=PAGE">검진·접종·프로그램만 <span>{{ hints }}</span></button></div>
       <div class="filter-field health-search"><label for="health-q">검색</label><input id="health-q" v-model="query" type="search" maxlength="100" placeholder="예: 검진, 독감, 치매" autocomplete="off" @input="shown=PAGE"></div>
     </div>
+    <HealthWeekly :bundle="bundle" :district="district" :today="kstDate(props.now)" />
     <details v-if="programGroups.length" :key="district||'all'" class="health-programs" :open="!!district||!!query.trim()">
       <summary><h3 id="health-programs-title">상시 운영 검진·건강관리 <span>{{ programs.length }}곳</span></h3><small v-if="!district">지역을 고르면 바로 펼쳐집니다</small></summary>
       <p class="fine-print">"AI 작성" 문장은 AI가 보건소 원문을 읽고 쓴 안내입니다. 숫자·무료 표현은 원문 구절과 대조했지만, 예약 전 원문이나 전화로 확인하세요. 남은 예산이나 자리 수는 알 수 없습니다.</p>
