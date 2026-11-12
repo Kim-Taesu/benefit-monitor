@@ -500,6 +500,27 @@ class AutoPublishIntegrationTests(unittest.TestCase):
         run(held, later + timedelta(hours=1), False)
         self.assertEqual(list(json.loads((self.root/'cache/ai_publish/approved.json').read_text())), [cid])
 
+    def test_held_draft_the_gate_would_now_publish_is_read_before_older_items(self):
+        # Approved 2026-11-13: such drafts jump the oldest-checked rotation (local check, no model call).
+        from benefit_monitor import ai_review
+        older = {'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/2', 'title': '서울 음악회', 'summary': '검토 대기'}
+        ready = {'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1', 'title': '서울 미술 전시', 'summary': '검토 대기'}
+        old_id, ready_id = ai_review.Benefit(**older).id, ai_review.Benefit(**ready).id
+        path = self.root/'cache/ai_review/state.json'; path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({'items': {
+            old_id: {'model_status': 'validated_draft', 'run_id': 'a' * 64, 'last_checked_at': '2026-11-01T00:00:00+09:00'},
+            ready_id: {'model_status': 'validated_draft', 'run_id': 'b' * 64, 'last_checked_at': '2026-11-07T00:00:00+09:00'}}}))
+        verdict = {'a' * 64: False, 'b' * 64: True}
+        read = []
+
+        def fail(candidate, **k):
+            read.append(candidate['url'])
+            raise OSError('offline')
+        with patch('benefit_monitor.ai_review.auto_decide', side_effect=lambda r, run, n, reread=False: {'publish': verdict[run], 'reasons': [], 'record': None}), \
+                patch.object(ai_review.OfficialReader, 'read', side_effect=fail):
+            ai_review.review_candidates(self.root, [older, ready], NOW, 1, False)
+        self.assertEqual(read, [ready['url'], older['url']])
+
     def test_corrupt_takedowns_or_decide_crash_hold_without_crashing(self):
         from benefit_monitor import ai_review
         path = self.root/'cache/ai_publish/takedowns.json'; path.parent.mkdir(parents=True, exist_ok=True)
