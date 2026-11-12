@@ -83,3 +83,60 @@ export function filterHealth(items:HealthNotice[],district:string,hintOnly:boole
  const q=query.trim().toLocaleLowerCase('ko');
  return items.filter(i=>(!district||i.district===district)&&(!hintOnly||i.hint)&&(!q||[i.title,i.dept,i.center].some(v=>v.toLocaleLowerCase('ko').includes(q))));
 }
+
+// 이번 주 보건소 추천: 확인된 상시 사업을 종류·구별로 묶는다 (표시용, 사실 확정 아님).
+export type HealthKind='metabolic'|'pregnancy'|'youth'|'mind'|'mobile'|'smoking'|'tb'|'hepatitis'|'basic';
+export const HEALTH_KINDS:{key:HealthKind;label:string;words:string[]}[]=[
+ {key:'metabolic',label:'대사증후군 검진·관리',words:['대사증후군']},
+ {key:'pregnancy',label:'임신 준비 검사',words:['임신','신혼부부','예비부부']},
+ {key:'youth',label:'청년 1인가구 검진',words:['청년']},
+ {key:'mind',label:'마음건강검진',words:['마음건강']},
+ {key:'mobile',label:'모바일 헬스케어',words:['모바일']},
+ {key:'smoking',label:'금연클리닉',words:['금연']},
+ {key:'tb',label:'결핵검사',words:['결핵']},
+ {key:'hepatitis',label:'간염검사',words:['간염']},
+ {key:'basic',label:'기초 건강검사',words:['골다공증','골밀도','체성분','혈액','기초건강','무료건강검진']},
+];
+export function healthKind(name:string):HealthKind|null{
+ return HEALTH_KINDS.find(k=>k.words.some(w=>name.includes(w)))?.key??null;
+}
+export function firstSentence(s:string):string{
+ const m=/[.!?](?=\s|$)/.exec(s);
+ if(!m)return s;
+ const cut=s.slice(0,m.index+1);
+ return cut.length<12?s:cut;
+}
+export interface WeeklyProgram{name:string;url:string;center:string;kind:HealthKind|null;summary:string|null}
+export interface WeeklyDistrict{district:string;newNotices:number;programs:WeeklyProgram[];more:number;kinds:HealthKind[]}
+export interface WeeklyPicks{kinds:{key:HealthKind;label:string;districts:number}[];districts:WeeklyDistrict[];hasSummary:boolean}
+const WEEKLY_MAX=3;
+const kindOrder=(k:HealthKind|null)=>k?HEALTH_KINDS.findIndex(x=>x.key===k):HEALTH_KINDS.length;
+export function weeklyPicks(bundle:HealthBundle,todayKst:string):WeeklyPicks{
+ const t=new Date(todayKst+'T12:00:00Z');t.setUTCDate(t.getUTCDate()-6);
+ const from=t.toISOString().slice(0,10);
+ const fresh=new Map<string,number>();
+ for(const i of bundle.items)if(i.hint&&i.date>=from&&i.date<=todayKst)fresh.set(i.district,(fresh.get(i.district)??0)+1);
+ const byDistrict=new Map<string,WeeklyProgram[]>();
+ let hasSummary=false;
+ for(const p of bundle.programs){
+  if(p.status!=='checked'||p.stale)continue;
+  const summary=p.note?firstSentence(p.note):null;
+  if(summary)hasSummary=true;
+  const list=byDistrict.get(p.district)??[];
+  list.push({name:p.name,url:p.url,center:p.center,kind:healthKind(p.name),summary});
+  byDistrict.set(p.district,list);
+ }
+ const counts=new Map<HealthKind,number>();
+ const districts:WeeklyDistrict[]=[];
+ for(const [district,list] of byDistrict){
+  const kinds=[...new Set(list.map(p=>p.kind).filter((k):k is HealthKind=>k!==null))];
+  for(const k of kinds)counts.set(k,(counts.get(k)??0)+1);
+  list.sort((a,b)=>Number(!!b.summary)-Number(!!a.summary)||kindOrder(a.kind)-kindOrder(b.kind)||a.name.localeCompare(b.name,'ko'));
+  districts.push({district,newNotices:fresh.get(district)??0,programs:list.slice(0,WEEKLY_MAX),more:Math.max(0,list.length-WEEKLY_MAX),kinds});
+ }
+ const withSummary=(d:WeeklyDistrict)=>byDistrict.get(d.district)!.filter(p=>p.summary).length;
+ districts.sort((a,b)=>Number(b.newNotices>0)-Number(a.newNotices>0)||withSummary(b)-withSummary(a)||a.district.localeCompare(b.district,'ko'));
+ const kinds=HEALTH_KINDS.filter(k=>counts.has(k.key)).map(k=>({key:k.key,label:k.label,districts:counts.get(k.key)!}))
+  .sort((a,b)=>b.districts-a.districts||kindOrder(a.key)-kindOrder(b.key));
+ return {kinds,districts,hasSummary};
+}
