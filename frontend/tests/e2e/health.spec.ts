@@ -47,6 +47,7 @@ for(const width of [390,1440])test(`health weekly card filters by kind and distr
   board({items:[]}),
   board({district:'광진구',name:'광진구보건소',items:[item(7,{date:'2026-11-04',hint:true})]}),
   board({district:'송파구',name:'송파구보건소',items:[]}),
+  board({district:'은평구',name:'은평구보건소',items:[]}),
  ]}});
  (raw as Record<string,unknown>).health_notes=[{url:'https://www.example.go.kr/gs1',district:'강서구',sentence:'[테스트] 강서구 20~69세라면 대사증후군 검진을 무료로 받을 수 있어요. 전화로 예약하고 받아보세요.',generated_at:'2026-11-04T01:00:00+09:00'}];
  const origin=new URL(String(test.info().project.use.baseURL)).origin;
@@ -77,7 +78,10 @@ for(const width of [390,1440])test(`health weekly card filters by kind and distr
  await expect(card.locator('.health-weekly-district')).toHaveCount(1);
  await expect(card).toContainText('광진구');
  await expect(card).not.toContainText('강서구');
+ await page.locator('#health-district').selectOption('은평구');
+ await expect(card).toHaveCount(0);
  await page.locator('#health-district').selectOption('');
+ await expect(card).toHaveCount(1);
  await card.scrollIntoViewIfNeeded();
  if(width===390){
   await page.screenshot({path:'../.ax/plans/shots/health-weekly-390.png'});

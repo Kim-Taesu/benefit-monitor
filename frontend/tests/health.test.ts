@@ -115,3 +115,31 @@ test('weeklyPicks counts new hint notices within last 7 days and ranks them firs
  const r=weeklyPicks(bundleOf([board({items:[]}),gjBoard],[sp,gp],notes),'2026-11-11');
  assert.deepEqual(r.districts.map(d=>[d.district,d.newNotices]),[['광진구',1],['강서구',0]]);
 });
+
+test('firstSentence keeps full text when the remainder carries caveats (I1)',()=>{
+ const t='20~69세 구민은 대사증후군 검진을 무료로 받을 수 있어요. 예산 소진 시 조기 마감될 수 있으니 확인하세요.';
+ assert.equal(firstSentence(t),t);
+ for(const w of ['확인','마감','선착순','예산','중단','소진']){const x=`대사증후군 검진을 받을 수 있어요. ${w}하세요.`;assert.equal(firstSentence(x),x,w);}
+});
+
+test('firstSentence cuts at ! and ? and at the 11/12 char boundary',()=>{
+ assert.equal(firstSentence('대사증후군 검진을 받아보세요! 둘째 문장입니다.'),'대사증후군 검진을 받아보세요!');
+ assert.equal(firstSentence('대사증후군 검진을 받을 수 있나요? 둘째 문장입니다.'),'대사증후군 검진을 받을 수 있나요?');
+ const eleven='가'.repeat(10)+'.',twelve='가'.repeat(11)+'.';
+ assert.equal(eleven.length,11);assert.equal(twelve.length,12);
+ assert.equal(firstSentence(eleven+' 둘째 문장.'),eleven+' 둘째 문장.');
+ assert.equal(firstSentence(twelve+' 둘째 문장.'),twelve);
+});
+
+test('firstSentence does not cut inside dotted dates (M5)',()=>{
+ assert.equal(firstSentence('강서구 거주 1987. 1. 1. 이후 출생자는 검진을 받을 수 있어요. 둘째 문장.'),'강서구 거주 1987. 1. 1. 이후 출생자는 검진을 받을 수 있어요.');
+});
+
+test('weeklyPicks kind param sorts that kind first within district (I2)',()=>{
+ const ps=[wprog('가 결핵검사',1),wprog('나 대사증후군 관리',2),wprog('다 금연클리닉',3),wprog('라 간염검사',4)];
+ const notes=[wnote({url:ps[3].url as string,district:'강서구'},sent('간염검사를 받아보세요.'))];
+ const b=bundleOf([board()],ps,notes);
+ assert.equal(weeklyPicks(b,'2026-11-11','tb').districts[0].programs[0].name,'가 결핵검사');
+ assert.equal(weeklyPicks(b,'2026-11-11','').districts[0].programs[0].name,'라 간염검사');
+ assert.equal(weeklyPicks(b,'2026-11-11').districts[0].programs[0].name,'라 간염검사');
+});

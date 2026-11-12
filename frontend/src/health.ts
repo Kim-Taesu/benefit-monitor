@@ -101,17 +101,25 @@ export function healthKind(name:string):HealthKind|null{
  return HEALTH_KINDS.find(k=>k.words.some(w=>name.includes(w)))?.key??null;
 }
 export function firstSentence(s:string):string{
- const m=/[.!?](?=\s|$)/.exec(s);
- if(!m)return s;
- const cut=s.slice(0,m.index+1);
- return cut.length<12?s:cut;
+ const re=/[.!?](?=\s|$)/g;
+ let m:RegExpExecArray|null,cut='';
+ while((m=re.exec(s))){
+  if(m[0]==='.'){
+   const before=s.slice(0,m.index),after=s.slice(m.index+1).trimStart();
+   if(/\d$/.test(before)&&/^\d/.test(after))continue;
+   if(/\d{2,4}\.\s*\d{1,2}\.\s*\d{1,2}$/.test(before))continue;
+  }
+  cut=s.slice(0,m.index+1);break;
+ }
+ if(!cut||cut.length<12)return s;
+ return /확인|마감|선착순|예산|중단|소진/.test(s.slice(cut.length))?s:cut;
 }
 export interface WeeklyProgram{name:string;url:string;center:string;kind:HealthKind|null;summary:string|null}
 export interface WeeklyDistrict{district:string;newNotices:number;programs:WeeklyProgram[];more:number;kinds:HealthKind[]}
 export interface WeeklyPicks{kinds:{key:HealthKind;label:string;districts:number}[];districts:WeeklyDistrict[];hasSummary:boolean}
 const WEEKLY_MAX=3;
 const kindOrder=(k:HealthKind|null)=>k?HEALTH_KINDS.findIndex(x=>x.key===k):HEALTH_KINDS.length;
-export function weeklyPicks(bundle:HealthBundle,todayKst:string):WeeklyPicks{
+export function weeklyPicks(bundle:HealthBundle,todayKst:string,kind:HealthKind|''=''):WeeklyPicks{
  const t=new Date(todayKst+'T12:00:00Z');t.setUTCDate(t.getUTCDate()-6);
  const from=t.toISOString().slice(0,10);
  const fresh=new Map<string,number>();
@@ -131,7 +139,8 @@ export function weeklyPicks(bundle:HealthBundle,todayKst:string):WeeklyPicks{
  for(const [district,list] of byDistrict){
   const kinds=[...new Set(list.map(p=>p.kind).filter((k):k is HealthKind=>k!==null))];
   for(const k of kinds)counts.set(k,(counts.get(k)??0)+1);
-  list.sort((a,b)=>Number(!!b.summary)-Number(!!a.summary)||kindOrder(a.kind)-kindOrder(b.kind)||a.name.localeCompare(b.name,'ko'));
+  const kf=(p:WeeklyProgram)=>kind&&p.kind===kind?0:1;
+  list.sort((a,b)=>kf(a)-kf(b)||Number(!!b.summary)-Number(!!a.summary)||kindOrder(a.kind)-kindOrder(b.kind)||a.name.localeCompare(b.name,'ko'));
   districts.push({district,newNotices:fresh.get(district)??0,programs:list.slice(0,WEEKLY_MAX),more:Math.max(0,list.length-WEEKLY_MAX),kinds});
  }
  const withSummary=(d:WeeklyDistrict)=>byDistrict.get(d.district)!.filter(p=>p.summary).length;
