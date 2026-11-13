@@ -1,58 +1,4 @@
 {
-  "aa142de7a30effda44201f78": {
-    "schema_version": 1,
-    "candidate_id": "aa142de7a30effda44201f78",
-    "source": "health_notices",
-    "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261105132810812",
-    "title": "[노원구치매안심센터] 2026년 12월 찾아가는 치매 선별 검진 안내",
-    "summary": "노원구치매안심센터가 만 60세 이상 어르신을 대상으로 2026년 12월 4일 노원구보건소 5층 다목적실에서 무료 치매 선별검진과 상담을 실시함",
-    "conditions": "대상 만 60세 이상, 신분증 지참 방문 접수, 검진 시간 10:00~17:00. 비용: 무료 검사 및 상담 제공",
-    "fee_status": "free",
-    "districts": [
-      "노원구"
-    ],
-    "valid_from": "2026-12-04",
-    "valid_until": "2026-12-04",
-    "deadline_at": null,
-    "validity_kind": "fixed",
-    "labels": {},
-    "payment_terms": {},
-    "review": {
-      "kind": "ai_auto",
-      "documents": [
-        {
-          "url": "https://www.nowon.kr/health/user/bbs/BD_selectBbs.do?q_bbsCode=1001&q_bbscttSn=20261105132810812",
-          "body_hash": "1618d2dfb7af31e7e92d68de8bbd09ebe7d9e77a1acb83e9d1b2217777adc329",
-          "title": "[노원구치매안심센터] 2026년 12월 찾아가는 치매 선별 검진 안내"
-        }
-      ],
-      "document_count": 1,
-      "checked_at": "2026-11-13T06:59:41.852286+09:00",
-      "published_at": "2026-11-05",
-      "basis": {
-        "period_quotes": [
-          "○ ○ 검진 장소: 노원구보건소 5층 다목적실 ○ ○ 검진 일시: 2026.",
-          "12.",
-          "4.",
-          "(금) 10:00 ~ 17:00 ○ ○ 접수 방법: 신분증 + 방문 접수 문의 및 접수 ○ ○ 전화 문의: 02-911-7778 (평일 09:00 ~ 18:00 / 점심시간 12:00 ~ 13:00 제외, 주말 및 공휴일 휴무) 목록 다음글 2026년 하반기 지방세 미환급금 일제정리 안내 이전글 서울가족학교 아동기부모교실 참여 안내 본 공공저작물은 \"공공누리\" 제4유형:출처표시+상업적이용금지+변경금지 조건에 따라 이용 할 수 있습니다."
-        ],
-        "operating_quotes": [
-          "노원구치매안심센터에서 어르신 건강을 위한 [12월 찾아가는 치매 선별검진] 을 실시합니다.",
-          "가까운 검진 장소로 오셔서 무료로 검사 받으시고 상담도 함께 받아보세요!",
-          "사업 안내 ○ ○ 대 상: 만 60세 이상 누구나!",
-          "○ ○ 검진 장소: 노원구보건소 5층 다목적실 ○ ○ 검진 일시: 2026.",
-          "(금) 10:00 ~ 17:00 ○ ○ 접수 방법: 신분증 + 방문 접수 문의 및 접수 ○ ○ 전화 문의: 02-911-7778 (평일 09:00 ~ 18:00 / 점심시간 12:00 ~ 13:00 제외, 주말 및 공휴일 휴무) 목록 다음글 2026년 하반기 지방세 미환급금 일제정리 안내 이전글 서울가족학교 아동기부모교실 참여 안내 본 공공저작물은 \"공공누리\" 제4유형:출처표시+상업적이용금지+변경금지 조건에 따라 이용 할 수 있습니다."
-        ]
-      },
-      "original_body_hash": "1618d2dfb7af31e7e92d68de8bbd09ebe7d9e77a1acb83e9d1b2217777adc329"
-    },
-    "title_key": "노원구치매안심센터12월찾아가는치매선별검진안내|보건소공지",
-    "decided_at": "2026-11-13T06:59:41.852286+09:00",
-    "status": "withdrawn",
-    "withdrawn_reason": "body_changed",
-    "withdrawn_at": "2026-11-14T06:32:04.589508+09:00",
-    "recheck_priority": true
-  },
   "f0b397c6695a2af344cce14e": {
     "schema_version": 1,
     "candidate_id": "f0b397c6695a2af344cce14e",
@@ -94,5 +40,48 @@
     },
     "title_key": "서울가족학교'아버지교실'안내|보건소공지",
     "decided_at": "2026-11-13T06:59:41.852286+09:00"
+  },
+  "45a5c9fcd2650b69652dcdf8": {
+    "schema_version": 1,
+    "candidate_id": "45a5c9fcd2650b69652dcdf8",
+    "source": "eshare",
+    "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ29L5730846&rsrc_dcd=CPS001.006",
+    "title": "[공유누리] 요가(오전2반) · 서울 성북구 종암로25길 29 (종암동)",
+    "summary": "서울 성북구 종암동 자치회관 요가(오전2반) 강좌, 월·수·금 11:00~12:00",
+    "conditions": "방문시 요금납부; 예약승인 후 공공목적 취소 가능; 예약확정 후 취소 시 환불 규정 적용. 비용: 기본요금 25,000원, 강좌 수강료 75,000원(분기). 결제 조건: 방문시 요금납부",
+    "fee_status": "paid",
+    "districts": [
+      "성북구"
+    ],
+    "valid_from": null,
+    "valid_until": null,
+    "deadline_at": null,
+    "validity_kind": "ongoing",
+    "labels": {},
+    "payment_terms": {},
+    "review": {
+      "kind": "ai_auto",
+      "documents": [
+        {
+          "url": "https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ29L5730846&rsrc_dcd=CPS001.006",
+          "body_hash": "44002269600ba14a52899472180e83ef09955c6b183b7194ab45bb406e3a9ac9",
+          "title": "[공유누리] 요가(오전2반) · 서울 성북구 종암로25길 29 (종암동)"
+        }
+      ],
+      "document_count": 1,
+      "checked_at": "2026-11-14T06:38:42.493393+09:00",
+      "published_at": "2026-11-14",
+      "basis": {
+        "period_quotes": [],
+        "operating_quotes": [
+          "상세설명 종암동 자치회관 프로그램 ○강좌명: 요가(오전2반) ○시간: 월,수,금 11:00~12:00 ○수강료: 75,000원 (분기) 주의사항 □ 방문시 요금납부 □ 취소 및 환불 ▶ 예약승인 후에도 공공목적에 의해 취소될 수 있음을 양해하여 주시기 바랍니다.",
+          "▶ 예약확정 후 이용자 취소 시, 다음 규정에 따라 환불됩니다.",
+          "- 천재지변 또는 불가항력 등의 사유로 인하여 취소하는 경우 전액 반환 - 개강일 전일까지 수강취소원을 제출한 경우 전액 반환 ﻿ 이용후기 공유서비스를 직접 이용한 이용자들의 생생한 이용후기를 만나보세요!"
+        ]
+      },
+      "original_body_hash": "44002269600ba14a52899472180e83ef09955c6b183b7194ab45bb406e3a9ac9"
+    },
+    "title_key": "공유누리요가오전2반·서울성북구종암로25길29종암동|공유누리공공시설",
+    "decided_at": "2026-11-14T06:38:42.493393+09:00"
   }
 }
