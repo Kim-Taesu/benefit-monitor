@@ -9,7 +9,7 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 
 from benefit_monitor.trial_budget import TrialBudget
-from benefit_monitor.claude_trial import ClaudeClient, load_key, TrialError, validate_host, repair_context, parse_draft
+from benefit_monitor.claude_trial import ClaudeClient, load_key, TrialError, validate_host, repair_context, parse_draft, input_from_message
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -408,7 +408,7 @@ class ClaudeTrialTests(unittest.TestCase):
         schema=request['output_config']['format']['schema']
         self.assertEqual(request['output_config']['format']['type'],'json_schema')
         self.assertLessEqual(limits(schema)['unions'],16)
-        sent_doc=json.loads(request['messages'][0]['content'])['documents'][0]
+        sent_doc=input_from_message(request['messages'][0]['content'])['documents'][0]
         self.assertNotIn('body',sent_doc)
         self.assertEqual([x['text'] for x in sent_doc['segments']],['공식 원문 테스트.','관람료는 무료입니다.'])
         status=json.loads(output.getvalue())
@@ -458,7 +458,7 @@ class ClaudeTrialTests(unittest.TestCase):
              patch('benefit_monitor.claude_trial.load_key',return_value='fake-secret-for-tests'), \
              patch('benefit_monitor.claude_trial.network_open',side_effect=transport),redirect_stdout(output):
             self.assertEqual(main(),0)
-        sent_doc=json.loads(sent[2]['messages'][0]['content'])['documents'][0]
+        sent_doc=input_from_message(sent[2]['messages'][0]['content'])['documents'][0]
         self.assertNotIn('body',sent_doc)
         self.assertIn('품질 검증자',sent[2]['system'])
         status=json.loads(output.getvalue())

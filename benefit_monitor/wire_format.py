@@ -151,9 +151,11 @@ def research_wire_schema():
     districts use items; published_at uses start (YYYY-MM-DD). Unused slots are empty. research_from_wire enforces all of it.
     """
     text, texts = _string(), {'type': 'array', 'items': _string()}
-    fact = _object({'field': {'enum': list(FIELDS)}, 'status': {'enum': FACT_STATUSES}, 'text': text,
+    # Output is generated in property order: evidence first, then values, then the verdict
+    # (grounding before judging; thinking is off, so this order is the model's reasoning order).
+    fact = _object({'field': {'enum': list(FIELDS)}, 'segment_ids': texts, 'text': text,
                     'items': texts, 'not_confirmed': texts, 'start': text, 'end': text,
-                    'number': {'type': 'integer'}, 'segment_ids': texts, 'unknown_reason': text})
+                    'number': {'type': 'integer'}, 'unknown_reason': text, 'status': {'enum': FACT_STATUSES}})
     record = _object({'candidate_id': _string(), 'research_status': {'enum': STATUSES},
                       'stop_reason': {'enum': ['sufficient_evidence', 'budget_exhausted', 'access_blocked',
                                                'unsupported_document', 'unresolved_conflict', 'tool_failure']},
@@ -334,8 +336,9 @@ def grocery_from_wire(wire, host):
 def health_wire_schema(host):
     """One sentence and its page quotes; the same schema every day (one grammar probe)."""
     from .health_notes import STATUSES
-    schema = _object({'wire_version': {'enum': [HEALTH_WIRE]}, 'status': {'enum': list(STATUSES)},
-                      'sentence': _string(), 'quotes': {'type': 'array', 'items': _string()}})
+    # Quotes first so the status and sentence are written from them (generation follows property order).
+    schema = _object({'wire_version': {'enum': [HEALTH_WIRE]}, 'quotes': {'type': 'array', 'items': _string()},
+                      'status': {'enum': list(STATUSES)}, 'sentence': _string()})
     check_limits(schema)
     return schema
 

@@ -153,7 +153,7 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(wire_format.from_wire('health', wire, None), GOOD)
         with self.assertRaises(ValueError):
             wire_format.from_wire('health', dict(wire, extra=1), None)
-        self.assertEqual(wire_format.schema_for('health', None)['required'], ['wire_version', 'status', 'sentence', 'quotes'])
+        self.assertEqual(wire_format.schema_for('health', None)['required'], ['wire_version', 'quotes', 'status', 'sentence'])
 
     def test_paid_input_must_match_the_stored_bundle(self):
         from benefit_monitor.claude_trial import validate_host
