@@ -47,7 +47,11 @@
       "original_body_hash": "1618d2dfb7af31e7e92d68de8bbd09ebe7d9e77a1acb83e9d1b2217777adc329"
     },
     "title_key": "노원구치매안심센터12월찾아가는치매선별검진안내|보건소공지",
-    "decided_at": "2026-11-13T06:59:41.852286+09:00"
+    "decided_at": "2026-11-13T06:59:41.852286+09:00",
+    "status": "withdrawn",
+    "withdrawn_reason": "body_changed",
+    "withdrawn_at": "2026-11-14T06:32:04.589508+09:00",
+    "recheck_priority": true
   },
   "f0b397c6695a2af344cce14e": {
     "schema_version": 1,
