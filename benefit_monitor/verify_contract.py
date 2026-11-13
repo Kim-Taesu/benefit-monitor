@@ -34,10 +34,11 @@ ENDED_WORDS = re.compile(r'종료되었|종료됐|종료된\s*(?:행사|이벤�
 
 def wire_schema():
     texts = {'type': 'array', 'items': _string()}
-    claim = _object({'claim_id': _string(), 'verdict': {'enum': VERDICTS}, 'segment_ids': texts,
-                     'official_text': _string()})
-    schema = _object({'wire_version': {'enum': [WIRE]}, 'item_status': {'enum': ITEM_STATUSES},
-                      'status_segment_ids': texts, 'claims': {'type': 'array', 'items': claim}})
+    # Evidence before verdict: generation follows property order, so the model cites, then judges.
+    claim = _object({'claim_id': _string(), 'segment_ids': texts, 'official_text': _string(),
+                     'verdict': {'enum': VERDICTS}})
+    schema = _object({'wire_version': {'enum': [WIRE]}, 'status_segment_ids': texts,
+                      'item_status': {'enum': ITEM_STATUSES}, 'claims': {'type': 'array', 'items': claim}})
     check_limits(schema)
     return schema
 

@@ -17,3 +17,29 @@
 - 건강·효능·다이어트·면역·질병 같은 표현, "최저가·특가·세일·쿠폰·무조건·보장" 같은 단어를 쓰지 않는다.
 - 줄바꿈, 링크, 꺾쇠괄호를 쓰지 않는다.
 - 가격은 전국 평균이므로 특정 매장 가격처럼 말하지 않는다.
+
+아래 예시는 모든 규칙을 통과한 출력이다. 문장 구조만 참고하고, 품목·숫자·요리는 실제 입력의 후보로 쓴다.
+
+<examples>
+<example>
+<candidates>
+[{"id":"p-cabbage","kind":"produce","name":"배추","detail":"","unit":"1포기","price":2823,"base":"평년","base_price":3620,"pct":-22},
+ {"id":"p-spinach","kind":"produce","name":"시금치","detail":"","unit":"100g","price":3120,"base":"평년","base_price":3850,"pct":-19},
+ {"id":"p-apple","kind":"produce","name":"사과","detail":"후지","unit":"10개","price":24500,"base":"1년전","base_price":28800,"pct":-15},
+ {"id":"m-belly","kind":"meat","name":"삼겹살","detail":"돼지 삼겹살","unit":"100g","price":2650}]
+</candidates>
+<output>
+{"summary":"배추(2,823원, 평년보다 22% 쌈)와 시금치(3,120원, 평년보다 19% 쌈)가 싸요. 배추는 겉절이로, 시금치는 나물로 즐겨 보세요. 삼겹살(2,650원)은 구이로 곁들이기 좋아요.","picks":[{"id":"p-cabbage","menu":"배추겉절이"},{"id":"p-spinach","menu":"시금치나물"},{"id":"m-belly","menu":"삼겹살구이"}]}
+</output>
+</example>
+<example>
+<candidates>
+[{"id":"p-radish","kind":"produce","name":"무","detail":"","unit":"1개","price":1650,"base":"평년","base_price":2010,"pct":-18},
+ {"id":"p-apple","kind":"produce","name":"사과","detail":"후지","unit":"10개","price":24500,"base":"1년전","base_price":28800,"pct":-15},
+ {"id":"m-egg","kind":"meat","name":"계란","detail":"계란 특란 30구","unit":"30구","price":6980}]
+</candidates>
+<output>
+{"summary":"무(1,650원, 평년보다 18% 쌈)와 사과(24,500원, 1년 전보다 15% 쌈)를 장바구니에 담아 보세요. 무는 국으로, 사과는 샐러드로 좋아요. 계란을 더하면 한 끼가 든든해요.","picks":[{"id":"p-radish","menu":"소고기뭇국"},{"id":"p-apple","menu":"사과샐러드"},{"id":"m-egg","menu":"계란말이"}]}
+</output>
+</example>
+</examples>
