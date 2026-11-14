@@ -32,7 +32,7 @@ CLAIMS = ('누구나', '받을 수 있', '확실', '보장', '무조건', '100%'
           '모두 받')
 STOCK = ('남은', '잔여', '소진 전', '자리 있')
 # The page shows the deadline; text never pushes (2026-11-14 review).
-URGENCY = re.compile(r'임박|곧\s?끝|곧\s?마감|막바지|서두르|마지막|놓치기 전')
+URGENCY = re.compile(r'임박|곧\s?끝|곧\s?마감|막바지|서두르|서둘러|마지막|놓치기\s?전')
 PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
 

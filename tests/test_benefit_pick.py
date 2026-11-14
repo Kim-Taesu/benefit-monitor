@@ -138,7 +138,7 @@ class ReviewTests(unittest.TestCase):
 
     def test_urgency_words_rejected(self):
         # The page shows the deadline; text never pushes (2026-11-14 review).
-        for word in ('마감 임박', '곧 끝나요', '곧끝나요', '곧 마감', '막바지', '서두르세요', '마지막 기회', '놓치기 전에'):
+        for word in ('마감 임박', '곧 끝나요', '곧끝나요', '곧 마감', '막바지', '서두르세요', '서둘러 신청', '서둘러요', '마지막 기회', '놓치기 전에', '놓치기전에'):
             self.assertIn('urgency', bp.review(one(BID, '버스 체험, ' + word), HOST), word)
         self.assertIn('urgency', bp.review(draft(summary='서울사랑상품권 페이백 행사가 곧 끝나니 결제를 챙겨 보세요.'), HOST))
         self.assertEqual(bp.review(draft(), HOST), [])

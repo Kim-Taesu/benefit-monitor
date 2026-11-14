@@ -180,7 +180,7 @@ onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),lo
     <p>추천일 {{festivalPick.day}} · {{festivalPick.source==='ai'?'AI 작성 문구 공개 중':'자동 선정(문구 없음)'}}</p>
     <blockquote v-if="festivalPick.summary">{{festivalPick.summary}}</blockquote>
     <p v-if="festivalMuted" class="pending">이 날짜의 AI 문구는 꺼져 있습니다.</p>
-    <p v-if="festivalPick.source==='rule'">지금은 문장 없는 자동 선정 카드입니다.</p>
+    <p v-if="festivalPick.source==='rule'&&!festivalMuted">지금은 문장 없는 자동 선정 카드입니다.</p>
     <div v-else class="row">
      <label for="festival-note">메모 (공개 저장소에 기록됩니다)</label>
      <input id="festival-note" v-model="festivalNote" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">
@@ -197,7 +197,7 @@ onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),lo
     <p>추천일 {{benefitPick.day}} · {{benefitPick.source==='ai'?'AI 작성 문구 공개 중':'자동 선정(문구 없음)'}}</p>
     <blockquote v-if="benefitPick.summary">{{benefitPick.summary}}</blockquote>
     <p v-if="benefitMuted" class="pending">이 날짜의 AI 문구는 꺼져 있습니다.</p>
-    <p v-if="benefitPick.source==='rule'">지금은 문장 없는 자동 선정 카드입니다.</p>
+    <p v-if="benefitPick.source==='rule'&&!benefitMuted">지금은 문장 없는 자동 선정 카드입니다.</p>
     <div v-else class="row">
      <label for="benefit-note">메모 (공개 저장소에 기록됩니다)</label>
      <input id="benefit-note" v-model="benefitNote" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">

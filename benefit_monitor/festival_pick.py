@@ -27,7 +27,7 @@ SUMMARY_MIN, SUMMARY_MAX = 20, 200
 LINE_MIN, LINE_MAX = 1, 40
 MARKUP = re.compile(r'[<>\x00-\x1f]|https?:|www\.')  # control chars too: the page rejects them
 # The page shows each festival's dates, so text never says when (2026-11-14 review).
-RELATIVE = re.compile(r'오늘|내일|모레|어제|이번\s?주|다음\s?주|주말|평일|마지막\s?날|막바지|곧|임박|서두르')
+RELATIVE = re.compile(r'오늘|내일|모레|어제|이번\s?주|다음\s?주|주말|평일|마지막\s?날|막바지|곧|임박|서두르|서둘러')
 FORBIDDEN = ('보장', '무조건', '최저가', '확실', '선착순', '매진', '완판', '100%')
 PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
