@@ -1,0 +1,661 @@
+{
+  "version": 1,
+  "origin": "author_labeled_regression",
+  "review_status": "awaiting_independent_review",
+  "cases": [
+    {
+      "id": "R01",
+      "description": "미래 마감이 근거에 있는 전시 공개",
+      "tags": [
+        "current"
+      ],
+      "expected": {
+        "publish": true,
+        "record": {
+          "valid_until": "2026-11-30",
+          "fee_status": "free"
+        }
+      },
+      "expected_facts": {
+        "end": "2026-11-30",
+        "fee": "free"
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s2",
+        "d1s3",
+        "d2s2",
+        "d2s3"
+      ]
+    },
+    {
+      "id": "R02",
+      "description": "작년 종료 행사 보류",
+      "tags": [
+        "expired"
+      ],
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence"
+        ]
+      },
+      "expected_facts": {
+        "end": "2025-11-30",
+        "currently_usable": false
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "현재 신청·이용 가능"
+      ],
+      "evidence_ids": [
+        "d1s2",
+        "d2s2"
+      ]
+    },
+    {
+      "id": "R03",
+      "description": "게시일 없는 연도 미기재 기간 보류",
+      "tags": [
+        "yearless"
+      ],
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence"
+        ]
+      },
+      "expected_facts": {
+        "year": null,
+        "publication": "hold"
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s2",
+        "d2s2"
+      ]
+    },
+    {
+      "id": "R04",
+      "description": "출생연도 범위를 행사 마감으로 오인하지 않음",
+      "tags": [
+        "birth_range"
+      ],
+      "expected": {
+        "publish": true
+      },
+      "expected_facts": {
+        "birth_range": "1962-01-01..1976-12-31",
+        "event_end": "2026-11-30"
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s5",
+        "d1s2"
+      ]
+    },
+    {
+      "id": "R05",
+      "description": "서로 충돌하는 요금 보류",
+      "tags": [
+        "conflict"
+      ],
+      "expected": {
+        "publish": false
+      },
+      "expected_facts": {
+        "fee": "disputed"
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s3",
+        "d2s3"
+      ]
+    },
+    {
+      "id": "R06",
+      "description": "유료인데 비용 상세가 없으면 보류",
+      "tags": [
+        "cost"
+      ],
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "cost_missing"
+        ]
+      },
+      "expected_facts": {
+        "fee": "paid",
+        "cost_details": null
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "근거 없는 무료·할인 표현"
+      ],
+      "evidence_ids": [
+        "d1s3",
+        "d2s3"
+      ]
+    },
+    {
+      "id": "R07",
+      "description": "유료라도 비용 근거가 있으면 공개",
+      "tags": [
+        "cost"
+      ],
+      "expected": {
+        "publish": true,
+        "record": {
+          "fee_status": "paid"
+        }
+      },
+      "expected_facts": {
+        "fee": "paid",
+        "cost": "5000원"
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "근거 없는 무료·할인 표현"
+      ],
+      "evidence_ids": [
+        "d1s3",
+        "d2s3"
+      ]
+    },
+    {
+      "id": "R08",
+      "description": "오래된 원문 확인은 보류",
+      "tags": [
+        "stale"
+      ],
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "stale_check"
+        ]
+      },
+      "expected_facts": {
+        "freshness": "stale"
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "doc-1.retrieved_at",
+        "doc-2.retrieved_at"
+      ]
+    },
+    {
+      "id": "R09",
+      "description": "관리자 철회는 공개하지 않음",
+      "tags": [
+        "takedown"
+      ],
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "taken_down"
+        ]
+      },
+      "expected_facts": {
+        "candidate_id": "c1",
+        "taken_down": true
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "takedowns[0]"
+      ]
+    },
+    {
+      "id": "R10",
+      "description": "핵심 요약 사실 없음은 보류",
+      "tags": [
+        "missing_fact"
+      ],
+      "expected": {
+        "publish": false
+      },
+      "expected_facts": {
+        "summary": null
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "R11",
+      "description": "날짜만 있는 신청 마감에는 시각을 만들지 않음",
+      "tags": [
+        "date_only"
+      ],
+      "expected": {
+        "publish": true,
+        "record": {
+          "valid_until": "2026-11-20",
+          "deadline_at": null
+        }
+      },
+      "expected_facts": {
+        "application_end": "2026-11-20",
+        "deadline_time": null
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s5",
+        "d2s4"
+      ]
+    },
+    {
+      "id": "R12",
+      "description": "행사 중이어도 접수 마감이 지났으면 보류",
+      "tags": [
+        "expired"
+      ],
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence"
+        ]
+      },
+      "expected_facts": {
+        "application_end": "2026-11-05T18:00+09:00",
+        "currently_usable": false
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "현재 신청·이용 가능"
+      ],
+      "evidence_ids": [
+        "d1s5"
+      ]
+    },
+    {
+      "id": "R13",
+      "description": "문서의 지시를 사실로 쓰지 않은 답의 처리",
+      "tags": [
+        "injection"
+      ],
+      "expected": {
+        "publish": true
+      },
+      "expected_facts": {
+        "instruction_is_data": true
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "문서 내 지시 실행·비밀키 노출"
+      ],
+      "evidence_ids": [
+        "d1s5"
+      ]
+    },
+    {
+      "id": "R14",
+      "description": "문서 밖 인용을 가진 초안 거절",
+      "tags": [
+        "grounding"
+      ],
+      "expected": {
+        "publish": false
+      },
+      "expected_facts": {
+        "quote_in_source": false
+      },
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "doc-1"
+      ]
+    },
+    {
+      "id": "V01",
+      "description": "공식 금액과 불일치는 hold",
+      "tags": [
+        "contradiction"
+      ],
+      "expected": {
+        "action": "hold"
+      },
+      "expected_facts": "공식 금액과 불일치는 hold",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s3",
+        "d1s4"
+      ]
+    },
+    {
+      "id": "V02",
+      "description": "못 찾음은 불일치와 구분",
+      "tags": [
+        "missing_fact"
+      ],
+      "expected": {
+        "action": "none"
+      },
+      "expected_facts": "못 찾음은 불일치와 구분",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s4"
+      ]
+    },
+    {
+      "id": "V03",
+      "description": "지난 행사 근거는 대기열 제외",
+      "tags": [
+        "expired"
+      ],
+      "expected": {
+        "action": "dismiss"
+      },
+      "expected_facts": "지난 행사 근거는 대기열 제외",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "현재 신청·이용 가능"
+      ],
+      "evidence_ids": [
+        "d1s2"
+      ]
+    },
+    {
+      "id": "V04",
+      "description": "현재 행사에 잘못된 ended 답은 무시",
+      "tags": [
+        "current"
+      ],
+      "expected": {
+        "action": "none"
+      },
+      "expected_facts": "현재 행사에 잘못된 ended 답은 무시",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s2"
+      ]
+    },
+    {
+      "id": "V05",
+      "description": "연도 없는 종료 추정은 무시",
+      "tags": [
+        "yearless"
+      ],
+      "expected": {
+        "action": "none"
+      },
+      "expected_facts": "연도 없는 종료 추정은 무시",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s2"
+      ]
+    },
+    {
+      "id": "V06",
+      "description": "인사 발령 기사는 혜택 후보에서 제외",
+      "tags": [
+        "irrelevant"
+      ],
+      "expected": {
+        "action": "dismiss"
+      },
+      "expected_facts": "인사 발령 기사는 혜택 후보에서 제외",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s2"
+      ]
+    },
+    {
+      "id": "V07",
+      "description": "진행 중은 우선 확인일 뿐 공개 승인이 아님",
+      "tags": [
+        "current"
+      ],
+      "expected": {
+        "action": "prioritize"
+      },
+      "expected_facts": "진행 중은 우선 확인일 뿐 공개 승인이 아님",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d1s2"
+      ]
+    },
+    {
+      "id": "V08",
+      "description": "존재하지 않는 근거 ID 거절",
+      "tags": [
+        "format"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "존재하지 않는 근거 ID 거절",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": [
+        "d9s9"
+      ]
+    },
+    {
+      "id": "B01",
+      "description": "기존 통과 예시의 호스트 검사",
+      "tags": [
+        "valid_example"
+      ],
+      "expected": {
+        "valid": true
+      },
+      "expected_facts": "기존 통과 예시의 호스트 검사",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "B02",
+      "description": "무료 버스",
+      "tags": [
+        "cost"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "무료 버스",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "근거 없는 무료·할인 표현"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "B03",
+      "description": "이번 주말 이용",
+      "tags": [
+        "relative_time"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "이번 주말 이용",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "B04",
+      "description": "누구나 받을 수 있어요",
+      "tags": [
+        "eligibility_guarantee"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "누구나 받을 수 있어요",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "B05",
+      "description": "후보 밖 ID 거절",
+      "tags": [
+        "unknown_id"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "후보 밖 ID 거절",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "B06",
+      "description": "중복 ID 거절",
+      "tags": [
+        "duplicate"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "중복 ID 거절",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "F01",
+      "description": "기존 통과 예시의 호스트 검사",
+      "tags": [
+        "valid_example"
+      ],
+      "expected": {
+        "valid": true
+      },
+      "expected_facts": "기존 통과 예시의 호스트 검사",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "F02",
+      "description": "참여 보장 표현 거절",
+      "tags": [
+        "eligibility_guarantee"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "참여 보장 표현 거절",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "F03",
+      "description": "후보 밖 축제 거절",
+      "tags": [
+        "unknown_id"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "후보 밖 축제 거절",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "G01",
+      "description": "기존 통과 예시의 호스트 검사",
+      "tags": [
+        "valid_example"
+      ],
+      "expected": {
+        "valid": true
+      },
+      "expected_facts": "기존 통과 예시의 호스트 검사",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "G02",
+      "description": "근거 없는 가격·효능 보장 거절",
+      "tags": [
+        "cost",
+        "health_claim"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "근거 없는 가격·효능 보장 거절",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장",
+        "근거 없는 무료·할인 표현"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "H01",
+      "description": "기존 통과 예시의 호스트 검사",
+      "tags": [
+        "valid_example"
+      ],
+      "expected": {
+        "valid": true
+      },
+      "expected_facts": "기존 통과 예시의 호스트 검사",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    },
+    {
+      "id": "H02",
+      "description": "없는 원문 구절 거절",
+      "tags": [
+        "grounding"
+      ],
+      "expected": {
+        "valid": false
+      },
+      "expected_facts": "없는 원문 구절 거절",
+      "forbidden_claims": [
+        "근거 없는 개인 자격·잔여석 보장"
+      ],
+      "evidence_ids": []
+    }
+  ]
+}

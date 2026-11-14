@@ -57,6 +57,13 @@ class PromptExampleTests(unittest.TestCase):
 
 
 class PromptShapeTests(unittest.TestCase):
+    def test_pick_task_does_not_encourage_forbidden_copy(self):
+        for kind in ('festival', 'benefit'):
+            with self.subTest(kind=kind):
+                self.assertNotRegex(TASKS[kind], r'이번 주|주말|놓치면|서두르')
+                self.assertIn('후보', TASKS[kind])
+                self.assertIn('규칙', TASKS[kind])
+
     def test_evidence_comes_before_verdict_in_wire_schemas(self):
         from benefit_monitor.verify_contract import wire_schema
         verify = wire_schema()['properties']

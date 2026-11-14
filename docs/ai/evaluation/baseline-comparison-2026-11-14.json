@@ -1,0 +1,47 @@
+{
+  "scope": "historical_topic_comparison",
+  "rows": [
+    {
+      "run_id": "232a5f7bc5b43e00a0fcb5b175376aa9c9a7cd6e1febad91b2639cf7c86003ce",
+      "status": "not_comparable"
+    },
+    {
+      "run_id": "261da3ca2b8c045561364c1d5c764fc168ff324d94c9a1638d78c4ea18a51026",
+      "status": "not_comparable"
+    },
+    {
+      "run_id": "2c6f14e18097fe9f27129f4d0ecc285ad6c883b9a5aff59e8224451b79a77536",
+      "status": "comparable",
+      "input_sha256": "58b10cfdc30c3eac1bda893d48ee6cb66e1e23a2a0c358433bd9832098b45d3a",
+      "reference_time": "2026-11-19T12:00:00+09:00",
+      "rule": {
+        "cards": 3,
+        "links": 5,
+        "unique_items": 5,
+        "duplicate_links": 0
+      },
+      "ai": {
+        "cards": 4,
+        "links": 6,
+        "unique_items": 5,
+        "duplicate_links": 1
+      },
+      "usefulness": "not_rated"
+    },
+    {
+      "run_id": "32bc4b637b4be20ea0c59a95d1e36a0d0b8355c9555696b545277a2986183b8f",
+      "status": "not_comparable"
+    },
+    {
+      "run_id": "7daa312026dd56663cfd1e0a55c049b46430e57d440e7e1ff253f776d2fbbe8b",
+      "status": "not_comparable"
+    },
+    {
+      "run_id": "9e92b510b4587be1c34ef4ae30142a654caf550589cc365077d3f4292fa9901a",
+      "status": "not_comparable"
+    }
+  ],
+  "comparable": 1,
+  "useful_rate": null,
+  "cost_per_useful_recommendation_usd": null
+}
