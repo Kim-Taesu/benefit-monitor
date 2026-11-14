@@ -44,7 +44,7 @@ SUMMARY = '서울사랑상품권 추가 페이백 행사가 곧 끝나니 결제
 
 def draft(summary=SUMMARY, picks=None):
     return dict(summary=summary, picks=picks if picks is not None else [
-        dict(id=CID, line='결제액 추가 페이백, 상품권 구매 필요'), dict(id=BID, line='무료'), dict(id=RID, line='무료')])
+        dict(id=CID, line='결제액 추가 페이백, 상품권 구매 필요'), dict(id=BID, line='야간 자율주행버스 체험'), dict(id=RID, line='화상면접실 이용')])
 
 
 def stored(day='2026-11-14', generated=NOW, source='ai', summary=SUMMARY, picks=None):
@@ -55,8 +55,11 @@ def stored(day='2026-11-14', generated=NOW, source='ai', summary=SUMMARY, picks=
 
 
 def one(cid, line):
-    # The summary names 서울사랑상품권, so it is only checked when that benefit is among the picks.
-    return draft(summary=SUMMARY if cid == CID else '이번 주말에는 서울에서 챙겨 볼 만한 혜택 몇 가지를 골라 보았어요.', picks=[dict(id=cid, line=line), dict(id=BID, line='무료'), dict(id=RID, line='무료')])
+    # The summary names 서울사랑상품권, so it may only be used when that benefit is among the picks.
+    others = [dict(id=BID, line='야간 자율주행버스 체험'), dict(id=RID, line='화상면접실 이용')]
+    others = [p for p in others if p['id'] != cid] + [dict(id=YID, line='종암동 요가 강좌')]
+    return draft(summary=SUMMARY if cid == CID else '서울에서 챙겨 볼 만한 혜택 몇 가지를 골라 보았어요 확인하세요.',
+                 picks=[dict(id=cid, line=line)] + others[:2])
 
 
 HOST = bp.host(ITEMS, NOW)
@@ -95,35 +98,22 @@ class ReviewTests(unittest.TestCase):
     def test_max_percent_rejected(self):
         self.assertIn('claim', bp.review(one(CID, '최대 15% 할인'), HOST))
 
-    def test_paid_needs_cost(self):
-        self.assertEqual(bp.review(one(CID, '추가 페이백'), HOST), ['cost'])
-        self.assertEqual(bp.review(one(CID, '결제액 추가 페이백, 상품권 구매 필요'), HOST), [])
+    def test_text_must_not_talk_about_price(self):
+        for line in ('비용이 없어요', '비용 이 없어요', '구매 안 해도 돼요', '유료가 아니에요', '유료 아닌 코스', '결제 면제예요', '비용 안 받아요',
+                     '참가비 면제', '유료 아닙니다', '반액', '구매하면 돈 안 들어요', '오 퍼센트 할인', '천원', '무료', '공짜 수업',
+                     '무상 지원', '입장료 안내', 'FREE 혜택', '공으로 받아요', '결제 없이 이용', '절반 가격'):
+            self.assertIn('price', bp.review(one(CID, line), HOST), line)
+        self.assertIn('price', bp.review(one(BID, '무료 버스'), HOST))
+        self.assertIn('price', bp.review(draft(summary='요가 강좌와 화상면접실은 무료예요 한번 확인해 보세요.'), HOST))
+        self.assertIn('price', bp.review(draft(summary='서울사랑상품권 행사와 화상면접실 모두 무료예요 확인해 보세요.'), HOST))
 
-    def test_negated_cost_is_not_a_cost_word(self):
-        for line in ('유료 아님, 페이백', '비용 없이 페이백', '결제 부담 없이 페이백', '공으로 페이백', '반값 페이백, 구매'):
-            self.assertIn('free', bp.review(one(CID, line), HOST), line)
-        self.assertIn('free', bp.review(draft(summary='서울사랑상품권 페이백은 부담 없이 챙길 수 있는 행사라 좋아요.'), HOST))
-        self.assertIn('cost', bp.review(one(CID, '구매 없이 페이백'), HOST) + ['cost'])
-
-    def test_free_only_when_free(self):
-        self.assertIn('free', bp.review(one(YID, '무료 수업'), HOST))
-
-    def test_free_synonyms_need_free_status(self):
-        for word in ('공짜 수업', '무상 수강', '0원 수업', '수강료 0원'):
-            self.assertIn('free', bp.review(one(YID, word + ', 결제'), HOST), word)
-
-    def test_summary_free_is_attributed_to_the_named_benefit(self):
-        ok = bp.review(draft(summary='청계 A01 야간 자율주행버스는 무료로 타 볼 수 있어요. 서울사랑상품권 결제도 챙기세요.'), HOST)
-        self.assertNotIn('free', ok)
-        bad = bp.review(draft(summary='서울사랑상품권 추가 페이백은 무료로 받아요. 청계 A01 야간 자율주행버스도 있어요.'), HOST)
-        self.assertIn('free', bad)
-        self.assertIn('free', bp.review(draft(summary='이번에는 무료로 즐길 수 있는 혜택이 여러 가지 있으니 확인하세요.'), HOST))
-        # The owner must be in the same sentence.
-        self.assertIn('free', bp.review(draft(summary='청계 A01 야간 자율주행버스가 있어요. 서울사랑상품권 소식도 무료라 좋아요.'), HOST))
+    def test_plain_lines_pass(self):
+        self.assertEqual(bp.review(one(CID, '결제액 추가 페이백, 상품권으로 받아요'), HOST), [])
+        self.assertEqual(bp.review(one(BID, '야간 자율주행버스 체험'), HOST), [])
 
     def test_summary_names_unpicked_benefit(self):
         bad = bp.review(draft(summary='화상면접실은 무료로 쓰고 요가 강좌도 무료예요 확인해 보세요.',
-                              picks=[dict(id=RID, line='무료'), dict(id=BID, line='무료'), dict(id=CID, line='구매 필요')]), HOST)
+                              picks=[dict(id=RID, line='화상면접실 이용'), dict(id=BID, line='버스 체험'), dict(id=CID, line='상품권으로 받아요')]), HOST)
         self.assertTrue({'free', 'summary_item'} & set(bad), bad)
         self.assertIn('summary_item', bp.review(draft(summary='청계 A01 야간 자율주행버스와 종암동 자치회관 요가(오전2반) 안내예요.'), HOST))
 
@@ -174,7 +164,7 @@ class PublicTests(unittest.TestCase):
 
     def test_public_removes_one_line_and_summary_keeps_enough_lines(self):
         extra = row('seoul', 'https://x.kr/1', '제철 차 학습라운지', '무료 교육 운영', '16개 프로그램 무료 운영', 'free')
-        four = draft(picks=draft()['picks'] + [dict(id=bp.item_id(extra), line='무료')])['picks']
+        four = draft(picks=draft()['picks'] + [dict(id=bp.item_id(extra), line='학습라운지 교육')])['picks']
         items = [r for r in ITEMS + [extra] if r is not COGPE]
         pick = bp.public(stored(picks=four), items, [], NOW)
         self.assertEqual(pick['source'], 'ai')
@@ -200,8 +190,8 @@ class PublicTests(unittest.TestCase):
         self.assertIsNone(bp.public(stored(), ITEMS[:2], [], NOW))  # below the 3-line floor
 
     def test_public_rereviews_against_current_items(self):
-        changed = [dict(r, fee_status='paid') if r is BUS else r for r in ITEMS]
-        self.assertEqual(bp.public(stored(), changed, [], NOW)['source'], 'rule')
+        bad = stored(picks=[dict(id=CID, line='결제액 추가 페이백'), dict(id=BID, line='무료 버스'), dict(id=RID, line='화상면접실 이용')])
+        self.assertEqual(bp.public(bad, ITEMS, [], NOW)['source'], 'rule')
 
     def test_rule_pick_order_and_size(self):
         many = ITEMS + [row('seoul', f'https://x.kr/{i}', f'혜택 번호 {i}', '요약', '조건', 'free') for i in range(5)]

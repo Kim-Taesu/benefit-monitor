@@ -31,7 +31,6 @@ MARKUP = re.compile(r'[<>\n\r]|https?:|www\.')
 CLAIMS = ('누구나', '받을 수 있', '확실', '보장', '무조건', '100%', '최대', '누구든', '전원', '반드시', '신청하면', '바로 받',
           '모두 받')
 STOCK = ('남은', '잔여', '소진 전', '자리 있')
-COST_WORDS = ('구매', '결제', '유료', '비용', '참가비', '수강료')
 PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
 
@@ -74,16 +73,15 @@ def host(items, now):
     return _input(rows, now, trim=True) if len(rows) >= MIN_CANDIDATES else None
 
 
-FREE_WORDS = ('무료', '공짜', '무상', '0원')
-FREE = re.compile('|'.join(r'(?<![\d,])0원' if w == '0원' else w for w in FREE_WORDS))
-NO_COST = re.compile(r'(비용|참가비|수강료|구매|결제|유료)\s*(없|안\s*들|아님|아니|부담\s*없)|부담\s*없|공으로|free|반값|절반|\d\+\d',
-                     re.IGNORECASE)
+# The page shows cost from fee_status (per-line badge); model text must not talk about price at all.
+PRICE = re.compile(r'무료|공짜|무상|유료|비용|참가비|수강료|입장료|요금|가격|면제|반값|반액|절반|퍼센트|프로|할인율|[천만억]\s*원|돈|부담'
+                   r'|free|공으로|(?:구매|결제)(?:하지)?\s*(?:안|않|없|말)', re.IGNORECASE)
 DIGITS = re.compile('[0-9\uff10-\uff19]')
 RELATIVE = re.compile(r'오늘|내일|모레|이번\s?주|다음\s?주|주말|월말|연말')
 QUOTED = re.compile(r"['\"‘’“”]([^'\"‘’“”]{2,})['\"‘’“”]")
 WORD = re.compile(r'[0-9A-Za-z가-힣]+')
 NAME_MIN = 2
-GENERIC = ('혜택', '행사', '안내', '서비스', '프로그램', '이벤트', '신청', '이용', '운영', '서울', '무료') + FREE_WORDS
+GENERIC = ('혜택', '행사', '안내', '서비스', '프로그램', '이벤트', '신청', '이용', '운영', '서울', '무료', '공짜', '무상')
 
 
 def _names(rows):
@@ -106,11 +104,6 @@ def _mentions(text, rows):
             for m in re.finditer(re.escape(name), text):
                 found.append((m.end(), len(name), c))
     return [(end, c) for end, _, c in sorted(found, key=lambda f: (f[0], f[1]))]
-
-
-def _owner_before(mentions, pos):
-    named = [c for end, c in mentions if end <= pos]
-    return named[-1] if named else None
 
 
 def _check(summary, picks, host):
@@ -138,28 +131,10 @@ def _check(summary, picks, host):
     # Dates, amounts and deadlines are shown by the page from the data, never typed by the model.
     if any(DIGITS.search(t) or RELATIVE.search(t) for t in texts):
         errors.append('number')
-    free_bad = any(NO_COST.search(t) for t in texts)
-    free_bad = free_bad or any(FREE.search(p['line']) and by_id[p['id']]['fee_status'] != 'free'
-                               for p in picks if p['id'] in by_id)
-    if summary is not None:
-        mentions = _mentions(summary, host['candidates'])
-        if any(c['id'] not in ids for _, c in mentions):
-            errors.append('summary_item')
-        start = 0
-        for sentence in re.split(r'(?<=[.!?])', summary):
-            local = [(end - start, c) for end, c in mentions if start < end <= start + len(sentence)]
-            for m in FREE.finditer(sentence):
-                owner = _owner_before(local, m.start())
-                if owner is None or owner['fee_status'] != 'free':
-                    free_bad = True
-            start += len(sentence)
-    if free_bad:
-        errors.append('free')
-    for p in picks:
-        if p['id'] in by_id and by_id[p['id']]['fee_status'] == 'paid' \
-                and not any(w in NO_COST.sub(' ', p['line']) for w in COST_WORDS):
-            errors.append('cost')
-            break
+    if any(PRICE.search(t) for t in texts):
+        errors.append('price')
+    if summary is not None and any(c['id'] not in ids for _, c in _mentions(summary, host['candidates'])):
+        errors.append('summary_item')
     return errors
 
 
