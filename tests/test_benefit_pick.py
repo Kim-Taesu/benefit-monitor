@@ -39,12 +39,12 @@ YOGA = row('eshare', 'https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.
            'paid')
 ITEMS = [YOGA, ROOM, BUS, COGPE]
 CID, BID, RID, YID = (bp.item_id(r) for r in (COGPE, BUS, ROOM, YOGA))
-SUMMARY = '서울사랑상품권 추가 페이백이 11/15에 끝나니 이번 주말 결제를 챙겨 보세요.'
+SUMMARY = '서울사랑상품권 추가 페이백 행사가 곧 끝나니 결제를 챙겨 보세요.'
 
 
 def draft(summary=SUMMARY, picks=None):
     return dict(summary=summary, picks=picks if picks is not None else [
-        dict(id=CID, line='결제액 추가 5% 페이백, 상품권 구매 필요'), dict(id=BID, line='무료'), dict(id=RID, line='무료')])
+        dict(id=CID, line='결제액 추가 페이백, 상품권 구매 필요'), dict(id=BID, line='무료'), dict(id=RID, line='무료')])
 
 
 def stored(day='2026-11-14', generated=NOW, source='ai', summary=SUMMARY, picks=None):
@@ -76,6 +76,9 @@ class HostTests(unittest.TestCase):
         first = HOST['candidates'][0]
         self.assertEqual((first['category'], first['region'], first['fee_status']), ('할인·적립', '서울', 'paid'))
         self.assertLessEqual(len(first['conditions']), 200)
+        long = dict(COGPE, conditions=COGPE['conditions'] + '가' * 100)
+        self.assertEqual(len(bp.host([long, BUS, ROOM], NOW)['candidates'][0]['conditions']), 200)
+        self.assertGreater(len(bp._rows([long], NOW)[0]['conditions']), 200)  # only the model copy is trimmed
 
     def test_host_none_below_minimum(self):
         self.assertIsNone(bp.host(ITEMS[:2], NOW))
@@ -93,7 +96,14 @@ class ReviewTests(unittest.TestCase):
         self.assertIn('claim', bp.review(one(CID, '최대 15% 할인'), HOST))
 
     def test_paid_needs_cost(self):
-        self.assertEqual(bp.review(one(CID, '추가 5% 페이백'), HOST), ['cost'])
+        self.assertEqual(bp.review(one(CID, '추가 페이백'), HOST), ['cost'])
+        self.assertEqual(bp.review(one(CID, '결제액 추가 페이백, 상품권 구매 필요'), HOST), [])
+
+    def test_negated_cost_is_not_a_cost_word(self):
+        for line in ('유료 아님, 페이백', '비용 없이 페이백', '결제 부담 없이 페이백', '공으로 페이백', '반값 페이백, 구매'):
+            self.assertIn('free', bp.review(one(CID, line), HOST), line)
+        self.assertIn('free', bp.review(draft(summary='서울사랑상품권 페이백은 부담 없이 챙길 수 있는 행사라 좋아요.'), HOST))
+        self.assertIn('cost', bp.review(one(CID, '구매 없이 페이백'), HOST) + ['cost'])
 
     def test_free_only_when_free(self):
         self.assertIn('free', bp.review(one(YID, '무료 수업'), HOST))
@@ -101,47 +111,37 @@ class ReviewTests(unittest.TestCase):
     def test_free_synonyms_need_free_status(self):
         for word in ('공짜 수업', '무상 수강', '0원 수업', '수강료 0원'):
             self.assertIn('free', bp.review(one(YID, word + ', 결제'), HOST), word)
-        self.assertNotIn('free', bp.review(one(YID, '수강료 75,000원, 결제'), HOST))
-        self.assertNotIn('free', bp.review(one(CID, '구매 필요 10원'), HOST))
 
     def test_summary_free_is_attributed_to_the_named_benefit(self):
         ok = bp.review(draft(summary='청계 A01 야간 자율주행버스는 무료로 타 볼 수 있어요. 서울사랑상품권 결제도 챙기세요.'), HOST)
         self.assertNotIn('free', ok)
         bad = bp.review(draft(summary='서울사랑상품권 추가 페이백은 무료로 받아요. 청계 A01 야간 자율주행버스도 있어요.'), HOST)
         self.assertIn('free', bad)
-        self.assertIn('free', bp.review(draft(summary='이번 주말에는 무료로 즐길 수 있는 혜택이 여러 가지 있어요 확인하세요.'), HOST))
+        self.assertIn('free', bp.review(draft(summary='이번에는 무료로 즐길 수 있는 혜택이 여러 가지 있으니 확인하세요.'), HOST))
+        # The owner must be in the same sentence.
+        self.assertIn('free', bp.review(draft(summary='청계 A01 야간 자율주행버스가 있어요. 서울사랑상품권 소식도 무료라 좋아요.'), HOST))
+
+    def test_summary_names_unpicked_benefit(self):
+        bad = bp.review(draft(summary='화상면접실은 무료로 쓰고 요가 강좌도 무료예요 확인해 보세요.',
+                              picks=[dict(id=RID, line='무료'), dict(id=BID, line='무료'), dict(id=CID, line='구매 필요')]), HOST)
+        self.assertTrue({'free', 'summary_item'} & set(bad), bad)
+        self.assertIn('summary_item', bp.review(draft(summary='청계 A01 야간 자율주행버스와 종암동 자치회관 요가(오전2반) 안내예요.'), HOST))
 
     def test_eligibility_and_stock_words(self):
-        self.assertIn('claim', bp.review(draft(summary='서울사랑상품권 페이백은 누구나 11/15까지 결제하면 되니 챙기세요.'), HOST))
+        self.assertIn('claim', bp.review(draft(summary='서울사랑상품권 페이백은 누구나 결제하면 되니 챙기세요.'), HOST))
+        for word in ('누구든', '전원', '반드시', '신청하면', '바로 받아요', '모두 받아요'):
+            self.assertIn('claim', bp.review(one(BID, '무료, ' + word), HOST), word)
         self.assertIn('claim', bp.review(one(BID, '무료, 받을 수 있어요'), HOST))
         for word in ('남은 자리', '잔여석', '소진 전까지', '자리 있음'):
             self.assertIn('stock', bp.review(one(BID, '무료, ' + word), HOST), word)
         self.assertNotIn('stock', bp.review(one(BID, '무료, 마감 임박'), HOST))
 
-    def test_dates_must_match_the_benefit(self):
-        self.assertIn('number', bp.review(one(CID, '11/20까지 결제, 구매 필요'), HOST))
-        self.assertEqual(bp.review(one(CID, '11/15까지 결제, 구매 필요'), HOST), [])
-        self.assertEqual(bp.review(one(CID, '10월 29일부터 결제, 구매 필요'), HOST), [])
-        self.assertIn('number', bp.review(one(CID, '10월 29일까지 결제, 구매 필요'), HOST))
-        self.assertIn('number', bp.review(one(CID, '11월 15일부터 결제, 구매 필요'), HOST))
-        self.assertEqual(bp.review(one(CID, '10/29~11/15 결제, 구매 필요'), HOST), [])
-        self.assertIn('number', bp.review(one(CID, '10/29~11/30 결제, 구매 필요'), HOST))
-        self.assertIn('number', bp.review(one(BID, '무료, 10/22 시작, 11/15'), HOST))  # 11/15 is not this benefit's date
-
-    def test_numbers_need_their_unit_verbatim(self):
-        self.assertIn('number', bp.review(one(CID, '결제액 15% 페이백, 구매 필요'), HOST))
-        self.assertIn('number', bp.review(one(CID, '결제액 추가 50% 페이백, 구매 필요'), HOST))
-        self.assertIn('number', bp.review(one(CID, '결제액 추가 5,000원 환급, 구매 필요'), HOST))
-        self.assertEqual(bp.review(one(YID, '수강료 75,000원(분기), 결제 필요'), HOST), [])
-        self.assertEqual(bp.review(one(YID, '수강료 75000원, 결제 필요'), HOST), [])
-        self.assertIn('number', bp.review(one(YID, '수강료 7,500원, 결제 필요'), HOST))
-        self.assertIn('number', bp.review(one(BID, '무료, 30명 탑승'), HOST))
-
-    def test_summary_numbers_belong_to_the_named_benefit(self):
-        self.assertIn('number', bp.review(draft(summary='청계 A01 야간 자율주행버스는 무료이고 서울사랑상품권은 11/20에 끝나요.'), HOST))
-        self.assertIn('number', bp.review(draft(summary='이번 주말 11/15까지 챙길 혜택을 골라 보았으니 확인해 보세요.'), HOST))
-        self.assertIn('number', bp.review(draft(summary='서울사랑상품권 페이백이 15%까지 늘어나니 이번 주말 결제를 챙기세요.'), HOST))
-        self.assertEqual(bp.review(draft(summary='서울사랑상품권 5% 페이백이 11/15에 끝나니 이번 주말 결제를 챙기세요.'), HOST), [])
+    def test_no_digits_or_relative_time(self):
+        for line in ('11/15 시작, 결제 구매', '11/15 부터 구매 5% 페이백', '15% 할인, 구매', '이번 주 일요일까지 구매', '내일까지 결제',
+                     '５만원 구매', '모레 결제', '다음주 구매', '주말 구매', '월말까지 결제', '연말 구매', '오늘 결제'):
+            self.assertIn('number', bp.review(one(CID, line), HOST), line)
+        for text in ('11/15에 끝나요 서울사랑상품권 결제', '이번 주말 서울사랑상품권 결제를 챙기세요 꼭이요'):
+            self.assertIn('number', bp.review(draft(summary=text), HOST), text)
 
     def test_shape_ids_lengths_and_markup(self):
         self.assertEqual(bp.review({'summary': SUMMARY}, HOST), ['draft_shape'])
@@ -197,6 +197,7 @@ class PublicTests(unittest.TestCase):
         self.assertIsNone(bp.public(dict(stored(), extra=1), ITEMS, [], NOW))
         self.assertIsNone(bp.public(stored(generated=NOW + timedelta(hours=1)), ITEMS, [], NOW))
         self.assertIsNone(bp.public(stored(), [], [], NOW))
+        self.assertIsNone(bp.public(stored(), ITEMS[:2], [], NOW))  # below the 3-line floor
 
     def test_public_rereviews_against_current_items(self):
         changed = [dict(r, fee_status='paid') if r is BUS else r for r in ITEMS]
@@ -252,8 +253,8 @@ class RefreshTests(unittest.TestCase):
     def test_few_items_give_no_candidates(self):
         result, calls, pick, _ = self.run_refresh(items=[])
         self.assertEqual((result['status'], calls, pick), ('no_candidates', [], None))
-        result, calls, pick, _ = self.run_refresh(items=ITEMS[:2])  # rule card, no paid call
-        self.assertEqual((calls, pick['source']), ([], 'rule'))
+        result, calls, pick, _ = self.run_refresh(items=ITEMS[:2])  # below the 3-line floor: no card, no paid call
+        self.assertEqual((result['status'], calls, pick), ('no_candidates', [], None))
 
     def test_missing_report_means_no_candidates_and_no_call(self):
         tmp = tempfile.TemporaryDirectory(dir=Path(bp.__file__).resolve().parents[1])
