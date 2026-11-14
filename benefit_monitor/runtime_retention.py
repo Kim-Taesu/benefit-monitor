@@ -3,7 +3,7 @@
 Only three growing folders are touched: run artifacts, staged AI inputs and cached official
 bodies. An entry is removed only when nothing current references it (the per-candidate review
 state, the decisions behind auto-published records, the official-body cache index) and its own
-recorded timestamp is older than 14 days (3 days for verification runs). A missing or unreadable timestamp or reference file keeps
+recorded timestamp is older than 7 days (3 days for verification runs). A missing or unreadable timestamp or reference file keeps
 everything. The ledger (budget.json), its response cache and the review queue are never touched.
 """
 from datetime import datetime, timedelta
@@ -12,7 +12,8 @@ from pathlib import Path
 import re
 import shutil
 
-KEEP_DAYS = 14
+# 14 -> 7 (approved 2026-11-14): the runtime reached its size limit before anything was 14 days old.
+KEEP_DAYS = 7
 # Daily verification runs (up to 40) only feed that day's decision; their state lives in cache/ai_verify.
 KEEP_VERIFY_DAYS = 3
 RUNS = '.tools/claude-trial/live/runs'
@@ -74,7 +75,7 @@ def references(root):
 
 
 def prune(root, now):
-    """Remove unreferenced entries older than 14 days; returns the counts removed (or skipped)."""
+    """Remove unreferenced entries older than KEEP_DAYS; returns the counts removed (or skipped)."""
     if now.tzinfo is None:
         raise ValueError('timezone required')
     root = Path(root)
