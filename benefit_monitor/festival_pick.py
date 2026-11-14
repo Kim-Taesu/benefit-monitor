@@ -27,7 +27,6 @@ SUMMARY_MIN, SUMMARY_MAX = 20, 200
 LINE_MIN, LINE_MAX = 1, 40
 MARKUP = re.compile(r'[<>\n\r]|https?:|www\.')
 FORBIDDEN = ('보장', '무조건', '최저가', '확실', '선착순', '매진', '완판', '100%')
-NUMBER = re.compile(r'\d[\d,]*')
 PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
 
@@ -61,19 +60,68 @@ def known_names(bundle):
     return {row['name'] for row in (bundle or {}).get('items', []) if row.get('name')}
 
 
-def _owned(candidate):
-    """Numbers a line about this festival may contain: its start/end month and day, and numbers in its fee text."""
-    allowed = set()
-    for key in ('start', 'end'):
-        _, month, day = candidate[key].split('-')
-        allowed |= {str(int(month)), str(int(day))}
-    allowed |= {t.rstrip(',').replace(',', '') for t in NUMBER.findall(candidate['fee_text'])}
-    return allowed
+DATE = re.compile(r'(\d{1,2})\s*/\s*(\d{1,2})(?:\s*~\s*(?:(\d{1,2})\s*/\s*)?(\d{1,2}))?'
+                  r'|(\d{1,2})월\s*(\d{1,2})일(?:\s*~\s*(?:(\d{1,2})월\s*)?(\d{1,2})일)?')
+AMOUNT = re.compile(r'(\d[\d,]*)\s*(%|[가-힣])?')
+FREE_WORDS = ('무료', '공짜', '무상', '입장료 없', '0원')
+FREE = re.compile('|'.join(r'(?<![\d,])0원' if w == '0원' else w for w in FREE_WORDS))
+NOT_PAID = re.compile(r'유료(?!\s*아님)')
 
 
-def _numbers_ok(text, owners):
-    allowed = set().union(*(_owned(c) for c in owners)) if owners else set()
-    return all(t.rstrip(',').replace(',', '') in allowed for t in NUMBER.findall(text))
+def _mentions(text, rows):
+    """[(end, candidate)] for every occurrence of a candidate name, in text order."""
+    found = []
+    for c in rows:
+        for m in re.finditer(re.escape(c['name']), text):
+            found.append((m.end(), len(c['name']), c))
+    return [(end, c) for end, _, c in sorted(found, key=lambda f: (f[0], f[1]))]
+
+
+def _owner_before(mentions, pos):
+    named = [c for end, c in mentions if end <= pos]
+    return named[-1] if named else None
+
+
+def _fee_norm(text):
+    return re.sub(r'(\d)\s+(%|[가-힣])', r'\1\2', re.sub(r'(?<=\d),(?=\d)', '', text))
+
+
+def _numbers_ok(text, rows, fixed=None):
+    """Dates must equal the owning festival's start or end; any other number needs its unit verbatim in its fee_text.
+
+    Owner: `fixed` (a line is about one festival), else the nearest candidate name before the number."""
+    mentions = [] if fixed else _mentions(text, rows)
+    for m in DATE.finditer(text):
+        c = fixed or _owner_before(mentions, m.start())
+        if c is None:
+            return False
+        g = m.groups()
+        month, day = (g[0], g[1]) if g[0] else (g[4], g[5])
+        end_month, end_day = ((g[2] or month, g[3]) if g[0] else (g[6] or month, g[7]))
+        pairs = [(int(month), int(day))] + ([(int(end_month), int(end_day))] if end_day else [])
+        dates = {key: tuple(int(v) for v in c[key].split('-')[1:]) for key in ('start', 'end')}
+        if any(pair not in dates.values() for pair in pairs):
+            return False
+        after = text[m.end():m.end() + 2]
+        if len(pairs) == 1 and ((after == '까지' and pairs[0] != dates['end'])
+                                or (after == '부터' and pairs[0] != dates['start'])):
+            return False
+    rest = DATE.sub(lambda m: ' ' * (m.end() - m.start()), text)
+    for m in AMOUNT.finditer(rest):
+        c = fixed or _owner_before(mentions, m.start())
+        token = m.group(1).replace(',', '') + (m.group(2) or '')
+        if c is None or not re.search(r'(?<!\d)' + re.escape(token) + r'(?!\d)', _fee_norm(c['fee_text'])):
+            return False
+    return True
+
+
+def _free_ok(candidate, line=None):
+    """A festival may be called free when its status is free, or mixed and (for a line) says part of it is paid."""
+    if candidate['fee_status'] == 'free':
+        return True
+    if candidate['fee_status'] != 'mixed':
+        return False
+    return line is None or ('일부' in line and bool(NOT_PAID.search(line)))
 
 
 def _check(summary, picks, host, known):
@@ -96,24 +144,23 @@ def _check(summary, picks, host, known):
         errors.append('markup')
     if any(word in t for t in texts for word in FORBIDDEN):
         errors.append('claim')
-    picked = [by_id[i] for i in dict.fromkeys(ids) if i in by_id]
     if summary is not None:
         rest = summary
         for name in sorted((c['name'] for c in host['candidates']), key=len, reverse=True):
             rest = rest.replace(name, ' ')
         if any(n in rest for n in known if isinstance(n, str) and n):
             errors.append('summary_item')
-    if any(not _numbers_ok(p['line'], [by_id[p['id']]]) for p in picks if p['id'] in by_id) \
-            or (summary is not None and not _numbers_ok(summary, picked)):
+    if any(not _numbers_ok(p['line'], [], by_id[p['id']]) for p in picks if p['id'] in by_id) \
+            or (summary is not None and not _numbers_ok(summary, host['candidates'])):
         errors.append('number')
-    free_bad = False
-    for p in picks:
-        c = by_id.get(p['id'])
-        if c and '무료' in p['line'] and (c['fee_status'] not in ('free', 'mixed')
-                                         or (c['fee_status'] == 'mixed' and not ('일부' in p['line'] or '유료' in p['line']))):
-            free_bad = True
-    if summary is not None and '무료' in summary and not any(c['fee_status'] in ('free', 'mixed') for c in picked):
-        free_bad = True
+    free_bad = any(FREE.search(p['line']) and not _free_ok(by_id[p['id']], p['line'])
+                   for p in picks if p['id'] in by_id)
+    if summary is not None:
+        mentions = _mentions(summary, host['candidates'])
+        for m in FREE.finditer(summary):
+            owner = _owner_before(mentions, m.start())
+            if owner is None or not _free_ok(owner):
+                free_bad = True
     if free_bad:
         errors.append('free')
     return errors

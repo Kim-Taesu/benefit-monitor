@@ -120,14 +120,64 @@ class ReviewTests(unittest.TestCase):
         self.assertIn('number', self.errors(d))
 
     def test_dates_and_fee_numbers_from_the_festival_are_allowed(self):
-        d = draft(summary='영주 사과축제는 11월 15일까지, 포항 축제는 11/19부터 열려요. 주말 나들이로 좋아요.',
-                  picks=[dict(id=APPLE, line='11/15까지, 일부 유료'), dict(id=POHANG, line='11/19~21 무료')])
+        d = draft(summary='영주 사과축제는 11월 15일까지, 포항국제불빛축제는 11/19부터 열려요. 주말 나들이로 좋아요.',
+                  picks=[dict(id=APPLE, line='11/13~15, 일부 유료'), dict(id=POHANG, line='11/19~21 무료')])
         self.assertEqual(self.errors(d), [])
         host = fp.host(BUNDLE, datetime.fromisoformat('2027-01-20T07:00:00+09:00'))
         known = fp.known_names(BUNDLE)
         ok = draft(summary='철원 한탄강 얼음트레킹 축제는 10,000원이고 5,000원이 환급돼요. 겨울 나들이로 좋아요.',
                    picks=[dict(id='e545101d-5bed-4a95-85c2-9ad0b15a84a6', line='10,000원 중 5,000원 환급')])
         self.assertEqual(fp.review(ok, host, known), [])
+
+    def test_number_bypasses_are_rejected(self):
+        def one(summary=SUMMARY, apple='무료, 일부 체험 유료'):
+            return self.errors(draft(summary=summary, picks=[dict(id=APPLE, line=apple),
+                                                             dict(id=POHANG, line='무료, 밤 불빛 행사')]))
+        self.assertIn('number', one(apple='15% 할인, 일부 유료'))
+        self.assertIn('number', one(apple='11/13까지, 일부 유료'))   # 11/13 is the start, not the end
+        self.assertIn('number', one(apple='11/14~15, 일부 유료'))
+        self.assertIn('number', one(apple='3시간 체험, 일부 유료'))
+        self.assertIn('number', one(summary='영주 사과축제는 11/19까지 열리고 포항 축제가 이어져요 주말 나들이로 좋아요.'))
+        self.assertIn('number', one(summary='11/15까지 영주 사과축제가 열리고 포항 축제가 이어져요 주말 나들이로 좋아요.'))
+        self.assertEqual(one(apple='11/13~15, 일부 유료'), [])
+        self.assertEqual(self.errors(draft(picks=[dict(id=POHANG, line='11/19~21 무료')])), [])
+
+    def test_fee_amount_needs_unit_verbatim(self):
+        host = fp.host(BUNDLE, datetime.fromisoformat('2027-01-20T07:00:00+09:00'))
+        known = fp.known_names(BUNDLE)
+        def line(text):
+            return fp.review(draft(summary='철원 한탄강 얼음트레킹 축제로 겨울 나들이를 떠나 보세요. 얼음 위를 걸어요.',
+                                   picks=[dict(id='e545101d-5bed-4a95-85c2-9ad0b15a84a6', line=text)]), host, known)
+        self.assertEqual(line('10,000원 중 5,000원 환급'), [])
+        self.assertIn('number', line('10,000명 방문'))
+        self.assertIn('number', line('5,000 환급'))
+        self.assertIn('number', line('50%'))
+
+    def test_free_synonyms_need_free_status(self):
+        host = fp.host(BUNDLE, datetime.fromisoformat('2026-11-20T07:00:00+09:00'))
+        known = fp.known_names(BUNDLE)
+        paid = '06c85b3f-b302-4025-9cc5-27ec77b3a5ff'
+        def line(i, text):
+            return fp.review(draft(summary='이번 주말 나들이로 갈 만한 축제를 골랐어요. 가볍게 다녀오세요.',
+                                   picks=[dict(id=i, line=text)]), host, known)
+        for word in ('공짜로 즐겨요', '입장료 없음', '무상 관람', '0원 입장', '무료'):
+            self.assertIn('free', line(paid, word), word)
+        self.assertEqual(line(POHANG, '공짜로 즐겨요'), [])
+        self.assertIn('free', line('47cc094e-78e5-4ebc-a7d5-f65430621719', '무료'))
+        self.assertIn('free', line('47cc094e-78e5-4ebc-a7d5-f65430621719', '무료, 유료 아님'))
+        self.assertIn('free', line('47cc094e-78e5-4ebc-a7d5-f65430621719', '일부 입장료 없음'))
+        self.assertEqual(line('47cc094e-78e5-4ebc-a7d5-f65430621719', '무료, 일부 체험 유료'), [])
+        self.assertNotIn('free', line(POHANG, '10,000원'))  # '0원' inside 10,000원 is not a free word
+
+    def test_summary_free_is_attributed_to_the_named_festival(self):
+        host = fp.host(BUNDLE, datetime.fromisoformat('2026-11-20T07:00:00+09:00'))
+        known = fp.known_names(BUNDLE)
+        picks = [dict(id=POHANG, line='불꽃쇼 구경'), dict(id='06c85b3f-b302-4025-9cc5-27ec77b3a5ff', line='반려견과 함께')]
+        bad = '포항국제불빛축제는 무료이고 포천펫스타도 모두 무료예요. 주말 나들이로 좋아요.'
+        self.assertIn('free', fp.review(draft(summary=bad, picks=picks), host, known))
+        self.assertIn('free', fp.review(draft(summary='이번 주말은 무료로 즐길 축제가 많아요. 가볍게 다녀오세요.', picks=picks), host, known))
+        ok = '포항국제불빛축제는 무료예요. 포천펫스타는 유료이니 입장료를 확인하세요.'
+        self.assertEqual(fp.review(draft(summary=ok, picks=picks), host, known), [])
 
     def test_summary_names_non_candidate(self):
         d = draft(summary='이번 주말 영주 사과축제를 즐기고 다음 달 해운대 빛축제도 기대해 보세요.')
