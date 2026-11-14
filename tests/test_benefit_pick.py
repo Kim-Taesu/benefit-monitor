@@ -101,13 +101,15 @@ class ReviewTests(unittest.TestCase):
     def test_text_must_not_talk_about_price(self):
         for line in ('비용이 없어요', '비용 이 없어요', '구매 안 해도 돼요', '유료가 아니에요', '유료 아닌 코스', '결제 면제예요', '비용 안 받아요',
                      '참가비 면제', '유료 아닙니다', '반액', '구매하면 돈 안 들어요', '오 퍼센트 할인', '천원', '무료', '공짜 수업',
-                     '무상 지원', '입장료 안내', 'FREE 혜택', '공으로 받아요', '결제 없이 이용', '절반 가격'):
+                     '돈 안 들어요', '부담 없이', '부담이 없어요', '무상 지원', '입장료 안내', 'FREE 혜택', '공으로 받아요', '결제 없이 이용', '절반 가격'):
             self.assertIn('price', bp.review(one(CID, line), HOST), line)
         self.assertIn('price', bp.review(one(BID, '무료 버스'), HOST))
         self.assertIn('price', bp.review(draft(summary='요가 강좌와 화상면접실은 무료예요 한번 확인해 보세요.'), HOST))
         self.assertIn('price', bp.review(draft(summary='서울사랑상품권 행사와 화상면접실 모두 무료예요 확인해 보세요.'), HOST))
 
     def test_plain_lines_pass(self):
+        for line in ('시민 프로그램 안내', '돈가스 체험', '프로젝트 참여', '프로모션 소개', '돈암동 센터', '부담스럽게 느끼지 않게'):
+            self.assertEqual(bp.review(one(BID, line), HOST), [], line)
         self.assertEqual(bp.review(one(CID, '결제액 추가 페이백, 상품권으로 받아요'), HOST), [])
         self.assertEqual(bp.review(one(BID, '야간 자율주행버스 체험'), HOST), [])
 

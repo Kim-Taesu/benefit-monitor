@@ -74,7 +74,8 @@ def host(items, now):
 
 
 # The page shows cost from fee_status (per-line badge); model text must not talk about price at all.
-PRICE = re.compile(r'무료|공짜|무상|유료|비용|참가비|수강료|입장료|요금|가격|면제|반값|반액|절반|퍼센트|프로|할인율|[천만억]\s*원|돈|부담'
+PRICE = re.compile(r'무료|공짜|무상|유료|비용|참가비|수강료|입장료|요금|가격|면제|반값|반액|절반|퍼센트|할인율|[천만억]\s*원'
+                   r'|(?<![가-힣])돈(?:[을이은도만]|\s|$)|부담\s*(?:없|덜|이\s*없|스럽지\s*않)'
                    r'|free|공으로|(?:구매|결제)(?:하지)?\s*(?:안|않|없|말)', re.IGNORECASE)
 DIGITS = re.compile('[0-9\uff10-\uff19]')
 RELATIVE = re.compile(r'오늘|내일|모레|이번\s?주|다음\s?주|주말|월말|연말')
