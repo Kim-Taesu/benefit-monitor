@@ -201,7 +201,7 @@ class ReviewTests(unittest.TestCase):
     def test_relative_time_words_rejected(self):
         # The page shows each festival's dates; text says what and where, never when (2026-11-14 review).
         for word in ('오늘', '내일', '모레', '어제', '이번 주', '이번주', '다음 주', '주말', '평일', '마지막 날', '마지막날',
-                     '막바지', '곧', '임박', '서두르세요'):
+                     '막바지', '곧', '임박', '서두르세요', '서둘러 가요'):
             self.assertIn('relative', self.errors(draft(picks=[dict(id=POHANG, line=f'{word} 불빛 행사')])), word)
         self.assertIn('relative', self.errors(draft(summary='이번 주말 포항국제불빛축제가 열려요. 밤 불빛 행사를 즐겨 보세요.')))
         self.assertIn('relative', self.errors(draft(picks=[dict(id=APPLE, line='오늘 마지막 날이에요, 일부 유료')])))
@@ -277,7 +277,7 @@ class PublicTests(unittest.TestCase):
         self.assertEqual((pick['source'], pick['summary']), ('rule', None))
         other = [{'kind': 'festival_pick_text', 'day': '2026-11-13'}]
         self.assertEqual(fp.public(stored(), BUNDLE, other, NOW)['source'], 'ai')
-        self.assertEqual(fp.apply_mute(stored(), BUNDLE, mute)['source'], 'rule')
+        self.assertEqual(fp.apply_mute(stored(), BUNDLE, mute, NOW)['source'], 'rule')
 
     def test_rule_pick_order_and_size(self):
         host = fp.host(BUNDLE, NOW)

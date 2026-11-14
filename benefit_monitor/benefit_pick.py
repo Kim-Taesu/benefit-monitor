@@ -32,7 +32,7 @@ CLAIMS = ('누구나', '받을 수 있', '확실', '보장', '무조건', '100%'
           '모두 받')
 STOCK = ('남은', '잔여', '소진 전', '자리 있')
 # The page shows the deadline; text never pushes (2026-11-14 review).
-URGENCY = re.compile(r'임박|곧\s?끝|곧\s?마감|막바지|서두르|마지막|놓치기 전')
+URGENCY = re.compile(r'임박|곧\s?끝|곧\s?마감|막바지|서두르|서둘러|마지막|놓치기\s?전')
 PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
 
@@ -171,7 +171,7 @@ def apply_mute(pick, items, takedowns, now):
     return rule_pick(_input(rows, now), now) if len(rows) >= MIN_CANDIDATES else None
 
 
-def _fill(pick, items, now):
+def _fill(pick, items):
     """Public lines: {'id','source','url','line'} taken from the current items."""
     by_id = {item_id(row): row for row in items or []}
     lines = [dict(id=p['id'], source=by_id[p['id']]['source'], url=by_id[p['id']]['url'], line=p['line'])
@@ -228,7 +228,7 @@ def public(pick, items, takedowns, now):
     """Re-check a stored (or already public) pick against the current items; None when it cannot be shown today."""
     try:
         result = _public(_stored_form(pick), items, takedowns, now)
-        return _fill(result, items, now) if result else None
+        return _fill(result, items) if result else None
     except (KeyError, TypeError, ValueError):
         return None
 
