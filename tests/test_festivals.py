@@ -24,6 +24,46 @@ def row(**over):
     return data
 
 
+FIREWORKS = ('운정호수공원 불꽃축제는 2017년 주민들의 손으로 시작된 축제이다. 2026년 제8회를 맞이한 올해 축제의 주제는 ‘다시, 빛’이며, '
+             '10월 31일 운정호수공원 일대에서 개최된다. 축제 당일 오후 2시부터 오후 6시 30분까지 거리예술 공연과 체험부스가 운영되며, '
+             '오후 7시 30분에는 점등식과 불꽃쇼가 진행된다. 또한 축제 당일부터 12월 31일까지 불빛정원을 운영하여 빛을 활용한 경관을 선보인다.')
+
+
+class MainDayTests(unittest.TestCase):
+    """2026-11-14: the listing ran a one-day fireworks festival to 12/31 (its light garden), so the card
+    still showed it two weeks after the day and linked to the page of the finished event."""
+
+    def held(self, summary, start='2026.10.31', end='2026.12.31'):
+        return festivals.parse(row(fstvlOutlCn=summary, fstvlBgngDe=start, fstvlEndDe=end))['end']
+
+    def test_single_day_festival_with_a_long_side_programme_ends_on_its_day(self):
+        self.assertEqual(self.held(FIREWORKS), '2026-10-31')
+        item = festivals.parse(row(fstvlOutlCn=FIREWORKS, fstvlBgngDe='2026.10.31', fstvlEndDe='2026.12.31'))
+        self.assertIn('12월 31일까지 불빛정원', item['summary'])  # The official text itself is untouched.
+        now = datetime.fromisoformat('2026-11-14T06:00:00+09:00')
+        raw = row(fstvlOutlCn=FIREWORKS, fstvlBgngDe='2026.10.31', fstvlEndDe='2026.12.31')
+        self.assertEqual(festivals.select([raw], now, 90), [])
+        self.assertEqual(len(festivals.select([raw], datetime.fromisoformat('2026-10-31T20:00:00+09:00'), 90)), 1)
+
+    def test_listing_period_is_kept_whenever_the_text_is_not_that_clear(self):
+        kept = '2026-12-31'
+        for summary in (
+                '해운대구는 10월 31일 점등식을 시작으로 12월 31일까지 해운대빛축제를 연다.',            # a range
+                '10월 31일부터 12월 31일까지 매주 금, 토, 일 진행되는 힐링축제이다.',                   # a range
+                '축제는 12월 31일까지 이어지며, 개막식은 10월 31일 호수공원 일대에서 개최된다.',        # the opening only
+                '올해 축제는 10월 31일 개막식과 함께 호수공원에서 개최된다.',                          # the opening only
+                '지난해 10월 31일 개최된 축제에는 10만 명이 찾았다.',                                  # not this year's statement
+                '11월 7일 호수공원 일대에서 개최된다.',                                                # another day than the start
+                '10월 31일 호수공원에서 개최된다. 12월 1일 시민회관에서도 개최된다.',                   # two days
+                '빛축제가 10월 31일 호수공원 일대에서 개최된다. 축제는 12월 31일까지 매일 저녁 이어진다.',  # goes on
+                '10월 31일 호수공원에서 개최된다. 이후 12월 25일 한 번 더 열린다.',                      # returns
+                '10월 31일 호수공원 일대에서 개최된다. ' + '빛의 정원을 거닐어 보자. ' * 40 + '12월 24일 시민회관에서도 개최된다.',  # past the card cut
+                '빛으로 물드는 호수공원의 겨울 축제이다.'):
+            self.assertEqual(self.held(summary), kept, summary)
+        # A short listing is never cut: "개최된다" on the first day of a three-day festival is ordinary.
+        self.assertEqual(self.held('10월 31일 호수공원 일대에서 개최된다.', end='2026.11.02'), '2026-11-02')
+
+
 class FestivalTests(unittest.TestCase):
     def test_parse_keeps_official_fields_and_strips_private_contacts(self):
         item = festivals.parse(row())

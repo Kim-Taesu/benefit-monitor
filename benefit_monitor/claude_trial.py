@@ -637,15 +637,21 @@ def main():
         (destination/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
         print(json.dumps({'status':'validated_draft','publication_approved':False,'semantic_review':'required','cached':client.last_cached,'run_id':run_id,'output':str(destination),'usage':result['usage']},ensure_ascii=False))
         return 0
-    except (ValueError,KeyError,TypeError):
+    except (ValueError,KeyError,TypeError) as error:
         if draft is not None:
             (destination/'rejected-result.json').write_text(json.dumps(draft,ensure_ascii=False,indent=2)+'\n')
-        failure = report or {'valid':False,'error':'invalid_or_truncated_model_output',
-                             'stop_reason':result.get('stop_reason'),
-                             'content_types':[x.get('type') for x in result.get('content',[])]}
+        failure = report or rejection(result,error)
         (destination/'validation.json').write_text(json.dumps(failure,ensure_ascii=False,indent=2)+'\n')
         print(json.dumps({'status':'rejected_draft','cached':client.last_cached,'run_id':run_id,'usage':result.get('usage')}))
         return 1
+
+
+def rejection(result,error):
+    """validation.json for an answer that never reached the contract report. `detail` names the host
+    rule that refused it (2026-11-14: a complete answer with one bad slot read as "truncated")."""
+    return {'valid':False,'error':'invalid_or_truncated_model_output','detail':str(error)[:200],
+            'stop_reason':result.get('stop_reason'),
+            'content_types':[x.get('type') for x in result.get('content',[])]}
 
 
 if __name__ == '__main__':

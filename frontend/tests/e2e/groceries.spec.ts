@@ -35,25 +35,29 @@ test('weekly pick card shows the AI summary, linked prices and the rule fallback
  await expect(card.locator('.grocery-pick-menu')).toHaveCount(0);
 });
 
-for(const width of [390,1440])test(`weekly pick sits on top and 더보기 opens the grocery tab ${width}`,async({page})=>{
+// 2026-11-14: the weekly pick is no longer pinned above the tabs; it shows inside the grocery tab only.
+for(const width of [390,1440])test(`weekly pick shows only inside the grocery tab ${width}`,async({page})=>{
  await page.setViewportSize({width,height:844});
  await page.clock.install({time:new Date(NOW)});
  await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries,grocery_pick:weekly})}));
  await page.goto('./');
- const teaser=page.locator('.pick-teaser');
- await expect(teaser).toBeVisible();
- // The teaser comes before the tabs and the benefit list.
- const [top,tabs]=await Promise.all([teaser.boundingBox(),page.locator('#site-tabs').boundingBox()]);
- expect(top!.y).toBeLessThan(tabs!.y);
- await expect(teaser.locator('li')).toHaveText([/파 2,597원.*파전/,/양파 1,893원/,/돼지 삼겹살 2,768원/]);
- const [m,d]=kst(1).slice(5).split('-').map(Number);
- await expect(teaser.locator('.pick-teaser-date')).toHaveText(`전국 평균 소매가 · 농·수산물 ${m}/${d} 조사 · 육류 ${m}/${d} 조사 기준`);
+ await expect(page.locator('#results')).toBeVisible();
+ await expect(page.locator('.pick-teaser')).toHaveCount(0);
+ await expect(page.getByText('이번 주 장보기 추천')).toBeHidden();
  await expect(page.locator('#groceries')).toBeHidden();
- await teaser.getByRole('button',{name:/장보기 시세 더보기/}).click();
- await expect(page.getByRole('tab',{name:'장보기'})).toHaveAttribute('aria-selected','true');
- await expect(page.locator('#groceries')).toBeVisible();
+ // Nothing sits between the page heading and the tabs.
+ const [hero,tabs]=await Promise.all([page.locator('.hero').boundingBox(),page.locator('#site-tabs').boundingBox()]);
+ expect(tabs!.y-(hero!.y+hero!.height)).toBeLessThan(40);
+ await page.getByRole('tab',{name:'장보기'}).click();
  await expect(page.locator('#results')).toBeHidden();
  expect(new URL(page.url()).hash).toBe('#groceries');
+ const card=page.locator('.grocery-pick');
+ await expect(card).toBeVisible();
+ await expect(page.getByText('이번 주 장보기 추천')).toHaveCount(1);
+ await expect(card.locator('li')).toHaveText([/파 2,597원.*파전/,/양파 1,893원/,/돼지 삼겹살 2,768원/]);
+ // The card is in the top part of the tab: above the category buttons and the price list.
+ const [pick,list]=await Promise.all([card.boundingBox(),page.locator('.grocery-tabs').boundingBox()]);
+ expect(pick!.y).toBeLessThan(list!.y);
  await page.getByRole('tab',{name:/혜택/}).click();
  await expect(page.locator('#results')).toBeVisible();
  expect(new URL(page.url()).hash).toBe('');
@@ -120,7 +124,7 @@ test('missing grocery bundle hides the section and the shortcut',async({page})=>
  await page.goto('./');
  await expect(page.locator('#results')).toBeVisible();
  await expect(page.locator('#groceries')).toHaveCount(0);
- await expect(page.locator('.pick-teaser')).toHaveCount(0);
+ await expect(page.getByText('이번 주 장보기 추천')).toHaveCount(0);
 });
 
 const quickGroceries={...groceries,meat:{...groceries.meat,items:[...groceries.meat.items,

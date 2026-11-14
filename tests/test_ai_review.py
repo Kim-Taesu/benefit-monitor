@@ -136,6 +136,31 @@ class AIReviewTests(unittest.TestCase):
             normal=run(self.root,path,now=NOW)
         self.assertNotIn('ai_review',normal)
 
+    def test_cli_brings_back_delisted_drafts_but_not_dismissed_ones(self):
+        # 2026-11-14: a held draft the gate would now publish is read again although today's collection
+        # no longer lists it; one that verification dismissed (ended / not a benefit) stays out.
+        from benefit_monitor.cli import run
+        from benefit_monitor.models import Benefit
+        def stored(url):
+            return Benefit(source='seoul',url=url,title='',summary='').id,{
+                'source':'seoul','url':url,'model_status':'validated_draft','run_id':'a'*64,
+                'auto_publish':{'publish':False,'reasons':['no_current_evidence']},'observed_at':(NOW-timedelta(days=5)).isoformat()}
+        (keep_id,keep),(gone_id,gone)=stored('https://www.seoul.go.kr/news/7'),stored('https://www.seoul.go.kr/news/8')
+        path=self.root/'cache/ai_review/state.json';path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(json.dumps({'items':{keep_id:keep,gone_id:gone}}))
+        (self.root/'cache/operational_state.json').write_text(json.dumps({'schema_version':1,'sources':{},'items':{
+            gone_id:{'source':'seoul','first_seen_at':(NOW-timedelta(days=6)).isoformat(),
+                     'ai_dismissed':{'reason':'ended','body_hash':'1'*64,'at':(NOW-timedelta(days=4)).isoformat()}}}}))
+        incoming=self.root/'incoming.json';incoming.write_text('[]')
+        # The stored run would publish on a fresh reread; a new answer is held (keeps this test off the record writer).
+        verdict=lambda root,run,now,reread=False:{'publish':reread,'reasons':[] if reread else ['test'],'record':None}
+        with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport), \
+             patch('benefit_monitor.ai_review.auto_decide',side_effect=verdict), \
+             patch('benefit_monitor.ai_review.invoke',return_value={'status':'validated_draft','run_id':'b'*64}):
+            run(self.root,incoming,online=True,now=NOW,ai_review=True,ai_execute=True)
+        pages=[u for u in self.requests if not u.endswith('/robots.txt')]
+        self.assertEqual(pages,['https://www.seoul.go.kr/news/7'])
+
     def test_image_only_event_sources_never_reach_paid_research(self):
         from benefit_monitor.cli import run
         self.config['sources'][0]['ai_review']=False

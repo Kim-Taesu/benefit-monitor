@@ -132,7 +132,13 @@ def _organizer_names():
 
 
 def _end_point(value):
-    """(KST date, comparable instant or None) for a canonical date or timestamp string."""
+    """(KST date, comparable instant or None) for a canonical date or timestamp string.
+
+    A deadline the official text gave as a date only arrives as that day's DAY_END marker and is
+    read as the date again: current through that day, and no time is shown (approved 2026-11-14)."""
+    from .wire_format import DAY_END
+    if value.endswith(DAY_END):
+        return date.fromisoformat(value[:-len(DAY_END)]), None
     if 'T' in value:
         moment = datetime.fromisoformat(value.replace('Z', '+00:00'))
         if moment.tzinfo is None:

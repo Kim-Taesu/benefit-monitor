@@ -12,7 +12,7 @@ AI는 후보 참조·조사 상태·중단 사유와 사실(field/value/status/e
 |---|---|
 | eligibility | scope, required[], not_confirmed[] 객체 |
 | event_period | start/end 날짜 객체; YYYY-MM-DD 또는 null |
-| application_period | start/end 객체; timezone이 있는 timestamp 또는 null |
+| application_period | start/end 객체; timezone이 있는 timestamp 또는 null. 모델이 날짜만 쓰면 호스트가 그날 00:00:00~23:59:59(KST)로 바꾸고, 공개 판정은 23:59:59를 "시각 미기재"로 읽는다 |
 | fee_status | free/paid/conditional |
 | cost_details | 참가·재료·최소구매 등 비용 설명 문자열 |
 | payment_conditions | 결제수단·포인트·중복 적용 등 문자열 |

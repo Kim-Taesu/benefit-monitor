@@ -303,6 +303,43 @@ class RecheckTests(Base):
         self.assertEqual(auto_release.mark_checked(fresh, CID, None, later), 'gone')
         self.assertEqual(fresh[CID]['withdrawn_reason'], 'source_gone')
 
+    def test_record_approved_before_counters_were_dropped_keeps_its_place(self):
+        # 2026-11-14: the stored original page differs from today's only by its view counter, so the
+        # record moves to the cleaned hash instead of being withdrawn. A real edit still withdraws.
+        from benefit_monitor.collectors.body import stable_text
+        url = 'https://official.example/ai/1'
+        old_body = '공식 전시 안내 등록일 2026-11-05 조회수 388 첨부파일. 전시는 2026년 11월 30일까지 열립니다.'
+        old = hashlib.sha256(old_body.encode()).hexdigest()
+        new = hashlib.sha256(stable_text(old_body.replace('388', '475')).encode()).hexdigest()
+        key = hashlib.sha256(url.encode()).hexdigest()
+        save(self.root / f'cache/ai_review/documents/{key}-{old}.json', dict(body=old_body))
+        later = NOW + timedelta(hours=2)
+
+        def approved():
+            return {CID: record(review=dict(original_body_hash=old, documents=[dict(url=url, body_hash=old, title='AI 전시')]))}
+        rows = approved()
+        self.assertEqual(auto_release.mark_checked(rows, CID, new, later, root=self.root), 'ok')
+        review = rows[CID]['review']
+        self.assertEqual((review['original_body_hash'], review['documents'][0]['body_hash'], review['checked_at']),
+                         (new, new, later.isoformat()))
+        self.assertNotIn('status', rows[CID])
+        self.assertEqual(auto_release.mark_checked(rows, CID, new, later, root=self.root), 'ok')
+        for other in ('9' * 64, hashlib.sha256(stable_text(old_body + ' 신청은 마감되었습니다.').encode()).hexdigest()):
+            rows = approved()
+            self.assertEqual(auto_release.mark_checked(rows, CID, other, later, root=self.root), 'changed')
+            self.assertEqual(rows[CID]['review']['original_body_hash'], old)
+        # A record already withdrawn is not quietly moved: only a new decision brings it back.
+        rows = approved()
+        rows[CID].update(status='withdrawn', withdrawn_reason='body_changed', withdrawn_at=NOW.isoformat(), recheck_priority=True)
+        self.assertEqual(auto_release.mark_checked(rows, CID, new, later, root=self.root), 'changed')
+        self.assertEqual(rows[CID]['review']['original_body_hash'], old)
+        # Without the stored page (or without a root) nothing is assumed.
+        rows = approved()
+        self.assertEqual(auto_release.mark_checked(rows, CID, new, later), 'changed')
+        (self.root / f'cache/ai_review/documents/{key}-{old}.json').unlink()
+        rows = approved()
+        self.assertEqual(auto_release.mark_checked(rows, CID, new, later, root=self.root), 'changed')
+
     SOURCES = {'test': SOURCE, 'two': dict(id='two', domains=['two.example'], routes=['https://two.example/'], feed_url=None)}
 
     def check(self, approved, page=BODY, error=None, content_type='text/html; charset=utf-8', takedowns=(), now=None):

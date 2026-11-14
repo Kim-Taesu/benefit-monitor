@@ -78,6 +78,23 @@ class ReviewDeskTests(unittest.TestCase):
             self.desk(5).approve('aaaa', confirm=True)
         self.assertEqual(self.desk(6).list(), '검토 대기 없음')
 
+    def test_date_only_deadline_becomes_the_last_day_without_a_time(self):
+        # 2026-11-14: a deadline the notice gave as a date arrives as that day's 23:59:59 marker.
+        # The draft a person approves shows the day, never a time nobody wrote.
+        run = self.root/'.tools/claude-trial/live/runs'/RUN/'result.json'
+        self.desk(1).show('aaaa')
+        for minute, (stamp, want) in enumerate((
+                ('2026-11-20T23:59:59+09:00', (None, '2026-11-20')),
+                ('2026-12-05T23:59:59+09:00', (None, '2026-11-30')),  # The event ends first.
+                ('2026-11-20T18:00:00+09:00', ('2026-11-20T18:00:00+09:00', '2026-11-30'))), 2):
+            result = load(run, None)
+            result['records'][0]['proposed_fields']['deadline_at'] = stamp
+            save(run, result)
+            path = self.desk(minute).prepare('aaaa')
+            draft = load(path, None)
+            self.assertEqual((draft['deadline_at'], draft['valid_until']), want)
+            Path(path).unlink()
+
     def test_private_text_or_swapped_url_is_refused_without_writing(self):
         path = self.desk(1).prepare('aaaa')
         draft = load(path, None)

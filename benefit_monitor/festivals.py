@@ -61,6 +61,40 @@ def _homepage(raw):
     return url if len(url) <= LIMITS["homepage"] else ""
 
 
+# "10월 31일 운정호수공원 일대에서 개최된다": the one day the text says the festival itself is held on.
+HELD = re.compile(r"(\d{1,2})월\s*(\d{1,2})일[^.!?。]*?개최(?:된다|한다|됩니다|합니다|되며|하며)")
+MONTH_DAY = re.compile(r"\d{1,2}월\s*\d{1,2}일")
+# Ranges, repeats, ceremonies and earlier editions: the sentence is then not a plain one-day statement.
+NOT_ONE_DAY = re.compile(r"부터|까지|[~∼～]|동안|매주|매일|개막|폐막|점등|전야|기념식|선포|지난|작년|전년")
+# In another sentence, a date together with one of these says the festival itself goes on or returns.
+GOES_ON = re.compile(r"축제[는가은이]|열린다|열립니다|열리|이어진|이어집|계속|진행|개최")
+SIDE_PROGRAMME_DAYS = 7
+
+
+def main_day(summary, start, end):
+    """True when the listing period runs on for a side programme after a one-day festival.
+
+    Approved 2026-11-14: a fireworks festival held on 10/31 was listed to 12/31 because its light
+    garden stays lit, so the card showed it as running and linked to the page of the finished day.
+    Only an unmistakable text counts: every "…개최된다" sentence names one date, that date is the
+    listed start, no other dated sentence says the festival goes on, and the listing runs at least
+    SIDE_PROGRAMME_DAYS past it. Anything else keeps the official period."""
+    first, last = date.fromisoformat(start), date.fromisoformat(end)
+    if (last - first).days < SIDE_PROGRAMME_DAYS:
+        return False
+    days = set()
+    for sentence in re.split(r"(?<=[.!?。])\s+", summary):
+        found = HELD.search(sentence)
+        if not found:
+            if MONTH_DAY.search(sentence) and GOES_ON.search(sentence):
+                return False
+            continue
+        if NOT_ONE_DAY.search(sentence) or len(MONTH_DAY.findall(sentence)) != 1:
+            return False
+        days.add((int(found.group(1)), int(found.group(2))))
+    return days == {(first.month, first.day)}
+
+
 def parse(row):
     ident = str(row.get("fstvlCntntsId") or "")
     start, end = _date(row.get("fstvlBgngDe")), _date(row.get("fstvlEndDe"))
@@ -68,6 +102,9 @@ def parse(row):
     if not ID.fullmatch(ident) or not name or not start or not end or end < start:
         return None
     fee_text = _text(row.get("fstvlUtztFareInfo"), LIMITS["fee_text"])
+    # The whole official text is read here, not the shortened summary shown on the card.
+    if main_day(_text(row.get("fstvlOutlCn"), 10 ** 6), start, end):
+        end = start
     return {
         "id": ident, "name": name, "start": start, "end": end,
         "region": _text(row.get("areaNm"), LIMITS["region"]),

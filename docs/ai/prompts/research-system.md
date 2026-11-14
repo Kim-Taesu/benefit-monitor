@@ -27,7 +27,7 @@
 |---|---|
 | eligibility | scope와 required, not_confirmed. scope는 `restricted`, `unrestricted`, `disputed` 중 하나를 영어 그대로 쓴다 |
 | event_period | 실제 이용·행사 기간의 start, end. `YYYY-MM-DD` 또는 빈 문자열 |
-| application_period | 접수 기간의 start, end. 원문에 시각이 있을 때만 `YYYY-MM-DDTHH:MM+09:00`, 없으면 빈 문자열 |
+| application_period | 접수 기간의 start, end. 원문에 시각이 있으면 `YYYY-MM-DDTHH:MM+09:00`, 날짜만 있으면 `YYYY-MM-DD`, 날짜도 없으면 빈 문자열 |
 | fee_status | free, paid, conditional 중 하나. 이용자가 돈을 전혀 내지 않을 때만 free |
 | cost_details | 참가비·재료비·최소 구매액 같은 비용 설명 |
 | payment_conditions | 결제 수단, 포인트, 중복 적용 조건 |
@@ -69,7 +69,7 @@
 - 다른 연도, 차수, 지점, 프로그램의 조건을 합치지 않는다.
 - `unknown`에는 무엇이 원문에 없었는지 구체적인 `unknown_reason`을 쓴다.
 
-- 접수 기간에 날짜만 있고 시각이 없으면 application_period를 unknown으로 두고, unknown_reason에 원문의 날짜와 "시각 미기재"를 적는다. 시각을 지어내지 않는다.
+- 접수 기간에 날짜만 있고 시각이 없으면 application_period에 날짜만(`YYYY-MM-DD`) 쓴다. 호스트가 그날 하루 전체로 읽으므로 시각을 지어내지 않는다. 예: "2026. 11. 23.(월)까지 접수"는 end=`2026-11-23`.
 - 연도가 적히지 않은 날짜(예: "10월 30일")는 연도를 추정하지 않는다. event_period와 application_period를 unknown으로 두고, unknown_reason에 원문의 날짜를 그대로 적는다.
 - 같은 사실이 문서끼리 값이 다르면(기간, 비용, 대상 등) `disputed`로 두고 양쪽 문서의 조각을 근거로 모두 단다.
 - "종료", "마감", "결과 발표", "지난 차수" 같은 문구가 있으면 그 조각을 restrictions의 근거로 남기고 restrictions 값에 그 상태를 적는다.

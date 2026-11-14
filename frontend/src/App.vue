@@ -6,15 +6,12 @@ import FestivalSection from './FestivalSection.vue';
 import HealthSection from './HealthSection.vue';
 import GrocerySection from './GrocerySection.vue';
 import GradeHelp from './GradeHelp.vue';
-import {won,monthDay} from './groceries';
 import {parseGroceries,parsePick,parseBaselines,parseDiscounts} from './groceries';
 import {DISTRICTS,isSeoulCandidate} from './beta';
 import type {Topic} from './beta';
 const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=ref<Topic|null>(null);
 function selectTopic(topic:Topic|null){selectedTopic.value=topic;}
 const gradeHelp=ref<InstanceType<typeof GradeHelp>|null>(null);
-// 'YYYY-MM-DD' -> 'M/D' (조사일 표시, 2026-11-10: 농산물·육류 조사일이 다를 수 있어 둘 다 보여준다).
-const md=(d:string|null|undefined)=>monthDay(d??null);
 // 탭(2026-11-10): 혜택·장보기·축제, 2026-11-11 보건소 추가. 주소의 #groceries·#festivals·#health로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
 type Tab='benefits'|'groceries'|'festivals'|'health';
 const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'},{id:'health',label:'보건소'}];
@@ -120,13 +117,6 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
   <header class="site-header"><div class="header-inner"><a class="brand" href="./" aria-label="Benefit Monitor 홈"><span class="brand-mark" aria-hidden="true">b<span>m</span></span>Benefit Monitor<span class="version">2.0</span></a><section class="overview" aria-label="브리핑 요약"><div><span class="metric-label">공개 혜택</span><strong>{{ loading?'—':all.length }}<small>건</small></strong></div><div><span class="metric-label">7일 내 마감</span><strong>{{ loading?'—':urgent }}<small>건</small></strong></div><div class="last-verified"><span class="metric-label">데이터 갱신</span><strong>{{ loading?'—':formatDate(updated) }}</strong></div><div class="last-verified"><span class="metric-label" title="사람이 공식 원문과 대조해 공개를 승인한 가장 최근 시각">마지막 사람 승인</span><strong>{{ loading?'—':formatDate(newest) }}</strong></div></section><div class="header-actions"><button type="button" :aria-pressed="savedOnly" :aria-label="'즐겨찾기만 보기 '+savedItems.length" @click="savedOnly=!savedOnly"><span aria-hidden="true">{{ savedOnly?'★':'☆' }} {{ savedItems.length }}</span></button><button type="button" aria-label="검색 조건 공유" @click="shareSearch">공유</button></div></div></header>
   <main class="container">
     <section class="hero" aria-labelledby="hero-title"><h1 id="hero-title">오늘의 혜택, <span>한눈에.</span></h1><p class="hero-description">로그인 없이 탐색하고, 조건은 공식 안내에서 확인하세요.</p></section>
-    <article v-if="groceryPick" class="pick-teaser" aria-labelledby="pick-teaser-title">
-      <div class="card-meta"><h2 id="pick-teaser-title">이번 주 장보기 추천</h2><span class="grocery-badge" :class="groceryPick.source==='ai'?'ai':'normal'">{{ groceryPick.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
-      <p v-if="groceryPick.summary" class="pick-teaser-summary">{{ groceryPick.summary }}</p>
-      <ul class="pick-teaser-list"><li v-for="p in groceryPick.picks.slice(0,3)" :key="p.row.kind+p.row.id"><strong>{{ p.row.name }}</strong> {{ won(p.row.current) }}<span v-if="p.menu"> → {{ p.menu }}</span></li></ul>
-      <p class="pick-teaser-date">전국 평균 소매가 · 농·수산물 {{ md(groceries?.produceDate) }} 조사<template v-if="groceries?.meatDate"> · 육류 {{ md(groceries.meatDate) }} 조사</template> 기준</p>
-      <button type="button" class="pick-teaser-more" @click="setTab('groceries',true)">장보기 시세 더보기 <span aria-hidden="true">→</span></button>
-    </article>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="t.id==='benefits'&&!loading" class="tab-count">{{ all.length }}</span></button></div></nav>
     <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits">
     <BetaPanel ref="topicPanel" :items="all" :now="now" :query="filters.q" :published-data="raw" @select-topic="selectTopic" />

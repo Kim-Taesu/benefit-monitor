@@ -219,6 +219,11 @@ pre{{white-space:pre-wrap;word-break:break-word;font:inherit}} mark{{background:
         application = supported('application_period') or {}
         valid_until = p.get('valid_until') or event.get('end')
         deadline = p.get('deadline_at') or application.get('end')
+        from .wire_format import DAY_END
+        if deadline and deadline.endswith(DAY_END):
+            # The notice gave a date only: shown as the last day, never as a time nobody wrote.
+            day = deadline[:-len(DAY_END)]
+            valid_until, deadline = min(valid_until, day) if valid_until else day, None
         if deadline and not valid_until:
             valid_until = datetime.fromisoformat(deadline).astimezone(SEOUL).date().isoformat()
         parts = [p.get('conditions') or supported('conditions')]

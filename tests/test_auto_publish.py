@@ -167,6 +167,23 @@ class AutoPublishTests(unittest.TestCase):
         self.assertEqual(result['record']['deadline_at'], '2026-11-20T18:00+09:00')
         self.assertEqual(result['record']['valid_until'], '2026-11-20')
 
+    def test_date_only_application_deadline_lasts_that_day_and_shows_no_time(self):
+        # 2026-11-14: "11월 20일까지" without a time is current through that day; no time is invented.
+        body = D1 + '\n신청은 2026-11-20까지입니다.'
+        second = D2 + '\n신청 마감은 2026-11-20입니다.'
+        facts = period_facts(application_period=sup({'start': '', 'end': '2026-11-20'}, 'd1s5', 'd2s4'))
+        result = self.decide(host(body, second), facts)
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual((result['record']['valid_until'], result['record']['deadline_at']), ('2026-11-20', None))
+        last_day = datetime(2026, 11, 20, 22, tzinfo=KST)
+        docs = [doc(1, body, last_day - timedelta(hours=1)), doc(2, second, last_day - timedelta(hours=1))]
+        self.assertTrue(self.decide(host(docs=docs), facts, now=last_day)['publish'])
+        day_after = datetime(2026, 11, 21, 0, 30, tzinfo=KST)
+        docs = [doc(1, body, day_after - timedelta(minutes=10)), doc(2, second, day_after - timedelta(minutes=10))]
+        self.assertIn('no_current_evidence', self.decide(host(docs=docs), facts, now=day_after)['reasons'])
+        passed = period_facts(application_period=sup({'start': '', 'end': '2026-11-05'}, 'd1s5'))
+        self.assertIn('no_current_evidence', self.decide(host(D1 + '\n신청은 2026-11-05까지입니다.', D2), passed)['reasons'])
+
     def test_same_body_two_urls_counts_once(self):
         base = host(docs=[doc(1, D1), doc(2, D1, url='https://www.seoul.go.kr/news/copy')])
         facts = period_facts(fee_status=sup('free', 'd1s3', 'd2s3'), event_period=sup(
@@ -520,6 +537,156 @@ class AutoPublishIntegrationTests(unittest.TestCase):
                 patch.object(ai_review.OfficialReader, 'read', side_effect=fail):
             ai_review.review_candidates(self.root, [older, ready], NOW, 1, False)
         self.assertEqual(read, [ready['url'], older['url']])
+
+    def _research(self, facts, now, prompt, first_body=None, expect_model=None, candidates=None):
+        """One review run over the art-show candidate with a fixed prompt fingerprint."""
+        from benefit_monitor import ai_review
+        candidate = {'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1', 'title': '서울 미술 전시', 'summary': '검토 대기'}
+        cid = ai_review.Benefit(**candidate).id
+        base = json.loads(json.dumps(self.base)); base['candidates'][0]['candidate_id'] = cid
+        if first_body is not None:
+            base['documents'][0].update(body=first_body, body_hash=hashlib.sha256(first_body.encode()).hexdigest())
+        docs = base['documents']
+        stored = getattr(self, 'stored_run', None)
+        if facts is not None:
+            draft = draft_for(base, **facts)
+            for record in draft['records']:
+                record['candidate_id'] = cid
+            stored = self.stored_run = (draft, base)
+        with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: dict(docs[0], links=[])), \
+                patch('benefit_monitor.ai_review._related_docs', return_value=[dict(d, links=[]) for d in docs[1:]]), \
+                patch('benefit_monitor.ai_review.fingerprint', return_value=prompt), \
+                patch('benefit_monitor.ai_review.invoke', return_value={'status': 'validated_draft', 'run_id': 'e' * 64}) as invoke, \
+                patch('benefit_monitor.ai_review.load_run', side_effect=lambda run: self.stored_run):
+            result = ai_review.review_candidates(self.root, [candidate] if candidates is None else candidates, now, 1, True)
+        if expect_model is not None:
+            self.assertEqual(invoke.called, expect_model)
+        if facts is not None and not invoke.called:
+            self.stored_run = stored
+        return cid, result, docs
+
+    def _approved(self):
+        path = self.root/'cache/ai_publish/approved.json'
+        return json.loads(path.read_text()) if path.exists() else {}
+
+    def test_prompt_change_alone_redecides_a_held_draft_without_a_model_call(self):
+        # Approved 2026-11-14: PR #53 changed the prompt, so two drafts the gate would have published
+        # were sent to the model again and came back rejected. Same pages now means a local decision.
+        cid, _, _ = self._research(period_facts(), NOW, 'prompt-1', expect_model=True)
+        path = self.root/'cache/ai_publish/approved.json'
+        path.write_text('{}')  # Held by an older gate.
+        state_path = self.root/'cache/ai_review/state.json'
+        state = json.loads(state_path.read_text())
+        state['items'][cid]['auto_publish'] = {'publish': False, 'reasons': ['no_current_evidence']}
+        state_path.write_text(json.dumps(state))
+        later = NOW + timedelta(days=1)
+        cid, result, docs = self._research(None, later, 'prompt-2', expect_model=False)
+        approved = self._approved()
+        self.assertEqual(list(approved), [cid])
+        self.assertEqual(approved[cid]['review']['checked_at'], later.isoformat())
+        self.assertEqual(result['auto_published'], 1)
+        self.assertEqual(result['skipped_unchanged'], 1)
+        # Published and unchanged: a further prompt change does not send it to the model either.
+        self._research(None, later + timedelta(days=1), 'prompt-3', expect_model=False)
+        self.assertEqual(list(self._approved()), [cid])
+
+    def test_prompt_change_sends_a_draft_that_stays_held_to_the_model(self):
+        held = period_facts(conditions={'unknown_reason': '원문에 없음'})
+        cid, _, _ = self._research(held, NOW, 'prompt-1', expect_model=True)
+        self._research(None, NOW + timedelta(days=1), 'prompt-2', expect_model=True)
+        self.assertEqual(self._approved(), {})
+
+    def test_page_that_differs_only_by_its_view_counter_is_the_same_page(self):
+        # A row researched before 2026-11-14 holds the body with its counter; today's body has none.
+        from benefit_monitor.collectors.body import stable_text
+        counted = D1 + '\n등록일 2026-11-01 조회수 446'
+        cid, _, _ = self._research(period_facts(), NOW, 'prompt-1', first_body=counted, expect_model=True)
+        (self.root/'cache/ai_publish/approved.json').write_text('{}')
+        state_path = self.root/'cache/ai_review/state.json'
+        state = json.loads(state_path.read_text())
+        state['items'][cid]['auto_publish'] = {'publish': False, 'reasons': ['no_current_evidence']}
+        state_path.write_text(json.dumps(state))
+        today = stable_text(counted.replace('446', '475'))
+        later = NOW + timedelta(days=1)
+        stored = self.stored_run
+        from benefit_monitor import ai_review
+        candidate = {'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1', 'title': '서울 미술 전시', 'summary': '검토 대기'}
+        fresh = dict(stored[1]['documents'][0], body=today, body_hash=hashlib.sha256(today.encode()).hexdigest(), links=[])
+        with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: fresh), \
+                patch('benefit_monitor.ai_review._related_docs', return_value=[dict(d, links=[]) for d in stored[1]['documents'][1:]]), \
+                patch('benefit_monitor.ai_review.fingerprint', return_value='prompt-2'), \
+                patch('benefit_monitor.ai_review.invoke') as invoke, \
+                patch('benefit_monitor.ai_review.load_run', return_value=stored):
+            result = ai_review.review_candidates(self.root, [candidate], later, 1, True)
+        self.assertFalse(invoke.called)
+        self.assertEqual(result['changed_ids'], [])
+        record = self._approved()[cid]
+        # The published record points at today's hash, so tomorrow's check compares like with like.
+        self.assertEqual(record['review']['original_body_hash'], fresh['body_hash'])
+        self.assertEqual(record['review']['documents'][0]['body_hash'], fresh['body_hash'])
+        # A record withdrawn earlier for that counter is decided again locally and comes back.
+        path = self.root/'cache/ai_publish/approved.json'
+        withdrawn = dict(record, status='withdrawn', withdrawn_reason='body_changed', withdrawn_at=later.isoformat(),
+                         recheck_priority=True)
+        withdrawn['review'] = dict(record['review'], original_body_hash=hashlib.sha256(counted.encode()).hexdigest())
+        path.write_text(json.dumps({cid: withdrawn}))
+        with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: fresh), \
+                patch('benefit_monitor.ai_review._related_docs', return_value=[dict(d, links=[]) for d in stored[1]['documents'][1:]]), \
+                patch('benefit_monitor.ai_review.fingerprint', return_value='prompt-2'), \
+                patch('benefit_monitor.ai_review.invoke') as invoke, \
+                patch('benefit_monitor.ai_review.load_run', return_value=stored):
+            ai_review.review_candidates(self.root, [candidate], later + timedelta(hours=1), 1, True)
+        self.assertFalse(invoke.called)
+        back = self._approved()[cid]
+        self.assertNotIn('status', back)
+        self.assertEqual(back['review']['original_body_hash'], fresh['body_hash'])
+        # A real edit is still a changed page and goes to the model.
+        edited = dict(fresh, body=today + '\n신청은 마감되었습니다.')
+        edited['body_hash'] = hashlib.sha256(edited['body'].encode()).hexdigest()
+        with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: edited), \
+                patch('benefit_monitor.ai_review._related_docs', return_value=[]), \
+                patch('benefit_monitor.ai_review.fingerprint', return_value='prompt-2'), \
+                patch('benefit_monitor.ai_review.invoke', return_value={'status': 'rejected_draft', 'run_id': None}) as invoke:
+            result = ai_review.review_candidates(self.root, [candidate], later + timedelta(days=1), 1, True)
+        self.assertTrue(invoke.called)
+        self.assertEqual(result['changed_ids'], [cid])
+        self.assertEqual(self._approved()[cid]['status'], 'withdrawn')
+
+    def test_candidates_that_left_the_listing_are_still_settled(self):
+        # Approved 2026-11-14: a held draft the gate would now publish (and a withdrawn published record)
+        # is read again even when today's collection no longer lists it.
+        from benefit_monitor import ai_review
+        cid, _, _ = self._research(period_facts(), NOW, 'prompt-1', expect_model=True)
+        state_path = self.root/'cache/ai_review/state.json'
+        approved_path = self.root/'cache/ai_publish/approved.json'
+        published = self._approved()[cid]
+
+        def hold(reasons=('no_current_evidence',), **row):
+            state = json.loads(state_path.read_text())
+            state['items'][cid].update(auto_publish={'publish': False, 'reasons': list(reasons)}, **row)
+            state_path.write_text(json.dumps(state))
+            approved_path.write_text('{}')
+        later = NOW + timedelta(days=3)
+        with patch('benefit_monitor.ai_review.load_run', side_effect=lambda run: self.stored_run):
+            self.assertEqual(ai_review.stored_candidates(self.root, later, set()), [])  # Published: nothing to settle.
+            hold()
+            self.assertEqual(ai_review.stored_candidates(self.root, later, set()),
+                             [{'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1', 'title': '서울 미술 전시', 'summary': ''}])
+            self.assertEqual(ai_review.stored_candidates(self.root, later, {cid}), [])  # Listed today.
+            # Past its period the gate holds it, so it is not brought back.
+            self.assertEqual(ai_review.stored_candidates(self.root, datetime(2026, 12, 2, 9, tzinfo=KST), set()), [])
+            hold(observed_at=(later - timedelta(days=ai_review.STORED_DAYS + 1)).isoformat())
+            self.assertEqual(ai_review.stored_candidates(self.root, later, set()), [])
+            hold(observed_at=NOW.isoformat())
+            # The stored candidate goes through the usual loop: same pages, published locally.
+            listed = ai_review.stored_candidates(self.root, later, set())
+        self._research(None, later, 'prompt-2', expect_model=False, candidates=listed)
+        self.assertEqual(list(self._approved()), [cid])
+        # A withdrawn record waits for a new decision; an old withdrawal is left alone.
+        approved_path.write_text(json.dumps({cid: dict(published, status='withdrawn', withdrawn_reason='body_changed',
+                                                       withdrawn_at=later.isoformat(), recheck_priority=True)}))
+        self.assertEqual([c['url'] for c in ai_review.stored_candidates(self.root, later, set())], ['https://www.seoul.go.kr/news/1'])
+        self.assertEqual(ai_review.stored_candidates(self.root, later + timedelta(days=ai_review.STORED_DAYS + 1), set()), [])
 
     def test_corrupt_takedowns_or_decide_crash_hold_without_crashing(self):
         from benefit_monitor import ai_review

@@ -423,6 +423,12 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(metadata['preflight']['input_tokens'],812)
         self.assertFalse(metadata['preflight']['billed'])
 
+    def test_rejection_names_the_host_rule(self):
+        from benefit_monitor.claude_trial import rejection
+        failure=rejection({'stop_reason':'end_turn','content':[{'type':'text','text':'{}'}]},ValueError('invalid period format'))
+        self.assertEqual(failure,{'valid':False,'error':'invalid_or_truncated_model_output','detail':'invalid period format',
+                                  'stop_reason':'end_turn','content_types':['text']})
+
     def test_cli_verify_response_is_validated_without_real_network(self):
         import hashlib,shutil
         from contextlib import redirect_stdout

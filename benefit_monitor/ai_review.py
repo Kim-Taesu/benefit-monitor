@@ -1,4 +1,5 @@
 """Optional collection → change detection → model → private human-review queue."""
+from datetime import datetime,timedelta
 import hashlib
 import json
 from pathlib import Path
@@ -8,6 +9,7 @@ import sys
 from . import cost_policy
 from . import auto_publish
 from . import auto_release
+from .collectors.body import stable_text
 from .cross_sources import allowed_domains, related_urls
 from .models import Benefit
 from .official_reader import OfficialReader, project_path
@@ -110,7 +112,9 @@ def _withdraw_if_changed(root,cid,body_hash,now):
     baseline=review.get('original_body_hash') or next(
         (d.get('body_hash') for d in review.get('documents',[]) if isinstance(d,dict) and d.get('url')==approved[cid].get('url')),None)
     if body_hash is not None and body_hash==baseline:return
-    if auto_release.mark_checked(approved,cid,body_hash,now)!='ok':save(path,approved)
+    # Saved in every case: a withdrawal, or the record moved to the hash without the view counter.
+    auto_release.mark_checked(approved,cid,body_hash,now,root=root)
+    save(path,approved)
 
 
 def _gone(error):
@@ -139,6 +143,65 @@ def _related_docs(reader,cid,candidate,doc,peers,failures):
 
 # Daily paid research limit (approved 2026-11-10: 20 -> 40; the monthly USD cap still decides spend).
 MAX_RESEARCH=40
+# How long a row that left the listing is still brought back by stored_candidates.
+STORED_DAYS=30
+
+
+def _stored_pages(root,row):
+    """Hashes of the pages a stored row was researched from, own page first, view counters dropped
+    (rows stored before 2026-11-14 hold bodies with them). None when the input cannot be read."""
+    try:
+        documents=load(project_path(root,row['input_file']),None)['documents']
+        return [hashlib.sha256(stable_text(d['body']).encode()).hexdigest() for d in documents]
+    except Exception:
+        return None
+
+
+def _rebase(record,docs):
+    """A record decided again from a stored run names today's page hashes, so the daily body check
+    compares it with what the reader returns now."""
+    today={d.get('final_url') or d['requested_url']:d['body_hash'] for d in docs}
+    review=record['review']
+    documents=[dict(d,body_hash=today.get(d.get('url'),d['body_hash'])) for d in review['documents']]
+    return {**record,'review':{**review,'documents':documents,
+                               'original_body_hash':today.get(record['url'],review['original_body_hash']),
+                               'document_count':len({d['body_hash'] for d in documents})}}
+
+
+def _ready(root,row,now):
+    """A held, validated draft that the current gate would publish once its pages are read again."""
+    return (row.get('model_status')=='validated_draft' and bool(row.get('run_id'))
+            and not (row.get('auto_publish') or {}).get('publish')
+            and auto_decide(root,row['run_id'],now,reread=True)['publish'])
+
+
+def stored_candidates(root,now,present):
+    """Candidates today's collection no longer lists but that still have something to settle
+    (approved 2026-11-14): withdrawn auto-published records, and held drafts the current gate would
+    publish once re-read. Local checks only. Rows older than STORED_DAYS are left alone; the caller
+    applies the same filters as for collected candidates (human-approved, dismissed, source policy)."""
+    root=Path(root).resolve()
+    def recent(stamp):
+        try:return timedelta(0)<=now-datetime.fromisoformat(stamp)<=timedelta(days=STORED_DAYS)
+        except (TypeError,ValueError):return False
+    def entry(source,url,title):
+        return {'source':source,'url':url,'title':title,'summary':''}
+    out,seen=[],set(present)
+    try:approved=load(project_path(root,'cache/ai_publish/approved.json'),{})
+    except (OSError,ValueError):approved={}
+    for cid,record in (approved.items() if isinstance(approved,dict) else ()):
+        if (cid not in seen and isinstance(record,dict) and record.get('recheck_priority') and recent(record.get('withdrawn_at'))
+                and isinstance(record.get('source'),str) and isinstance(record.get('url'),str)):
+            seen.add(cid);out.append(entry(record['source'],record['url'],str(record.get('title') or '')))
+    try:rows=load(project_path(root,'cache/ai_review/state.json'),{'items':{}})['items']
+    except (OSError,ValueError,KeyError,TypeError):rows={}
+    for cid,row in rows.items():
+        if cid in seen or not isinstance(row,dict) or not recent(row.get('observed_at')) or not _ready(root,row,now):continue
+        try:title=load(project_path(root,row['input_file']),None)['candidates'][0]['title']
+        except Exception:title=''
+        if isinstance(row.get('source'),str) and isinstance(row.get('url'),str):
+            seen.add(cid);out.append(entry(row['source'],row['url'],str(title or '')))
+    return out
 
 
 def review_candidates(root,candidates,now,max_candidates=2,execute=False):
@@ -159,12 +222,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
         # Approved 2026-11-13: a held draft that the current gate would publish once its pages are
         # read again unchanged goes next (local check only, no model call), so gate fixes are not
         # stuck behind the oldest-checked rotation.
-        def _ready(cid):
-            row=state['items'].get(cid,{})
-            return (row.get('model_status')=='validated_draft' and bool(row.get('run_id'))
-                    and not (row.get('auto_publish') or {}).get('publish')
-                    and auto_decide(root,row['run_id'],now,reread=True)['publish'])
-        ready={cid for cid in unique if cid not in withdrawn and _ready(cid)}
+        ready={cid for cid in unique if cid not in withdrawn and _ready(root,state['items'].get(cid,{}),now)}
         ordered=sorted(unique.items(),key=lambda pair:(pair[0] not in withdrawn,pair[0] not in ready,state['items'].get(pair[0],{}).get('last_checked_at','')))
         # Only model requests count toward max_candidates; unchanged skips and fetch failures do not
         # (2026-11-10). The run's public HTTP budget still ends the loop.
@@ -188,25 +246,40 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             hashes=','.join(sorted(d['body_hash'] for d in docs))
             signature=hashlib.sha256((cid+'\n'+hashes+'\n'+prompt).encode()).hexdigest()
             previous=state['items'].get(cid,{})
-            if previous.get('body_hash') and previous['body_hash']!=doc['body_hash']:result['changed_ids'].append(cid)
+            same_signature=previous.get('signature')==signature
+            # The signature also covers the prompt. The pages themselves are compared separately, from
+            # the stored input, so a prompt change (or the 2026-11-14 hashing change) is not a page change.
+            stored=None if same_signature or not previous.get('input_file') else _stored_pages(root,previous)
+            same_pages=same_signature or (stored is not None and sorted(stored)==sorted(d['body_hash'] for d in docs))
+            if previous.get('body_hash') and (stored[0] if stored else previous['body_hash'])!=doc['body_hash']:
+                result['changed_ids'].append(cid)
             # A rejected answer gets one more try on a later day (same input); then it waits for a body change.
             retry=(previous.get('model_status')=='rejected_draft' and previous.get('attempts',1)<2
                    and previous_checked[:10]<today)
-            if previous.get('signature')==signature and previous.get('model_status') in ('validated_draft','rejected_draft','stopped_before_result') and not retry:
+            validated=previous.get('model_status')=='validated_draft' and bool(previous.get('run_id'))
+            settled=same_signature and previous.get('model_status') in ('validated_draft','rejected_draft','stopped_before_result') and not retry
+            if settled or (same_pages and validated):
                 # Approved 2026-11-12: a held draft with byte-identical pages is decided again by the
                 # current gate without a model call, so gate fixes reach items already researched.
-                if (previous.get('model_status')=='validated_draft' and previous.get('run_id')
-                        and not (previous.get('auto_publish') or {}).get('publish')):
+                # Approved 2026-11-14: the same holds when only the prompt changed since that answer.
+                # A withdrawn record counts as not published: with its pages back as researched,
+                # the stored answer is decided again and can return without a model call.
+                published=bool((previous.get('auto_publish') or {}).get('publish')) and cid not in withdrawn
+                if validated and not published:
                     decision=auto_decide(root,previous['run_id'],now,reread=True)
                     # A missing or unreadable stored run (contract) keeps the earlier decision as it was.
                     if decision['reasons']!=['contract'] and (
                             decision['publish'] or decision['reasons']!=(previous.get('auto_publish') or {}).get('reasons')):
+                        if decision['publish'] and decision.get('record'):decision={**decision,'record':_rebase(decision['record'],docs)}
                         _store_decision(root,cid,decision,previous,now)
                         state['items'][cid]['auto_publish']={'publish':decision['publish'],'reasons':decision['reasons']}
                         result['auto_published']=result.get('auto_published',0)+decision['publish']
-                result['skipped_unchanged']+=1
-                result['rows'].append({'candidate_id':cid,'status':'unchanged','review_file':previous['review_file']})
-                continue
+                        published=decision['publish']
+                # Only the prompt changed and the draft is still held: the new prompt gets its try below.
+                if settled or published:
+                    result['skipped_unchanged']+=1
+                    result['rows'].append({'candidate_id':cid,'status':'unchanged','review_file':previous['review_file']})
+                    continue
             host=dict(schema_version='research-input-v1',mode='api_agent',synthetic=False,now=now.isoformat(),
                       output_schema_version='research-draft-v1',budget={'http_remaining':max(0,cost_policy.budget.limit-cost_policy.budget.used),'llm_api_remaining':1},
                       candidates=[dict(candidate_id=cid,source_id=candidate['source'],title=candidate['title'],document_ids=[d['id'] for d in docs],

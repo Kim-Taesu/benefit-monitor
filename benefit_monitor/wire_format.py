@@ -44,6 +44,11 @@ OPTIONAL_FIELDS = tuple(f for f in FIELDS if f not in REQUIRED_FIELDS)
 # Host-side format checks; never sent as schema patterns.
 DATE_OR_EMPTY = '^([0-9]{4}-[0-9]{2}-[0-9]{2})?$'
 TIMESTAMP_OR_EMPTY = '^([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2})?(Z|[+-][0-9]{2}:[0-9]{2}))?$'
+# A deadline written as a date only is that whole KST day. DAY_END is the marker auto_publish reads
+# back as "no time was written" (approved 2026-11-14).
+DAY_START, DAY_END = 'T00:00:00+09:00', 'T23:59:59+09:00'
+# Reason the host writes when the model left an unknown fact without one (approved 2026-11-14).
+NO_REASON = '모델이 이유를 적지 않음'
 FACT_STATUSES = ['supported', 'disputed', 'unknown']
 TEXT_FIELDS = ('cost_details', 'payment_conditions', 'selection', 'application_method',
                'cancellation', 'restrictions', 'summary', 'conditions')
@@ -180,11 +185,24 @@ def _fact_value(field, fact):
         if fact['text'] not in SCOPES:
             raise ValueError('invalid eligibility scope')
         return {'scope': fact['text'], 'required': list(fact['items']), 'not_confirmed': list(fact['not_confirmed'])}
-    if field in ('event_period', 'application_period'):
-        pattern = DATE_OR_EMPTY if field == 'event_period' else TIMESTAMP_OR_EMPTY
-        if any(not re.fullmatch(pattern, fact[key]) for key in ('start', 'end')):
+    if field == 'event_period':
+        if any(not re.fullmatch(DATE_OR_EMPTY, fact[key]) for key in ('start', 'end')):
             raise ValueError('invalid period format')
         return {key: fact[key] or None for key in ('start', 'end')}
+    if field == 'application_period':
+        value = {}
+        for key, whole_day in (('start', DAY_START), ('end', DAY_END)):
+            raw = fact[key]
+            if raw and re.fullmatch(DATE_OR_EMPTY, raw):
+                try:
+                    date.fromisoformat(raw)
+                except ValueError:
+                    raise ValueError('invalid period format') from None
+                raw += whole_day
+            elif not re.fullmatch(TIMESTAMP_OR_EMPTY, raw):
+                raise ValueError('invalid period format')
+            value[key] = raw or None
+        return value
     if field == 'published_at':
         if not re.fullmatch(DATE_OR_EMPTY, fact['start']) or not fact['start'] or fact['end']:
             raise ValueError('invalid period format')
@@ -217,12 +235,12 @@ def research_from_wire(wire, host):
         for field in FIELDS:
             fact = by_field[field]
             if fact['status'] == 'unknown':
-                if not fact['unknown_reason'].strip():
-                    raise ValueError('unknown fact without reason')
                 if field in OPTIONAL_FIELDS:
                     continue
+                # An unknown carries no value or evidence, so a missing reason is filled in here
+                # instead of rejecting the other facts of the answer.
                 facts.append({'field': field, 'value': None, 'status': 'unknown', 'evidence': [],
-                              'unknown_reason': fact['unknown_reason'].strip()})
+                              'unknown_reason': fact['unknown_reason'].strip() or NO_REASON})
                 continue
             if not fact['segment_ids']:
                 raise ValueError('known fact without evidence')
