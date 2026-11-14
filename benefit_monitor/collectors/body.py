@@ -59,6 +59,17 @@ class BodyText(HTMLParser):
         return ' '.join(' '.join(self.parts).split()), 'document'
 
 
+# Board counters that move on every visit, in the shapes seen on official boards: "조회수 475",
+# "조회수475", "조회 : 1,657", "좋아요 12". A bare "조회 24시간" or "조회 02 123 4567" is page content and
+# is not matched; neither is a number that runs into a date or a counting unit ("조회수 2026.11.05").
+VOLATILE = re.compile(r'((?:조회\s*수\s*[:：]?|조회\s*[:：]|좋아요)\s*)\d[\d,]*(?![\d,]|[.\-/:]\d|\s*[년월일회건번명개원%])')
+
+
+def stable_text(text):
+    """Body text without visit counters, so a page nobody edited keeps the same hash (2026-11-14)."""
+    return VOLATILE.sub(lambda match: match.group(1).rstrip(), text)
+
+
 def extract_body(page, target=''):
     seoul_scope = bool(target and official(target, ['mediahub.seoul.go.kr'])
                        and re.fullmatch(r'/archives/[0-9]+', urlsplit(target).path))

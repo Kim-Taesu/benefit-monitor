@@ -11,7 +11,7 @@ from urllib.parse import quote, urljoin, urlsplit, urldefrag
 from urllib.request import Request, build_opener
 
 from . import cost_policy
-from .collectors.body import extract_body
+from .collectors.body import extract_body, stable_text
 from .collectors.rss import AGENT, LIMIT
 from .research_probe import NoRedirect
 from .robots import allowed, crawl_delay
@@ -164,6 +164,8 @@ class OfficialReader:
             if 'text/html' not in content_type:raise ValueError('unsupported body content type')
             html=raw.decode('utf-8','strict')
             text,mode=extract_body(html,url)
+            # Visit counters are not page content: with them every reread looked like an edited page.
+            text=stable_text(text)
             if len(text)<80:raise ValueError('insufficient official body')
             digest=hashlib.sha256(text.encode()).hexdigest()
             doc=dict(id='doc-'+digest[:24],requested_url=url,final_url=url,source_id=source['id'],

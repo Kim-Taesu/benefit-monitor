@@ -145,7 +145,7 @@ def _check_auto(approved,takedowns,sources,now,reader):
                 # A page that lost its body is treated as changed (hidden until the AI re-decides).
                 if str(e)!='insufficient official body':raise
                 mark_checked(approved,cid,'',now);continue
-            mark_checked(approved,cid,doc['body_hash'],now)
+            mark_checked(approved,cid,doc['body_hash'],now,root=reader.root)
         except Exception as error:
             errors.append(dict(source=record.get('source'),item_id=cid,**error_info(error)))
     return errors

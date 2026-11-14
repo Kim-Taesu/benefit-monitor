@@ -101,7 +101,6 @@ class ResearchWireTests(unittest.TestCase):
                  'period format': wire(event_period={'status': 'supported', 'value': {'start': '11월 7일', 'end': ''},
                                                      'evidence': [{'segment_id': 'd1s1'}]}),
                  'districts': wire(districts={'status': 'supported', 'value': [], 'evidence': [{'segment_id': 'd1s1'}]}),
-                 'reason': wire(selection={'status': 'unknown', 'unknown_reason': ' '}),
                  'availability': wire(availability={'status': 'supported', 'value': 'x', 'evidence': [{'segment_id': 'd1s1'}]}),
                  'fee_status': wire(fee_status={'status': 'supported', 'value': 'maybe', 'evidence': [{'segment_id': 'd1s4'}]}),
                  'scope': wire(eligibility={'status': 'supported', 'evidence': [{'segment_id': 'd1s2'}],
@@ -120,10 +119,48 @@ class ResearchWireTests(unittest.TestCase):
             self.assertTrue(conforms(value, schema, schema), message)
             with self.assertRaisesRegex(ValueError, message):
                 w.research_from_wire(value, host())
-        timed = wire(application_period={'status': 'supported', 'value': {'start': '2026-11-07', 'end': ''},
-                                         'evidence': [{'segment_id': 'd1s1'}]})
-        with self.assertRaisesRegex(ValueError, 'period format'):
-            w.research_from_wire(timed, host())
+
+    def test_application_period_accepts_a_date_without_a_time(self):
+        # 2026-11-14: notices mostly give the deadline as a date only, and the model wrote that date even
+        # though the prompt asked for unknown; the whole answer was then thrown away. The host now reads
+        # a date as that whole day (KST) and never shows a time nobody wrote (see auto_publish._end_point).
+        def period(start, end):
+            draft = w.research_from_wire(wire(application_period={'status': 'supported', 'value': {'start': start, 'end': end},
+                                                                  'evidence': [{'segment_id': 'd1s1'}]}), host())
+            _, report = evaluate_draft(draft, host(), 'research')
+            self.assertTrue(report['structural_valid'], report)
+            return {f['field']: f for f in draft['records'][0]['facts']}['application_period']['value']
+        self.assertEqual(period('2026-11-07', '2026-11-23'),
+                         {'start': '2026-11-07T00:00:00+09:00', 'end': '2026-11-23T23:59:59+09:00'})
+        self.assertEqual(period('', '2026-11-23'), {'start': None, 'end': '2026-11-23T23:59:59+09:00'})
+        self.assertEqual(period('2026-11-07T09:00+09:00', '2026-11-23'),
+                         {'start': '2026-11-07T09:00+09:00', 'end': '2026-11-23T23:59:59+09:00'})
+        self.assertEqual(period('2026-11-07T09:00+09:00', '2026-11-19T17:00+09:00'),
+                         {'start': '2026-11-07T09:00+09:00', 'end': '2026-11-19T17:00+09:00'})
+        for bad in ('11월 23일', '2026-13-40', '2026-11-23 18:00', '2026-11-23T18:00'):
+            with self.assertRaisesRegex(ValueError, 'invalid period format'):
+                w.research_from_wire(wire(application_period={'status': 'supported', 'value': {'start': '', 'end': bad},
+                                                              'evidence': [{'segment_id': 'd1s1'}]}), host())
+        # event_period stays a plain date.
+        with self.assertRaisesRegex(ValueError, 'invalid period format'):
+            w.research_from_wire(wire(event_period={'status': 'supported', 'value': {'start': '', 'end': '2026-11-23T18:00+09:00'},
+                                                    'evidence': [{'segment_id': 'd1s1'}]}), host())
+
+    def test_unknown_without_a_reason_gets_a_host_reason(self):
+        # 2026-11-14: one empty unknown_reason used to reject every other fact of the answer. An unknown
+        # carries no value either way, so the host fills the reason in and keeps the rest.
+        value = wire(selection={'status': 'unknown', 'unknown_reason': ' '},
+                     fee_status={'status': 'supported', 'value': 'free', 'evidence': [{'segment_id': 'd1s4'}]})
+        for fact in value['records'][0]['facts']:
+            if fact['field'] == 'eligibility':
+                fact.update(text='unrestricted', unknown_reason='')  # Stray value on an unknown: dropped.
+        draft = w.research_from_wire(value, host())
+        facts = {f['field']: f for f in draft['records'][0]['facts']}
+        self.assertEqual((facts['selection']['status'], facts['selection']['unknown_reason']), ('unknown', w.NO_REASON))
+        self.assertEqual((facts['eligibility']['value'], facts['eligibility']['unknown_reason']), (None, w.NO_REASON))
+        self.assertEqual(facts['fee_status']['value'], 'free')
+        _, report = evaluate_draft(draft, host(), 'research')
+        self.assertTrue(report['structural_valid'], report)
 
     def test_published_at_requires_date_and_segment(self):
         ok = w.research_from_wire(wire(published_at={'status': 'supported', 'value': '2026-10-30',
@@ -255,13 +292,11 @@ class ResearchWireTests(unittest.TestCase):
         self.assertFalse(report['valid'])
         self.assertIn('unrestricted_with_restriction', [f['code'] for f in report['coverage']['findings']])
 
-    def test_unknown_segment_wrong_version_and_empty_reason_are_rejected(self):
+    def test_unknown_segment_and_wrong_version_are_rejected(self):
         with self.assertRaisesRegex(ValueError, 'segment'):
             w.research_from_wire(wire(fee_status={'status': 'supported', 'value': 'free', 'evidence': [{'segment_id': 'd1s99'}]}), host())
         with self.assertRaisesRegex(ValueError, 'version'):
             w.research_from_wire(dict(wire(), wire_version='research-extraction-v3'), host())
-        with self.assertRaisesRegex(ValueError, 'reason'):
-            w.research_from_wire(wire(cost_details={'status': 'unknown', 'unknown_reason': '  '}), host())
 
     def test_invalid_date_is_still_rejected_by_existing_gate(self):
         draft = w.research_from_wire(wire(event_period={'status': 'supported', 'value': {'start': '2026-13-40', 'end': ''},

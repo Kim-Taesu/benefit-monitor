@@ -260,13 +260,39 @@ def apply_takedowns(data, takedowns, current=None, now=None):
     return data
 
 
-def mark_checked(approved, candidate_id, body_hash, now):
-    """Daily body check: 'ok' renews checked_at; 'changed'/'gone' withdraws until the AI re-decides."""
+def _same_once_cleaned(root, record, baseline, body_hash):
+    """Whether the stored original page (reader cache, hashed with its view counter) equals today's
+    cleaned body. Missing or unreadable files answer no."""
+    import hashlib
+    from .collectors.body import stable_text
+    if not isinstance(baseline, str) or not HASH.fullmatch(baseline) or not isinstance(record.get('url'), str):
+        return False
+    key = hashlib.sha256(record['url'].encode()).hexdigest()
+    try:
+        old = json.loads((Path(root) / 'cache/ai_review/documents' / f'{key}-{baseline}.json').read_text())['body']
+        return hashlib.sha256(stable_text(old).encode()).hexdigest() == body_hash
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def mark_checked(approved, candidate_id, body_hash, now, root=None):
+    """Daily body check: 'ok' renews checked_at; 'changed'/'gone' withdraws until the AI re-decides.
+
+    root: lets a record approved before 2026-11-14 (bodies were then hashed with their view counter)
+    move to the cleaned hash when its stored original page differs from today's only by that counter."""
     record = approved[candidate_id]
     review = record['review']
     baseline = review.get('original_body_hash') or next(
         (d.get('body_hash') for d in review.get('documents', []) if d.get('url') == record.get('url')), None)
     result = 'gone' if body_hash is None else 'ok' if baseline and body_hash == baseline else 'changed'
+    # A record already withdrawn is left as it is: only a new decision republishes it.
+    if (result == 'changed' and root is not None and body_hash and record.get('status') != 'withdrawn'
+            and _same_once_cleaned(root, record, baseline, body_hash)):
+        review['original_body_hash'] = body_hash
+        for document in review.get('documents', []):
+            if isinstance(document, dict) and document.get('body_hash') == baseline:
+                document['body_hash'] = body_hash
+        result = 'ok'
     if result == 'ok':
         review['checked_at'] = now.isoformat()
     elif record.get('status') != 'withdrawn':

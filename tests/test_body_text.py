@@ -48,3 +48,52 @@ class SeoulBodyScopeTests(unittest.TestCase):
     def test_legacy_mode_still_reproduces_v3_hash_input(self):
         page = '<main>조회 99<div class="news_detail_cont">조건 1,000원</div></main>'
         self.assertEqual(extract_body(page), ('조회 99 조건 1,000원', 'main'))
+
+
+class StableTextTests(unittest.TestCase):
+    """2026-11-14: view counters changed the body hash every day and withdrew published items."""
+
+    def test_view_counters_are_dropped_and_the_result_is_stable(self):
+        from benefit_monitor.collectors.body import stable_text
+        for raw, want in (('등록일 2026-11-05 조회수 475 첨부파일 없음', '등록일 2026-11-05 조회수 첨부파일 없음'),
+                          ('작성일 : 2026-10-20 조회 : 1,657 담당부서', '작성일 : 2026-10-20 조회 : 담당부서'),
+                          ('조회수475 좋아요 12 공유', '조회수 좋아요 공유'),
+                          ('조회수 : 30 목록', '조회수 : 목록'), ('작성자 보건소 조회수 475.', '작성자 보건소 조회수.')):
+            self.assertEqual(stable_text(raw), want)
+            self.assertEqual(stable_text(want), want)
+        self.assertEqual(stable_text('조회수 446 본문'), stable_text('조회수 475 본문'))
+
+    def test_dates_and_counted_conditions_are_kept(self):
+        from benefit_monitor.collectors.body import stable_text
+        for text in ('조회 2026.11.05 등록', '조회수 2026-11-05', '조회 5회 이상 시 지급', '조회 3건당 100원',
+                     '지원금 5,000원 · 정원 30명 · 11월 30일까지', '좋아요 10개 이상 받은 글', '조회수 100회 이상',
+                     '환급금 조회 24시간 가능', '조회 3단계 절차', '문의 조회 02 123 4567', '조회 5 · 공감수 7'):
+            self.assertEqual(stable_text(text), text)
+
+    def test_reader_hashes_the_stable_body(self):
+        import hashlib, io, json, tempfile
+        from datetime import datetime
+        from pathlib import Path
+        from unittest.mock import patch
+        from zoneinfo import ZoneInfo
+        from benefit_monitor import cost_policy
+        from benefit_monitor.official_reader import OfficialReader
+        root = Path(__file__).resolve().parents[1]
+        now = datetime(2026, 11, 14, 7, tzinfo=ZoneInfo('Asia/Seoul'))
+        page = '<html><main>치매 선별 검진 안내 등록일 2026-11-05 조회수 %d 첨부파일 없음. 12월 찾아가는 치매 선별검진을 실시합니다. 대상은 만 60세 이상 노원구민이며 비용은 무료입니다. 신분증을 지참하고 가까운 동 주민센터로 방문하면 됩니다.</main></html>'
+
+        class Response(io.BytesIO):
+            headers = {'Content-Type': 'text/html; charset=utf-8'}
+        hashes = []
+        for count in (446, 475):
+            with tempfile.TemporaryDirectory(dir=root) as temp:
+                (Path(temp)/'sources.yaml').write_text(json.dumps({'sources': [{'id': 'seoul', 'domains': ['www.seoul.go.kr']}]}))
+                cost_policy.reset(10)
+                body = (page % count).encode()
+                with patch('benefit_monitor.official_reader.network_open',
+                           side_effect=lambda r: Response(b'User-agent: *\nAllow: /' if r.full_url.endswith('/robots.txt') else body)):
+                    doc = OfficialReader(temp, now).read({'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1'})
+            self.assertNotIn(str(count), doc['body'])
+            self.assertEqual(doc['body_hash'], hashlib.sha256(doc['body'].encode()).hexdigest())
+            hashes.append(doc['body_hash'])
+        self.assertEqual(hashes[0], hashes[1])
