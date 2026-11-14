@@ -58,7 +58,8 @@ FALLBACK_REFRESH_HOUR=10
 ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
 # Per-day paid request limits: verification 40, research 40 (2026-11-10), topic 1, grocery pick 1,
 # health-programme sentences 10 (2026-11-11), festival pick 1, benefit pick 1 (2026-11-14),
-# grammar probes (one per new schema).
+# grammar probes (one per new schema), request-setting measurement 4 (festival and benefit x 2
+# variants, bounded days; variant_trial).
 MAX_DAILY_RESEARCH=40
 MAX_DAILY_VERIFY=40
 STATUS_FILE='cache/ai_daily/status.json'
@@ -332,13 +333,17 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
             session.finish(day,'failed')
             return {'status':'credit_exhausted','day':day,'delivery':delivery}
         after=TrialBudget(safe_path(root,BUDGET)).summary();new=after['requests'][summary['requests']:]
-        failures=[row.get('error_code','unknown') for row in new if row['status']!='completed']
+        # A refused measurement request is reported on its own: it is not part of the day's results.
+        measurement=result.get('measurement') or {}
+        measured=set(measurement.get('request_ids') or [])
+        failures=[row.get('error_code','unknown') for row in new if row['status']!='completed' and row['id'] not in measured]
+        measurement['provider_failures']=[row.get('error_code','unknown') for row in new if row['status']!='completed' and row['id'] in measured]
         status='completed_with_provider_failure' if failures or after['halted'] else 'completed'
         write_ai_status(root,'ok' if status=='completed' else 'failed',day,now);upload_ai_status(root,store)
         delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
         session.finish(day,'completed')
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
-                'halted':after['halted'],'retried_day':retried}
+                'halted':after['halted'],'retried_day':retried,'measurement':{k:v for k,v in measurement.items() if k!='request_ids'}}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')

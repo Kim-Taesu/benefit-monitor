@@ -229,6 +229,27 @@ class AIReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):project_path(ROOT.parent,'cache/ai_review/state.json')
         with self.assertRaises(ValueError):project_path(ROOT,'../outside.json')
 
+    def test_answers_signed_before_the_fingerprint_was_narrowed_are_not_paid_for_again(self):
+        # 2026-11-14: the fingerprint stopped hashing all of wire_format.py. Rows signed with the last
+        # whole-file value keep counting as the same input until the research contract really changes.
+        from benefit_monitor import ai_review
+        rejected={'status':'rejected_draft','run_id':'b'*64}
+        with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport):
+            with patch('benefit_monitor.ai_review.fingerprint',return_value=ai_review.LEGACY_FINGERPRINT), \
+                 patch('benefit_monitor.ai_review.invoke',return_value=rejected):
+                first=self.run_review()
+            with patch('benefit_monitor.ai_review.invoke',side_effect=AssertionError('no paid call')):
+                bridged=self.run_review()
+            # The one later-day retry still counts the earlier attempt, so there is no third call.
+            with patch('benefit_monitor.ai_review.invoke',return_value=rejected) as model:
+                self.run_review(now=NOW+timedelta(days=1));self.run_review(now=NOW+timedelta(days=2))
+            with patch('benefit_monitor.ai_review.fingerprint',return_value='a-later-contract'), \
+                 patch('benefit_monitor.ai_review.invoke',return_value=rejected) as changed:
+                self.run_review(now=NOW+timedelta(days=3))
+        self.assertEqual((first['rejected'],bridged['skipped_unchanged']),(1,1))
+        self.assertEqual(model.call_count,1)
+        self.assertEqual(changed.call_count,1)
+
     def test_runtime_fingerprint_tracks_the_actual_single_model_prompt(self):
         from benefit_monitor.ai_review import fingerprint
         self.assertEqual(fingerprint(self.root),fingerprint(ROOT))

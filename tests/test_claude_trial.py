@@ -323,6 +323,15 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(state['confirmed_microdollars'],0)
         self.assertGreater(state['exposure_microdollars'],0)
 
+    def test_refused_measurement_variant_does_not_halt_but_a_regular_rejection_does(self):
+        def reject(request):
+            raise HTTPError(request.full_url,400,'bad',{},self.response({'error':{'message':'effort is not supported'}}))
+        with patch('benefit_monitor.claude_trial.network_open',side_effect=reject):
+            with self.assertRaises(TrialError):self.client().message('s','u',variant='adaptive-high')
+            self.assertFalse(self.budget.summary()['halted'])
+            with self.assertRaises(TrialError):self.client().message('s','u')
+        self.assertTrue(self.budget.summary()['halted'])
+
     def test_grammar_probe_rejection_is_recorded_once_without_halting(self):
         from benefit_monitor.wire_format import research_wire_schema
         body={'type':'error','error':{'type':'invalid_request_error','message':'The compiled grammar is too large'}}

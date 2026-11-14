@@ -317,24 +317,47 @@ def topic_host():
 
 
 class TopicWireTests(unittest.TestCase):
-    def test_branches_allow_only_basis_supported_items(self):
+    def test_schema_is_the_same_every_day_and_host_rejects_ineligible_pairs(self):
         choices = w.eligible_items(topic_host())
         self.assertEqual(choices, {'culture': ['a', 'b'], 'family': ['b']})
         schema = w.topic_wire_schema(topic_host())
         self.assertEqual(w.limits(schema)['unions'], 0)
+        # 2026-11-14: no per-day enums, so one grammar (and one paid probe) serves every day.
+        other = topic_host()
+        other['approved_items'] = other['approved_items'][1:2]
+        self.assertEqual(w.topic_wire_schema(other), schema)
+        self.assertEqual(w.schema_for('topic', None), schema)
         card = schema['properties']['topics']['items']
-        self.assertEqual(card['properties']['topic_id']['enum'], ['culture', 'family'])
-        self.assertEqual(card['properties']['item_links']['items']['properties']['item_id']['enum'], ['a', 'b'])
+        self.assertEqual(card['properties']['topic_id']['enum'], list(w.TITLES))
+        self.assertEqual(card['properties']['item_links']['items']['properties']['item_id'], {'type': 'string'})
+        self.assertEqual(schema['$defs']['excluded']['items']['properties']['item_id'], {'type': 'string'})
+        self.assertEqual(w.topic_choices(topic_host()), [{'topic_id': 'culture', 'item_ids': ['a', 'b']},
+                                                         {'topic_id': 'family', 'item_ids': ['b']}])
         sample = dict(wire_version=w.TOPIC_WIRE, status='completed', errors=[], excluded_items=[],
                       topics=[dict(topic_id='family', item_links=[dict(item_id='b', reason='r', match_type='explicit')],
                                    excluded_items=[dict(item_id='a', reason='가족 근거 없음')])])
         self.assertTrue(conforms(sample, schema, schema))
-        sample['topics'][0]['item_links'][0]['item_id'] = 'c'
-        self.assertFalse(conforms(sample, schema, schema))
-        sample['topics'][0]['item_links'][0]['item_id'] = 'a'
-        self.assertTrue(conforms(sample, schema, schema))
-        with self.assertRaisesRegex(ValueError, 'not eligible'):
-            w.topic_from_wire(sample, topic_host())
+        w.topic_from_wire(sample, topic_host())
+        # What the grammar used to forbid is now refused by the host, never dropped.
+        for item_id in ('a', 'c', 'zz'):
+            sample['topics'][0]['item_links'][0]['item_id'] = item_id
+            self.assertTrue(conforms(sample, schema, schema))
+            with self.assertRaisesRegex(ValueError, 'not eligible'):
+                w.topic_from_wire(sample, topic_host())
+        sample['topics'][0]['item_links'][0]['item_id'] = 'b'
+        for topic in ('shopping', 'career'):
+            sample['topics'][0]['topic_id'] = topic
+            self.assertTrue(conforms(sample, schema, schema))
+            with self.assertRaisesRegex(ValueError, 'topic not eligible'):
+                w.topic_from_wire(sample, topic_host())
+
+    def test_unknown_excluded_item_is_rejected_by_the_contract_gate(self):
+        answer = dict(wire_version=w.TOPIC_WIRE, status='completed', errors=[],
+                      excluded_items=[{'item_id': 'zz', 'reason': '없는 항목'}],
+                      topics=[dict(topic_id='family', excluded_items=[],
+                                   item_links=[dict(item_id='b', reason='가족 참여 프로그램', match_type='explicit')])])
+        _, report = evaluate_draft(w.topic_from_wire(answer, topic_host()), topic_host(), 'topic')
+        self.assertFalse(report['valid'])
 
     def test_no_eligible_topic_stops_before_any_request(self):
         empty = topic_host()

@@ -284,18 +284,25 @@ def eligible_items(host):
     return result
 
 
-def topic_wire_schema(host):
-    """Union-free: topic and item enums are flat; topic_from_wire rejects ineligible pairs."""
-    choices = eligible_items(host)
-    if not choices:
+def topic_choices(host):
+    """Model-input hint: which items each topic may hold today. It replaces the per-day item enums the
+    schema used to carry; topic_from_wire still rejects any pair outside it."""
+    return [{'topic_id': topic, 'item_ids': ids} for topic, ids in eligible_items(host).items()]
+
+
+def topic_wire_schema(host=None):
+    """The same schema every day (2026-11-14): topic IDs are the fixed TITLES and item IDs are plain
+    strings, like the pick schemas. Until then the item enums followed the day's approved items, so
+    every day compiled a new grammar and paid a new probe, and the enum grew with the item list.
+    topic_from_wire rejects ineligible topics, pairs and unknown items; ai_contract.validate rejects
+    unknown excluded items. With a host, stops before any request when no topic has eligible items."""
+    if host is not None and not eligible_items(host):
         raise ValueError('no topic has eligible items; no request needed')
-    all_ids = [item['item_id'] for item in host['approved_items']]
-    linkable = [i for i in all_ids if any(i in ids for ids in choices.values())]
-    defs = {'excluded': {'type': 'array', 'items': _object({'item_id': {'enum': all_ids}, 'reason': _string()})}}
+    defs = {'excluded': {'type': 'array', 'items': _object({'item_id': _string(), 'reason': _string()})}}
     excluded = {'$ref': '#/$defs/excluded'}
-    card = _object({'topic_id': {'enum': list(choices)},
+    card = _object({'topic_id': {'enum': list(TITLES)},
                     'item_links': {'type': 'array', 'minItems': 1,
-                                   'items': _object({'item_id': {'enum': linkable}, 'reason': _string(),
+                                   'items': _object({'item_id': _string(), 'reason': _string(),
                                                      'match_type': {'enum': ['explicit', 'contextual']}})},
                     'excluded_items': excluded})
     schema = _object({'wire_version': {'enum': [TOPIC_WIRE]}, 'status': {'enum': STATUSES}, 'errors': _errors(),
@@ -397,27 +404,44 @@ def benefit_wire_schema(host):
 PICK_WIRES = {'festival': FESTIVAL_WIRE, 'benefit': BENEFIT_WIRE}
 
 
+def festival_from_wire(wire, host):
+    return _pick_from_wire(wire, FESTIVAL_WIRE)
+
+
+def benefit_from_wire(wire, host):
+    return _pick_from_wire(wire, BENEFIT_WIRE)
+
+
+def _verify_schema(host):
+    from .verify_contract import wire_schema
+    return wire_schema()
+
+
+def _verify_from_wire(wire, host):
+    from .verify_contract import from_wire as verify_from_wire
+    return verify_from_wire(wire, host)
+
+
+# kind -> (wire version, schema(host), from_wire(wire, host), decoder functions).
+# One row per model task. A new kind adds a row here and one in claude_trial.KINDS; nothing else
+# branches on the kind name. `decoders` are the host rules that turn the model's answer back into
+# the draft contract; contract_fingerprint hashes their source so a rule change is noticed for
+# that kind only.
+WIRES = {
+    'research': (RESEARCH_WIRE, lambda host: research_wire_schema(), research_from_wire,
+                 (segments, research_model_input, _fact_value, research_from_wire)),
+    'topic': (TOPIC_WIRE, topic_wire_schema, topic_from_wire, (eligible_items, topic_from_wire)),
+    'verify': ('verify-wire-v1', _verify_schema, _verify_from_wire, ()),
+    'grocery': (GROCERY_WIRE, grocery_wire_schema, grocery_from_wire, (grocery_from_wire,)),
+    'health': (HEALTH_WIRE, health_wire_schema, health_from_wire, (health_from_wire,)),
+    'festival': (FESTIVAL_WIRE, festival_wire_schema, festival_from_wire, (_pick_from_wire,)),
+    'benefit': (BENEFIT_WIRE, benefit_wire_schema, benefit_from_wire, (_pick_from_wire,)),
+}
+
+
 def schema_for(kind, host):
-    if kind in PICK_WIRES:
-        return _pick_wire_schema(PICK_WIRES[kind])
-    if kind == 'health':
-        return health_wire_schema(host)
-    if kind == 'grocery':
-        return grocery_wire_schema(host)
-    if kind == 'verify':
-        from .verify_contract import wire_schema
-        return wire_schema()
-    return research_wire_schema() if kind == 'research' else topic_wire_schema(host)
+    return WIRES[kind][1](host)
 
 
 def from_wire(kind, wire, host):
-    if kind in PICK_WIRES:
-        return _pick_from_wire(wire, PICK_WIRES[kind])
-    if kind == 'health':
-        return health_from_wire(wire, host)
-    if kind == 'grocery':
-        return grocery_from_wire(wire, host)
-    if kind == 'verify':
-        from .verify_contract import from_wire as verify_from_wire
-        return verify_from_wire(wire, host)
-    return research_from_wire(wire, host) if kind == 'research' else topic_from_wire(wire, host)
+    return WIRES[kind][2](wire, host)

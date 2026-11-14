@@ -4,14 +4,16 @@
 
 ## 실제 조립 경로
 
-`benefit_monitor/claude_trial.py`의 `system_prompt()`가 작업별 Markdown과 공통 `PROMPT_FOOTER`를 합친다. `user_message()`는 `<input>` 안에 JSON 데이터를 놓고 마지막에 `TASKS[kind]`의 짧은 작업 지시를 붙인다. JSON Schema는 API의 구조화 출력 설정으로 전달한다. 운영 이력이나 AGENTS.md 전체를 모델에 넣지 않는다.
+`benefit_monitor/claude_trial.py`의 `system_prompt()`가 작업별 Markdown과 공통 `PROMPT_FOOTER`를 합친다. `user_message()`는 `<input>` 안에 JSON 데이터를 놓고 마지막에 그 kind의 짧은 작업 지시를 붙인다. JSON Schema는 API의 구조화 출력 설정으로 전달한다. 운영 이력이나 AGENTS.md 전체를 모델에 넣지 않는다.
+
+kind별 설정은 두 표에 한 줄씩 있다(2026-11-14). `claude_trial.KINDS`에는 지침 파일·작업 지시·모델 입력 변환·입력 검사·출력 검사가, `wire_format.WIRES`에는 wire 버전·스키마·복원 함수가 있다. 새 kind는 두 표에 한 줄씩 더하면 되고, `claude_trial` 안에 kind 이름으로 갈라지는 분기는 없다. 두 표의 kind가 다르면 import에서 멈춘다.
 
 | kind | 지침 파일 | 모델에 전달하는 핵심 맥락 | 호스트 검사 |
 |---|---|---|---|
 | research | `prompts/research-system.md` | 후보와 원문 조각, 기준 시각 | `wire_format`, `research_extraction`, `auto_publish` |
 | research + investigation | `prompts/research-system.md` + `prompts/investigation-system.md` | 공통 목적·목표 필드·읽은 문서의 링크 ID·남은 예산 | 기존 연구 게이트 + `investigation_contract` |
 | verify | `prompts/verify-system.md` | audit/triage 목적, 주장, 원문 조각 | `verify_contract`, `ai_verify` |
-| topic | `prompts/topic-system.md` | 승인 항목·사실·주제 근거 | `ai_contract`, `topic_semantics`, 공개 게이트 |
+| topic | `prompts/topic-system.md` | 승인 항목·사실·주제 근거, 주제별 허용 항목(`topic_choices`) | `wire_format.topic_from_wire`, `ai_contract`, `topic_semantics`, 공개 게이트 |
 | grocery | `prompts/grocery-system.md` | `survey_date`, 가격 후보 | `grocery_pick.review` |
 | health | `prompts/health-system.md` | 구·보건소·사업·본문·`today` | `health_notes.review` |
 | festival | `prompts/festival-system.md` | `today`, 축제 후보 | `festival_pick.review` |
@@ -38,11 +40,21 @@
 - 예시와 스키마·호스트 검사가 일치해야 한다. `python3 -m unittest discover -s tests -p test_prompt_examples.py -v`로 실제 검사 함수를 실행한다.
 - 코드 변경 후 `python3 -m unittest discover -s tests -v`를 실행한다.
 - 실제 모델의 유용성·거절률 개선은 별도 평가 결과가 있어야 주장한다. 현재 오프라인 검사는 그 증명이 아니다.
-- `ai_review.fingerprint()`는 조사 프롬프트·wire 코드·조사 스키마를 포함한다. 조사 지침 변경은 보류 후보의 유료 재조사를 유발할 수 있다. 이번 축제·혜택 변경은 이 파일들을 바꾸지 않는다.
-- 공통 footer·TASKS를 바꿀 때는 영향을 받는 kind를 확인한다. 현재 조사 fingerprint가 전체 유효 프롬프트를 포괄하는 것은 아니다. Phase 1에서 실행별 시스템+사용자 입력+스키마 해시를 평가 기록에 남긴다.
+- `claude_trial.contract_fingerprint(root, kind)`는 그 kind의 모델이 실제로 받는 것과 답을 읽는 규칙을 해시한다: 지침 파일+공통 footer, 작업 지시, wire 스키마, 복원 함수 소스. 다른 kind의 지침·스키마를 고쳐도 값이 바뀌지 않는다. 공통 footer를 고치면 모든 kind의 값이 바뀐다.
+- `ai_review.fingerprint()`는 조사 kind의 위 값에 조사 초안 스키마(`research-extraction-v3.schema.json`)를 더한다. 2026-11-14 전에는 `wire_format.py` 파일 전체를 해시해서 장보기·축제 스키마만 고쳐도 조사 후보가 유료로 다시 조사됐고, footer와 작업 지시는 빠져 있었다.
+- 조사 지침·footer·조사 작업 지시·조사 스키마·조사 복원 함수를 바꾸면 보류·거절 후보가 하루 한도 안에서 다시 조사된다. `tests/test_kind_registry.py`의 `test_bridge_still_matches_the_current_research_contract`가 그 변경을 알려 준다. 비용을 확인한 뒤 `ai_review`의 `LEGACY_FINGERPRINT`·`BRIDGED_FINGERPRINT`와 그 검사를 함께 지운다. 이 두 상수는 범위를 좁힌 그 한 번의 변경에서 기존 답을 다시 사지 않으려고 둔 것이다.
+- 검증 kind의 `ai_verify.fingerprint()`는 아직 파일 단위(`verify-system.md`, `verify_contract.py`)다. 바꾸면 승인 항목이 다시 대조되므로 이번에는 건드리지 않았다.
 - 추천 문구 변경은 기존 저장 결과를 즉시 무효화하지 않는다. 이미 생성한 같은 날 카드의 유지·유효시간 정책을 따른다. 이번 작업은 운영 호출·재배포를 실행하지 않는다.
 - 스키마·공개 게이트 변경은 별도 변경으로 다루고 필요한 승인 해시를 검사한다. 테스트를 통과시키기 위해 공개 기준을 낮추지 않는다.
 
 ## 추가 조사 모드
 
 `claude_trial`은 research 호스트에 검증된 `investigation`이 있을 때만 지침과 next_step 출력 계약을 덧붙인다. 기존 기본 research 지침·wire 파일·스키마는 유지한다. 링크 ID의 실제 출처와 누락 필드는 모델이 아닌 호스트가 검사한다. 임의 URL·예산 변경·개인 프로필은 입력 계약으로 허용하지 않는다. 상세는 [추가 조사 계약](investigation.md)을 따른다.
+
+## 요청 설정 변형과 측정
+
+정규 실행은 `thinking: disabled`만 보낸다(`claude_trial.VARIANTS['baseline']`). 요청 본문이 이전과 한 바이트도 다르지 않아 기록된 요청 ID가 그대로 맞는다. `adaptive-medium`·`adaptive-high`는 사람이 `--variant`로 지정했을 때만 보낸다. thinking 토큰은 출력 요금으로 청구되고 `max_tokens`에 포함된다. 예약액은 이미 `max_tokens` 전체를 잡으므로 달라지지 않는다.
+
+`benefit_monitor/variant_trial.py`는 그날 정규 실행이 보낸 축제·혜택 입력을 다른 변형으로 한 번씩 더 보내고, 호스트 검사 통과 여부·오류 코드·토큰·비용만 `cache/variant_trial/results.json`에 남긴다. 추천 카드 파일은 쓰지 않으므로 측정한 문장은 공개되지 않는다. 날짜·kind·변형마다 한 번이고, 요청 전에 시도를 먼저 기록한다. 정규 하루 호출 수에 더해지는 유료 요청이다. 사용자 2026-11-14 승인으로 일일 실행(`ai_daily`)이 축제·혜택 추천 직후 이 단계를 부르며, 측정일 7일·2026-11-30을 넘으면 아무것도 보내지 않는다. 결과 묶음은 암호화 런타임에 보관하고, 통과 수·오류 코드·토큰 요약은 실행 결과의 `measurement`로 출력된다. 측정 요청의 HTTP 400은 원장을 멈추지 않는다.
+
+응답의 `stop_reason`이 `refusal`이면 "model refused", `max_tokens`면 "output truncated at max_tokens"로 거절 사유를 따로 남긴다. 두 경우 모두 구조화 출력이어도 스키마와 맞지 않을 수 있어 해석하지 않는다.
