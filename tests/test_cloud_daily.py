@@ -405,9 +405,9 @@ class CloudDailyTests(unittest.TestCase):
         m=self.module();made=[]
         class Fake:
             def __init__(self,folder,budget,key):made.append(budget)
-            def grammar_probe(self,schema):
-                self.schema=schema;return {'status':outcome[0],'schema_sha256':'0'*64,'cached':False}
-        outcome=['passed']
+            def grammar_probe(self,schema,variant='baseline'):
+                probed.append(variant);return {'status':outcome[0],'schema_sha256':'0'*64,'cached':False}
+        outcome=['passed'];probed=[]
         with patch.object(m,'ClaudeClient',Fake),patch.object(m,'daily',side_effect=AssertionError('no daily')),\
                 patch.object(m,'disable_workflow') as disable:
             with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'schedule'}),self.assertRaisesRegex(ValueError,'manual'):
@@ -418,6 +418,10 @@ class CloudDailyTests(unittest.TestCase):
         self.assertEqual((passed['status'],rejected['status']),('probe_passed','probe_rejected'))
         self.assertEqual((m.exit_code(passed),m.exit_code(rejected)),(0,1))
         self.assertEqual(len(made),2);disable.assert_not_called()
+        # Research, the six other kinds, then the two measurement variants on the festival schema.
+        self.assertEqual(probed[:9],['baseline']*7+['adaptive-medium','adaptive-high'])
+        self.assertEqual(set(passed['probes']),{'topic','verify','grocery','health','festival','benefit',
+                                                'festival:adaptive-medium','festival:adaptive-high'})
         self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
 
     def test_runtime_near_its_size_limit_stops_before_any_paid_call_or_day_use(self):

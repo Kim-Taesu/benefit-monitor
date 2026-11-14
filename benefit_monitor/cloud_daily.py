@@ -281,8 +281,22 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
             from .investigation_contract import schema as investigation_schema
             schema=investigation_schema(schema)
         probe=client.grammar_probe(schema)
-        session.save_runtime()
-        return dict(summary,status='probe_'+probe['status'],probe=probe)
+        # Every other kind's schema too (2026-11-14: the topic schema became static and changed once),
+        # and the measurement variants on the festival schema. Already-probed ones are cached and free.
+        from . import wire_format
+        from .claude_trial import VARIANTS
+        others={}
+        try:
+            for kind in wire_format.WIRES:
+                if kind!='research':others[kind]=client.grammar_probe(wire_format.schema_for(kind,None))
+            for variant in VARIANTS:
+                if variant!='baseline':
+                    others['festival:'+variant]=client.grammar_probe(wire_format.schema_for('festival',None),variant=variant)
+        finally:
+            session.save_runtime()
+        passed=probe['status']=='passed' and all(row['status']=='passed' for row in others.values())
+        return dict(summary,status='probe_passed' if passed else 'probe_rejected',probe=probe,
+                    probes={name:{k:row.get(k) for k in ('status','cached','detail','usage')} for name,row in others.items()})
     if check_only:
         data=dict(session.control)
         data['check']={'snapshot_sha256':snapshot_digest(data),'ref':os.environ.get('GITHUB_REF',''),
@@ -368,7 +382,7 @@ def exit_code(result):
     if result.get('status') in ATTENTION:
         if result['status']=='credit_exhausted':print('::error::Anthropic credit balance exhausted; today skipped, trial not halted, next day runs normally')
         elif result['status']=='runtime_too_large':print('::error::encrypted AI runtime is near its size limit ('+str(result.get('reason'))+'); no paid call was made')
-        elif result['status']=='probe_rejected':print('::error::grammar probe rejected the research schema; trial not halted')
+        elif result['status']=='probe_rejected':print('::error::grammar probe rejected a schema or request variant; trial not halted')
         else:print('::error::AI provider rejected '+str(len(result.get('provider_failures',[])))+' request(s); trial halted='+str(result.get('halted')))
         return 1
     return 0
