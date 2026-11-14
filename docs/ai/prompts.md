@@ -55,6 +55,6 @@ kind별 설정은 두 표에 한 줄씩 있다(2026-11-14). `claude_trial.KINDS`
 
 정규 실행은 `thinking: disabled`만 보낸다(`claude_trial.VARIANTS['baseline']`). 요청 본문이 이전과 한 바이트도 다르지 않아 기록된 요청 ID가 그대로 맞는다. `adaptive-medium`·`adaptive-high`는 사람이 `--variant`로 지정했을 때만 보낸다. thinking 토큰은 출력 요금으로 청구되고 `max_tokens`에 포함된다. 예약액은 이미 `max_tokens` 전체를 잡으므로 달라지지 않는다.
 
-`benefit_monitor/variant_trial.py`는 그날 정규 실행이 보낸 축제·혜택 입력을 다른 변형으로 한 번씩 더 보내고, 호스트 검사 통과 여부·오류 코드·토큰·비용만 `cache/variant_trial/results.json`에 남긴다. 추천 카드 파일은 쓰지 않으므로 측정한 문장은 공개되지 않는다. 날짜·kind·변형마다 한 번이고, 요청 전에 시도를 먼저 기록한다. 정규 하루 호출 수에 더해지는 유료 요청이다. 사용자 2026-11-14 승인으로 일일 실행(`ai_daily`)이 축제·혜택 추천 직후 이 단계를 부르며, 측정일 7일·2026-11-30을 넘으면 아무것도 보내지 않는다. 결과 묶음은 암호화 런타임에 보관하고, 통과 수·오류 코드·토큰 요약은 실행 결과의 `measurement`로 출력된다. 측정 요청의 HTTP 400은 원장을 멈추지 않는다.
+`benefit_monitor/variant_trial.py`는 그날 정규 실행이 보낸 축제·혜택 입력을 다른 변형으로 한 번씩 더 보내고, 호스트 검사 통과 여부·오류 코드·토큰·비용만 `cache/variant_trial/results.json`에 남긴다. 추천 카드 파일은 쓰지 않으므로 측정한 문장은 공개되지 않는다. 날짜·kind·변형마다 한 번이고, 요청 전에 시도를 먼저 기록한다. 정규 하루 호출 수에 더해지는 유료 요청이다. 사용자 2026-11-14 승인으로 일일 실행(`ai_daily`)이 축제·혜택 추천 직후 이 단계를 부른다. 처음 승인한 측정일 7일·2026-11-30 제한은 같은 날 해제되어 종료일이 없다. 월 $15 원장 상한은 그대로다. 결과 묶음은 암호화 런타임에 보관하고, 통과 수·오류 코드·토큰 요약은 실행 결과의 `measurement`로 출력된다. 측정 요청의 HTTP 400은 원장을 멈추지 않는다.
 
 응답의 `stop_reason`이 `refusal`이면 "model refused", `max_tokens`면 "output truncated at max_tokens"로 거절 사유를 따로 남긴다. 두 경우 모두 구조화 출력이어도 스키마와 맞지 않을 수 있어 해석하지 않는다.

@@ -12,7 +12,9 @@ import tarfile
 from scripts.install_age import safe_path,verify_installation
 from .trial_budget import secure_open
 
-MAX_RUNTIME_BYTES=32*1024*1024
+# Expanded size. Raised 32 -> 64 MiB (approved 2026-11-14): nine days of runs passed the 24 MiB preflight
+# and stopped every paid step. The real storage bound is the 8 MiB encrypted file, which is unchanged.
+MAX_RUNTIME_BYTES=64*1024*1024
 # Daily multi-document research retains several small artifacts per request.
 # Keep the same 32 MiB expanded / 8 MiB encrypted bounds; allow more small files.
 MAX_FILES=8192

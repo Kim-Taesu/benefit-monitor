@@ -103,27 +103,18 @@ class VariantTrialTests(unittest.TestCase):
             vt.measure(self.root, NOW, execute=True)
         self.assertEqual(model.call_count, 1)
 
-    def test_window_closes_after_the_approved_days_and_date(self):
-        from datetime import timedelta
-        if True:
-            for offset in range(vt.MAX_DAYS + 1):
-                now = datetime.fromisoformat('2026-11-15T09:00:00+09:00') + timedelta(days=offset)
-                day = now.date().isoformat()
-                path = f'.tools/ai-festival-inputs/{day}.json'
-                save(self.root / path, {})
-                run_id = f'{offset:064d}'
-                save(self.root / 'cache/festival_pick/days.json', {'days': {day: {'status': 'validated_draft', 'input_file': path, 'run_id': run_id}}})
-                self.run_folder(run_id, True)
-                self.invoke = lambda root, kind, input_path, variant=None, n=offset: (
-                    self.calls.append(n), {'status': 'rejected_draft', 'run_id': None})[1]
-                with patch.object(vt, 'invoke', side_effect=self.invoke):
-                    last = vt.measure(self.root, now, kinds=('festival',), variants=('adaptive-high',), execute=True)
-        self.assertEqual(len(self.calls), vt.MAX_DAYS)
-        self.assertEqual(last[0]['status'], 'window_closed')
-        self.regular('benefit')
-        with patch.object(vt, 'invoke', side_effect=AssertionError('no paid call after the last day')):
-            late = vt.measure(self.root, datetime.fromisoformat('2026-12-01T09:00:00+09:00'), execute=True)
-        self.assertEqual(late[0]['status'], 'window_closed')
+    def test_measurement_has_no_end_date_and_old_rows_roll_off(self):
+        # 2026-11-14: the seven-day window was lifted the same day it was approved.
+        self.regular('festival')
+        late = datetime.fromisoformat('2027-03-01T09:00:00+09:00')
+        path = '.tools/ai-festival-inputs/late.json'
+        save(self.root / path, {})
+        save(self.root / 'cache/festival_pick/days.json', {'days': {'2027-03-01': {'status': 'rejected_draft', 'input_file': path, 'run_id': 'a' * 64}}})
+        with patch.object(vt, 'invoke', return_value={'status': 'rejected_draft', 'run_id': None}) as model, \
+                patch.object(vt, 'MAX_ROWS', 2):
+            vt.measure(self.root, late, kinds=('festival',), execute=True)
+        self.assertEqual(model.call_count, 2)
+        self.assertEqual(len(self.rows()), 2)
 
     def test_daily_step_reports_new_ledger_rows_and_no_model_text(self):
         self.regular('festival')

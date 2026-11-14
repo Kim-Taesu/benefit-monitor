@@ -8,8 +8,8 @@ from benefit_monitor import runtime_retention as retention
 from benefit_monitor.store import save
 
 NOW = datetime.fromisoformat('2026-11-30T07:00:00+09:00')
-OLD = (NOW - timedelta(days=15)).isoformat()
-NEW = (NOW - timedelta(days=13)).isoformat()
+OLD = (NOW - timedelta(days=8)).isoformat()
+NEW = (NOW - timedelta(days=6)).isoformat()  # KEEP_DAYS is 7 (2026-11-14)
 
 
 def h(char):

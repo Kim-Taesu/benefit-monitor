@@ -9,8 +9,9 @@ claude_trial.VARIANTS, through the same CLI, key, ledger and host review. The an
 private run folder; pick.json is never written here, so nothing measured can reach the page.
 
 Every measurement is an extra paid request on top of the regular daily calls: at most once per
-day, kind and variant (4 a day). Approved 2026-11-14 for MAX_DAYS measured days and no later than
-LAST_DAY; after that the daily step sends nothing. Extending it needs a new approval.
+day, kind and variant (4 a day). Approved 2026-11-14, first for seven measured days, then the same
+day without an end date: when credit runs out the regular cards fall back to rule cards anyway.
+The monthly ledger cap still applies. To stop measuring, remove the call in ai_daily.
 """
 import argparse
 from datetime import datetime
@@ -28,8 +29,6 @@ BASELINE = 'baseline'
 MEASURED = ('adaptive-medium', 'adaptive-high')
 STATE = 'cache/variant_trial/results.json'
 MAX_ROWS = 600
-MAX_DAYS = 7
-LAST_DAY = '2026-11-30'
 # Microdollars per token, the ledger's fixed Haiku 5.5 rate card.
 INPUT_RATE, OUTPUT_RATE = 0.10, 0.50
 
@@ -68,9 +67,6 @@ def measure(root, now, kinds=KINDS, variants=MEASURED, execute=False):
     with lock(project_path(root, 'cache/variant_trial/.lock')):
         state = load(project_path(root, STATE), {'schema_version': 1, 'rows': []})
         done = {(r['day'], r['kind'], r['variant']) for r in state['rows']}
-        measured_days = {r['day'] for r in state['rows'] if r['variant'] != BASELINE}
-        if day > LAST_DAY or (day not in measured_days and len(measured_days) >= MAX_DAYS):
-            return [{'day': day, 'kind': None, 'variant': None, 'status': 'window_closed'}]
 
         def store(row):
             state['rows'] = (state['rows'] + [row])[-MAX_ROWS:]
