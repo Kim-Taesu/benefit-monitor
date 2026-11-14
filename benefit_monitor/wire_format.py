@@ -34,6 +34,8 @@ RESEARCH_WIRE = 'research-wire-v1'
 TOPIC_WIRE = 'topic-wire-v1'
 GROCERY_WIRE = 'grocery-wire-v1'
 HEALTH_WIRE = 'health-note-wire-v1'
+FESTIVAL_WIRE = 'festival-wire-v1'
+BENEFIT_WIRE = 'benefit-wire-v1'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
 GRAMMAR_UNION_LIMIT = 0
@@ -368,7 +370,36 @@ def health_from_wire(wire, host):
     return {'status': wire['status'], 'sentence': wire['sentence'], 'quotes': wire['quotes']}
 
 
+def _pick_wire_schema(version):
+    """Summary plus id/line picks (festival and benefit picks, 2026-11-14). Ids are plain strings so the
+    schema stays the same every day (one grammar probe); review() rejects ids outside today's candidates."""
+    pick = _object({'id': _string(), 'line': _string()})
+    schema = _object({'wire_version': {'enum': [version]}, 'summary': _string(),
+                      'picks': {'type': 'array', 'items': pick}})
+    check_limits(schema)
+    return schema
+
+
+def _pick_from_wire(wire, version):
+    if not isinstance(wire, dict) or wire.get('wire_version') != version or set(wire) != {'wire_version', 'summary', 'picks'}:
+        raise ValueError(version + ' contract mismatch')
+    return {'summary': wire['summary'], 'picks': wire['picks']}
+
+
+def festival_wire_schema(host):
+    return _pick_wire_schema(FESTIVAL_WIRE)
+
+
+def benefit_wire_schema(host):
+    return _pick_wire_schema(BENEFIT_WIRE)
+
+
+PICK_WIRES = {'festival': FESTIVAL_WIRE, 'benefit': BENEFIT_WIRE}
+
+
 def schema_for(kind, host):
+    if kind in PICK_WIRES:
+        return _pick_wire_schema(PICK_WIRES[kind])
     if kind == 'health':
         return health_wire_schema(host)
     if kind == 'grocery':
@@ -380,6 +411,8 @@ def schema_for(kind, host):
 
 
 def from_wire(kind, wire, host):
+    if kind in PICK_WIRES:
+        return _pick_from_wire(wire, PICK_WIRES[kind])
     if kind == 'health':
         return health_from_wire(wire, host)
     if kind == 'grocery':

@@ -399,5 +399,23 @@ class RequestShapeTests(unittest.TestCase):
         self.assertEqual(self.budget.summary()['request_count'], 1)
 
 
+
+class PickWireTests(unittest.TestCase):
+    """Festival and benefit picks share one plain schema shape (2026-11-14)."""
+
+    def test_pick_schemas_round_trip_and_reject_other_versions(self):
+        for kind, version in (('festival', w.FESTIVAL_WIRE), ('benefit', w.BENEFIT_WIRE)):
+            schema = w.schema_for(kind, None)
+            self.assertEqual(list(schema['properties']), ['wire_version', 'summary', 'picks'])
+            self.assertEqual(w.limits(schema), {'unions': 0, 'optional': 0, 'patterns': 0, 'unsupported': []})
+            draft = {'summary': '요약', 'picks': [{'id': 'a', 'line': '줄'}]}
+            self.assertEqual(w.from_wire(kind, dict(draft, wire_version=version), None), draft)
+            other = w.BENEFIT_WIRE if kind == 'festival' else w.FESTIVAL_WIRE
+            with self.assertRaises(ValueError):
+                w.from_wire(kind, dict(draft, wire_version=other), None)
+            with self.assertRaises(ValueError):
+                w.from_wire(kind, dict(draft, wire_version=version, extra=1), None)
+
+
 if __name__ == '__main__':
     unittest.main()

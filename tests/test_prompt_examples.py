@@ -7,7 +7,7 @@ import re
 import unittest
 from pathlib import Path
 
-from benefit_monitor import grocery_pick, health_notes, wire_format
+from benefit_monitor import benefit_pick, festival_pick, grocery_pick, health_notes, wire_format
 from benefit_monitor.claude_trial import TASKS, input_from_message, system_prompt, user_message
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +39,21 @@ class PromptExampleTests(unittest.TestCase):
             draft = json.loads(raw_output)
             self.assertEqual(list(draft), order)
             self.assertEqual(health_notes.review(draft, {'page_text': page, 'district': '강남구'}), [], draft['sentence'])
+
+    def test_festival_examples_pass_review(self):
+        for raw_input, raw_output in examples('festival-system.md', 'candidates'):
+            candidates = json.loads(raw_input)
+            draft = json.loads(raw_output)
+            self.assertEqual(list(draft), list(wire_format.festival_wire_schema(None)['properties'])[1:])
+            names = [c['name'] for c in candidates]
+            self.assertEqual(festival_pick.review(draft, {'candidates': candidates}, names), [], draft['summary'])
+
+    def test_benefit_examples_pass_review(self):
+        for raw_input, raw_output in examples('benefit-system.md', 'candidates'):
+            candidates = json.loads(raw_input)
+            draft = json.loads(raw_output)
+            self.assertEqual(list(draft), list(wire_format.benefit_wire_schema(None)['properties'])[1:])
+            self.assertEqual(benefit_pick.review(draft, {'candidates': candidates}), [], draft['summary'])
 
 
 class PromptShapeTests(unittest.TestCase):

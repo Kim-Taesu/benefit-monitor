@@ -129,3 +129,32 @@ test('the main page does not link to the admin page',async({page})=>{
  await expect(page.locator('#results article').first()).toBeVisible();
  await expect(page.locator('a[href*="admin"]')).toHaveCount(0);
 });
+
+test('a rule pick has no text to mute, so its mute buttons are hidden',async({page})=>{
+ const pick=(source:string)=>({schema_version:1,generated_at:'2026-11-04T07:00:00+09:00',day:'2026-11-04',source,summary:source==='ai'?'[테스트] 요약':null,picks:[]});
+ await setup(page,snapshot([auto],{festival_pick:pick('rule'),benefit_pick:pick('ai')}));
+ await page.goto('./admin.html');
+ const festival=page.locator('section[aria-labelledby="festival-heading"]'),benefit=page.locator('section[aria-labelledby="benefit-heading"]');
+ await expect(festival).toContainText('지금은 문장 없는 자동 선정 카드입니다.');
+ await expect(festival.getByRole('button')).toHaveCount(0);
+ await expect(benefit.getByRole('button',{name:'AI 혜택 문구 끄기'})).toBeVisible();
+ await expect(benefit).not.toContainText('지금은 문장 없는 자동 선정 카드입니다.');
+});
+
+test('a muted day turns into a rule card but can still be switched back on',async({page})=>{
+ const pick=(source:string)=>({schema_version:1,generated_at:'2026-11-04T07:00:00+09:00',day:'2026-11-04',source,summary:source==='ai'?'[테스트] 요약':null,picks:[]});
+ const seen=await setup(page,snapshot([auto],{festival_pick:pick('rule'),benefit_pick:pick('rule')}),
+  [{kind:'festival_pick_text',day:'2026-11-04',taken_down_at:'2026-11-04T08:00:00+09:00'}]);
+ await page.goto('./admin.html');
+ await page.getByLabel('GitHub 토큰').fill(TOKEN);
+ await page.getByRole('button',{name:'토큰 저장'}).click();
+ const festival=page.locator('section[aria-labelledby="festival-heading"]'),benefit=page.locator('section[aria-labelledby="benefit-heading"]');
+ await expect(festival).toContainText('이 날짜의 AI 문구는 꺼져 있습니다.');
+ await expect(festival).not.toContainText('지금은 문장 없는 자동 선정 카드입니다.');
+ await festival.getByRole('button',{name:'다시 켜기'}).click();
+ await expect.poll(()=>seen.github.some(c=>c.method==='PUT')).toBe(true);
+ const put=seen.github.find(c=>c.method==='PUT')!;
+ expect(JSON.parse(Buffer.from((put.body as {content:string}).content,'base64').toString())).toEqual([]);
+ // The benefit card is a plain rule card (no mute): no buttons.
+ await expect(benefit.getByRole('button')).toHaveCount(0);
+});

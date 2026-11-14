@@ -61,6 +61,7 @@ def restore(root, repository, now=None, env=None):
     restore_health_notices(root,repository,env)
     restore_health_notes(root,repository,env)
     restore_grocery_pick(root,repository,env)
+    restore_tab_picks(root,repository,env)
     return envelope.get("sha")
 
 
@@ -111,6 +112,27 @@ def restore_grocery_pick(root, repository, env=None):
     except Exception:
         pass
     return False
+
+
+TAB_PICKS = (("ai-festival-pick.json", "cache/festival_pick/pick.json"),
+             ("ai-benefit-pick.json", "cache/benefit_pick/pick.json"))
+
+
+def restore_tab_picks(root, repository, env=None):
+    """Last AI run's festival and benefit picks (2026-11-14); publication re-checks each against today's data.
+    The AI run's own copy is never replaced, and a missing or unreadable file is not an error."""
+    from .store import save
+    restored = []
+    for name, local in TAB_PICKS:
+        path = Path(root) / local
+        try:
+            pick, _ = _get(repository, name, env)
+            if isinstance(pick, dict) and not path.exists():
+                save(path, pick)
+                restored.append(name)
+        except Exception:
+            pass
+    return restored
 
 
 def restore_health_notes(root, repository, env=None):

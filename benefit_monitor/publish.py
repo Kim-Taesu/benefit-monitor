@@ -375,7 +375,25 @@ def run(root, now=None, failure=False):
         if bundle is not None:data['festivals'] = bundle
         attach_groceries(root,data,now)
         attach_health_notices(root,data,now)
+        attach_tab_picks(root,data,now)
     return write_export(root,data)
+
+
+def attach_tab_picks(root,data,now):
+    """Festival and benefit picks from the AI run (approved 2026-11-14), re-checked against this payload's
+    festivals and items; a missing, stale or broken pick is simply left out, never failing publication."""
+    from . import auto_release
+    try:
+        takedowns = auto_release.load(root)[1]
+    except Exception:
+        takedowns = []
+    for key,path in (('festival_pick','cache/festival_pick/pick.json'),('benefit_pick','cache/benefit_pick/pick.json')):
+        try:
+            pick = load(Path(root)/path, None)
+        except Exception:
+            pick = None
+        if isinstance(pick,dict):data[key] = pick
+    auto_release.recheck_tab_picks(data,takedowns,now)
 
 
 def attach_health_notices(root,data,now):

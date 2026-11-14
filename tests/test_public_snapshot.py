@@ -196,4 +196,33 @@ class PublicSnapshotTests(unittest.TestCase):
         self.assertNotIn('grocery_baselines',clean);self.assertNotIn('groceries',clean)
 
 
+    def test_tab_picks_are_rechecked_against_the_clean_snapshot(self):
+        import test_benefit_pick as tb, test_festival_pick as tf
+        raw=publish.payload(self.root,now=NOW)
+        raw['benefit_pick']=tb.stored()  # its items are not in this snapshot
+        raw['festival_pick']=tf.stored()  # no festivals bundle in this snapshot
+        (self.root/'report.json').unlink()
+        clean=self.stage(raw)
+        self.assertNotIn('benefit_pick',clean)
+        self.assertNotIn('festival_pick',clean)
+
+    def test_tab_picks_are_checked_against_clean_items_and_kept_when_valid(self):
+        from unittest.mock import patch
+        raw=publish.payload(self.root,now=NOW)
+        raw['benefit_pick']={'marker':'stored'}
+        seen=[]
+        def check(pick,items,takedowns,now):seen.append([r['url'] for r in items]);return {'marker':'checked'}
+        (self.root/'report.json').unlink()
+        with patch('benefit_monitor.benefit_pick.public',side_effect=check):
+            clean=self.stage(deepcopy(raw))
+            self.assertEqual(clean['benefit_pick'],{'marker':'checked'})
+            self.assertEqual(seen,[[r['url'] for r in clean['items']]])
+            # A local hold removes the item from clean only: the raw item must not keep the pick alive.
+            save(self.root/'cache/operational_state.json',{'schema_version':1,'items':{
+                benefit().id:{'source':'test','hold_at':NOW.isoformat(),'hold_reason':'body_changed'}},'sources':{}})
+            seen.clear()
+            held=self.stage(deepcopy(raw))
+        self.assertEqual((held['items'],seen),([],[]))
+        self.assertNotIn('benefit_pick',held)
+
 if __name__=='__main__':unittest.main()

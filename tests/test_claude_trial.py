@@ -540,4 +540,54 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertNotIn('title',wire['approved_claims'][0]['value'])
         self.assertEqual(host,original)
 
+
+class PickKindHostTests(unittest.TestCase):
+    """Festival and benefit picks (2026-11-14): only the input rebuilt from today's data may be sent."""
+
+    def test_festival_host_must_match_cache(self):
+        import tempfile
+        from copy import deepcopy
+        from benefit_monitor import festival_pick as fp
+        from benefit_monitor.store import save
+        from tests.test_festival_pick import BUNDLE, NOW
+        host = fp.host(BUNDLE, NOW)
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(ValueError):
+                validate_host(host, 'festival', tmp)  # no festivals cache
+            save(Path(tmp)/'cache/festivals.json', BUNDLE)
+            validate_host(host, 'festival', tmp)
+            forged = deepcopy(host)
+            forged['candidates'][0]['fee_text'] = '무료'
+            with self.assertRaises(ValueError):
+                validate_host(forged, 'festival', tmp)
+            with self.assertRaises(ValueError):
+                validate_host(dict(host, extra=1), 'festival', tmp)
+
+    def test_benefit_host_must_match_payload(self):
+        from copy import deepcopy
+        from unittest.mock import patch
+        from benefit_monitor import benefit_pick as bp
+        from tests.test_benefit_pick import ITEMS, NOW
+        host = bp.host(ITEMS, NOW)
+        with patch('benefit_monitor.publish.payload', return_value={'items': ITEMS}):
+            validate_host(host, 'benefit', ROOT)
+            forged = deepcopy(host)
+            forged['candidates'][0]['fee_status'] = 'free'
+            with self.assertRaises(ValueError):
+                validate_host(forged, 'benefit', ROOT)
+            with self.assertRaises(ValueError):
+                validate_host(dict(host, extra=1), 'benefit', ROOT)
+        with patch('benefit_monitor.publish.payload', side_effect=ValueError('no report')):
+            with self.assertRaises(ValueError):
+                validate_host(host, 'benefit', ROOT)
+
+    def test_pick_drafts_are_evaluated_by_their_review(self):
+        from benefit_monitor.claude_trial import evaluate_draft
+        from benefit_monitor import benefit_pick as bp, festival_pick as fp
+        from tests import test_benefit_pick as tb, test_festival_pick as tf
+        self.assertTrue(evaluate_draft(tf.draft(), fp.host(tf.BUNDLE, tf.NOW), 'festival')[1]['valid'])
+        bad = evaluate_draft(tb.draft(summary='서울사랑상품권 추가 5% 페이백을 챙겨 보세요.'), bp.host(tb.ITEMS, tb.NOW), 'benefit')[1]
+        self.assertFalse(bad['valid'])
+        self.assertIn('number', bad['errors'])
+
 if __name__=='__main__':unittest.main()

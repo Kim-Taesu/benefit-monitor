@@ -57,7 +57,8 @@ def disable_workflow(store):
 FALLBACK_REFRESH_HOUR=10
 ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
 # Per-day paid request limits: verification 40, research 40 (2026-11-10), topic 1, grocery pick 1,
-# health-programme sentences 10 (2026-11-11), grammar probes (one per new schema).
+# health-programme sentences 10 (2026-11-11), festival pick 1, benefit pick 1 (2026-11-14),
+# grammar probes (one per new schema).
 MAX_DAILY_RESEARCH=40
 MAX_DAILY_VERIFY=40
 STATUS_FILE='cache/ai_daily/status.json'
@@ -101,6 +102,30 @@ def upload_grocery_pick(root,store):
         return True
     except Exception:
         return False
+
+
+TAB_PICKS=(('cache/festival_pick/pick.json','ai-festival-pick.json','Update AI festival pick'),
+           ('cache/benefit_pick/pick.json','ai-benefit-pick.json','Update AI benefit pick'))
+
+
+def upload_tab_picks(root,store):
+    """Best effort copy of today's festival and benefit picks (2026-11-14) to briefing-data, so collection-only
+    runs keep the AI text. Returns the names written; a failure skips that file and never raises."""
+    written=[]
+    for local,name,message in TAB_PICKS:
+        try:
+            pick=load(safe_path(root,local),None)
+            if not isinstance(pick,dict):continue
+            try:sha=store._api(f'contents/{name}?ref=briefing-data').get('sha')
+            except ValueError:sha=None  # Not created yet.
+            body={'message':message,'branch':'briefing-data',
+                  'content':base64.b64encode((json.dumps(pick,ensure_ascii=False,indent=2)+'\n').encode()).decode()}
+            if sha:body['sha']=sha
+            store._api(f'contents/{name}',body)
+            written.append(name)
+        except Exception:
+            continue
+    return written
 
 
 def upload_health_notes(root,store):
@@ -200,7 +225,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     if save_ai(root,REPOSITORY,env=env)!=local:
         # Merged with a concurrent writer: this snapshot no longer matches; the next collection publishes it.
         return {'status':'ai_approval_merged_deferred'}
-    upload_health_notes(root,store);upload_grocery_pick(root,store)
+    upload_health_notes(root,store);upload_grocery_pick(root,store);upload_tab_picks(root,store)
     commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content,expected_sha=expected_sha)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{

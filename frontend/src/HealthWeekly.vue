@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { weeklyPicks, type HealthBundle, type HealthKind } from './health';
 const props=defineProps<{bundle:HealthBundle;district:string;today:string}>();
-const SHOW=4;
+const SHOW=3;
 const kind=ref<HealthKind|''>(''),expanded=ref(false);
 const picks=computed(()=>weeklyPicks(props.bundle,props.today,kind.value));
 watch(()=>[props.district,kind.value],()=>{expanded.value=false;});
@@ -13,19 +13,20 @@ const visible=computed(()=>picks.value.districts.length>0&&(kind.value||!props.d
 </script>
 <template>
   <section v-if="visible" class="health-weekly" aria-labelledby="health-weekly-title">
-    <h3 id="health-weekly-title">이번 주 보건소 추천</h3>
-    <p v-if="shownSummary" class="fine-print"><span class="health-ai">AI 작성</span>AI가 공식 페이지를 요약했습니다. 대상·기간·비용은 원문에서 확인하세요.</p>
+    <h3 id="health-weekly-title">이번 주 보건소 추천<span v-if="shownSummary" class="health-ai">AI 작성</span></h3>
+    <p v-if="shownSummary" class="fine-print">AI가 공식 페이지를 요약했습니다. 대상·기간·비용은 원문에서 확인하세요.</p>
     <p v-else class="fine-print">공식 페이지 링크입니다. 대상·기간·비용은 원문에서 확인하세요.</p>
     <div v-if="picks.kinds.length" class="quick-filters health-weekly-kinds" role="group" aria-label="사업 종류">
       <button v-for="k in picks.kinds" :key="k.key" type="button" :aria-pressed="kind===k.key" @click="kind=kind===k.key?'':k.key">{{ k.label }} {{ k.districts }}개 구</button>
     </div>
     <div v-for="d in shown" :key="d.district" class="health-weekly-district">
       <div class="health-weekly-head"><strong>{{ d.district }}</strong><span v-if="d.newNotices" class="health-badge">새 공지 {{ d.newNotices }}건</span></div>
-      <ul>
-        <li v-for="p in d.programs" :key="p.url">
-          <a :href="p.url" target="_blank" rel="noopener noreferrer">{{ p.name }}<span class="sr-only"> (새 창, {{ p.center }})</span></a>
-          <p v-if="p.summary" class="health-note"><span class="health-ai">AI 작성</span>{{ p.summary }}</p>
+      <ul v-if="d.programs.length">
+        <li>
+          <a :href="d.programs[0].url" target="_blank" rel="noopener noreferrer">{{ d.programs[0].name }}<span class="sr-only"> (새 창, {{ d.programs[0].center }})</span></a>
+          <p v-if="d.programs[0].summary" class="health-note">{{ d.programs[0].summary }}</p>
         </li>
+        <li v-if="d.programs.length>1" class="health-weekly-others">외: <template v-for="(p,i) in d.programs.slice(1)" :key="p.url"><template v-if="i"> · </template><a :href="p.url" target="_blank" rel="noopener noreferrer">{{ p.name }}<span class="sr-only"> (새 창, {{ p.center }})</span></a></template></li>
       </ul>
       <small v-if="d.more>0" class="health-weekly-more">외 {{ d.more }}곳</small>
     </div>

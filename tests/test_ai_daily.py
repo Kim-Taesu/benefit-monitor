@@ -124,3 +124,45 @@ class GroceryIsolationTests(unittest.TestCase):
                 patch('benefit_monitor.ai_daily.publish_briefing',side_effect=lambda root,**kw:published.append(1) or {'status':'ok'}):
             result=self.run_daily(online=True,allow_spend=True,publish=True)
         self.assertEqual((result['status'],result['grocery']['status'],published),('completed','failed',[1]))
+
+
+class TabPickTests(unittest.TestCase):
+    """Festival and benefit picks (2026-11-14): one paid call each, after health, never failing the day."""
+    setUp,save,run_daily=AIDailyTests.setUp,AIDailyTests.save,AIDailyTests.run_daily
+
+    def chain(self,festival=None,benefit=None,collect=None):
+        self.policy.update(recurring_spend_approved=True,public_application_approved=True);self.save()
+        seen=[]
+        def mark(name,result):
+            def call(root,now,execute):seen.append((name,execute));return result
+            return call
+        ok={'status':'completed','source':'ai','model':{'status':'validated_draft'}}
+        with patch('benefit_monitor.ai_daily.collect',return_value=collect or {'ai_review':{}}),\
+                patch('benefit_monitor.ai_daily.refresh',return_value={'topics':[]}),\
+                patch('benefit_monitor.ai_daily.grocery_refresh',side_effect=mark('grocery',ok)),\
+                patch('benefit_monitor.ai_daily.health_refresh',side_effect=mark('health',{'status':'completed'})),\
+                patch('benefit_monitor.ai_daily.festival_refresh',side_effect=festival or mark('festival',ok)),\
+                patch('benefit_monitor.ai_daily.benefit_refresh',side_effect=benefit or mark('benefit',ok)),\
+                patch('benefit_monitor.ai_daily.publish_briefing',side_effect=lambda root,**kw:seen.append(('publish',None)) or {'status':'ok'}):
+            return self.run_daily(online=True,allow_spend=True,publish=True),seen
+
+    def test_festival_and_benefit_run_after_health_and_before_publish(self):
+        result,seen=self.chain()
+        self.assertEqual([s[0] for s in seen],['grocery','health','festival','benefit','publish'])
+        self.assertEqual((result['festival']['source'],result['benefit']['source']),('ai','ai'))
+
+    def test_no_paid_pick_after_credit_runs_out(self):
+        result,seen=self.chain(collect={'ai_review':{'credit_exhausted':True}})
+        self.assertEqual(dict(seen)['festival'],False)
+        self.assertEqual(dict(seen)['benefit'],False)
+
+    def test_festival_credit_exhaustion_stops_the_benefit_call(self):
+        def festival(root,now,execute):return {'status':'completed','source':'rule','model':{'status':'credit_exhausted'}}
+        result,seen=self.chain(festival=festival)
+        self.assertEqual(dict(seen)['benefit'],False)
+        self.assertEqual(result['status'],'credit_exhausted')
+
+    def test_pick_failures_do_not_fail_the_day(self):
+        result,seen=self.chain(festival=KeyError('days'),benefit=OSError('disk'))
+        self.assertEqual((result['status'],result['festival']['status'],result['benefit']['status']),('completed','failed','failed'))
+        self.assertIn(('publish',None),seen)

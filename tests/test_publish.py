@@ -330,5 +330,38 @@ class PublishTests(unittest.TestCase):
             self.assertIn(expected, text)
 
 
+
+class TabPickAttachTests(unittest.TestCase):
+    """publish.attach_tab_picks reads the AI run's picks and re-checks them (2026-11-14)."""
+
+    def test_attaches_rechecked_picks_and_skips_missing_files(self):
+        from unittest.mock import patch
+        import test_benefit_pick as tb, test_festival_pick as tf
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            data = {'items': list(tb.ITEMS), 'festivals': tf.BUNDLE}
+            with patch('benefit_monitor.auto_release.load', return_value=({}, [])):
+                publish.attach_tab_picks(root, data, tb.NOW)
+                self.assertNotIn('benefit_pick', data)
+                self.assertNotIn('festival_pick', data)
+                save(root / 'cache/benefit_pick/pick.json', tb.stored())
+                save(root / 'cache/festival_pick/pick.json', tf.stored())
+                publish.attach_tab_picks(root, data, tb.NOW)
+            self.assertEqual(data['benefit_pick']['source'], 'ai')
+            self.assertEqual(set(data['benefit_pick']['picks'][0]), {'id', 'source', 'url', 'line'})
+            self.assertEqual(data['festival_pick']['source'], 'ai')
+
+    def test_broken_pick_file_never_fails_publication(self):
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / 'cache/benefit_pick').mkdir(parents=True)
+            (root / 'cache/benefit_pick/pick.json').write_text('{not json')
+            data = {'items': []}
+            with patch('benefit_monitor.auto_release.load', return_value=({}, [])):
+                publish.attach_tab_picks(root, data, NOW)
+            self.assertNotIn('benefit_pick', data)
+
+
 if __name__ == "__main__":
     unittest.main()

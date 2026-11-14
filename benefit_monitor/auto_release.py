@@ -249,6 +249,8 @@ def apply_takedowns(data, takedowns, current=None, now=None):
             data.pop('grocery_discounts')
         else:
             data['grocery_discounts'] = bundle
+    # Festival and benefit picks follow the items and festivals kept above (2026-11-14).
+    data = recheck_tab_picks(data, takedowns, now or datetime.now(KST))
     if 'grocery_pick' in data:
         # Admin mute: the same rule card the collection path would publish (no model text).
         from .grocery_pick import apply_mute
@@ -257,6 +259,26 @@ def apply_takedowns(data, takedowns, current=None, now=None):
             data.pop('grocery_pick')
         else:
             data['grocery_pick'] = pick
+    return data
+
+
+def recheck_tab_picks(data, takedowns, now):
+    """Re-check the festival and benefit picks of a public payload against its own festivals and items
+    (2026-11-14): a line never outlives its item, an admin mute gives the rule card, anything that fails
+    is removed. Never raises, so a pick can never block publication."""
+    from . import benefit_pick, festival_pick
+    for key, check, basis in (('festival_pick', festival_pick.public, data.get('festivals')),
+                              ('benefit_pick', benefit_pick.public, data.get('items'))):
+        if key not in data:
+            continue
+        try:
+            pick = check(data[key], basis, takedowns, now) if basis else None
+        except Exception:
+            pick = None
+        if pick is None:
+            data.pop(key)
+        else:
+            data[key] = pick
     return data
 
 

@@ -150,3 +150,39 @@ class RestoreBaselinesTests(unittest.TestCase):
                 mirror.restore(root, 'o/r')
             self.assertFalse((root / 'cache/grocery_baselines.json').exists())
             self.assertTrue((root / 'cache/operational_state.json').exists())
+
+
+class RestorePickTests(unittest.TestCase):
+    """Festival and benefit picks (2026-11-14) come back like the grocery pick; a local copy is never replaced."""
+
+    def run_restore(self, root, files):
+        def run(args, **kwargs):
+            url = args[-1]
+            for name, value in files.items():
+                if name in url:
+                    env = {'encoding': 'base64', 'content': base64.b64encode(json.dumps(value).encode()).decode(), 'sha': 's'}
+                    return subprocess.CompletedProcess(args, 0, json.dumps(env), '')
+            if 'ai-' in url:
+                return subprocess.CompletedProcess(args, 1, '', 'gh: Not Found (HTTP 404)')
+            remote = {'operational_state': {'schema_version': 1, 'items': {}, 'sources': {}}}
+            envelope = {'encoding': 'base64', 'content': base64.b64encode(json.dumps(remote).encode()).decode()}
+            return subprocess.CompletedProcess(args, 0, json.dumps(envelope), '')
+        save(root / 'sources.yaml', {'sources': [{'id': 'test'}]})
+        with patch('benefit_monitor.mirror.subprocess.run', side_effect=run):
+            mirror.restore(root, 'o/r')
+
+    def test_restores_festival_and_benefit_picks(self):
+        festival, benefit = {'source': 'ai', 'day': '2026-11-14'}, {'source': 'rule', 'day': '2026-11-14'}
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            self.run_restore(root, {'ai-festival-pick.json': festival, 'ai-benefit-pick.json': benefit})
+            self.assertEqual(json.loads((root / 'cache/festival_pick/pick.json').read_text()), festival)
+            self.assertEqual(json.loads((root / 'cache/benefit_pick/pick.json').read_text()), benefit)
+
+    def test_local_pick_is_kept_and_missing_remote_is_not_error(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            save(root / 'cache/festival_pick/pick.json', {'source': 'local'})
+            self.run_restore(root, {'ai-festival-pick.json': {'source': 'remote'}})
+            self.assertEqual(json.loads((root / 'cache/festival_pick/pick.json').read_text()), {'source': 'local'})
+            self.assertFalse((root / 'cache/benefit_pick/pick.json').exists())

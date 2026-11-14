@@ -33,7 +33,7 @@ const md=(d:string)=>`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`;
       <p class="fine-print">공지가 아니라 보건소 사업 안내 페이지라서 연중 운영하는 무료 검진(대사증후군 등)이 여기 있습니다. 페이지가 살아 있는지만 확인했고, 대상·비용·예약 방법은 원문에서 확인하세요.</p>
       <div v-for="[name,rows] in programGroups" :key="name" class="health-program-group">
         <strong>{{ name }}</strong>
-        <ul><li v-for="p in rows" :key="p.url" :class="{noted:p.note}"><a :href="p.url" target="_blank" rel="noopener noreferrer">{{ p.name }}<span class="sr-only"> (새 창, {{ p.center }})</span></a><small v-if="p.stale" class="health-stale"> 확인 지연</small><small v-else-if="p.checkedAt"> · 확인 {{ md(p.checkedAt.slice(0,10)) }}</small><p v-if="p.note" class="health-note"><span class="health-ai">AI 작성</span>{{ p.note }}</p></li></ul>
+        <ul><li v-for="p in rows" :key="p.url" :class="{noted:p.note}"><a :href="p.url" target="_blank" rel="noopener noreferrer">{{ p.name }}<span class="sr-only"> (새 창, {{ p.center }})</span></a><small v-if="p.stale" class="health-stale"> 확인 지연</small><small v-else-if="p.checkedAt"> · 확인 {{ md(p.checkedAt.slice(0,10)) }}</small><details v-if="p.note" class="health-ai-details"><summary>AI 안내 보기</summary><p class="health-note"><span class="health-ai">AI 작성</span>{{ p.note }}</p></details></li></ul>
       </div>
     </details>
     <h3 class="health-notices-title">최근 공지</h3>

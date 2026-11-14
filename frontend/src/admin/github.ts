@@ -54,8 +54,9 @@ export async function readTakedowns(token:string,options:Options={}):Promise<Lis
 }
 
 // One read for the admin page: item takedowns and grocery text mutes come from the same file.
-export async function readAdminState(token:string,options:Options={}):Promise<{list:Takedown[];mutes:string[];healthMutes:string[]}>{
- checkToken(token);const {list,raw}=await read(token,options);return {list,mutes:mutesIn(raw),healthMutes:healthMutesIn(raw)};
+export async function readAdminState(token:string,options:Options={}):Promise<{list:Takedown[];mutes:string[];healthMutes:string[];festivalMutes:string[];benefitMutes:string[]}>{
+ checkToken(token);const {list,raw}=await read(token,options);
+ return {list,mutes:mutesIn(raw),healthMutes:healthMutesIn(raw),festivalMutes:pickMutesIn(raw,'festival_pick_text'),benefitMutes:pickMutesIn(raw,'benefit_pick_text')};
 }
 
 // Read, change, write with the sha precondition; on 409/422 re-read once and re-apply the change.
@@ -129,6 +130,30 @@ export async function unmuteGroceryText(token:string,surveyDay:string,options:Op
  checkToken(token);
  if(!DAY.test(surveyDay))throw new Error('조사일 형식이 올바르지 않습니다');
  await update(token,options,raw=>raw.some(sameMute(surveyDay))?raw.filter(t=>!sameMute(surveyDay)(t)):null,'Unmute grocery pick text '+surveyDay);
+ await redeploy(token,options);
+}
+
+// Festival / benefit pick AI summary: mute one public pick day (the card keeps its rule-based picks).
+export type PickKind='festival_pick_text'|'benefit_pick_text';
+const samePick=(kind:PickKind,day:string)=>(t:unknown)=>!!t&&typeof t==='object'&&(t as Record<string,unknown>).kind===kind&&(t as Record<string,unknown>).day===day;
+function pickMutesIn(raw:unknown[],kind:PickKind):string[]{
+ return raw.flatMap(t=>{const v=t as Record<string,unknown>;return v&&typeof v==='object'&&v.kind===kind&&typeof v.day==='string'&&DAY.test(v.day)?[v.day]:[];});
+}
+
+export async function mutePickText(token:string,kind:PickKind,day:string,note:string,options:Options={}):Promise<void>{
+ checkToken(token);
+ const memo=note.trim();
+ if(!DAY.test(day))throw new Error('추천 날짜 형식이 올바르지 않습니다');
+ if(memo.length>NOTE_MAX)throw new Error(`메모는 ${NOTE_MAX}자 이하로 적으세요`);
+ const entry={kind,day,taken_down_at:(options.now?.()||new Date()).toISOString(),note:memo};
+ await update(token,options,raw=>raw.some(samePick(kind,day))?null:[...raw,entry],`Mute ${kind} ${day}`);
+ await redeploy(token,options);
+}
+
+export async function unmutePickText(token:string,kind:PickKind,day:string,options:Options={}):Promise<void>{
+ checkToken(token);
+ if(!DAY.test(day))throw new Error('추천 날짜 형식이 올바르지 않습니다');
+ await update(token,options,raw=>raw.some(samePick(kind,day))?raw.filter(t=>!samePick(kind,day)(t)):null,`Unmute ${kind} ${day}`);
  await redeploy(token,options);
 }
 

@@ -30,6 +30,11 @@ for(const width of [390,1440])test(`health notice tab shows hint notices first a
  await expect(section.locator('.health-programs').getByRole('link',{name:/대사증후군 관리/})).toBeHidden();
  await section.locator('#health-district').selectOption('강서구');
  await expect(section.locator('.health-programs').getByRole('link',{name:/대사증후군 관리/})).toHaveAttribute('href','https://www.gangseo.seoul.kr/health/ht020103');
+ const aiToggle=section.locator('.health-programs details summary',{hasText:'AI 안내 보기'});
+ await expect(section.locator('.health-programs .health-note')).toBeHidden();
+ expect((await aiToggle.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+ await aiToggle.click();
+ await expect(section.locator('.health-programs .health-note')).toBeVisible();
  await expect(section.locator('.health-programs .health-note')).toContainText('AI 작성');
  await expect(section.locator('.health-programs .health-note')).toContainText('무료로 받을 수 있어요');
  await section.locator('#health-district').selectOption('은평구');
@@ -43,10 +48,11 @@ for(const width of [390,1440])test(`health weekly card filters by kind and distr
  await page.setViewportSize({width,height:900});
  await page.clock.install({time:new Date(NOW)});
  const raw=snapshot(undefined,{health_notices:{schema_version:1,source:'health_notices',fetched_at:'2026-11-04T00:07:00+09:00',notice:'[테스트] 보건소 공지',programs:[
-  prog('강서구','대사증후군 관리','gs1'),prog('강서구','임신 준비 검사','gs2'),prog('광진구','대사증후군 검진','gj1'),prog('송파구','결핵검사','sp1')],boards:[
+  prog('강서구','대사증후군 관리','gs1'),prog('강서구','임신 준비 검사','gs2'),prog('광진구','대사증후군 검진','gj1'),prog('송파구','결핵검사','sp1'),prog('마포구','결핵검사','mp1')],boards:[
   board({items:[]}),
   board({district:'광진구',name:'광진구보건소',items:[item(7,{date:'2026-11-04',hint:true})]}),
   board({district:'송파구',name:'송파구보건소',items:[]}),
+  board({district:'마포구',name:'마포구보건소',items:[]}),
   board({district:'은평구',name:'은평구보건소',items:[]}),
  ]}});
  (raw as Record<string,unknown>).health_notes=[{url:'https://www.example.go.kr/gs1',district:'강서구',sentence:'[테스트] 강서구 20~69세라면 대사증후군 검진을 무료로 받을 수 있어요. 전화로 예약하고 받아보세요.',generated_at:'2026-11-04T01:00:00+09:00'}];
@@ -66,6 +72,13 @@ for(const width of [390,1440])test(`health weekly card filters by kind and distr
  await expect(card).not.toContainText('전화로 예약하고');
  await expect(card).toContainText('새 공지 1건');
  await expect(card.locator('.health-weekly-district')).toHaveCount(3);
+ await expect(card.locator('.health-ai')).toHaveCount(1);
+ await expect(card.locator('.health-weekly-district .health-ai')).toHaveCount(0);
+ for(const d of await card.locator('.health-weekly-district').all())expect(await d.locator('.health-note').count()).toBeLessThanOrEqual(1);
+ await expect(card.getByText(/^외:/)).toHaveCount(1);
+ await expect(card.getByRole('link',{name:/임신 준비 검사/})).toHaveAttribute('target','_blank');
+ await card.getByRole('button',{name:/구 더 보기 \(1곳 남음\)/}).click();
+ await expect(card.locator('.health-weekly-district')).toHaveCount(4);
  const chip=card.getByRole('button',{name:'대사증후군 검진·관리 2개 구'});
  await chip.click();
  await expect(chip).toHaveAttribute('aria-pressed','true');
