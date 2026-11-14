@@ -18,7 +18,9 @@ MAX_RUNTIME_BYTES=32*1024*1024
 MAX_FILES=8192
 CONTROL_FILES={'.tools/claude-trial/live/budget.json','cache/ai_daily/days.json'}
 FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs/',
-         'cache/ai_review/','cache/ai_topics/','cache/ai_daily/','cache/ai_publish/')
+         'cache/ai_review/','cache/ai_topics/','cache/ai_daily/','cache/ai_publish/',
+         # Measurement rows (variant_trial): counts the approved measured days across runs.
+         'cache/variant_trial/')
 FILES={'report.json','cache/operational_state.json','cache/verified_items.json',
        'cache/district_candidates.json','cache/collection_log.json'}
 

@@ -47,6 +47,17 @@ class PromptExampleTests(unittest.TestCase):
             self.assertEqual(list(draft), list(wire_format.festival_wire_schema(None)['properties'])[1:])
             names = [c['name'] for c in candidates]
             self.assertEqual(festival_pick.review(draft, {'candidates': candidates}, names), [], draft['summary'])
+            # v3 (2026-11-14): the page shows dates and fees, so examples never write them. An example
+            # that did would teach the model the sentences the gate rejects most often.
+            for text in [draft['summary']] + [p['line'] for p in draft['picks']]:
+                self.assertNotRegex(text, r'\d|무료|유료|입장료|공짜|무상', text)
+        rows = examples('festival-system.md', 'candidates')
+        self.assertGreaterEqual(len(rows), 3)
+        # Diverse on purpose: every fee status appears, and no two outputs start the same way.
+        statuses = {c['fee_status'] for raw_input, _ in rows for c in json.loads(raw_input)}
+        self.assertEqual(statuses, {'free', 'mixed', 'paid', 'unknown'})
+        starts = [json.loads(raw_output)['picks'][0]['line'][:4] for _, raw_output in rows]
+        self.assertEqual(len(set(starts)), len(starts))
 
     def test_benefit_examples_pass_review(self):
         for raw_input, raw_output in examples('benefit-system.md', 'candidates'):

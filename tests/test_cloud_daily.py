@@ -299,6 +299,21 @@ class CloudDailyTests(unittest.TestCase):
         with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'workflow_run'}):m.trusted_environment()
         with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'pull_request_target'}),self.assertRaises(ValueError):m.trusted_environment()
 
+    def test_refused_measurement_request_is_reported_apart_from_the_day(self):
+        m=self.module()
+        def inner(*args,**kwargs):
+            from benefit_monitor.cloud_state import CloudSession
+            from benefit_monitor.trial_budget import TrialBudget
+            session=CloudSession.from_context(self.root,self.fixture.store())
+            budget=TrialBudget(self.fixture.budget_path,checkpoint=session.checkpoint_budget)
+            budget.reserve('e'*64,1000);budget.fail('e'*64,'http_400','effort not supported',halt=False)
+            return {'status':'completed','measurement':{'request_ids':['e'*64],'today':[],'summary':[]}}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',side_effect=inner),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        self.assertEqual((result['status'],result['provider_failures'],result['halted']),('completed',[],False))
+        self.assertEqual(result['measurement'],{'today':[],'summary':[],'provider_failures':['http_400']})
+        self.assertEqual(m.exit_code(result),0)
+
     def test_provider_rejection_finishes_day_but_exits_red(self):
         m=self.module()
         def inner(*args,**kwargs):

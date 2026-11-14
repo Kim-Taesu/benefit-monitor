@@ -189,6 +189,27 @@ class TabPickTests(unittest.TestCase):
         self.assertEqual(dict(seen)['benefit'],False)
         self.assertEqual(result['status'],'credit_exhausted')
 
+    def test_measurement_runs_after_the_picks_and_never_fails_the_day(self):
+        # Approved 2026-11-14: request-setting measurement on the picks' inputs, recorded only.
+        calls=[]
+        def step(root,now,execute):calls.append(execute);return {'today':[],'summary':[]}
+        with patch('benefit_monitor.variant_trial.daily_step',side_effect=step):
+            result,seen=self.chain()
+        self.assertEqual((calls,result['measurement']),([True],{'today':[],'summary':[]}))
+
+    def test_measurement_failure_never_fails_the_day(self):
+        with patch('benefit_monitor.variant_trial.daily_step',side_effect=OSError('disk')):
+            result,seen=self.chain()
+        self.assertEqual((result['status'],result['measurement']['status']),('completed','failed'))
+        self.assertIn(('publish',None),seen)
+
+    def test_no_measurement_request_after_credit_runs_out(self):
+        calls=[]
+        def step(root,now,execute):calls.append(execute);return {}
+        with patch('benefit_monitor.variant_trial.daily_step',side_effect=step):
+            self.chain(collect={'ai_review':{'credit_exhausted':True}})
+        self.assertEqual(calls,[False])
+
     def test_pick_failures_do_not_fail_the_day(self):
         result,seen=self.chain(festival=KeyError('days'),benefit=OSError('disk'))
         self.assertEqual((result['status'],result['festival']['status'],result['benefit']['status']),('completed','failed','failed'))

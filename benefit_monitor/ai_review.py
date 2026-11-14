@@ -20,23 +20,50 @@ from .store import load,save,lock
 
 
 def fingerprint(_runtime_root):
-    """Changes when the model prompt or the structured-output wire contract changes."""
+    """Changes when what the research model is asked, or how its answer is read, changes.
+
+    Until 2026-11-14 this hashed all of wire_format.py, so editing the grocery or festival schema
+    re-researched benefit candidates, while the shared prompt footer and the task line (both sent
+    to the model) were not covered. It now follows the research contract only."""
+    from .claude_trial import contract_fingerprint
     root=Path(__file__).resolve().parents[1]
-    names=('docs/ai/prompts/research-system.md','benefit_monitor/wire_format.py',
-           'docs/ai/schemas/research-extraction-v3.schema.json')
-    return hashlib.sha256(b'\n'.join((Path(root)/p).read_bytes() for p in names)).hexdigest()
+    draft_schema=(root/'docs/ai/schemas/research-extraction-v3.schema.json').read_bytes()
+    return hashlib.sha256(contract_fingerprint(root,'research').encode()+b'\n'+draft_schema).hexdigest()
+
+
+# One-time bridge for the change above. The research prompt, schema and decoder were not edited in
+# that commit, so answers signed with the last whole-file value stay valid and are not paid for
+# again. It applies only while fingerprint() equals BRIDGED_FINGERPRINT: the next real change to the
+# research contract switches it off by itself. Delete both constants (and their test) then.
+LEGACY_FINGERPRINT='c138133987052d63a1d61b80518ce7be6ed921cadbd25c6f6d5b8e9a6e8539b9'
+BRIDGED_FINGERPRINT='ed38ec4b44cd16f1c716b53324f28c01942691267388a9f8eb6aa06ed41688e6'
+
+
+def _signature(cid,hashes,prompt):
+    return hashlib.sha256((cid+'\n'+hashes+'\n'+prompt).encode()).hexdigest()
+
+
+def _signatures(cid,hashes,prompt,suffix=''):
+    """Today's signature, and the set of stored signatures that mean the same input and contract."""
+    signature=_signature(cid,hashes,prompt+suffix)
+    same={signature}
+    if prompt==BRIDGED_FINGERPRINT:same.add(_signature(cid,hashes,LEGACY_FINGERPRINT+suffix))
+    return signature,same
 
 
 
 
 @obs.timed('extraction','model_invoke')
-def invoke(root,kind,input_path):
-    """Only the existing CLI owns API credentials, reservations and response checks."""
+def invoke(root,kind,input_path,variant=None):
+    """Only the existing CLI owns API credentials, reservations and response checks.
+
+    variant: request settings for a manual measurement (variant_trial); regular runs never pass it."""
     trial_root=Path(__file__).resolve().parents[1]
     input_path=project_path(root,Path(input_path).resolve())
     if not input_path.is_relative_to(trial_root):raise ValueError('AI input outside repository')
     proc=subprocess.run([sys.executable,'-m','benefit_monitor.claude_trial','run','--root',str(trial_root),
-                         '--kind',kind,'--input',str(input_path)],cwd=trial_root,capture_output=True,text=True)
+                         '--kind',kind,'--input',str(input_path)]+(['--variant',variant] if variant else []),
+                        cwd=trial_root,capture_output=True,text=True)
     try:
         value=json.loads(proc.stdout)
         if value.get('status')=='credit_exhausted':return {'status':'credit_exhausted','run_id':None}
@@ -262,15 +289,15 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False,investi
                 except Exception:
                     result['failures'].append({'candidate_id':cid,'code':'investigation_reread_failed'})
                     continue
-                candidate_prompt=prompt+'\n'+investigation.fingerprint()
+                suffix='\n'+investigation.fingerprint()
             else:
                 docs=[doc]+_related_docs(reader,cid,candidate,doc,peers,result['failures'])
                 docs=[{**d,'links':[]} for d in docs]
-                candidate_prompt=prompt
+                suffix=''
             hashes=','.join(sorted(d['body_hash'] for d in docs))
-            signature=hashlib.sha256((cid+'\n'+hashes+'\n'+candidate_prompt).encode()).hexdigest()
+            signature,equivalent=_signatures(cid,hashes,prompt,suffix)
             previous=state['items'].get(cid,{})
-            same_signature=previous.get('signature')==signature
+            same_signature=previous.get('signature') in equivalent
             # The signature also covers the prompt. The pages themselves are compared separately, from
             # the stored input, so a prompt change (or the 2026-11-14 hashing change) is not a page change.
             stored=None if same_signature or not previous.get('input_file') else _stored_pages(root,previous)
@@ -314,7 +341,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False,investi
                 host=investigation_result['host'];docs=host['documents'];input_path=investigation_result['input_path']
                 model=investigation_result['model'];attempted+=max(1,investigation_result['report']['model_calls'])
                 hashes=','.join(sorted(d['body_hash'] for d in docs))
-                signature=hashlib.sha256((cid+'\n'+hashes+'\n'+candidate_prompt).encode()).hexdigest()
+                signature,equivalent=_signatures(cid,hashes,prompt,suffix)
             else:
                 input_path=project_path(root,'.tools/ai-inputs/'+signature+'.json')
                 if input_path.exists():
@@ -350,7 +377,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False,investi
                 _store_decision(root,cid,decision,row,now)
                 result['auto_published']=result.get('auto_published',0)+decision['publish']
             save(project_path(root,review_file),row)
-            attempts=previous.get('attempts',1)+1 if previous.get('signature')==signature else 1
+            attempts=previous.get('attempts',1)+1 if previous.get('signature') in equivalent else 1
             state['items'][cid]={**row,'review_file':review_file,'last_checked_at':now.isoformat(),'attempts':attempts}
             result['queued']+=1
             result['rejected']+=model['status']=='rejected_draft'

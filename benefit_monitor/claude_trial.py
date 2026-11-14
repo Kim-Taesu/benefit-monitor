@@ -90,6 +90,33 @@ def redacted_detail(error, key, raw=None):
     return None
 
 
+# Request settings that may be compared (Phase 5). `baseline` is what every regular run sends and its
+# body is byte-identical to earlier requests, so recorded request IDs keep matching. The other
+# variants are sent only when a person names one with --variant; nothing switches by itself.
+# Thinking tokens are billed as output and count toward max_tokens, which the reservation already
+# covers in full.
+VARIANTS = {
+    'baseline': {'thinking': {'type': 'disabled'}},
+    'adaptive-medium': {'thinking': {'type': 'adaptive'}, 'effort': 'medium'},
+    'adaptive-high': {'thinking': {'type': 'adaptive'}, 'effort': 'high'},
+}
+THINKING_BLOCKS = ('thinking', 'redacted_thinking')
+
+
+def answer_text(result, variant='baseline'):
+    """The model's final text, or ValueError naming why there is none. A refusal or a cut-off answer
+    may not match the schema even with structured outputs, so neither is parsed."""
+    reason = result.get('stop_reason')
+    if reason == 'refusal':
+        raise ValueError('model refused')
+    if reason == 'max_tokens':
+        raise ValueError('output truncated at max_tokens')
+    allowed = ('text',) + (THINKING_BLOCKS if VARIANTS[variant]['thinking']['type'] != 'disabled' else ())
+    if reason != 'end_turn' or any(x['type'] not in allowed for x in result['content']):
+        raise ValueError('truncated or unexpected output')
+    return ''.join(x['text'] for x in result['content'] if x['type'] == 'text')
+
+
 PROBE_SYSTEM = 'Grammar compile check. Reply with the smallest JSON value that matches the schema.'
 PROBE_MAX_TOKENS = 16
 
@@ -212,15 +239,18 @@ class ClaudeClient:
     def models(self):
         return self._request('/v1/models?limit=100')
 
-    def payload(self, system, user, max_tokens=4096, output_schema=None):
+    def payload(self, system, user, max_tokens=4096, output_schema=None, variant='baseline'):
         if type(max_tokens) is not int or not 1 <= max_tokens <= 8192:
             raise ValueError('invalid output token limit')
+        settings = VARIANTS[variant]
         payload = dict(model=self.budget.summary()['model'], max_tokens=max_tokens, system=system,
-                       thinking={'type':'disabled'}, messages=[{'role':'user','content':user}])
+                       thinking=dict(settings['thinking']), messages=[{'role':'user','content':user}])
         if output_schema is not None:
             # Checked before the reservation so an over-limit schema never costs a request.
             wire_format.check_limits(output_schema)
             payload['output_config'] = {'format':{'type':'json_schema','schema':output_schema}}
+        if 'effort' in settings:
+            payload.setdefault('output_config', {})['effort'] = settings['effort']
         return payload
 
     def count_tokens(self, payload):
@@ -282,136 +312,160 @@ class ClaudeClient:
         path.write_text(json.dumps(rows, ensure_ascii=False, indent=2) + '\n')
         return dict(row, schema_sha256=key, cached=False)
 
-    def message(self, system, user, max_tokens=4096, retry_failed_once=False, output_schema=None, preflight=False):
-        payload = self.payload(system, user, max_tokens, output_schema)
+    def message(self, system, user, max_tokens=4096, retry_failed_once=False, output_schema=None, preflight=False,
+                variant='baseline'):
+        payload = self.payload(system, user, max_tokens, output_schema, variant)
         self.last_preflight = None
         if preflight:
             # A provider rejection here stops the run before any reservation or request count.
             self.count_tokens(payload)
-        return self._request('/v1/messages', payload, retry_failed_once=retry_failed_once)
+        # A measurement variant the provider refuses (HTTP 400) must not halt the regular daily work.
+        return self._request('/v1/messages', payload, retry_failed_once=retry_failed_once, probe=variant != 'baseline')
 
 
-def validate_host(host, kind, root):
-    """Reject fixture/private/forged document inputs before a paid request."""
-    if kind == 'verify':
-        from .verify_contract import validate_host as validate_verify
-        validate_verify(host, root)
-        return
-    if kind == 'health':
-        # Only the input the code rebuilds from the stored health bundle (official page text) may be sent.
-        from .health_notes import host as health_host
-        from .health_notices import FILE, sanitize
-        from .store import load
-        if set(host) != {'schema_version','mode','synthetic','now','district','center','program','url','text_sha','page_text'}:
-            raise ValueError('unexpected host fields; private data must not be sent')
-        now = datetime.fromisoformat(host['now'])
-        if now.tzinfo is None:
-            raise ValueError('host timestamp requires timezone')
-        bundle = sanitize(load(Path(root)/FILE, None), now, private=True)
-        program = next((p for p in (bundle or {}).get('programs', []) if p['url'] == host['url']), None)
-        if program is None or health_host(program, now) != host:
-            raise ValueError('health input differs from the stored health bundle')
-        return
-    if kind in ('festival', 'benefit'):
-        # Only the input the code rebuilds from today's data may reach a paid request (2026-11-14):
-        # festivals from the festival cache, benefits from the items today's publication would show.
-        from .store import load
-        if set(host) != {'schema_version','mode','synthetic','now','day','candidates'}:
-            raise ValueError('unexpected host fields; private data must not be sent')
-        now = datetime.fromisoformat(host['now'])
-        if now.tzinfo is None:
-            raise ValueError('host timestamp requires timezone')
-        if kind == 'festival':
-            from .festival_pick import host as festival_host
-            from .festivals import sanitize as festivals
-            expected = festival_host(festivals(load(Path(root)/'cache/festivals.json', None), now), now)
-        else:
-            from .benefit_pick import host as benefit_host
-            from . import publish
-            expected = benefit_host(publish.payload(Path(root), now)['items'], now)
-        if expected is None or host != expected:
-            raise ValueError(kind + ' input differs from current data')
-        return
-    if kind == 'grocery':
-        # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
-        from .grocery_pick import host as grocery_host
-        from .groceries import sanitize
-        from .store import load
-        if set(host) != {'schema_version','mode','synthetic','now','survey_date','candidates'}:
-            raise ValueError('unexpected host fields; private data must not be sent')
-        now = datetime.fromisoformat(host['now'])
-        if now.tzinfo is None:
-            raise ValueError('host timestamp requires timezone')
-        expected = grocery_host(sanitize(load(Path(root)/'cache/groceries.json', None), now), now)
-        if expected is None or host != expected:
-            raise ValueError('grocery input differs from current groceries bundle')
-        return
-    allowed_fields = ({'schema_version','mode','synthetic','now','output_schema_version','budget','candidates','documents','unverified_links','investigation'}
-                      if kind == 'research' else
-                      {'schema_version','mode','synthetic','now','evaluation_only','source_review_id','gate_owner','gate_description',
-                       'snapshot_id','approved_items','approved_claims','excluded_items','allowed_topic_ids','allowed_topic_titles','previous_topics'})
+def _host_now(host):
+    now = datetime.fromisoformat(host['now'])
+    if now.tzinfo is None:
+        raise ValueError('host timestamp requires timezone')
+    return now
+
+
+def _only_fields(host, fields):
+    if set(host) != fields:
+        raise ValueError('unexpected host fields; private data must not be sent')
+
+
+def _validate_verify(host, root):
+    from .verify_contract import validate_host as validate_verify
+    validate_verify(host, root)
+
+
+def _validate_health(host, root):
+    # Only the input the code rebuilds from the stored health bundle (official page text) may be sent.
+    from .health_notes import host as health_host
+    from .health_notices import FILE, sanitize
+    from .store import load
+    _only_fields(host, {'schema_version','mode','synthetic','now','district','center','program','url','text_sha','page_text'})
+    now = _host_now(host)
+    bundle = sanitize(load(Path(root)/FILE, None), now, private=True)
+    program = next((p for p in (bundle or {}).get('programs', []) if p['url'] == host['url']), None)
+    if program is None or health_host(program, now) != host:
+        raise ValueError('health input differs from the stored health bundle')
+
+
+# Only the input the code rebuilds from today's data may reach a paid request (2026-11-14):
+# festivals from the festival cache, benefits from the items today's publication would show.
+PICK_HOST_FIELDS = {'schema_version','mode','synthetic','now','day','candidates'}
+
+
+def _validate_festival(host, root):
+    from .festival_pick import host as festival_host
+    from .festivals import sanitize as festivals
+    from .store import load
+    _only_fields(host, PICK_HOST_FIELDS)
+    now = _host_now(host)
+    expected = festival_host(festivals(load(Path(root)/'cache/festivals.json', None), now), now)
+    if expected is None or host != expected:
+        raise ValueError('festival input differs from current data')
+
+
+def _validate_benefit(host, root):
+    from .benefit_pick import host as benefit_host
+    from . import publish
+    _only_fields(host, PICK_HOST_FIELDS)
+    now = _host_now(host)
+    expected = benefit_host(publish.payload(Path(root), now)['items'], now)
+    if expected is None or host != expected:
+        raise ValueError('benefit input differs from current data')
+
+
+def _validate_grocery(host, root):
+    # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
+    from .grocery_pick import host as grocery_host
+    from .groceries import sanitize
+    from .store import load
+    _only_fields(host, {'schema_version','mode','synthetic','now','survey_date','candidates'})
+    now = _host_now(host)
+    expected = grocery_host(sanitize(load(Path(root)/'cache/groceries.json', None), now), now)
+    if expected is None or host != expected:
+        raise ValueError('grocery input differs from current groceries bundle')
+
+
+def _api_host(host, allowed_fields):
     if set(host) - allowed_fields:
         raise ValueError('unexpected host fields; private data must not be sent')
     if host.get('mode') != 'api_agent' or host.get('synthetic') is not False:
         raise ValueError('explicit non-fixture API input required')
-    now = datetime.fromisoformat(host['now'])
-    if now.tzinfo is None:
-        raise ValueError('host timestamp requires timezone')
-    if kind == 'research':
-        if host.get('output_schema_version') != 'research-draft-v1':
-            raise ValueError('unknown research contract')
-        config = json.loads((Path(root)/'sources.yaml').read_text())
-        sources = {s['id']:s['domains'] for s in config['sources']}
-        if 'investigation' in host:
-            from .investigation_contract import validate_context
-            validate_context(host,{s['id']:s for s in config['sources']})
-        if not 1 <= len(host['candidates']) <= 10 or not 1 <= len(host['documents']) <= 50:
-            raise ValueError('invalid trial input size')
-        docs = {d['id']:d for d in host['documents']}
-        if len(docs) != len(host['documents']):
-            raise ValueError('duplicate input documents')
-        used = set()
-        for candidate in host['candidates']:
-            if candidate['source_id'] not in sources:
-                raise ValueError('unapproved source')
-            for did in candidate['document_ids']:
-                used.add(did)
-                doc = docs[did]
-                if doc['source_id'] not in sources or doc['publisher_type'] not in ('issuer','official_editorial','unknown'):
-                    raise ValueError('unapproved document provenance')
-                if not all(official(doc[k],sources[doc['source_id']]) for k in ('requested_url','final_url')):
-                    raise ValueError('unapproved document URL')
-                if doc['hash_algorithm'] != 'sha256-utf8-exact' or hashlib.sha256(doc['body'].encode()).hexdigest() != doc['body_hash']:
-                    raise ValueError('input body hash mismatch')
-                if datetime.fromisoformat(doc['retrieved_at']).tzinfo is None:
-                    raise ValueError('source timestamp requires timezone')
-        if used != set(docs):
-            raise ValueError('unrelated input documents')
-    else:
-        if 'allowed_topic_titles' in host:
-            from .daily_topics import TITLES
-            if host['allowed_topic_titles'] != TITLES:
-                raise ValueError('topic titles differ from host policy')
-        if str(host.get('source_review_id','')).startswith('public-release:'):
-            from .public_topics import approved_snapshot
-            expected=approved_snapshot(root,now,host.get('previous_topics',[]))
-            if host != expected:
-                raise ValueError('topic input differs from current public approval snapshot')
-            return
-        if host.get('evaluation_only') is not True:
-            raise ValueError('topic trial is evaluation-only')
-        review = json.loads((Path(root)/'docs/ai/evaluations/phase234-2026-11-05/human-final-review-result.json').read_text())
-        if host.get('source_review_id') != review['review_id']:
-            raise ValueError('unreviewed topic input')
-        accepted = {k for k,v in review['candidate_results'].items() if v == 'O'}
-        items = host['approved_items']
-        if len({x['item_id'] for x in items}) != len(items) or any(x['item_id'] not in accepted or x['display_eligible'] is not True for x in items):
-            raise ValueError('topic item outside reviewed development snapshot')
-        for item in items:
-            if item.get('valid_until') and datetime.fromisoformat(item['valid_until']).date() < now.astimezone(ZoneInfo('Asia/Seoul')).date():
-                raise ValueError('expired topic item')
-            if item.get('deadline_at') and datetime.fromisoformat(item['deadline_at']) <= now:
-                raise ValueError('closed topic item')
+    return _host_now(host)
+
+
+def _validate_research(host, root):
+    _api_host(host, {'schema_version','mode','synthetic','now','output_schema_version','budget','candidates',
+                     'documents','unverified_links','investigation'})
+    if host.get('output_schema_version') != 'research-draft-v1':
+        raise ValueError('unknown research contract')
+    config = json.loads((Path(root)/'sources.yaml').read_text())
+    sources = {s['id']:s['domains'] for s in config['sources']}
+    if 'investigation' in host:
+        from .investigation_contract import validate_context
+        validate_context(host,{s['id']:s for s in config['sources']})
+    if not 1 <= len(host['candidates']) <= 10 or not 1 <= len(host['documents']) <= 50:
+        raise ValueError('invalid trial input size')
+    docs = {d['id']:d for d in host['documents']}
+    if len(docs) != len(host['documents']):
+        raise ValueError('duplicate input documents')
+    used = set()
+    for candidate in host['candidates']:
+        if candidate['source_id'] not in sources:
+            raise ValueError('unapproved source')
+        for did in candidate['document_ids']:
+            used.add(did)
+            doc = docs[did]
+            if doc['source_id'] not in sources or doc['publisher_type'] not in ('issuer','official_editorial','unknown'):
+                raise ValueError('unapproved document provenance')
+            if not all(official(doc[k],sources[doc['source_id']]) for k in ('requested_url','final_url')):
+                raise ValueError('unapproved document URL')
+            if doc['hash_algorithm'] != 'sha256-utf8-exact' or hashlib.sha256(doc['body'].encode()).hexdigest() != doc['body_hash']:
+                raise ValueError('input body hash mismatch')
+            if datetime.fromisoformat(doc['retrieved_at']).tzinfo is None:
+                raise ValueError('source timestamp requires timezone')
+    if used != set(docs):
+        raise ValueError('unrelated input documents')
+
+
+def _validate_topic(host, root):
+    now = _api_host(host, {'schema_version','mode','synthetic','now','evaluation_only','source_review_id','gate_owner',
+                           'gate_description','snapshot_id','approved_items','approved_claims','excluded_items',
+                           'allowed_topic_ids','allowed_topic_titles','previous_topics'})
+    if 'allowed_topic_titles' in host:
+        from .daily_topics import TITLES
+        if host['allowed_topic_titles'] != TITLES:
+            raise ValueError('topic titles differ from host policy')
+    if str(host.get('source_review_id','')).startswith('public-release:'):
+        from .public_topics import approved_snapshot
+        expected=approved_snapshot(root,now,host.get('previous_topics',[]))
+        if host != expected:
+            raise ValueError('topic input differs from current public approval snapshot')
+        return
+    if host.get('evaluation_only') is not True:
+        raise ValueError('topic trial is evaluation-only')
+    review = json.loads((Path(root)/'docs/ai/evaluations/phase234-2026-11-05/human-final-review-result.json').read_text())
+    if host.get('source_review_id') != review['review_id']:
+        raise ValueError('unreviewed topic input')
+    accepted = {k for k,v in review['candidate_results'].items() if v == 'O'}
+    items = host['approved_items']
+    if len({x['item_id'] for x in items}) != len(items) or any(x['item_id'] not in accepted or x['display_eligible'] is not True for x in items):
+        raise ValueError('topic item outside reviewed development snapshot')
+    for item in items:
+        if item.get('valid_until') and datetime.fromisoformat(item['valid_until']).date() < now.astimezone(ZoneInfo('Asia/Seoul')).date():
+            raise ValueError('expired topic item')
+        if item.get('deadline_at') and datetime.fromisoformat(item['deadline_at']) <= now:
+            raise ValueError('closed topic item')
+
+
+def validate_host(host, kind, root):
+    """Reject fixture/private/forged document inputs before a paid request."""
+    KINDS[kind].validate_host(host, root)
 
 
 def parse_draft(text):
@@ -454,37 +508,31 @@ def repair_context(host, kind, previous, model_input=None):
 from . import observability as obs
 
 
-@obs.timed('validation','draft_validation')
-def evaluate_draft(draft, host, kind, required_version=None):
-    """Run all local gates; model output never grants publication."""
-    if kind == 'verify':
-        # from_wire already rejected unknown segments and claim mismatches; decide() applies the rules.
-        return draft, {'valid': True, 'errors': []}
-    if kind == 'health':
-        from .health_notes import review as health_review
-        errors = health_review(draft, host)
+def _review_verify(draft, host, required_version):
+    # from_wire already rejected unknown segments and claim mismatches; decide() applies the rules.
+    return draft, {'valid': True, 'errors': []}
+
+
+def _reviewer(module):
+    """Pick/sentence kinds: the category module's review() returns error codes; none means valid.
+    Bundle-wide names are checked again in that module's refresh() and at publication."""
+    def run(draft, host, required_version):
+        from importlib import import_module
+        errors = import_module('.' + module, __package__).review(draft, host)
         return draft, {'valid': not errors, 'errors': errors}
-    if kind == 'festival':
-        # Bundle-wide festival names are checked again in festival_pick.refresh and at publication.
-        from .festival_pick import review as festival_review
-        errors = festival_review(draft, host)
-        return draft, {'valid': not errors, 'errors': errors}
-    if kind == 'benefit':
-        from .benefit_pick import review as benefit_review
-        errors = benefit_review(draft, host)
-        return draft, {'valid': not errors, 'errors': errors}
-    if kind == 'grocery':
-        # Bundle-wide item names are checked again in grocery_pick.refresh and at publication.
-        from .grocery_pick import review as grocery_review
-        errors = grocery_review(draft, host)
-        return draft, {'valid': not errors, 'errors': errors}
-    if kind == 'research':
-        if required_version is not None and draft.get('schema_version') != required_version:
-            raise ValueError('model output contract version mismatch')
-        from .research_extraction import assemble
-        return assemble(draft,host)
+    return run
+
+
+def _review_research(draft, host, required_version):
+    if required_version is not None and draft.get('schema_version') != required_version:
+        raise ValueError('model output contract version mismatch')
+    from .research_extraction import assemble
+    return assemble(draft,host)
+
+
+def _review_topic(draft, host, required_version):
     from .topic_semantics import review
-    report = validate(draft,host,kind)
+    report = validate(draft,host,'topic')
     report['structural_valid'] = report['valid']
     if report['valid']:
         semantic = review(draft,host)
@@ -495,14 +543,86 @@ def evaluate_draft(draft, host, kind, required_version=None):
     return draft, report
 
 
-SYSTEM_PROMPTS = {'research':'research-system.md', 'topic':'topic-system.md', 'verify':'verify-system.md',
-                  'grocery':'grocery-system.md', 'health':'health-system.md',
-                  'festival':'festival-system.md', 'benefit':'benefit-system.md'}
+@obs.timed('validation','draft_validation')
+def evaluate_draft(draft, host, kind, required_version=None):
+    """Run all local gates; model output never grants publication."""
+    return KINDS[kind].review(draft, host, required_version)
+
+
+def topic_model_input(host):
+    """Keep every item/condition; public fact metadata stays in the local gate."""
+    wire=deepcopy(host)
+    for claim in wire['approved_claims']:
+        if claim.get('field')=='public_release_facts':
+            fact=claim['value']
+            claim['value']={k:fact[k] for k in ('fee_status','payment_terms','benefit_value') if k in fact}
+    # The schema no longer lists today's item IDs, so the allowed pairs are stated as data.
+    wire['topic_choices']=wire_format.topic_choices(host)
+    return wire
+
+
+def _verify_input(host):
+    from .verify_contract import model_input as verify_model_input
+    return verify_model_input(host)
+
+
+def _pick_input(host):
+    return {'today': host['day'], 'candidates': host['candidates']}
+
+
+class Kind:
+    """One model task: its prompt, what is sent, what must come back and who checks it.
+
+    Everything claude_trial does per kind reads this row, so a new category adds one row here and
+    one in wire_format.WIRES (docs/ai/prompts.md). `task` is restated after the data: queries
+    placed after long input answer better."""
+    def __init__(self, prompt, task, model_input, validate_host, review, draft_version=None):
+        self.prompt, self.task, self.model_input = prompt, task, model_input
+        self.validate_host, self.review, self.draft_version = validate_host, review, draft_version
+
+
+KINDS = {
+    'research': Kind('research-system.md',
+                     '위 `<input>`의 `documents` 조각만 근거로 `candidates`의 후보마다 모든 필드를 채워라. '
+                     '사실마다 근거 조각을 먼저 고르고, 값을 쓴 뒤, 상태를 정한다.',
+                     wire_format.research_model_input, _validate_research, _review_research,
+                     draft_version='research-extraction-v3'),
+    'verify': Kind('verify-system.md',
+                   '위 `<input>`의 원문 조각만 근거로 항목 상태를 정하고, `item.claims`의 모든 claim_id에 한 번씩 답하라. '
+                   '근거 조각을 먼저 고른 뒤 판정한다.',
+                   _verify_input, _validate_verify, _review_verify),
+    'topic': Kind('topic-system.md',
+                  '위 `<input>`의 승인 항목과 승인 사실만으로 오늘의 생활 주제 카드를 만들어라. '
+                  '항목은 `topic_choices`에서 그 주제의 `item_ids`에 있는 것만 넣는다.',
+                  topic_model_input, _validate_topic, _review_topic),
+    'grocery': Kind('grocery-system.md',
+                    '위 `<input>`의 `candidates`만으로 이번 주 장보기 추천 카드를 써라.',
+                    lambda host: {'survey_date': host['survey_date'], 'candidates': host['candidates']},
+                    _validate_grocery, _reviewer('grocery_pick')),
+    'festival': Kind('festival-system.md',
+                     '위 `<input>`의 `candidates` 안에서 후보를 골라 나들이 추천 카드를 써라. '
+                     '후보의 프로그램을 근거로 소개하고, 시스템 지침의 문장 규칙과 완료 기준을 지켜라.',
+                     _pick_input, _validate_festival, _reviewer('festival_pick')),
+    'benefit': Kind('benefit-system.md',
+                    '위 `<input>`의 `candidates` 안에서 후보를 골라 혜택 추천 카드를 써라. '
+                    '후보의 이용 목적과 조건을 근거로 소개하고, 시스템 지침의 문장 규칙과 완료 기준을 지켜라.',
+                    _pick_input, _validate_benefit, _reviewer('benefit_pick')),
+    'health': Kind('health-system.md',
+                   '위 `<input>`의 `page_text`에서 이 사업을 설명하는 구절을 먼저 그대로 복사하고, '
+                   '그 구절만으로 상태와 문장을 정하라.',
+                   lambda host: {k: host[k] for k in ('district','center','program','page_text')} | {'today': host['now'][:10]},
+                   _validate_health, _reviewer('health_notes')),
+}
+if set(KINDS) != set(wire_format.WIRES):
+    raise RuntimeError('every model kind needs a row in both KINDS and wire_format.WIRES')
+# Kept as plain tables for the evaluation tools and tests.
+SYSTEM_PROMPTS = {kind: row.prompt for kind, row in KINDS.items()}
+TASKS = {kind: row.task for kind, row in KINDS.items()}
 
 
 def system_prompt(root, kind):
     """Model-only rules; operating history and approval records stay out of the prompt."""
-    text = (Path(root)/'docs/ai/prompts'/SYSTEM_PROMPTS[kind]).read_text()
+    text = (Path(root)/'docs/ai/prompts'/KINDS[kind].prompt).read_text()
     return text.rstrip('\n') + '\n\n' + PROMPT_FOOTER
 
 
@@ -513,41 +633,29 @@ PROMPT_FOOTER = ('## 출력이 쓰이는 곳\n\n'
                  '네 출력은 코드 검사를 거치고, 통과한 결과만 공개 판단에 쓰인다. 규칙을 하나라도 어기면 결과 전체가 버려진다. '
                  '승인 필드를 만들지 않는다. 응답 형식은 요청에 첨부된 JSON Schema가 강제하며, 칸은 스키마 순서대로 채운다.')
 
-# The task is restated after the data: queries placed after long input answer better.
-TASKS = {
-    'research': '위 `<input>`의 `documents` 조각만 근거로 `candidates`의 후보마다 모든 필드를 채워라. '
-                '사실마다 근거 조각을 먼저 고르고, 값을 쓴 뒤, 상태를 정한다.',
-    'verify': '위 `<input>`의 원문 조각만 근거로 항목 상태를 정하고, `item.claims`의 모든 claim_id에 한 번씩 답하라. '
-              '근거 조각을 먼저 고른 뒤 판정한다.',
-    'topic': '위 `<input>`의 승인 항목과 승인 사실만으로 오늘의 생활 주제 카드를 만들어라.',
-    'grocery': '위 `<input>`의 `candidates`만으로 이번 주 장보기 추천 카드를 써라.',
-    'festival': '위 `<input>`의 `candidates` 안에서 후보를 골라 나들이 추천 카드를 써라. '
-                '후보의 프로그램을 근거로 소개하고, 시스템 지침의 문장 규칙과 완료 기준을 지켜라.',
-    'benefit': '위 `<input>`의 `candidates` 안에서 후보를 골라 혜택 추천 카드를 써라. '
-               '후보의 이용 목적과 조건을 근거로 소개하고, 시스템 지침의 문장 규칙과 완료 기준을 지켜라.',
-    'health': '위 `<input>`의 `page_text`에서 이 사업을 설명하는 구절을 먼저 그대로 복사하고, '
-              '그 구절만으로 상태와 문장을 정하라.',
-}
+
+def contract_fingerprint(root, kind, host=None):
+    """Hash of what this kind's model is asked and how its answer is read: system prompt with the
+    shared footer, the task line, the wire schema and the source of the host decoder functions.
+
+    A stored answer may be reused while this value and the input are unchanged. Editing another
+    kind's prompt, schema or decoder does not change it; editing the footer changes every kind,
+    because every kind's model reads it."""
+    import inspect
+    version, schema, _, decoders = wire_format.WIRES[kind]
+    parts = {'kind': kind, 'wire_version': version, 'system': system_prompt(root, kind), 'task': KINDS[kind].task,
+             'schema': schema(host), 'decoders': [inspect.getsource(f) for f in decoders]}
+    return hashlib.sha256(json.dumps(parts, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
 
 def user_message(kind, data):
     """Data first inside <input>, the task last."""
-    return '<input>\n' + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + '\n</input>\n\n' + TASKS[kind]
+    return '<input>\n' + json.dumps(data, ensure_ascii=False, separators=(',', ':')) + '\n</input>\n\n' + KINDS[kind].task
 
 
 def input_from_message(text):
     """Inverse of user_message (tests and replays)."""
     return json.loads(text.split('<input>\n', 1)[1].split('\n</input>', 1)[0])
-
-
-def topic_model_input(host):
-    """Keep every item/condition; public fact metadata stays in the local gate."""
-    wire=deepcopy(host)
-    for claim in wire['approved_claims']:
-        if claim.get('field')=='public_release_facts':
-            fact=claim['value']
-            claim['value']={k:fact[k] for k in ('fee_status','payment_terms','benefit_value') if k in fact}
-    return wire
 
 
 def main():
@@ -557,7 +665,9 @@ def main():
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
     parser.add_argument('--repair-from')
-    parser.add_argument('--kind', choices=('research','topic','verify','grocery','health','festival','benefit'))
+    parser.add_argument('--kind', choices=tuple(KINDS))
+    parser.add_argument('--variant', choices=tuple(VARIANTS), default='baseline',
+                        help='request settings to compare; anything but baseline is a manual measurement')
     parser.add_argument('--input', type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
@@ -612,17 +722,7 @@ def main():
         schema=investigation_schema(schema)
         wire_format.check_limits(schema)
         system+='\n\n'+(Path(__file__).resolve().parents[1]/'docs/ai/prompts/investigation-system.md').read_text()
-    if args.kind == 'verify':
-        from .verify_contract import model_input as verify_model_input
-        model_input = verify_model_input(host)
-    elif args.kind == 'grocery':
-        model_input = {'survey_date': host['survey_date'], 'candidates': host['candidates']}
-    elif args.kind in ('festival', 'benefit'):
-        model_input = {'today': host['day'], 'candidates': host['candidates']}
-    elif args.kind == 'health':
-        model_input = {k: host[k] for k in ('district','center','program','page_text')} | {'today': host['now'][:10]}
-    else:
-        model_input = wire_format.research_model_input(host) if args.kind == 'research' else topic_model_input(host)
+    model_input = KINDS[args.kind].model_input(host)
     user_input = model_input
     if args.repair_from:
         if not re.fullmatch('[0-9a-f]{64}',args.repair_from):
@@ -635,9 +735,9 @@ def main():
     user_text = user_message(args.kind, user_input)
     if args.command == 'preflight':
         # Free token count only: no reservation, no request count, no model output.
-        tokens = client.count_tokens(client.payload(system, user_text, 8192, schema))
+        tokens = client.count_tokens(client.payload(system, user_text, 8192, schema, args.variant))
         print(json.dumps({'status':'preflight_passed','kind':args.kind,'input_tokens':tokens,'billed':False,
-                          'anthropic_version':API_VERSION,'schema_limits':{k:sorted(v) if isinstance(v,set) else v for k,v in wire_format.limits(schema).items()},
+                          'variant':args.variant,'anthropic_version':API_VERSION,'schema_limits':{k:sorted(v) if isinstance(v,set) else v for k,v in wire_format.limits(schema).items()},
                           'request_count':budget.summary()['request_count']},ensure_ascii=False))
         return 0
     probe = client.grammar_probe(schema)
@@ -645,7 +745,7 @@ def main():
         print(json.dumps(dict(probe, kind=args.kind, status='grammar_'+probe['status']), ensure_ascii=False))
         return 0 if probe['status'] == 'passed' else 1
     result = client.message(system, user_text, max_tokens=8192, retry_failed_once=args.retry_failed_once,
-                            output_schema=schema, preflight=True)
+                            output_schema=schema, preflight=True, variant=args.variant)
     run_id = client.last_request_id
     destination = folder/'runs'/run_id
     if not destination.resolve().is_relative_to(folder.resolve()):
@@ -659,27 +759,22 @@ def main():
                 'input_sha256':hashlib.sha256(json.dumps(host,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
                 'prompt_sha256':hashlib.sha256(system.encode()).hexdigest(),'repair_of':args.repair_from,
                 'cached':client.last_cached,'wire_decoder':'structured-output-v1','usage':result['usage'],
-                'preflight':client.last_preflight,
+                'preflight':client.last_preflight,'variant':args.variant,
+                'contract_sha256':None if 'investigation' in host else contract_fingerprint(root,args.kind,host),
                 'schema_sha256':hashlib.sha256(json.dumps(schema,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
-                'model_output_contract':{'research':wire_format.RESEARCH_WIRE,'topic':wire_format.TOPIC_WIRE,'verify':'verify-wire-v1',
-                                         'grocery':wire_format.GROCERY_WIRE,'health':wire_format.HEALTH_WIRE,
-                                         'festival':wire_format.FESTIVAL_WIRE,'benefit':wire_format.BENEFIT_WIRE}[args.kind]}
+                'model_output_contract':wire_format.WIRES[args.kind][0]}
     (destination/'metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n')
     (destination/'input.json').write_text(json.dumps(host,ensure_ascii=False,indent=2)+'\n')
     (destination/'prompt.txt').write_text(system)
     report = None
     draft = None
     try:
-        if result['stop_reason'] != 'end_turn' or any(x['type']!='text' for x in result['content']):
-            raise ValueError('truncated or unexpected output')
-        text = ''.join(x['text'] for x in result['content'])
-        wire = parse_draft(text)
+        wire = parse_draft(answer_text(result, args.variant))
         (destination/'model-output.json').write_text(json.dumps(wire,ensure_ascii=False,indent=2)+'\n')
         draft = wire
         draft = wire_format.from_wire(args.kind, wire, host)
         (destination/'normalized-output.json').write_text(json.dumps(draft,ensure_ascii=False,indent=2)+'\n')
-        draft, report = evaluate_draft(draft, host, args.kind,
-                                       required_version='research-extraction-v3' if args.kind == 'research' else None)
+        draft, report = evaluate_draft(draft, host, args.kind, required_version=KINDS[args.kind].draft_version)
         if not report['valid']:
             raise ValueError('output contract failed')
         if args.kind=='research' and 'investigation' in host:

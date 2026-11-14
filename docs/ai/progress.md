@@ -1,5 +1,20 @@
 # 개선 진행 기록
 
+## 2026-11-14 — Phase 4·5 전 모델 계약 정리
+
+- 작업 단위와 범위: 브랜치 `feat/phase4-prep-ai-contract`(origin/main `6ae6aa2` 기준). 스키마 검토에서 나온 다섯 가지를 순서대로 적용했다. 이후 사용자가 커밋·main 반영과 측정을 승인했다.
+- 변경 파일과 이유:
+  - `ai_review.py`: 조사 fingerprint를 `wire_format.py` 파일 전체에서 조사 계약(지침+footer, 작업 지시, 스키마, 복원 함수, v3 초안 스키마)으로 좁혔다. 이전 값으로 서명된 답은 `LEGACY_FINGERPRINT`→`BRIDGED_FINGERPRINT` 다리로 같은 입력으로 취급해 다시 조사하지 않는다.
+  - `claude_trial.py`, `wire_format.py`: kind별 설정을 `KINDS`·`WIRES` 표로 모으고 kind 이름 분기를 없앴다. `contract_fingerprint(root, kind)` 추가. 실행 기록 `metadata.json`에 `variant`와 `contract_sha256`을 남긴다.
+  - `wire_format.py`, `prompts/topic-system.md`: 주제 스키마를 날마다 같은 모양으로 고정했다. 허용 조합은 모델 입력 `topic_choices`로 알려 주고 호스트가 거절한다.
+  - `prompts/festival-system.md` v3: 날짜·숫자·요금 표현을 문장에 쓰지 않게 하고(화면이 직접 보여 줌), 규칙마다 이유를 적고, 예시를 1개에서 3개로 늘렸다. `festival_pick.review` 게이트는 바꾸지 않았다.
+  - `claude_trial.py`, `variant_trial.py`: 요청 설정 변형(`baseline`·`adaptive-medium`·`adaptive-high`)과 축제·혜택 측정 도구. `refusal`·`max_tokens` 거절 사유를 구분한다.
+- 실제 실행한 검사·결과(2026-11-14): `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` → 1022개 실행, 실패 0(변경 전 998개, 측정 연결 뒤 1029개). `git diff --check` 통과. main 코드와 대조해 조사·검증·장보기·보건소·혜택의 지침·작업 지시·스키마가 동일하고, 축제는 지침만, 주제는 지침·작업 지시·스키마·모델 입력이 달라졌음을 확인했다. 정규 요청 본문(`baseline`)이 이전과 같은지는 테스트로 고정했다.
+- 미검증·실패·관측 한계: 실제 모델 호출은 없었다. 축제 v3 지침과 주제 고정 스키마가 거절률을 낮추는지, 높이는지는 모른다. 주제 스키마가 바뀌어 첫 실행에서 유료 문법 시험이 한 번 있다(11/6 승인 범위). 로컬에 축제 데이터가 없어, 이름에 숫자가 든 축제를 요약문에서 부르면 `number`로 거절되는 일이 실제로 얼마나 잦은지는 확인하지 못했다. 프런트는 바꾸지 않아 프런트 검사는 실행하지 않았다.
+- 결정과 근거: thinking/effort 변형은 정규 실행에 적용하지 않았다. 검증 kind의 fingerprint는 바꾸면 승인 항목이 다시 대조되므로 그대로 두었다.
+- 측정 연결(사용자 승인 후): 축제·혜택의 일별 상태가 암호화 런타임에 없어 별도 수동 실행으로는 그날 입력을 찾을 수 없다. 그래서 일일 실행의 축제·혜택 추천 직후에 측정 단계를 넣었다. 하루 4건, 측정일 7일, 2026-11-30까지를 코드가 막는다. 측정 요청의 HTTP 400은 원장을 멈추지 않고 그날 실패와 따로 보고한다. 런타임 보관 범위에 `cache/variant_trial/`을 더했다. 최종 검사: Python 1029개 실행, 실패 0.
+- 다음 작업과 주의사항: ① 반영 후 첫 실행에서 주제 문법 시험 통과, 주제·축제 거절 사유, 측정 요청이 실제로 받아들여지는지 확인. ② 7일 뒤 실행 결과의 `measurement.summary`로 변형별 통과율·토큰을 비교하고, 정규 설정 변경은 별도 승인을 받는다. ③ 조사 계약을 다음에 바꿀 때는 다리 상수와 그 검사를 함께 지운다.
+
 ## 2026-11-14 — main 반영·운영 최신화
 
 - 사용자 승인: main 반영, 화면 최신화, 과금이 발생하는 AI 재실행. 원본 `feat/tab-ai-picks`의 미커밋 변경은 건드리지 않았다.
