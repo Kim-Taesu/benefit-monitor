@@ -12,7 +12,8 @@ function record(v:unknown):v is Record<string,unknown>{return !!v&&typeof v==='o
 function text(v:unknown,limit:number):v is string{return typeof v==='string'&&v.length>0&&v.length<=limit&&!/[<>\u0000-\u001f]/.test(v);}
 function head(p:Record<string,unknown>):boolean{
  if(p.schema_version!==1||(p.source!=='ai'&&p.source!=='rule')||!Array.isArray(p.picks)||p.picks.length>MAX_PICKS)return false;
- return p.source==='ai'?text(p.summary,220):p.summary===null;
+ // An ai pick may have lost its summary when a re-check dropped a line; its lines stay.
+ return p.source==='ai'?p.summary===null||text(p.summary,220):p.summary===null;
 }
 function line(source:unknown,v:unknown):string|null|undefined{
  if(v===null)return null;
@@ -31,7 +32,7 @@ export function parseFestivalPick(raw:unknown,bundle:FestivalBundle):FestivalPic
   const festival=byId.get(x.id),l=line(p.source,x.line);
   if(festival&&l!==undefined&&!seen.has(x.id)){seen.add(x.id);picks.push({festival,line:l});}
  }
- return picks.length?{source:p.source as 'ai'|'rule',summary:p.source==='ai'?p.summary as string:null,picks}:null;
+ return picks.length?{source:p.source as 'ai'|'rule',summary:p.source==='ai'?p.summary as string|null:null,picks}:null;
 }
 
 export function parseBenefitPick(raw:unknown,items:Benefit[]):BenefitPick|null{
@@ -46,7 +47,10 @@ export function parseBenefitPick(raw:unknown,items:Benefit[]):BenefitPick|null{
   const k=key(x.source,x.url),item=bySource.get(k),l=line(p.source,x.line);
   if(item&&l!==undefined&&!seen.has(k)){seen.add(k);picks.push({item,line:l});}
  }
- return picks.length?{source:p.source as 'ai'|'rule',summary:p.source==='ai'?p.summary as string:null,picks}:null;
+ // Items here are Seoul-filtered, the backend picked from all public items: a summary may name a dropped line.
+ const total=(p.picks as unknown[]).length,dropped=picks.length<total;
+ if(!picks.length||picks.length<Math.min(3,total))return null;
+ return {source:p.source as 'ai'|'rule',summary:p.source==='ai'&&!dropped?p.summary as string|null:null,picks};
 }
 
 const md=(date:string)=>`${Number(date.slice(5,7))}/${Number(date.slice(8,10))}`;

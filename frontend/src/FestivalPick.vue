@@ -17,6 +17,6 @@ const pick=computed(()=>parseFestivalPick(props.raw,props.bundle));
         <span v-if="p.line" class="grocery-pick-menu">→ {{ p.line }}</span>
       </li>
     </ul>
-    <p class="fine-print">{{ pick.source==='ai'?'AI가 공개 정보 안에서 쓴 문장이에요. 날짜·요금은 공개 전에 코드가 원본과 대조했어요.':'가까운 날짜 순으로 자동 선정했어요.' }}</p>
+    <p class="fine-print">{{ pick.source==='ai'?'AI가 공개 정보 안에서 쓴 문장이에요. 날짜·요금은 공개 전에 코드가 원본과 대조했어요.':'수도권 먼저, 가까운 날짜 순으로 자동 선정했어요.' }}</p>
   </article>
 </template>

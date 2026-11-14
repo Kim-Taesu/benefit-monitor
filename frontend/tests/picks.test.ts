@@ -31,6 +31,13 @@ test('festival rule pick has no summary or lines',()=>{
  assert.deepEqual([p.source,p.summary,p.picks[0].line],['rule',null,null]);
  assert.equal(parseFestivalPick(fraw({source:'rule',summary:'x'}),bundle),null);
 });
+test('festival ai pick whose summary was dropped still shows its lines',()=>{
+ const b3=parseFestivals({festivals:{schema_version:1,source:'kfes',fetched_at:'2026-11-14T06:00:00+09:00',notice:'n',items:[festival(1),festival(2),festival(3)]}},NOW)!;
+ const p=parseFestivalPick(fraw({summary:null,picks:[{id:fid(1),line:'공연'},{id:fid(2),line:'체험'},{id:fid(3),line:'먹거리'}]}),b3)!;
+ assert.deepEqual([p.source,p.summary],['ai',null]);
+ assert.deepEqual(p.picks.map(x=>x.line),['공연','체험','먹거리']);
+ assert.equal(parseFestivalPick(fraw({summary:7}),bundle),null);
+});
 test('festival line formats period and single day',()=>{
  assert.equal(festivalLine(bundle.items[0]),'축제 1 (11/15~11/17 · 경상북도 구미시)');
  assert.equal(festivalLine(bundle.items[1]),'축제 2 (11/16 · 경상북도 구미시)');
@@ -46,9 +53,22 @@ const braw=(over:Record<string,unknown>={})=>({benefit_pick:{schema_version:1,ge
  {id:'b3',source:'seoul',url:'https://nope.example/',line:'없는 혜택'},
  {id:'b4',source:'gangseo',url:'https://mediahub.seoul.go.kr/archives/1',line:'소스 불일치'}],...over}});
 
+const three=[{id:'b1',source:'gangseo',url:'https://www.gangseo.seoul.kr/x',line:'구민이면 살펴보세요'},
+ {id:'b2',source:'seoul',url:'https://mediahub.seoul.go.kr/archives/1',line:'시민 대상'},
+ {id:'b5',source:'seoul',url:'https://mediahub.seoul.go.kr/archives/3',line:'신청 필요'}];
 test('benefit pick matches by source and url',()=>{
- const p=parseBenefitPick(braw(),items)!;
- assert.deepEqual(p.picks.map(x=>[x.item.title,x.line]),[['혜택 B','구민이면 살펴보세요'],['혜택 A',null]]);
+ const p=parseBenefitPick(braw({picks:three}),items)!;
+ assert.deepEqual(p.picks.map(x=>[x.item.title,x.line]),[['혜택 B','구민이면 살펴보세요'],['혜택 A','시민 대상'],['혜택 C','신청 필요']]);
+ assert.equal(p.summary,'놓치기 아까운 혜택이에요.');
+});
+test('benefit pick with an unmatched line hides the summary, and hides the card below three lines',()=>{
+ // The page matches against Seoul-filtered items; the backend picked from all public items.
+ const p=parseBenefitPick(braw({picks:[...three,{id:'b3',source:'seoul',url:'https://nope.example/',line:'없는 혜택'}]}),items)!;
+ assert.equal(p.summary,null);
+ assert.equal(p.picks.length,3);
+ assert.equal(parseBenefitPick(braw(),items),null); // 4 lines, 2 match
+ const ai=parseBenefitPick(braw({summary:null,picks:three}),items)!;
+ assert.deepEqual([ai.source,ai.summary,ai.picks.length],['ai',null,3]);
 });
 test('benefit pick rejects zero matches, bad schema and unsafe text',()=>{
  assert.equal(parseBenefitPick(braw({picks:[{id:'x',source:'seoul',url:'https://nope.example/',line:null}]}),items),null);

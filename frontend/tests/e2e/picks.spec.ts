@@ -49,7 +49,7 @@ test('festival rule pick shows the auto badge and no summary',async({page})=>{
  const card=page.locator('#festivals .grocery-pick');
  await expect(card.locator('.grocery-badge').first()).toHaveText('자동 선정');
  await expect(card.locator('.grocery-pick-summary')).toHaveCount(0);
- await expect(card).toContainText('가까운 날짜 순으로 자동 선정했어요.');
+ await expect(card.locator('.fine-print')).toHaveText('수도권 먼저, 가까운 날짜 순으로 자동 선정했어요.');
 });
 
 for(const width of [390,1440])test(`benefit pick card shows 5 lines then the rest ${width}`,async({page})=>{
