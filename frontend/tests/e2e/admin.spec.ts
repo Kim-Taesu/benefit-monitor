@@ -129,3 +129,14 @@ test('the main page does not link to the admin page',async({page})=>{
  await expect(page.locator('#results article').first()).toBeVisible();
  await expect(page.locator('a[href*="admin"]')).toHaveCount(0);
 });
+
+test('a rule pick has no text to mute, so its mute buttons are hidden',async({page})=>{
+ const pick=(source:string)=>({schema_version:1,generated_at:'2026-11-04T07:00:00+09:00',day:'2026-11-04',source,summary:source==='ai'?'[테스트] 요약':null,picks:[]});
+ await setup(page,snapshot([auto],{festival_pick:pick('rule'),benefit_pick:pick('ai')}));
+ await page.goto('./admin.html');
+ const festival=page.locator('section[aria-labelledby="festival-heading"]'),benefit=page.locator('section[aria-labelledby="benefit-heading"]');
+ await expect(festival).toContainText('지금은 문장 없는 자동 선정 카드입니다.');
+ await expect(festival.getByRole('button')).toHaveCount(0);
+ await expect(benefit.getByRole('button',{name:'AI 혜택 문구 끄기'})).toBeVisible();
+ await expect(benefit).not.toContainText('지금은 문장 없는 자동 선정 카드입니다.');
+});
