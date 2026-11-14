@@ -3,12 +3,12 @@ import { computed, ref, useId, onMounted, onBeforeUnmount } from 'vue';
 import type { Benefit } from './benefits';
 import { fees, timing, formatDate, benefitValueLabel } from './benefits';
 import { grade, GRADES } from './grade';
-const props=defineProps<{item:Benefit;now:number;saved?:boolean;hideFavorite?:boolean;failures?:Record<string,number>}>();
-const emit=defineEmits<{toggleFavorite:[];officialClick:[];gradeHelp:[]}>();
+const props=defineProps<{item:Benefit;now:number;saved?:boolean;hideFavorite?:boolean;failures?:Record<string,number>;freshness?:string}>();
+const emit=defineEmits<{toggleFavorite:[];officialClick:[];gradeHelp:[];detailsOpen:[]}>();
 const dialog=ref<HTMLDialogElement|null>(null),titleId=useId();
 const opener=ref<HTMLButtonElement|null>(null);
 let previousOverflow='',returnFocus=false;
-function openDetails(){if(dialog.value?.open)return;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';returnFocus=true;history.pushState({...history.state,benefitDialog:titleId},'');dialog.value?.showModal();}
+function openDetails(){if(dialog.value?.open)return;previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';returnFocus=true;history.pushState({...history.state,benefitDialog:titleId},'');dialog.value?.showModal();emit('detailsOpen');}
 function closeDetails(){if(!dialog.value?.open)return;dialog.value.close();document.body.style.overflow=previousOverflow;if(history.state?.benefitDialog===titleId)history.back();}
 function popDetails(){if(dialog.value?.open){dialog.value.close();document.body.style.overflow=previousOverflow;}if(returnFocus){returnFocus=false;setTimeout(()=>opener.value?.focus({preventScroll:true}),0);}}
 function backdrop(event:MouseEvent){const element=dialog.value;if(!element||event.target!==element)return;const r=element.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)closeDetails();}
@@ -28,6 +28,7 @@ const paymentRows=computed(()=>Object.entries(paymentNames).filter(([key])=>prop
     <p class="card-source">{{ item.sourceName }}<span aria-hidden="true"> · </span>{{ item.regions.join(' · ') || '지역 조건 확인 필요' }}</p>
     <div class="card-tags"><span v-if="aiReview" class="ai-badge">AI 정리 · 공식 원문 {{ aiReview.documentCount }}곳 대조</span><span v-if="item.labels.audience">{{ item.labels.audience }}</span><span v-if="item.labels.action">{{ item.labels.action }}</span><span>{{ fees[item.fee_status] }}</span></div>
     <p class="card-grade"><span class="grade-badge" :class="'grade-'+trust.grade" :title="trust.reason||trust.title">신뢰도 {{ trust.grade }}</span><span class="grade-text">{{ trust.title }}<template v-if="trust.reason"> · {{ trust.reason }}</template></span><button type="button" class="grade-help" aria-label="신뢰도 등급 설명 보기" @click="emit('gradeHelp')">?</button></p>
+    <p v-if="freshness" class="fine-print freshness">{{freshness}}</p>
     <p class="verified">공식 확인 <time :datetime="item.verified_at">{{ formatDate(item.verified_at) }}</time></p>
     <button v-if="!hideFavorite" class="favorite-toggle" type="button" :aria-pressed="Boolean(saved)" :aria-label="item.summary+' 즐겨찾기'" @click="emit('toggleFavorite')"><span aria-hidden="true">{{ saved?'★':'☆' }}</span> {{ saved?'저장됨':'즐겨찾기 저장' }}</button>
     <dialog ref="dialog" class="benefit-modal" :aria-labelledby="titleId" @cancel.prevent="closeDetails" @click="backdrop">

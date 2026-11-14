@@ -33,3 +33,12 @@ test('empty approved card set falls back to current local rules',()=>{
  const raw=data();raw.topic_cards.topics=[];
  assert.equal(publishedTopics(raw,adapt(raw,NOW).items,emptyBeta().profile,NOW),null);
 });
+
+test('published topics apply local feedback and explicit exclusions without fallback resurrection',()=>{
+ const raw=data(),profile=emptyBeta().profile;
+ const events=Array.from({length:20},()=>({topic:'culture' as const,action:'view' as const,at:NOW}));
+ const result=publishedTopics(raw,adapt(raw,NOW).items,profile,NOW,events)!;
+ assert.ok(result[0].score<0);
+ profile.excludedTopics=['culture'];
+ assert.deepEqual(publishedTopics(raw,adapt(raw,NOW).items,profile,NOW,events),[]);
+});

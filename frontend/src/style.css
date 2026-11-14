@@ -89,3 +89,6 @@
 .grocery-pick li a{color:var(--text,inherit);overflow-wrap:anywhere}.grocery-pick li strong{overflow-wrap:anywhere}.benefit-pick li{align-items:baseline}.pick-more{min-height:44px;padding:8px 14px;margin:0 0 6px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--accent);font-weight:650;cursor:pointer}
 
 .health-weekly h3 .health-ai{margin:0 0 0 8px;vertical-align:middle}.health-weekly-others{color:var(--muted)}.health-weekly-others a{display:inline-flex;align-items:center;min-height:44px}.health-ai-details{width:100%}.health-ai-details>summary{display:flex;align-items:center;min-height:44px;cursor:pointer;font-size:13px;font-weight:700;color:#005d59}
+
+/* Recommendation reasons span the card, not the narrow icon column. */
+.topic-button .topic-reason{grid-column:1/-1;min-width:0;margin-top:6px;font-size:12px;font-weight:400;line-height:1.5;color:#485b54}

@@ -12,6 +12,8 @@ import {DISTRICTS,isSeoulCandidate} from './beta';
 import type {Topic} from './beta';
 const topicPanel=ref<InstanceType<typeof BetaPanel>|null>(null),selectedTopic=ref<Topic|null>(null);
 function selectTopic(topic:Topic|null){selectedTopic.value=topic;}
+const recommendation=ref<{items:Benefit[];personalized:boolean}>({items:[],personalized:false});
+function updateRecommendation(items:Benefit[],personalized:boolean){recommendation.value={items,personalized};}
 const gradeHelp=ref<InstanceType<typeof GradeHelp>|null>(null);
 // 탭(2026-11-10): 혜택·장보기·축제, 2026-11-11 보건소 추가. 주소의 #groceries·#festivals·#health로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
 type Tab='benefits'|'groceries'|'festivals'|'health';
@@ -120,8 +122,8 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     <section class="hero" aria-labelledby="hero-title"><h1 id="hero-title">오늘의 혜택, <span>한눈에.</span></h1><p class="hero-description">로그인 없이 탐색하고, 조건은 공식 안내에서 확인하세요.</p></section>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="t.id==='benefits'&&!loading" class="tab-count">{{ all.length }}</span></button></div></nav>
     <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits">
-    <BenefitPick :raw="raw" :items="all" />
-    <BetaPanel ref="topicPanel" :items="all" :now="now" :query="filters.q" :published-data="raw" @select-topic="selectTopic" />
+    <BenefitPick :raw="raw" :items="recommendation.items" :personalized="recommendation.personalized" />
+    <BetaPanel ref="topicPanel" :items="all" :now="now" :query="filters.q" :published-data="raw" @select-topic="selectTopic" @recommendation="updateRecommendation" />
     <section class="discovery" aria-label="혜택 검색 및 필터">
       <div class="search-box"><span aria-hidden="true" class="search-icon">⌕</span><label for="search" class="sr-only">혜택·조건·지역·기관 검색</label><input id="search" v-model="draft" type="search" maxlength="200" placeholder="혜택·조건·지역·기관을 검색하세요" autocomplete="off" aria-controls="results"></div>
       <div class="filter-row"><div class="filter-field"><label for="region">지역</label><select id="region" v-model="filters.region"><option value="">서울시 전체</option><option v-for="region in regions" :key="region">{{ region }}</option></select></div><div class="quick-filters" aria-label="상태 필터"><button type="button" :aria-pressed="filters.status==='urgent'" @click="filters.status=filters.status==='urgent'?'':'urgent'">마감 임박 <span>{{ urgent }}</span></button><button type="button" :aria-pressed="filters.status==='new'" @click="filters.status=filters.status==='new'?'':'new'">24시간 내 확인</button></div><button v-if="active" class="reset" type="button" @click="reset">필터 초기화</button></div>
@@ -134,7 +136,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       <p v-if="selectedTopic" class="topic-result-reason">{{ selectedTopic.reason }} · 검색·지역 필터도 함께 적용됩니다.</p>
       <p v-if="savedOnly" class="fine-print">이 브라우저에만 저장됩니다. 현재 표시 가능한 {{ savedItems.length }}건 · 현재 유효성을 확인할 수 없는 저장 항목 {{ Math.max(0,favorites.length-savedItems.length) }}건. 종료를 뜻하지 않습니다.</p>
       <p role="status" aria-live="polite" class="action-notice">{{ favoriteNotice }}</p><div v-if="shareLink" class="share-result"><p role="status" aria-live="polite">{{ shareNotice }}</p><label for="share-link">공유할 검색 링크</label><input id="share-link" :value="shareLink" readonly @focus="($event.target as HTMLInputElement).select()"><p class="fine-print">검색·지역·정렬·상태만 포함합니다. 개인화 주제·관심 설정·즐겨찾기 목록은 공유하지 않습니다.</p></div>
-      <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" :saved="favorites.includes(benefitKey(item))" :failures="data?.sourceFailures" @toggle-favorite="toggleFavorite(item)" @official-click="topicPanel?.officialClick()" @grade-help="gradeHelp?.open()" /></div>
+      <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" :saved="favorites.includes(benefitKey(item))" :failures="data?.sourceFailures" :freshness="topicPanel?.freshness(item)" @details-open="topicPanel?.rememberItem(item)" @toggle-favorite="toggleFavorite(item)" @official-click="topicPanel?.officialClick()" @grade-help="gradeHelp?.open()" /></div>
       <div v-else-if="!loading" class="empty-state"><span class="empty-symbol" aria-hidden="true">⌕</span><h3>{{ savedOnly?'현재 조건에 맞는 즐겨찾기가 없어요':all.length?'조건에 맞는 검증 항목이 없어요':state==='partial'?'현재 표시 가능한 검증 항목이 없어요':'확인된 목록이 준비되면 여기에 표시됩니다' }}</h3><p>{{ all.length?'다른 검색어나 지역로 찾아보세요.':'개별 표시기한 경과 또는 검증 보류일 수 있습니다. 실제 혜택이 없거나 행사가 종료됐다는 뜻은 아닙니다.' }}</p><button v-if="active" type="button" class="primary-button" @click="reset">필터 초기화</button></div>
     </section>
     </div>

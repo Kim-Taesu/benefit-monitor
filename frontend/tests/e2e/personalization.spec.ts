@@ -1,0 +1,72 @@
+import {test,expect} from '@playwright/test';
+import {mkdirSync} from 'node:fs';
+import {item,snapshot,NOW} from '../fixtures';
+
+for(const width of [390,1440])test(`local preferences affect published topics, exclusion and consent ${width}`,async({page})=>{
+ await page.setViewportSize({width,height:900});await page.clock.install({time:new Date(NOW)});
+ const rows=[item({title:'전시 안내',summary:'야간 전시 안내'}),item({url:'https://mediahub.seoul.go.kr/archives/2',title:'편의점 행사',summary:'편의점 할인 행사',labels:{category:'할인·적립',region:'전국'},districts:[]})];
+ const raw=snapshot(rows,{topic_cards:{schema_version:1,generated_at:'2026-11-04T08:00:00+09:00',valid_until:'2026-11-04T18:00:00+09:00',topics:rows.map((row,n)=>({id:n?'shopping':'culture',title:n?'장보기·멤버십':'문화·체험',items:[{source:row.source,url:row.url,facts:row}]}))}});
+ const requests:{url:string;method:string;body:string|null}[]=[];
+ await page.route('**/*',route=>{
+  const request=route.request(),u=new URL(request.url());requests.push({url:request.url(),method:request.method(),body:request.postData()});
+  if(u.origin!==new URL(String(test.info().project.use.baseURL)).origin)return route.abort();
+  return u.pathname.endsWith('/briefing.json')?route.fulfill({json:raw}):route.continue();
+ });
+ await page.goto('./');await expect(page.locator('#beta')).toContainText('공통 추천');
+ await expect(page.locator('#beta .topic-button').first()).toHaveAttribute('data-topic','culture');
+ const reasonBox=await page.locator('#beta .topic-reason').first().boundingBox();
+ expect(reasonBox!.width).toBeGreaterThan(100);expect(reasonBox!.height).toBeLessThan(200);
+ await page.locator('.beta-settings > summary').click();
+ await page.getByLabel('관심사 생활 할인',{exact:true}).check();
+ await page.getByRole('button',{name:'개인화 설정 저장',exact:true}).click();
+ await expect(page.locator('#beta .topic-button').first()).toHaveAttribute('data-topic','shopping');
+ await expect(page.locator('#beta')).toContainText('이 브라우저의 설정');
+ await page.getByLabel('이 기기의 행동 기록에 동의').check();
+ const card=page.locator('#results article').filter({hasText:'야간 전시 안내'});
+ await expect(card.locator('.freshness')).toHaveText('처음 확인하는 정보');
+ await card.locator('.card-open').click();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);
+ await expect(card.locator('.freshness')).toHaveText('이전에 확인한 정보');
+ let stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('benefit-monitor:beta:v1')!));
+ expect(stored.seen).toHaveLength(1);expect(JSON.stringify(stored.seen)).not.toContain('http');
+ raw.items[0]={...rows[0],conditions:'참여 조건이 변경되었습니다.'};
+ await page.reload();await expect(page.locator('#results .freshness').first()).toHaveText('지난 확인 후 내용 변경');
+ await page.locator('.beta-settings > summary').click();
+ await page.getByLabel('이 기기의 행동 기록에 동의').uncheck();
+ await expect(page.locator('#results .freshness')).toHaveCount(0);
+ stored=await page.evaluate(()=>JSON.parse(localStorage.getItem('benefit-monitor:beta:v1')!));
+ expect(stored.seen).toEqual([]);expect(stored.events).toEqual([]);
+ await page.getByText('추천에서 제외할 주제 ·', {exact:false}).click();
+ await page.getByLabel('추천 제외 생활 할인',{exact:true}).check();
+ await page.getByRole('button',{name:'개인화 설정 저장',exact:true}).click();
+ await expect(page.locator('[data-topic="shopping"]')).toHaveCount(0);
+ await expect(page.locator('[data-topic="convenience"]')).toHaveCount(0);
+ await expect(page.locator('#beta')).toContainText('추천 제외: 생활 할인');
+ await expect(page.locator('#results article')).toHaveCount(2);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+ mkdirSync('../.tools/phase2-screenshots',{recursive:true});
+ await page.screenshot({path:`../.tools/phase2-screenshots/personalization-${width}.png`,fullPage:true});
+ expect(requests.every(r=>r.method==='GET'&&r.body===null&&new URL(r.url).origin===new URL(String(test.info().project.use.baseURL)).origin)).toBe(true);
+});
+
+test('top AI picks follow local ranking and explicit exclusions without rewriting model text',async({page})=>{
+ await page.clock.install({time:new Date(NOW)});
+ const names=['야간 전시','편의점 할인','교육 강좌','가족 체험'];
+ const rows=names.map((summary,n)=>item({url:`https://mediahub.seoul.go.kr/archives/${n+1}`,title:summary,summary}));
+ const raw=snapshot(rows,{benefit_pick:{schema_version:1,source:'ai',summary:'공통 후보 안내',picks:rows.map(row=>({source:row.source,url:row.url,line:'공식 이용 조건을 확인하세요'}))}});
+ await page.route('**/*',route=>{
+  const u=new URL(route.request().url());if(u.origin!==new URL(String(test.info().project.use.baseURL)).origin)return route.abort();
+  return u.pathname.endsWith('/briefing.json')?route.fulfill({json:raw}):route.continue();
+ });
+ await page.goto('./');await expect(page.locator('.benefit-pick li').first()).toContainText('야간 전시');
+ await page.locator('.beta-settings > summary').click();
+ await page.getByLabel('관심사 아이와 함께 가볼 곳',{exact:true}).check();
+ await page.getByRole('button',{name:'개인화 설정 저장',exact:true}).click();
+ await expect(page.locator('.benefit-pick li').first()).toContainText('가족 체험');
+ await expect(page.locator('.benefit-pick')).not.toContainText('공통 후보 안내');
+ await page.getByText('추천에서 제외할 주제 ·',{exact:false}).click();
+ await page.getByLabel('추천 제외 생활 할인',{exact:true}).check();
+ await page.getByRole('button',{name:'개인화 설정 저장',exact:true}).click();
+ await expect(page.locator('.benefit-pick li')).toHaveCount(3);
+ await expect(page.locator('.benefit-pick')).not.toContainText('편의점 할인');
+ await expect(page.locator('#results article')).toHaveCount(4);
+});

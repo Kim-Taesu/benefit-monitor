@@ -1,7 +1,7 @@
 import type {Benefit} from './benefits.ts';
 import {timestamp} from './benefits.ts';
-import {TOPICS,topicsFor} from './beta.ts';
-import type {Profile,Topic,TopicId} from './beta.ts';
+import {TOPICS,topicCandidates,rankTopics} from './beta.ts';
+import type {Profile,Topic,TopicId,LocalEvent} from './beta.ts';
 import {benefitKey} from './favorites.ts';
 import titles from './topic-titles.json' with {type:'json'};
 
@@ -11,13 +11,13 @@ function canonical(value:unknown):string {
  if(object(value))return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonical(value[k])).join(',')+'}';
  return JSON.stringify(value)??'';
 }
-export function publishedTopics(raw:unknown,items:Benefit[],profile:Profile,now:number):Topic[]|null {
+export function publishedTopics(raw:unknown,items:Benefit[],profile:Profile,now:number,events:LocalEvent[]=[] ):Topic[]|null {
  if(!object(raw)||!object(raw.topic_cards)||!Array.isArray(raw.items))return null;
  const bundle=raw.topic_cards;
  if(bundle.schema_version!==1||!Array.isArray(bundle.topics)||bundle.topics.length>13||!Number.isFinite(timestamp(bundle.generated_at))||timestamp(bundle.generated_at)>now||!(timestamp(bundle.valid_until)>now))return null;
  const current=new Map(items.map(i=>[benefitKey(i),i]));
  const facts=new Map(raw.items.filter(object).filter(i=>typeof i.source==='string'&&typeof i.url==='string').map(i=>[String(i.source)+'\n'+String(i.url),i]));
- const local=topicsFor(items,profile,[],now),result:Topic[]=[],seen=new Set<string>();
+ const local=topicCandidates(items,profile),result:Topic[]=[],seen=new Set<string>();
  for(const row of bundle.topics){
   if(!object(row)||typeof row.id!=='string'||!Object.hasOwn(TOPICS,row.id)||seen.has(row.id)||!Array.isArray(row.items)||row.items.length>2000)return null;
   const id=row.id as TopicId;
@@ -37,5 +37,5 @@ export function publishedTopics(raw:unknown,items:Benefit[],profile:Profile,now:
    result.push({id,title:row.title as string,items:linked,pinned,score:pinned?100:0,reason:'공개 승인된 항목을 묶은 주제입니다. 이용 조건은 별도 확인하세요.'});}
  }
  for(const topic of local)if(topic.pinned&&!result.some(t=>t.id===topic.id))result.push(topic);
- return result.length?result.sort((a,b)=>Number(b.pinned)-Number(a.pinned)):null;
+ return result.length?rankTopics(result,profile,events,now,local):null;
 }
