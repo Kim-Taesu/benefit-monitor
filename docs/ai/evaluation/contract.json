@@ -1,7 +1,7 @@
 {
   "version": 1,
   "origin": "author_labeled_regression",
-  "review_status": "awaiting_independent_review",
+  "review_status": "independent_agent_reviewed",
   "cases": [
     {
       "id": "R01",
@@ -96,8 +96,14 @@
         "근거 없는 개인 자격·잔여석 보장"
       ],
       "evidence_ids": [
+        "d1s2",
         "d1s5",
-        "d1s2"
+        "d1s6",
+        "d1s7",
+        "d1s8",
+        "d1s9",
+        "d1s10",
+        "d1s11"
       ]
     },
     {
@@ -218,7 +224,7 @@
     },
     {
       "id": "R10",
-      "description": "핵심 요약 사실 없음은 보류",
+      "description": "원문에는 정보가 있어도 초안의 핵심 요약이 누락되면 보류",
       "tags": [
         "missing_fact"
       ],
@@ -226,7 +232,8 @@
         "publish": false
       },
       "expected_facts": {
-        "summary": null
+        "draft_summary": null,
+        "source_summary_available": true
       },
       "forbidden_claims": [
         "근거 없는 개인 자격·잔여석 보장"
@@ -272,11 +279,14 @@
       },
       "expected_facts": {
         "application_end": "2026-11-05T18:00+09:00",
-        "currently_usable": false
+        "new_application_available": false,
+        "event_end": "2026-11-30",
+        "publication": "hold"
       },
       "forbidden_claims": [
         "근거 없는 개인 자격·잔여석 보장",
-        "현재 신청·이용 가능"
+        "현재 신규 신청 가능",
+        "접수 마감만으로 기존 신청자의 관람 불가 단정"
       ],
       "evidence_ids": [
         "d1s5"
@@ -341,14 +351,17 @@
     },
     {
       "id": "V02",
-      "description": "못 찾음은 불일치와 구분",
+      "description": "원문에 온라인 결제 적용 여부가 없는 주장과 명시된 하루 한 회를 구분",
       "tags": [
         "missing_fact"
       ],
       "expected": {
         "action": "none"
       },
-      "expected_facts": "못 찾음은 불일치와 구분",
+      "expected_facts": {
+        "c1": "not_found",
+        "c2": "supported"
+      },
       "forbidden_claims": [
         "근거 없는 개인 자격·잔여석 보장"
       ],
@@ -455,13 +468,14 @@
       "forbidden_claims": [
         "근거 없는 개인 자격·잔여석 보장"
       ],
-      "evidence_ids": [
+      "evidence_ids": [],
+      "invalid_evidence_ids": [
         "d9s9"
       ]
     },
     {
       "id": "B01",
-      "description": "기존 통과 예시의 호스트 검사",
+      "description": "지급 수단을 추측하지 않는 혜택 소개 예시의 호스트 검사",
       "tags": [
         "valid_example"
       ],
@@ -622,8 +636,9 @@
       },
       "expected_facts": "근거 없는 가격·효능 보장 거절",
       "forbidden_claims": [
-        "근거 없는 개인 자격·잔여석 보장",
-        "근거 없는 무료·할인 표현"
+        "근거 없는 육류 저렴 주장",
+        "건강 효능 보장",
+        "무조건 구매"
       ],
       "evidence_ids": []
     },

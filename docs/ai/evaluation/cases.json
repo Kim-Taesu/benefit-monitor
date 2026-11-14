@@ -662,11 +662,11 @@
             "document_role": "notice",
             "retrieved_at": "2026-11-08T11:00:00+09:00",
             "published_at": null,
-            "body_hash": "45e25b05da453e3ac004f9505a53bb2e3786860254b616568c8c2aad4fb8b57b",
+            "body_hash": "2f1e4d2d2da6de1eafd74c8882754edfd245fd6231268da34a693b933bcca026",
             "hash_algorithm": "sha256-utf8-exact",
             "extraction_scope": "test",
             "fetch_status": "ok",
-            "body": "서울 미술 전시 안내.\n전시 기간은 2026-11-01부터 2026-11-30까지입니다.\n관람료는 무료입니다.\n누구나 관람할 수 있습니다.\n대상 출생연도: 1962. 1. 1. ~ 1976. 12. 31. 출생자."
+            "body": "서울 미술 전시 안내.\n전시 기간은 2026-11-01부터 2026-11-30까지입니다.\n관람료는 무료입니다.\n출생연도 조건을 확인하세요.\n대상 출생연도: 1962. 1. 1. ~ 1976. 12. 31. 출생자."
           },
           {
             "id": "doc-2",
@@ -709,6 +709,36 @@
                     "source_ref": "doc-1",
                     "quote": "대상 출생연도: 1962.",
                     "locator": "d1s5"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "1.",
+                    "locator": "d1s6"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "1.",
+                    "locator": "d1s7"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "~ 1976.",
+                    "locator": "d1s8"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "12.",
+                    "locator": "d1s9"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "31.",
+                    "locator": "d1s10"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "출생자.",
+                    "locator": "d1s11"
                   }
                 ],
                 "unknown_reason": null
@@ -830,13 +860,43 @@
               },
               {
                 "field": "conditions",
-                "value": "누구나 관람",
+                "value": "1962. 1. 1. ~ 1976. 12. 31. 출생자 대상",
                 "status": "supported",
                 "evidence": [
                   {
                     "source_ref": "doc-1",
-                    "quote": "누구나 관람할 수 있습니다.",
-                    "locator": "d1s4"
+                    "quote": "대상 출생연도: 1962.",
+                    "locator": "d1s5"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "1.",
+                    "locator": "d1s6"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "1.",
+                    "locator": "d1s7"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "~ 1976.",
+                    "locator": "d1s8"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "12.",
+                    "locator": "d1s9"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "31.",
+                    "locator": "d1s10"
+                  },
+                  {
+                    "source_ref": "doc-1",
+                    "quote": "출생자.",
+                    "locator": "d1s11"
                   }
                 ],
                 "unknown_reason": null
@@ -3094,7 +3154,7 @@
             {
               "claim_id": "c1",
               "field": "conditions",
-              "text": "VVIP·VIP·GOLD는 1천 원당 100원"
+              "text": "이 혜택은 온라인 결제에도 적용됩니다"
             },
             {
               "claim_id": "c2",
@@ -3443,7 +3503,7 @@
         "picks": [
           {
             "id": "a1",
-            "line": "결제액 추가 페이백, 상품권으로 받아요"
+            "line": "상품권 결제 행사 안내"
           },
           {
             "id": "b2",

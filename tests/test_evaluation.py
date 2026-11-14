@@ -13,6 +13,24 @@ DATA = ROOT/'docs/ai/evaluation'
 
 
 class EvaluationTests(unittest.TestCase):
+    def test_feedback_alone_cannot_prove_free_generation(self):
+        report=evaluation.summarize_events([dict(run_id='r',stage='response',status='ok',
+            reason=None,duration_ms=0,cost_usd=0,useful=True)])
+        self.assertIsNone(report['total_cost_usd'])
+        self.assertIsNone(report['cost_per_useful_recommendation_usd'])
+
+    def test_absent_expected_run_makes_total_cost_unknown(self):
+        event=dict(run_id='r',stage='extraction',status='ok',reason=None,duration_ms=1,cost_usd=0.01)
+        report=evaluation.summarize_events([event],expected_runs=['r','missing'])
+        self.assertIsNone(report['total_cost_usd'])
+        self.assertEqual(report['known_cost_usd'],0.01)
+        self.assertEqual(report['missing_cost_runs'],['missing'])
+
+    def test_swapping_blind_key_mapping_is_rejected(self):
+        packet,key=evaluation.blind_pair('one',{},[],[])
+        key['arms']={a:('rule' if s=='ai' else 'ai') for a,s in key['arms'].items()}
+        with self.assertRaises(ValueError):evaluation.score_ratings(packet,key,packet['ratings'])
+
     def test_fixed_contract_against_real_gates_without_network(self):
         with patch('socket.socket', side_effect=AssertionError('network forbidden')):
             report = evaluation.run_cases(DATA/'cases.json', DATA/'contract.json')

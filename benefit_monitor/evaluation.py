@@ -138,7 +138,7 @@ def run_cases(cases_path=DATA/'cases.json', contract_path=DATA/'contract.json'):
                              pass_rate=sum(r['passed'] for r in rows)/len(rows)))
 
 
-def summarize_events(events):
+def summarize_events(events, expected_runs=None):
     """Import measured observations; no timestamps/costs/user responses are invented."""
     seen=set()
     for e in events:
@@ -163,10 +163,17 @@ def summarize_events(events):
         stages[stage]=dict(observations=len(rows), statuses=dict(Counter(r['status'] for r in rows)),
                            reasons=dict(Counter(r['reason'] for r in rows if r.get('reason'))),
                            duration_ms=total(rows,'duration_ms'), cost_usd=total(rows,'cost_usd'))
-    cost=total(events,'cost_usd')
+    observed_runs={e['run_id'] for e in events}
+    expected_runs=observed_runs if expected_runs is None else set(expected_runs)
+    if not observed_runs<=expected_runs:raise ValueError('observation outside expected runs')
+    cost_runs={e['run_id'] for e in events if e['stage']=='extraction' and e.get('cost_usd') is not None}
+    missing_cost_runs=sorted(expected_runs-cost_runs)
+    cost=total(events,'cost_usd') if expected_runs and not missing_cost_runs else None
     ratings=[e['useful'] for e in events if e['stage']=='response' and type(e.get('useful')) is bool]
     useful=sum(ratings)
-    return dict(stages=stages, runs=len({e['run_id'] for e in events}), total_cost_usd=cost,
+    return dict(stages=stages, runs=len(expected_runs), total_cost_usd=cost,
+                known_cost_usd=sum(e.get('cost_usd') or 0 for e in events),
+                missing_cost_runs=missing_cost_runs, cost_scope='recorded_model_cost_not_provider_invoice',
                 rated_recommendations=len(ratings), useful_recommendations=useful if ratings else None,
                 cost_per_useful_recommendation_usd=cost/useful if cost is not None and useful else None)
 
@@ -270,7 +277,8 @@ def replay(root):
                              historical_cost_usd=(sum(r['recorded_charge_usd'] for r in rows)
                                                   if rows and all(r.get('recorded_charge_usd') is not None for r in rows) else None),
                              cost_covered_runs=sum(r.get('recorded_charge_usd') is not None for r in rows),
-                             known_recorded_charge_usd=sum(r.get('recorded_charge_usd') or 0 for r in rows)),observations=summarize_events(events),
+                             known_recorded_charge_usd=sum(r.get('recorded_charge_usd') or 0 for r in rows)),
+                observations=summarize_events(events,expected_runs=[r['run_id'] for r in rows]),
                 note='과거 입력 시각으로 재검사. 현재 원문·현재 모델 품질·실제 공개 상태를 확인하지 않음. '
                      '비용은 일치하는 완료 요청의 로컬 원장 기록만 사용하며 실제 청구액이 아님. 미관측 비용·사용자 반응은 null.')
 
@@ -307,8 +315,12 @@ def compare_recorded_topics(root):
                 useful_rate=None,cost_per_useful_recommendation_usd=None),packets,keys
 
 
+def blind_arms(case_id):
+    return {'A':'rule','B':'ai'} if int(digest(case_id)[0],16)%2 else {'A':'ai','B':'rule'}
+
+
 def blind_pair(case_id, host, rule, ai):
-    arms={'A':'rule','B':'ai'} if int(digest(case_id)[0],16)%2 else {'A':'ai','B':'rule'}
+    arms=blind_arms(case_id)
     outputs={'rule':rule,'ai':ai}
     packet=dict(id=case_id,input_sha256=digest(host),context=host,
                 alternatives={arm:outputs[source] for arm,source in arms.items()},
@@ -320,6 +332,7 @@ def blind_pair(case_id, host, rule, ai):
 def score_ratings(packet,key,ratings):
     if key['packet_sha256']!=digest(packet) or key['id']!=packet['id'] or key['input_sha256']!=packet['input_sha256']:
         raise ValueError('blind packet mismatch')
+    if key['arms']!=blind_arms(packet['id']):raise ValueError('blind mapping mismatch')
     if set(ratings)!=set(key['arms']):
         raise ValueError('rating arm mismatch')
     rows=[]

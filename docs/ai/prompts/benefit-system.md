@@ -50,7 +50,7 @@
  {"id":"c3","title":"완벽 방음에 최신 장비 갖춘 '화상면접실'이 무료! '서울청년센터 성북'","summary":"성북청년센터 화상면접실 무료 이용","conditions":"서울 생활권 19~39세 청년. 공공서비스예약 신청 후 승인 필요.","valid_from":null,"valid_until":null,"deadline_at":null,"fee_status":"free","category":"생활지원","region":"서울 성북구"}]
 </candidates>
 <output>
-{"summary":"서울사랑상품권 추가 페이백 행사로 결제를 챙겨 보고, 청계 야간 자율주행버스도 타 보세요.","picks":[{"id":"a1","line":"결제액 추가 페이백, 상품권으로 받아요"},{"id":"b2","line":"야간 자율주행버스 체험"},{"id":"c3","line":"화상면접실 이용"}]}
+{"summary":"서울사랑상품권 추가 페이백 행사로 결제를 챙겨 보고, 청계 야간 자율주행버스도 타 보세요.","picks":[{"id":"a1","line":"상품권 결제 행사 안내"},{"id":"b2","line":"야간 자율주행버스 체험"},{"id":"c3","line":"화상면접실 이용"}]}
 </output>
 </example>
 </examples>

@@ -1,0 +1,824 @@
+{
+  "version": 1,
+  "scope": "synthetic_gate_regression",
+  "origin": "synthetic_regression",
+  "contract_review": "independent_agent_reviewed",
+  "contract_sha256": "f6d87682f114aef36596771c8a1a40a2ce606d43cd8400342d796fbda8a86270",
+  "cases_sha256": "7b9ad952a26ef841adfd8f2060cb19eb715df78965ed267164ca8eb3b4ddb9f0",
+  "generated_at": "2026-11-14T07:25:49.574596+00:00",
+  "provenance": {
+    "commit": "36500cfd0e351c2ffcd89be3ba99cb5089446b5e",
+    "code_sha256": "2ad10d6324d673547b366eef1d60af3a4b717488763e8970985777fc07451c77",
+    "file_hashes": {
+      "benefit_monitor/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "benefit_monitor/age_state.py": "03c3c92c44626fe42bee8449ea729839ca7110c1dc3997945f05efac1889d186",
+      "benefit_monitor/ai_activation.py": "5eed5f4dee8a491aa0e841a2c51d87921c96f9b6e746612f505cecb87cf74036",
+      "benefit_monitor/ai_contract.py": "4625ae228ab8ccda86b32f55bb6cc7956fee465222bcaf9ec0578e5e6c1eca7b",
+      "benefit_monitor/ai_daily.py": "7b28e3f4da6baec149847a904ecde6bf2d3866e036d5dfba3973ab0c062e44fd",
+      "benefit_monitor/ai_review.py": "70f7f02f561121fd17223bb1455c1e17bd08c62fb87aa71ef52dd5da8bde4d5f",
+      "benefit_monitor/ai_verify.py": "51467610b27a942fb4148439671a2c9e5e25ce63133c16a02f38ef28f5f3b5ab",
+      "benefit_monitor/auto_publish.py": "56a9019d79dfb9897cd574cfdda274724bde4d83ae28e90407b8e65ff8bae77d",
+      "benefit_monitor/auto_release.py": "1855db47ae58d02fe3c0562b3dc77e2f0559e8064f204d479677a99cc5db2721",
+      "benefit_monitor/benefit_pick.py": "829a7a1876e2dba2b754f9df960e9a90c9196184b6f5afa23e68d127d4772bb5",
+      "benefit_monitor/briefing.py": "da7fd5f3c2a4767bec2f39245278553187ae1afe745895ff11cb484db84a52bc",
+      "benefit_monitor/claude_trial.py": "3eba8d16ce84cd70d83a3a97f8baefb6eaf23e094a5065049720e5344a60fcf7",
+      "benefit_monitor/cli.py": "b5ac0cd3e9130a48578fe31b95b50825e9b317e6a0801b118a48445d9ab10efb",
+      "benefit_monitor/cloud_daily.py": "84e1f8acc9e3fa00edb88d8161670a1770dda40c787f3ea2d642f4dd7105a736",
+      "benefit_monitor/cloud_state.py": "5d95fe8896564600b9dafcf1b3ba3a76cdf715dbe27ea2dbdf2cca9b34ff15ae",
+      "benefit_monitor/collection_snapshot.py": "d1f44a2203d3d6902f99067a1a2b94464a8df8f4b114c75f0fd3a05220168a12",
+      "benefit_monitor/collectors/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "benefit_monitor/collectors/body.py": "bdf91145921de428f4cfea3d839660e1faeba67166201291a2893b4534cadd01",
+      "benefit_monitor/collectors/districts.py": "643f789faefac50ecc27231a467c8543bc289650cc3fa1b734ef4056da3562e8",
+      "benefit_monitor/collectors/html.py": "23ee96db935e4888979f577f06e6e86463ee6b72e19467ec39d77f903e88ea49",
+      "benefit_monitor/collectors/public.py": "13e9582ca026f8c0a332a217e1146af863a4ae3f2cbabaa2a26b57edf4022068",
+      "benefit_monitor/collectors/rss.py": "fd91131dcade8ea1a5774067f9a77977d4b248088183a2d72dcef89ef411ca21",
+      "benefit_monitor/cost_policy.py": "2d4adc4a8cfd6f9961fe6f4015523a3b614a17af092065a27d23bdc83b8d8789",
+      "benefit_monitor/cross_sources.py": "7d2960b11caf4a1ce80e11024dabd41e0ce7a284610b58543cd047a71bf010ff",
+      "benefit_monitor/daily_topics.py": "34e50c07ec4396f280715a7dd69b51c7109f7dcd4281f74b80c10affd74d19c1",
+      "benefit_monitor/diff.py": "f9faccdba27678ae8504f53fc1981e3fb25f03dc41ec51d252761a3c5f4dbad3",
+      "benefit_monitor/discovery.py": "d49de6eae26c15bce91a5404595ae1a0eb16dd7b915871247844ea5caa963a01",
+      "benefit_monitor/evaluation.py": "1b4cc51d87c7d788f70fa29f9fefb2aa5f1ffe954f2f492c50a186c59d4f6a9e",
+      "benefit_monitor/festival_pick.py": "93b946dd1c7992f13daee41cdd53b5b2c8d8b42fcb52fb1c6fa384090bd9d913",
+      "benefit_monitor/festivals.py": "f3fc88d7f782bf8635e7838123fa075e8366d2710e8e7d6c8c1a55cd685a4758",
+      "benefit_monitor/groceries.py": "1aad9bddf51147fff67a25741a15e34f23647af227bf771a2bfb5da55c5413c9",
+      "benefit_monitor/grocery_baselines.py": "761cef1b4f3f12171b0cc93b57c3421c6b9b9a7088a00f3e799c4687894f8669",
+      "benefit_monitor/grocery_discounts.py": "c56047ed0892a514eca2c6fd632c45809e72c2507fcf9112fbc6dca6bb4178d2",
+      "benefit_monitor/grocery_pick.py": "ca5d74e5959dd5a6cabef338e4d75c78df7bc718c7d7cea9d7c5418164a37216",
+      "benefit_monitor/health_notes.py": "ed874068b2cc5f71315bf4246d2554e0f4a2458e996c7d73e6b4b588115fddb8",
+      "benefit_monitor/health_notices.py": "045e3c847eafacfa9c5214e712f2fb71efcafcdbbe80fff5df54c21e3efe57e3",
+      "benefit_monitor/mirror.py": "f881f4a5184278e0ed9fe002271613c8c6dc5190e2424fe55a3058e4c535e06b",
+      "benefit_monitor/models.py": "7e75836206a351ecb99c0b5b64419c1964beeb4f6cdb1ab3e94c8fc2d5756654",
+      "benefit_monitor/observability.py": "291dd0d2efad01102617144d9ac6fef913aa67436fea6834828673639345a9e2",
+      "benefit_monitor/official_reader.py": "0bf923ba4b5ce478ebc217d8dadfb4ee30a44c89168c8f0b700780c0a1d2a246",
+      "benefit_monitor/operations.py": "e2c996ddbdd0572b46ee971b9dfe2a644e920bbc36a7965c72b0be1770a637db",
+      "benefit_monitor/public_snapshot.py": "9c4229f0354df1b40133931adf4cabb2fe883171bce90c1b51af59b6ea276011",
+      "benefit_monitor/public_topics.py": "c08026b52ffe4f63886a450a3d0df6ad2eae867f4da2a756a2fb159deaf9db51",
+      "benefit_monitor/publish.py": "cc60e55b7523eb4eba7ee3c8139b51c59f73ccbaa0a1a46bf396bda088942538",
+      "benefit_monitor/quality_baseline.py": "f9fafaa8935bcb8ceb2ef98ade13cd98d18d323aa8df64382f0452d3c7c7eaf8",
+      "benefit_monitor/remote_delivery.py": "3858df7b8266d1e053a7057c89ccf2c3d75664087594f8f44353e96fcee8101f",
+      "benefit_monitor/replay_quality.py": "42258c2369aab3f69a59ec716c0c90df9bf7994a2f25a01fb1e58a725ba89d60",
+      "benefit_monitor/replay_research_guard.py": "aced24d32c85b52af0366b07d8ba3d0a43b4f3af10be0d426113e98cbe9e33f7",
+      "benefit_monitor/research_extraction.py": "72d34216d648b3ef4dbc84ac2a378c8862e5e41e8a23dd8a8d4061bb445204f6",
+      "benefit_monitor/research_guard.py": "c64919af7454d10d1c0b99b849b657bc27bcb5c40e485a8f12b8af0422aa62dd",
+      "benefit_monitor/research_probe.py": "2e66329c68678f2feebafd356cf6cacaa844e9e216ce46dc53bf0cc7e31e9ad5",
+      "benefit_monitor/review_desk.py": "c57b1810ed60554119bf7f33fdc2ebfd66a6e407d062259517cab362f58bde2d",
+      "benefit_monitor/robots.py": "715f0f7a49a3e7cc0d9a50354e1ea38bbf4ee6014747029b25531b98a3e80e2a",
+      "benefit_monitor/runtime_retention.py": "964bbe5c4c165c04ba5259c9b492e5f4f4b38adf16ab27fd85eb68432921503a",
+      "benefit_monitor/source_check.py": "92550ceede35296c2382495d2dfb544bf0662526db6a8d8dfc4dc896aa069c52",
+      "benefit_monitor/source_registry.py": "d721adf22538346b93d54b14a35d170f4db0c550e92ce19707817edae5002084",
+      "benefit_monitor/store.py": "93a89c51da65a4bdf6a9b3caba4f6d60f47dd3cd09530a85973f13a1337a7f31",
+      "benefit_monitor/topic_publication.py": "f8e134843ec2b3b79a9aaa566f0a83395f7ce69261f2ecf7a9de5253710d6198",
+      "benefit_monitor/topic_refresh.py": "2860aa83106b174437d849cb30ec11c98054f15b1d53c9be1572399a2c0b656c",
+      "benefit_monitor/topic_semantics.py": "5e6bca7b7bf9ea4db0e6d5a1ef459a3f9187c18752c10fad08ace057972fe21c",
+      "benefit_monitor/trial_budget.py": "8fa4c95f5c378ff84779c6dd4aabd08437426f6b3007230251801b7d46b82a28",
+      "benefit_monitor/validation.py": "68562eb01c9b77638d2eb438507e817add9ee46c1e942227a1470a15287362ac",
+      "benefit_monitor/verify_contract.py": "99c4645486a7bbf48cc56cb8b4a861b97b597d43dad43164fb5153ef556e8426",
+      "benefit_monitor/wire_format.py": "356f2797ffc684212abbd7a880e7a12c5c4d89b1af2982fe603a5e899c430442",
+      "docs/ai/schemas/research-extraction-v3.schema.json": "281eba9394c9fea04e993498aadced318663a9c9a27e7a4dac8f379d88563408",
+      "docs/ai/schemas/research-extraction.schema.json": "0efc8019615128ff9f2aa700f2887f0b243464c1d725f569cf6e36b3be99baf2",
+      "docs/ai/schemas/research-result.schema.json": "cd416a6452f0db4d52caf4c61bd294425b9083561764bc9657237125dc925319",
+      "docs/ai/schemas/topic-result.schema.json": "9378916b7d256489fad52df96ed826e96a252941961a4dec0e507f98fbf37978",
+      "sources.yaml": "13acde686ed4e6cb03747bbc2d415f86e903b58f45fb22a6d49ef68f8b82571a"
+    },
+    "prompt_sha256": {
+      "benefit": "22fb80a75e4beb5510c5f4172360bf1ff30eee08e1f21f6cbe94c9d5df346072",
+      "festival": "e49dbb5f78395cbfbb6314f0991278e6b13669561b7be02cc3ff33ff98df21f7",
+      "grocery": "33540109f09dff51f363c9a2da7cf59e9c6d10d660049de6fea0dde0cadfc34e",
+      "health": "9e1080bc1cc011afc9398a3ca60712f17654d7effcea6e1fa1efb420dcc5b6da",
+      "research": "c2d355e947a8bf097fbc3be837da9615637fd9ee4dd1167b5f3aeee6c5f69570",
+      "topic": "3d29dbb4992bad8b03f765abbec4090dedc4595a1e9d39df920101f0df2a9590",
+      "verify": "17b6201feaea4ee1d3d24ee6e27a6cf2f6c0f7c795f41b52ac00e2ff2085683b"
+    }
+  },
+  "new_api_calls": 0,
+  "model_quality": "not_measured",
+  "rows": [
+    {
+      "id": "R01",
+      "kind": "research",
+      "tags": [
+        "current"
+      ],
+      "input_sha256": "80348f6475e3936cd14b618fe3af566b1d0cbf5d72ffe76a8a72e2af57def8c5",
+      "expected": {
+        "publish": true,
+        "record": {
+          "valid_until": "2026-11-30",
+          "fee_status": "free"
+        }
+      },
+      "actual": {
+        "publish": true,
+        "reasons": [],
+        "record": {
+          "valid_until": "2026-11-30",
+          "deadline_at": null,
+          "fee_status": "free"
+        }
+      },
+      "passed": true,
+      "local_gate_ms": 1.559
+    },
+    {
+      "id": "R02",
+      "kind": "research",
+      "tags": [
+        "expired"
+      ],
+      "input_sha256": "a7aa4749b840e26e686a598d514ab97638bccae1ed99a8d5ef1ab32fee535e96",
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence"
+        ]
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence",
+          "year_trap"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 1.007
+    },
+    {
+      "id": "R03",
+      "kind": "research",
+      "tags": [
+        "yearless"
+      ],
+      "input_sha256": "6b07a6892177a788f300c3aaab922bd297b11055aff9155af08c49f833c6dbad",
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence"
+        ]
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence",
+          "single_source"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.93
+    },
+    {
+      "id": "R04",
+      "kind": "research",
+      "tags": [
+        "birth_range"
+      ],
+      "input_sha256": "cb933d4fb68c08827c47de39fae4cea1b0bb2d93a0db30065e292e3428d30fd3",
+      "expected": {
+        "publish": true
+      },
+      "actual": {
+        "publish": true,
+        "reasons": [],
+        "record": {
+          "valid_until": "2026-11-30",
+          "deadline_at": null,
+          "fee_status": "free"
+        }
+      },
+      "passed": true,
+      "local_gate_ms": 1.138
+    },
+    {
+      "id": "R05",
+      "kind": "research",
+      "tags": [
+        "conflict"
+      ],
+      "input_sha256": "b76f10390d279f1b1d59a31aade7612c2f0f1a06d18956782d4b4c6acf4665bb",
+      "expected": {
+        "publish": false
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "disputed",
+          "core_missing"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.96
+    },
+    {
+      "id": "R06",
+      "kind": "research",
+      "tags": [
+        "cost"
+      ],
+      "input_sha256": "673ab790732a03880688c6d0782e74e619c169d99e2eec2dad3fda84459a7464",
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "cost_missing"
+        ]
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "cost_missing"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.948
+    },
+    {
+      "id": "R07",
+      "kind": "research",
+      "tags": [
+        "cost"
+      ],
+      "input_sha256": "1d53ceaf35f6c7ed567847645bf9b9a89c7db2d84ff77c56e119ee1849d817dd",
+      "expected": {
+        "publish": true,
+        "record": {
+          "fee_status": "paid"
+        }
+      },
+      "actual": {
+        "publish": true,
+        "reasons": [],
+        "record": {
+          "valid_until": "2026-11-30",
+          "deadline_at": null,
+          "fee_status": "paid"
+        }
+      },
+      "passed": true,
+      "local_gate_ms": 0.981
+    },
+    {
+      "id": "R08",
+      "kind": "research",
+      "tags": [
+        "stale"
+      ],
+      "input_sha256": "ba01f313b8b2eaa668343d4b55f34b7a67c87cf526a0d591b12046e49270bcfe",
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "stale_check"
+        ]
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "stale_check"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.945
+    },
+    {
+      "id": "R09",
+      "kind": "research",
+      "tags": [
+        "takedown"
+      ],
+      "input_sha256": "886fad08274f33db6a94a31b4a3f2ce6f49d5eb59667df5b537fa6be899afd8a",
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "taken_down"
+        ]
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "taken_down"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.937
+    },
+    {
+      "id": "R10",
+      "kind": "research",
+      "tags": [
+        "missing_fact"
+      ],
+      "input_sha256": "2fce5e813901142b898e22a062a681e57ed594bf8b139f01661f0d9c1e838d91",
+      "expected": {
+        "publish": false
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "core_missing"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.889
+    },
+    {
+      "id": "R11",
+      "kind": "research",
+      "tags": [
+        "date_only"
+      ],
+      "input_sha256": "4500b1c36344b36630ea6680abe70954d07feb926045a30baf365d091b0936d2",
+      "expected": {
+        "publish": true,
+        "record": {
+          "valid_until": "2026-11-20",
+          "deadline_at": null
+        }
+      },
+      "actual": {
+        "publish": true,
+        "reasons": [],
+        "record": {
+          "valid_until": "2026-11-20",
+          "deadline_at": null,
+          "fee_status": "free"
+        }
+      },
+      "passed": true,
+      "local_gate_ms": 0.956
+    },
+    {
+      "id": "R12",
+      "kind": "research",
+      "tags": [
+        "expired"
+      ],
+      "input_sha256": "54a1e2a85f022d898811bcb52855e0297df13051d1065c17cf1cec6caf5cf02b",
+      "expected": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence"
+        ]
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "no_current_evidence"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.934
+    },
+    {
+      "id": "R13",
+      "kind": "research",
+      "tags": [
+        "injection"
+      ],
+      "input_sha256": "9d41b4ba20e2387dfef273a68ae4b34b5a57ad6118bf482c56862a275435585e",
+      "expected": {
+        "publish": true
+      },
+      "actual": {
+        "publish": true,
+        "reasons": [],
+        "record": {
+          "valid_until": "2026-11-30",
+          "deadline_at": null,
+          "fee_status": "free"
+        }
+      },
+      "passed": true,
+      "local_gate_ms": 0.951
+    },
+    {
+      "id": "R14",
+      "kind": "research",
+      "tags": [
+        "grounding"
+      ],
+      "input_sha256": "0f1d85360655e1366bce114f90dacd6dc3bb2bedcb602af4eb98019e82130d76",
+      "expected": {
+        "publish": false
+      },
+      "actual": {
+        "publish": false,
+        "reasons": [
+          "contract"
+        ],
+        "record": null
+      },
+      "passed": true,
+      "local_gate_ms": 0.739
+    },
+    {
+      "id": "V01",
+      "kind": "verify",
+      "tags": [
+        "contradiction"
+      ],
+      "input_sha256": "527e1e7693560a20f07f75c937868b5f7f06c1bdc4a1e4a931b4ac7fde18ec32",
+      "expected": {
+        "action": "hold"
+      },
+      "actual": {
+        "valid": true,
+        "action": "hold",
+        "reasons": [
+          "ai_contradicted"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.049
+    },
+    {
+      "id": "V02",
+      "kind": "verify",
+      "tags": [
+        "missing_fact"
+      ],
+      "input_sha256": "c77f05cb83950dcffb6602c7a9d20f8cf18697d50675db62e277925340669bf4",
+      "expected": {
+        "action": "none"
+      },
+      "actual": {
+        "valid": true,
+        "action": "none",
+        "reasons": []
+      },
+      "passed": true,
+      "local_gate_ms": 0.024
+    },
+    {
+      "id": "V03",
+      "kind": "verify",
+      "tags": [
+        "expired"
+      ],
+      "input_sha256": "f3cdaaef747101fcfce671eac0a37e97fd956ead1562acdd0ae86df82ded484f",
+      "expected": {
+        "action": "dismiss"
+      },
+      "actual": {
+        "valid": true,
+        "action": "dismiss",
+        "reasons": [
+          "ended"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.036
+    },
+    {
+      "id": "V04",
+      "kind": "verify",
+      "tags": [
+        "current"
+      ],
+      "input_sha256": "57d3a2fa40259a7b4c6bf3131aa6d3d39104608f8827af1a5938372bb8d2ee44",
+      "expected": {
+        "action": "none"
+      },
+      "actual": {
+        "valid": true,
+        "action": "none",
+        "reasons": []
+      },
+      "passed": true,
+      "local_gate_ms": 0.03
+    },
+    {
+      "id": "V05",
+      "kind": "verify",
+      "tags": [
+        "yearless"
+      ],
+      "input_sha256": "1367fdfacf25e5f0599ded5ab3863c12b6b72d3747850001c773a1b797a73e02",
+      "expected": {
+        "action": "none"
+      },
+      "actual": {
+        "valid": true,
+        "action": "none",
+        "reasons": []
+      },
+      "passed": true,
+      "local_gate_ms": 0.02
+    },
+    {
+      "id": "V06",
+      "kind": "verify",
+      "tags": [
+        "irrelevant"
+      ],
+      "input_sha256": "118ad73c4f22cb1924ec05a6707f0376b707898039792ce49fbb56b0872b3324",
+      "expected": {
+        "action": "dismiss"
+      },
+      "actual": {
+        "valid": true,
+        "action": "dismiss",
+        "reasons": [
+          "not_benefit"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.01
+    },
+    {
+      "id": "V07",
+      "kind": "verify",
+      "tags": [
+        "current"
+      ],
+      "input_sha256": "a77316d7bcbc25497195d9ee184f091bdb4b37f1777a915fe17a893dd6f4f865",
+      "expected": {
+        "action": "prioritize"
+      },
+      "actual": {
+        "valid": true,
+        "action": "prioritize",
+        "reasons": [
+          "ongoing"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.01
+    },
+    {
+      "id": "V08",
+      "kind": "verify",
+      "tags": [
+        "format"
+      ],
+      "input_sha256": "7bd08171f217b4a7d916b8d3c64c5906c5176ff39d752d2b8dae3cef568147a1",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "contract"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.011
+    },
+    {
+      "id": "B01",
+      "kind": "benefit",
+      "tags": [
+        "valid_example"
+      ],
+      "input_sha256": "324077c8b07099a95567c13e086e6eaae1e012fd1df6f2d6ca048c9df0f44b0c",
+      "expected": {
+        "valid": true
+      },
+      "actual": {
+        "valid": true,
+        "reasons": []
+      },
+      "passed": true,
+      "local_gate_ms": 3.661
+    },
+    {
+      "id": "B02",
+      "kind": "benefit",
+      "tags": [
+        "cost"
+      ],
+      "input_sha256": "b2573e3fb5353bdd66fb855daa78879e5f8198b11e6da08db95f128b714ebec8",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "price"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.06
+    },
+    {
+      "id": "B03",
+      "kind": "benefit",
+      "tags": [
+        "relative_time"
+      ],
+      "input_sha256": "95886219dce553021989ad1d5c9e13baea60a00af0c71d24310dcc642e36a281",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "number"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.055
+    },
+    {
+      "id": "B04",
+      "kind": "benefit",
+      "tags": [
+        "eligibility_guarantee"
+      ],
+      "input_sha256": "bfa1cf1e70d030a761f6bee240dac1781a1f5b9e4b52ec6d6968f583efa6ab3b",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "claim"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.049
+    },
+    {
+      "id": "B05",
+      "kind": "benefit",
+      "tags": [
+        "unknown_id"
+      ],
+      "input_sha256": "6e63bb65ae39b3a630fd019f9cdf2e5f468af3a7cce06978da54c1124726af68",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "picks_unknown"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.051
+    },
+    {
+      "id": "B06",
+      "kind": "benefit",
+      "tags": [
+        "duplicate"
+      ],
+      "input_sha256": "c363d1aedd1862a700509a6582a73e26ac996e9a7c438f2d5eb07a38a3195971",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "picks_duplicate",
+          "summary_item"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.048
+    },
+    {
+      "id": "F01",
+      "kind": "festival",
+      "tags": [
+        "valid_example"
+      ],
+      "input_sha256": "2f0d10aa4760df1d5f56e39cd838a46944ddca86a8f5ac735bb21b6460ba00c5",
+      "expected": {
+        "valid": true
+      },
+      "actual": {
+        "valid": true,
+        "reasons": []
+      },
+      "passed": true,
+      "local_gate_ms": 0.678
+    },
+    {
+      "id": "F02",
+      "kind": "festival",
+      "tags": [
+        "eligibility_guarantee"
+      ],
+      "input_sha256": "93efae6624bfc0ac390689d86d65172c0bdf852c5d8869bb923dffb5bbbd978e",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "claim"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.04
+    },
+    {
+      "id": "F03",
+      "kind": "festival",
+      "tags": [
+        "unknown_id"
+      ],
+      "input_sha256": "f919fbf9981c2358241701037bdd5e006facac2ac10c5488339230316f581553",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "picks_unknown"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.034
+    },
+    {
+      "id": "G01",
+      "kind": "grocery",
+      "tags": [
+        "valid_example"
+      ],
+      "input_sha256": "dca803391b6065ab5410d808eac06e82bd2f59651c45efc70073c802a9bd4da8",
+      "expected": {
+        "valid": true
+      },
+      "actual": {
+        "valid": true,
+        "reasons": []
+      },
+      "passed": true,
+      "local_gate_ms": 0.927
+    },
+    {
+      "id": "G02",
+      "kind": "grocery",
+      "tags": [
+        "cost",
+        "health_claim"
+      ],
+      "input_sha256": "a3a2d3fc922764632f47cd3efee334eb32772a3decf7223f2727996735837624",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "summary_claim",
+          "summary_cheap_meat"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.036
+    },
+    {
+      "id": "H01",
+      "kind": "health",
+      "tags": [
+        "valid_example"
+      ],
+      "input_sha256": "7ec05068d41d078e87c6eff391492c46813fad5c9588de427344cb86a01bf72d",
+      "expected": {
+        "valid": true
+      },
+      "actual": {
+        "valid": true,
+        "reasons": []
+      },
+      "passed": true,
+      "local_gate_ms": 0.321
+    },
+    {
+      "id": "H02",
+      "kind": "health",
+      "tags": [
+        "grounding"
+      ],
+      "input_sha256": "a3647142f3e19911dd5019b7eae8e6c0a596f6d2f3436d4da69ea899cdeda7fa",
+      "expected": {
+        "valid": false
+      },
+      "actual": {
+        "valid": false,
+        "reasons": [
+          "quote_not_in_page",
+          "number_not_quoted",
+          "free_not_quoted"
+        ]
+      },
+      "passed": true,
+      "local_gate_ms": 0.029
+    }
+  ],
+  "summary": {
+    "cases": 35,
+    "passed": 35,
+    "failed": 0,
+    "unsafe_acceptances": 0,
+    "valid_cases_rejected": 0,
+    "pass_rate": 1.0
+  }
+}

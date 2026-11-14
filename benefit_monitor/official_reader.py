@@ -16,6 +16,7 @@ from .collectors.rss import AGENT, LIMIT
 from .research_probe import NoRedirect
 from .robots import allowed, crawl_delay
 from .store import load, save
+from . import observability as obs
 from .validation import official
 
 
@@ -136,6 +137,7 @@ class OfficialReader:
         finally:
             save(self.path,self.state)
 
+    @obs.timed('read','official_read')
     def read(self,candidate,cooldown_on_failure=True):
         source=self.sources[candidate['source']]
         url=candidate['url']

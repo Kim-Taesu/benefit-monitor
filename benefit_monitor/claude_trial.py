@@ -448,6 +448,10 @@ def repair_context(host, kind, previous, model_input=None):
                           '근거를 찾지 못하면 unknown과 사유를 기록하고 확정하지 않는다.'}
 
 
+from . import observability as obs
+
+
+@obs.timed('validation','draft_validation')
 def evaluate_draft(draft, host, kind, required_version=None):
     """Run all local gates; model output never grants publication."""
     if kind == 'verify':

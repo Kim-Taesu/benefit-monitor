@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 
+from . import observability as obs
 from . import cost_policy
 from . import auto_publish
 from . import auto_release
@@ -25,6 +26,9 @@ def fingerprint(_runtime_root):
     return hashlib.sha256(b'\n'.join((Path(root)/p).read_bytes() for p in names)).hexdigest()
 
 
+
+
+@obs.timed('extraction','model_invoke')
 def invoke(root,kind,input_path):
     """Only the existing CLI owns API credentials, reservations and response checks."""
     trial_root=Path(__file__).resolve().parents[1]

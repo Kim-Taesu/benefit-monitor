@@ -268,6 +268,10 @@ def _hold(reasons):
     return {'publish': False, 'reasons': reasons, 'record': None}
 
 
+from . import observability as obs
+
+
+@obs.timed('publication','auto_publish')
 def decide(draft, host, now, takedowns):
     from .claude_trial import evaluate_draft
     if now.tzinfo is None:

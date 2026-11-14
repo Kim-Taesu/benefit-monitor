@@ -43,6 +43,15 @@ class AIDailyTests(unittest.TestCase):
         self.assertEqual(second['status'],'already_completed_today')
         self.assertEqual(seen,[('collect',True),('topics',True),('grocery',True),('publish',True)])
         self.assertEqual(first['grocery']['source'],'ai')
+        from benefit_monitor.observability import FILE
+        rows=json.loads((self.root/FILE).read_text())
+        by_operation={r['operation']:r for r in rows}
+        self.assertEqual(by_operation['topics']['status'],'held')
+        self.assertEqual(by_operation['grocery']['status'],'ok')
+        self.assertIn('public_export',by_operation)
+        self.assertEqual(len({r['attempt_id'] for r in rows}),1)
+        self.assertEqual(len(rows),6)
+
 
     def test_grocery_pick_skips_paid_call_after_credit_runs_out(self):
         self.policy.update(recurring_spend_approved=True);self.save()

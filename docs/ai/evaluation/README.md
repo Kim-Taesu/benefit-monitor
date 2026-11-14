@@ -55,7 +55,17 @@ python3 -m benefit_monitor.evaluation events --input .tools/evaluation/events.js
 
 단계는 collection/read/extraction/validation/publication/recommendation/response다. status는 ok/failed/held/skipped다. response에는 평가한 경우에만 `useful: true|false`를 넣는다. 관측이 없는 단계는 건수 0과 측정값 null로 구분한다. 시간·비용 일부가 빠졌으면 전체 합계를 임의 추정하지 않는다. 사용자 유용성 평가가 없으면 유용한 추천당 비용은 null이다.
 
-실시간 전체 파이프라인의 시간·반응 instrumentation은 아직 없다. 이번 도구는 기존 저장 자료에서 확인 가능한 단계와 명시적으로 가져온 관측만 집계한다. 실패 사유 구분은 수집 실패(fetch_failed), 형식(format), 근거(grounding), 의미(semantic), 공개 보류 사유, 추천 미노출(validation_rejected)로 유지한다.
+`cli.run`과 `ai_daily.daily`에는 비공개 단계 계측이 연결되어 있다. `cache/ai_daily/observations.json`에 최근 1,000행만 저장하며 기존 비공개 runtime 아카이브에 포함된다. 원문·프롬프트·개인 프로필·예외 메시지는 저장하지 않는다. 저장이나 진단 출력 실패가 기존 결과·예외를 바꾸지 않는다. 사용자 반응은 수집하지 않는다.
+
+`attempt_id`는 한 실행, `run_id`는 개별 span 식별자다. 여러 문서 읽기/추천은 별도 span으로 기록하므로 같은 stage의 여러 행을 합쳐 성공한 실행 수로 해석하지 않는다. `ok`는 해당 함수의 정상 반환이고, 사실 정확성·공개 완료·사용자 유용성을 뜻하지 않는다. `stopped_before_result`는 실패, 규칙 대체는 held로 분류한다.
+
+`extraction` 시간은 부모가 측정한 모델 subprocess 전체 시간(기동·사전 검사·API·내부 검증 포함)이다. subprocess 내부 최초 validation 시간은 별도 측정하지 않으며 부모에서 `evaluate_draft`를 거치는 재검증만 validation으로 남는다. 중첩 span의 시간을 합산하면 중복되므로 전체 지연으로 보고하지 않는다. 온라인 이전 수집 snapshot 재사용과 offline 수집은 skipped다. 계측값은 실제 공급자 청구와 연결되지 않아 extraction 비용은 null이다. 기존 재생 원장은 별도로 비교한다.
+
+```sh
+python3 -m benefit_monitor.evaluation events --input cache/ai_daily/observations.json --output .tools/evaluation/runtime-stages-run1.json
+```
+
+현재는 로컬 테스트로 저장·복원과 오류 격리를 확인했다. 배포 후 실측이 필요하며 전체 운영 단계와 사용자 반응 계측 완료를 뜻하지 않는다. 실패 사유 구분은 수집 실패(fetch_failed), 형식(format), 근거(grounding), 의미(semantic), 공개 보류 사유, 추천 미노출(validation_rejected)로 유지한다.
 
 ## 규칙 추천과 AI 추천 비교
 
@@ -89,4 +99,4 @@ python3 -m benefit_monitor.evaluation score \
 
 ## 이번 기준선과 남은 관측
 
-[기준선 요약](baseline-summary.md)을 참고한다. 35개 게이트 사례 실행과 과거 응답 재검사·비교 도구는 구현했다. 실제 현재 모델 평가, 정답 독립 검토, 사용자 유용성 평가, 전체 운영 단계 소요시간 측정은 남아 있다. 이 네 항목을 완료하기 전 Phase 1 전체가 달성됐다고 표시하지 않는다.
+[기준선 요약](baseline-summary.md)을 참고한다. 35개 게이트 사례 실행과 과거 응답 재검사·비교 도구는 구현했다. 정답 35개는 독립 agent가 원문·기대 계약을 대조하고 수정 후 재검토했다([검토 기록](review-2026-11-14.md)). 사람 검수나 모델 평가용 holdout은 아니다. 실제 현재 모델 평가, 사용자 유용성 평가, 운영 단계 소요시간 실측은 남아 있다. 이 항목을 완료하기 전 Phase 1 전체가 달성됐다고 표시하지 않는다.

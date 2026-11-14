@@ -14,8 +14,10 @@ from .health_notes import refresh as health_refresh
 from .festival_pick import refresh as festival_refresh
 from .benefit_pick import refresh as benefit_refresh
 from .remote_delivery import deliver,preceding_refresh
+from . import observability as obs
 
 
+@obs.entry
 def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=False,snapshot=None):
     root=Path(root).resolve()
     now=now or datetime.now(ZoneInfo('Asia/Seoul'))
@@ -60,17 +62,17 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
                                ai_execute=allow_spend,ai_max_candidates=limit,snapshot=snapshot,ai_max_verify=verify_limit)
             exhausted=bool((collection or {}).get('ai_review',{}).get('credit_exhausted'))
             # The topic step is a paid call too; skip it once credit has run out.
-            topics=refresh(root,now=now,execute=allow_spend) if not exhausted else {'topics':[],'skipped':'credit_exhausted'}
+            topics=obs.call('recommendation','topics',refresh,root,now=now,execute=allow_spend) if not exhausted else {'topics':[],'skipped':'credit_exhausted'}
             exhausted=exhausted or (topics.get('model') or {}).get('status')=='credit_exhausted'
             # One paid grocery pick a day; without credit it still writes the rule pick (no model text).
             try:
-                grocery=grocery_refresh(root,now,execute=allow_spend and not exhausted)
+                grocery=obs.call('recommendation','grocery',grocery_refresh,root,now,execute=allow_spend and not exhausted)
             except Exception as error:  # Optional card: never blocks publishing the day's paid results.
                 grocery={'status':'failed','error_type':type(error).__name__,'model':None}
             exhausted=exhausted or (grocery.get('model') or {}).get('status')=='credit_exhausted'
             # Up to 10 paid health-programme sentences a day, only for new or changed page text.
             try:
-                health=health_refresh(root,now,execute=allow_spend and not exhausted)
+                health=obs.call('recommendation','health',health_refresh,root,now,execute=allow_spend and not exhausted)
             except Exception as error:  # Optional text: never blocks publishing the day's paid results.
                 health={'status':'failed','error_type':type(error).__name__,'model':None}
             exhausted=exhausted or health.get('status')=='credit_exhausted'
@@ -79,11 +81,11 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
             picks={}
             for name,step in (('festival',festival_refresh),('benefit',benefit_refresh)):
                 try:
-                    picks[name]=step(root,now,execute=allow_spend and not exhausted)
+                    picks[name]=obs.call('recommendation',name,step,root,now,execute=allow_spend and not exhausted)
                 except Exception as error:  # Optional cards: never block publishing the day's paid results.
                     picks[name]={'status':'failed','error_type':type(error).__name__,'model':None}
                 exhausted=exhausted or (picks[name].get('model') or {}).get('status')=='credit_exhausted'
-            public=publish_briefing(root,now=now) if publish else None
+            public=obs.call('publication','public_export',publish_briefing,root,now=now) if publish else None
             remote=deliver(root,policy,now=now) if publish and policy.get('remote_delivery_approved') is True else None
             result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'grocery':grocery,'health':health,'festival':picks['festival'],'benefit':picks['benefit'],'public_exported':public is not None,
                     'remote_delivery':remote,'recurring_spend_requested':allow_spend,'public_status':public.get('status') if public else None}

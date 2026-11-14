@@ -16,8 +16,10 @@ from . import groceries
 from . import operations
 from . import collection_snapshot
 from .models import Benefit
+from . import observability as obs
 from .briefing import build as build_briefing, write as write_briefing
 
+@obs.entry
 def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2, snapshot=None, ai_max_verify=0):
     if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=40):raise ValueError("AI candidate limit 1..40")
     if ai_execute and not ai_review:raise ValueError("AI spend requires explicit review stage")
@@ -41,68 +43,75 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         handoffs, failures = [], []
         district_coverage = []
         successful_sources = []
-        if snapshot is not None:
-            # Today's free collection (collection_snapshot): no listing request is repeated.
-            incoming, district_coverage, successful_sources, failures, handoffs = collection_snapshot.unpack(root, snapshot)
-        else:
-            try:
-                if config.get("seoul_district_coverage"):
-                    if online:
-                        district_items, district_coverage = collect_districts(root, sources["seoul"], now)
-                        incoming.extend(district_items)
-                    else:
-                        cached = load(root/"cache/district_candidates.json", {})
-                        district_coverage = [{k:v for k,v in c.items() if k != "items"} | {"mode":"cached"} for c in cached.values()]
-                    for d in district_coverage:
-                        if d["status"] != "checked":
-                            failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), category=d.get("category", "other")))
-
-                for s in sources.values():
-                    if online and s.get("district_feed"):
-                        record = next((d for d in district_coverage if d["district"] == s["district_feed"]), {})
-                        if record.get("status") == "checked":
-                            successful_sources.append(s["id"])
-                            continue
-                        failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
-                    if online and s.get("collector") == "grocery_prices":
-                        # Separate display channel like festivals: official averages only, no review or AI.
-                        try:
-                            save(root/"cache/groceries.json", groceries.collect(s, now))
-                            successful_sources.append(s["id"])
-                        except Exception as e:
-                            failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
-                        continue
-                    if online and s.get("collector") == "health_notices":
-                        # Collected by its own daily workflow (health-notices.yml) and restored before
-                        # this run; here only health-looking titles become ordinary review candidates.
-                        from . import health_notices
-                        bundle = load(root/health_notices.FILE, None)
-                        if health_notices.sanitize(bundle, now) is not None:
-                            incoming.extend(health_notices.candidates(bundle, now))
-                            successful_sources.append(s["id"])
+        with obs.span('collection','source_collection') as observation:
+            if snapshot is not None:
+                # Today's free collection (collection_snapshot): no listing request is repeated.
+                incoming, district_coverage, successful_sources, failures, handoffs = collection_snapshot.unpack(root, snapshot)
+            else:
+                try:
+                    if config.get("seoul_district_coverage"):
+                        if online:
+                            district_items, district_coverage = collect_districts(root, sources["seoul"], now)
+                            incoming.extend(district_items)
                         else:
-                            failures.append(dict(source=s["id"], reason="HealthNoticesUnavailable", detail="No fresh health notice bundle"))
-                        continue
-                    if online and s.get("collector") == "kfes_festivals":
-                        # Separate display channel: never review candidates, AI research or topic cards.
-                        try:
-                            save(root/"cache/festivals.json", festivals.collect(s, now))
-                            successful_sources.append(s["id"])
-                        except Exception as e:
-                            failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
-                        continue
-                    if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
-                        try:
-                            incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))
-                            successful_sources.append(s["id"])
+                            cached = load(root/"cache/district_candidates.json", {})
+                            district_coverage = [{k:v for k,v in c.items() if k != "items"} | {"mode":"cached"} for c in cached.values()]
+                        for d in district_coverage:
+                            if d["status"] != "checked":
+                                failures.append(dict(source="seoul", district=d["district"], reason=d.get("error_type"), category=d.get("category", "other")))
+
+                    for s in sources.values():
+                        if online and s.get("district_feed"):
+                            record = next((d for d in district_coverage if d["district"] == s["district_feed"]), {})
+                            if record.get("status") == "checked":
+                                successful_sources.append(s["id"])
+                                continue
+                            failures.append(dict(source=s["id"], reason="DistrictFeedUnavailable", detail="Official district feed unavailable"))
+                        if online and s.get("collector") == "grocery_prices":
+                            # Separate display channel like festivals: official averages only, no review or AI.
+                            try:
+                                save(root/"cache/groceries.json", groceries.collect(s, now))
+                                successful_sources.append(s["id"])
+                            except Exception as e:
+                                failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
                             continue
-                        except Exception as e:
-                            failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
-                    handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
-            finally:
-                pass
-            if online:
-                collection_snapshot.capture(root, now, incoming, district_coverage, successful_sources, failures, handoffs)
+                        if online and s.get("collector") == "health_notices":
+                            # Collected by its own daily workflow (health-notices.yml) and restored before
+                            # this run; here only health-looking titles become ordinary review candidates.
+                            from . import health_notices
+                            bundle = load(root/health_notices.FILE, None)
+                            if health_notices.sanitize(bundle, now) is not None:
+                                incoming.extend(health_notices.candidates(bundle, now))
+                                successful_sources.append(s["id"])
+                            else:
+                                failures.append(dict(source=s["id"], reason="HealthNoticesUnavailable", detail="No fresh health notice bundle"))
+                            continue
+                        if online and s.get("collector") == "kfes_festivals":
+                            # Separate display channel: never review candidates, AI research or topic cards.
+                            try:
+                                save(root/"cache/festivals.json", festivals.collect(s, now))
+                                successful_sources.append(s["id"])
+                            except Exception as e:
+                                failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
+                            continue
+                        if online and (s.get("feed_url") or s.get("html_url") or s.get("collector")):
+                            try:
+                                incoming.extend(collect_public(s, now) if s.get("collector") else collect(s) if s.get("feed_url") else collect_html(s))
+                                successful_sources.append(s["id"])
+                                continue
+                            except Exception as e:
+                                failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
+                        handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
+                finally:
+                    pass
+                if online:
+                    collection_snapshot.capture(root, now, incoming, district_coverage, successful_sources, failures, handoffs)
+            if snapshot is not None:
+                observation.set_status('skipped','snapshot_reused')
+            elif not online:
+                observation.set_status('skipped','offline')
+            elif failures:
+                observation.set_status('failed','partial_collection' if successful_sources else 'collection_failed')
         # Explicit validated inputs take precedence over discovered candidates.
         explicit_items = [validate(d, sources, now) for d in explicit]
         operational_state = operations.sanitize(load(root/"cache/operational_state.json", {}), set(sources), now)

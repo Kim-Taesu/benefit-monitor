@@ -1,6 +1,6 @@
 # Phase 1 기준선 — 2026-11-14
 
-작업 트리: `~/personal/benefit-monitor/.worktrees/phase01-evaluation` · 브랜치: `feat/phase01-evaluation` · 기준 커밋: `f7ff647`. 미커밋 코드·프롬프트·계약은 각 보고서의 해시로 구분한다. 새 API 호출은 0회다.
+작업 트리: `~/personal/benefit-monitor/.worktrees/phase01-evaluation` · 브랜치: `feat/phase01-evaluation` · 검토 후 기준 커밋: `36500cf`. 미커밋 코드·프롬프트·계약은 각 보고서의 해시로 구분한다. 새 API 호출은 0회다.
 
 ## 관측 결과
 
@@ -22,12 +22,12 @@
 
 ## 결과 파일
 
-- [고정 사례 실행 결과](baseline-gates-2026-11-14.json)
-- [과거 응답 재생 결과](baseline-recorded-2026-11-14.json)
-- [동일 입력 비교 결과](baseline-comparison-2026-11-14.json)
+- [고정 사례 실행 결과](baseline-gates-reviewed-2026-11-14.json)
+- [과거 응답 재생 결과](baseline-recorded-reviewed-2026-11-14.json)
+- [동일 입력 비교 결과](baseline-comparison-reviewed-2026-11-14.json)
 - [평가 입력](cases.json) · [별도 기대 결과 계약](contract.json)
 
-원문을 포함한 비교 packet·매핑 키·미평가 양식은 `.tools/evaluation/`에만 있다. 공개 보고서에는 본문·개인 프로필·키·원장 전체를 싣지 않았다. 평가 계약의 독립 검토는 아직 미완료이며 모델 평가용 holdout으로 주장하지 않는다.
+원문을 포함한 비교 packet·매핑 키·미평가 양식은 `.tools/evaluation/`에만 있다. 공개 보고서에는 본문·개인 프로필·키·원장 전체를 싣지 않았다. 평가 계약 35개는 독립 agent가 검토하고 수정 후 재검토했다. [검토 기록](review-2026-11-14.md)에 수정 근거를 남겼으며 모델 평가용 holdout으로 주장하지 않는다. 기존 검토 전 보고서는 이력으로 보존한다.
 
 ## 단계별 관측 범위
 
@@ -35,16 +35,16 @@
 
 ## 실행 검증
 
-- `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests -v`: 954개 실행, 953개 통과, 1개 skip. 새 워크트리에 실제 age 바이너리가 없어 암호화 왕복 검사 1개를 건너뛰었다. 암호화 코드는 변경하지 않았다.
-- 새 평가 테스트 11개 통과: 네트워크 없이 실제 게이트 실행, 계약 변경 검출, 불완전 응답·해시 불일치 거절, verify wire 근거 검증, symlink 경계, 관측 누락·중복 처리, 비교 packet/키 분리와 미평가 값 유지.
+- `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests -v`: 967개 실행, 966개 통과, 1개 skip. 새 워크트리에 실제 age 바이너리가 없어 암호화 왕복 검사 1개를 건너뛰었다. 암호화 코드는 변경하지 않았다.
+- 평가 테스트 14개 및 계측 테스트 10개 통과: 네트워크 없이 실제 게이트 실행, 계약 변경 검출, 불완전 응답·해시 불일치 거절, verify wire 근거 검증, symlink 경계, 관측 누락·중복 처리, 비교 packet/키 분리와 미평가 값 유지.
 - `cases`, `replay`, `compare`, `score` CLI 실행 완료. 미평가 score의 양쪽 useful_rate는 null이다.
 - 실제 모델 호출·온라인 수집·프런트 실행·배포·push는 하지 않았다.
 
 ## 다음 의사결정에 필요한 것
 
-1. 35개 기대 결과를 별도 검토하고, 모델 개발에 쓰지 않을 실제 원문 평가 세트를 따로 확보한다.
+1. 독립 검토한 합성 35개와 별개로 모델 개발에 쓰지 않을 실제 원문 평가 세트를 확보한다.
 2. 현재 프롬프트로 실제 모델 결과를 기존 승인된 원장·Actions 경로에서 수집한다. 지금 과거 기록만으로 모델 교체 필요성을 판정하지 않는다.
 3. 비교 packet을 사람이 평가해 유용성 기준선을 만든다. 현재 1건은 통계적 비교에 부족하다.
-4. 운영 단계 소요시간과 명시적 사용자 반응을 기록한다. 개인정보 외부 전송 없이 어디서 측정할지 먼저 결정한다.
+4. 비공개 단계 계측을 배포한 후 운영 시간을 측정한다. subprocess 내부 최초 검증 시간은 미관측이고 모델 invocation 시간에 포함된다. 사용자 반응은 동의·로컬 보관 정책을 먼저 정하며 현재 새로 수집하지 않는다.
 
 Phase 0은 완료했지만 Phase 1의 제품 가치 달성은 아직 미완료다. 이번 결과는 평가를 실행하고 실패 원인을 구분할 수 있는 기반과 제한된 오프라인 기준선이다.
