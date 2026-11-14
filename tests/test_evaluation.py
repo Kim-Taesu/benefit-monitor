@@ -31,6 +31,11 @@ class EvaluationTests(unittest.TestCase):
         key['arms']={a:('rule' if s=='ai' else 'ai') for a,s in key['arms'].items()}
         with self.assertRaises(ValueError):evaluation.score_ratings(packet,key,packet['ratings'])
 
+    def test_evaluation_boundary_tracks_checkout_and_rejects_parent(self):
+        self.assertEqual(evaluation.ALLOWED,ROOT)
+        with self.assertRaisesRegex(ValueError,'outside permitted'):
+            evaluation.local(ROOT.parent,ROOT.parent)
+
     def test_fixed_contract_against_real_gates_without_network(self):
         with patch('socket.socket', side_effect=AssertionError('network forbidden')):
             report = evaluation.run_cases(DATA/'cases.json', DATA/'contract.json')

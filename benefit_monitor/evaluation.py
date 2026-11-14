@@ -19,7 +19,7 @@ from .claude_trial import evaluate_draft, parse_draft, SYSTEM_PROMPTS, system_pr
 from .quality_baseline import classify, current_gate
 
 ROOT = Path(__file__).resolve().parents[1]
-ALLOWED = Path('/Users/user/personal/benefit-monitor').resolve()
+ALLOWED = ROOT
 DATA = ROOT/'docs/ai/evaluation'
 STAGES = ('collection', 'read', 'extraction', 'validation', 'publication', 'recommendation', 'response')
 KINDS = set(SYSTEM_PROMPTS)

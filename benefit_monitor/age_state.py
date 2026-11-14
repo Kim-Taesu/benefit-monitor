@@ -13,7 +13,9 @@ from scripts.install_age import safe_path,verify_installation
 from .trial_budget import secure_open
 
 MAX_RUNTIME_BYTES=32*1024*1024
-MAX_FILES=4096
+# Daily multi-document research retains several small artifacts per request.
+# Keep the same 32 MiB expanded / 8 MiB encrypted bounds; allow more small files.
+MAX_FILES=8192
 CONTROL_FILES={'.tools/claude-trial/live/budget.json','cache/ai_daily/days.json'}
 FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs/',
          'cache/ai_review/','cache/ai_topics/','cache/ai_daily/','cache/ai_publish/')

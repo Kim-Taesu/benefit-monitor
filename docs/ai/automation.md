@@ -173,7 +173,7 @@ GitHub 예약 실행이 크게 늦거나 빠져서 트리거를 바꿨다. 모�
 ### 암호화 runtime 크기와 보관
 - briefing-data의 `ai-runtime.age`·`ai-control.age`는 1 MB를 넘으면 contents API가 본문을 주지 않는다. 그래서 sha만 contents API(object 형식)로 묻고 본문은 git blob API로 읽는다. 암호문 상한은 8 MiB다.
 - 매 AI 실행은 유료 호출과 날짜 사용 전에 오래된 비공개 자료를 정리한다. 대상은 `.tools/claude-trial/live/runs/`, `.tools/ai-inputs/`, `cache/ai_review/documents/`의 14일 넘은 항목 중 현재 검토 상태(`cache/ai_review/state.json`)·자동 공개 기록의 결정·본문 캐시 색인이 가리키지 않는 것뿐이다. 원장(`budget.json`)·응답 캐시(`responses/`)·검토 대기열은 지우지 않는다. 기준 파일이나 시각을 읽을 수 없으면 아무것도 지우지 않는다.
-- 정리 뒤에도 파일 수 3072개, 원본 24 MiB, 압축 6 MiB 중 하나를 넘으면 `runtime_too_large`로 멈추고 Actions가 실패한다. 이때는 유료 호출도, 그날 실행 기록도 남기지 않는다. 응답 캐시는 원장이 가리키므로 장기적으로 이 한도에 닿을 수 있다. 그때는 사람이 검토해 정리 방법을 정한다.
+- 정리 뒤에도 파일 수 6144개, 원본 24 MiB, 압축 6 MiB 중 하나를 넘으면 `runtime_too_large`로 멈추고 Actions가 실패한다. 이때는 유료 호출도, 그날 실행 기록도 남기지 않는다. 응답 캐시는 원장이 가리키므로 장기적으로 이 한도에 닿을 수 있다. 그때는 사람이 검토해 정리 방법을 정한다.
 
 ### 게이트 코드와 주제 카드 승인 해시
 자동 공개 게이트 등 공개 경로 코드를 바꾸면 `public/topic-publication.json`의 `policy_sha256`을 다시 기록해야 한다.
@@ -185,3 +185,5 @@ python3 -c "from benefit_monitor.topic_publication import policy_hash; print(pol
 출력값을 `policy_sha256`에 넣는다. 맞지 않으면 가드 테스트(`tests/test_topic_publication.py`)가 실패한다.
 
 주제 카드 공개 승인(`public/topic-publication.json`)은 2027-11-07까지 유효하며 이후에는 사람이 갱신해야 한다. 게이트 코드가 바뀌었다면 `policy_sha256`도 다시 기록한다.
+
+2026-11-14 운영 점검에서 작은 조사 산출물 누적으로 파일 수 사전 한도에 도달했다. 자료 삭제 없이 archive 파일 수 상한을 8192개로 조정했다. 원본 32 MiB·암호문 8 MiB와 사전 원본 24 MiB·압축 6 MiB 제한은 유지한다. 4200개 파일의 실제 pack/restore 및 byte 초과 거절을 검증한다.

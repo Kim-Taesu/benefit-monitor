@@ -53,6 +53,18 @@ class AgeStateTests(unittest.TestCase):
                 with self.assertRaises(ValueError):module.install(self.root,'Darwin','arm64')
         self.assertFalse((self.root/'.tools/bin/age').exists())
 
+    def test_many_small_artifacts_roundtrip_with_existing_byte_limits(self):
+        module=self.module('benefit_monitor.age_state')
+        folder=self.root/'cache/ai_review/documents';folder.mkdir(parents=True)
+        for i in range(4200):(folder/f'{i}.json').write_text('{}')
+        self.assertIsNone(module.runtime_headroom(self.root))
+        raw=module.pack_runtime(self.root)
+        destination=self.root/'restored';destination.mkdir()
+        module.restore_runtime(destination,raw)
+        self.assertEqual(len(list((destination/'cache/ai_review/documents').glob('*.json'))),4200)
+        with patch.object(module,'MAX_RUNTIME_BYTES',100):
+            with self.assertRaisesRegex(ValueError,'too large'):module.pack_runtime(self.root)
+
     def test_runtime_preserves_review_but_excludes_control_and_credentials(self):
         module=self.module('benefit_monitor.age_state')
         for name,value in [('cache/ai_review/queue/a.json','{"pending":true}'),('.tools/claude-trial/live/budget.json','{"requests":[]}'),('cache/ai_daily/days.json','{}'),('.env.claude','fake-private-input')]:
