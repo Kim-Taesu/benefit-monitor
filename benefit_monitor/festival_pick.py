@@ -25,7 +25,9 @@ TAKEDOWN_KIND = 'festival_pick_text'
 METRO = ('서울특별시', '경기도', '인천광역시')
 SUMMARY_MIN, SUMMARY_MAX = 20, 200
 LINE_MIN, LINE_MAX = 1, 40
-MARKUP = re.compile(r'[<>\n\r]|https?:|www\.')
+MARKUP = re.compile(r'[<>\x00-\x1f]|https?:|www\.')  # control chars too: the page rejects them
+# The page shows each festival's dates, so text never says when (2026-11-14 review).
+RELATIVE = re.compile(r'오늘|내일|모레|어제|이번\s?주|다음\s?주|주말|평일|마지막\s?날|막바지|곧|임박|서두르')
 FORBIDDEN = ('보장', '무조건', '최저가', '확실', '선착순', '매진', '완판', '100%')
 PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
@@ -65,7 +67,8 @@ DATE = re.compile(r'(\d{1,2})\s*/\s*(\d{1,2})(?:\s*~\s*(?:(\d{1,2})\s*/\s*)?(\d{
 AMOUNT = re.compile(r'(\d[\d,]*)\s*(%|[가-힣])?')
 FREE_WORDS = ('무료', '공짜', '무상', '입장료 없', '0원')
 FREE = re.compile('|'.join(r'(?<![\d,])0원' if w == '0원' else w for w in FREE_WORDS))
-NOT_PAID = re.compile(r'유료(?!\s*아님)')
+NOT_PAID = re.compile(r'유료(?!.{0,4}아[님니])')
+NEGATED = re.compile(r'[무유]료.{0,4}아[님니]')  # '무료 아님', '일부 유료가 아니에요'
 
 
 def _mentions(text, rows):
@@ -115,13 +118,20 @@ def _numbers_ok(text, rows, fixed=None):
     return True
 
 
-def _free_ok(candidate, line=None):
-    """A festival may be called free when its status is free, or mixed and (for a line) says part of it is paid."""
+def _free_ok(candidate, text):
+    """A festival may be called free when its status is free, or mixed and the same line or summary sentence
+    says part of it is paid."""
     if candidate['fee_status'] == 'free':
         return True
     if candidate['fee_status'] != 'mixed':
         return False
-    return line is None or ('일부' in line and bool(NOT_PAID.search(line)))
+    return '일부' in text and bool(NOT_PAID.search(text))
+
+
+def _sentence(text, pos):
+    start = max(text.rfind(ch, 0, pos) for ch in '.!?') + 1
+    ends = [i for i in (text.find(ch, pos) for ch in '.!?') if i >= 0]
+    return text[start:min(ends) if ends else len(text)]
 
 
 def _check(summary, picks, host, known):
@@ -144,6 +154,8 @@ def _check(summary, picks, host, known):
         errors.append('markup')
     if any(word in t for t in texts for word in FORBIDDEN):
         errors.append('claim')
+    if any(RELATIVE.search(t) for t in texts):
+        errors.append('relative')
     if summary is not None:
         rest = summary
         for name in sorted((c['name'] for c in host['candidates']), key=len, reverse=True):
@@ -159,8 +171,10 @@ def _check(summary, picks, host, known):
         mentions = _mentions(summary, host['candidates'])
         for m in FREE.finditer(summary):
             owner = _owner_before(mentions, m.start())
-            if owner is None or not _free_ok(owner):
+            if owner is None or not _free_ok(owner, _sentence(summary, m.start())):
                 free_bad = True
+    if any(NEGATED.search(t) for t in texts):
+        free_bad = True
     if free_bad:
         errors.append('free')
     return errors
@@ -218,19 +232,16 @@ def public(pick, bundle, takedowns, now):
         if not all(isinstance(p, dict) and set(p) == {'id', 'line'} and isinstance(p['id'], str) for p in pick['picks']):
             return rule_pick(current, now)
         if pick['source'] == 'rule':
-            kept = [dict(p) for p in pick['picks'] if p['id'] in ids]
-            if pick['summary'] is not None or not 1 <= len(pick['picks']) <= MAX_PICKS \
-                    or any(p['line'] is not None for p in pick['picks']) or not kept:
-                return rule_pick(current, now)
-            return dict(pick, picks=kept)
-        if not isinstance(pick['summary'], str) or any(not isinstance(p['line'], str) for p in pick['picks']) \
+            return rule_pick(current, now)  # No model text: always today's candidates.
+        if not (pick['summary'] is None or isinstance(pick['summary'], str)) \
+                or any(not isinstance(p['line'], str) for p in pick['picks']) \
                 or now - generated > timedelta(hours=MAX_AGE_HOURS):
             return rule_pick(current, now)
         kept = [dict(p) for p in pick['picks'] if p['id'] in ids]
         dropped = len(kept) < len(pick['picks'])
         if dropped and len(kept) < min(3, len(pick['picks'])) or not kept:
             return rule_pick(current, now)
-        summary = None if dropped else pick['summary']
+        summary = None if dropped else pick['summary']  # None already: an earlier re-check dropped a line.
         if _check(summary, kept, current, known_names(bundle)):
             return rule_pick(current, now)
         return apply_mute(dict(pick, summary=summary, picks=kept), bundle, takedowns, now)

@@ -49,7 +49,7 @@ def make_bundle(rows=ROWS):
 
 
 BUNDLE = make_bundle()
-SUMMARY = '이번 주말 서울에선 중구 영주 사과축제를 무료로 즐길 수 있고, 다음 주말엔 포항 축제가 이어져요.'
+SUMMARY = '서울 중구 영주 사과축제는 무료이고 일부 체험만 유료예요. 포항국제불빛축제에선 밤 불빛 행사를 볼 수 있어요.'
 
 
 def draft(summary=SUMMARY, picks=None):
@@ -120,7 +120,7 @@ class ReviewTests(unittest.TestCase):
         self.assertIn('number', self.errors(d))
 
     def test_dates_and_fee_numbers_from_the_festival_are_allowed(self):
-        d = draft(summary='영주 사과축제는 11월 15일까지, 포항국제불빛축제는 11/19부터 열려요. 주말 나들이로 좋아요.',
+        d = draft(summary='영주 사과축제는 11월 15일까지, 포항국제불빛축제는 11/19부터 열려요. 가족 나들이로 좋아요.',
                   picks=[dict(id=APPLE, line='11/13~15, 일부 유료'), dict(id=POHANG, line='11/19~21 무료')])
         self.assertEqual(self.errors(d), [])
         host = fp.host(BUNDLE, datetime.fromisoformat('2027-01-20T07:00:00+09:00'))
@@ -158,7 +158,7 @@ class ReviewTests(unittest.TestCase):
         known = fp.known_names(BUNDLE)
         paid = '06c85b3f-b302-4025-9cc5-27ec77b3a5ff'
         def line(i, text):
-            return fp.review(draft(summary='이번 주말 나들이로 갈 만한 축제를 골랐어요. 가볍게 다녀오세요.',
+            return fp.review(draft(summary='나들이로 갈 만한 축제를 골랐어요. 가볍게 다녀오세요.',
                                    picks=[dict(id=i, line=text)]), host, known)
         for word in ('공짜로 즐겨요', '입장료 없음', '무상 관람', '0원 입장', '무료'):
             self.assertIn('free', line(paid, word), word)
@@ -197,6 +197,35 @@ class ReviewTests(unittest.TestCase):
         self.assertIn('markup', self.errors(draft(summary=SUMMARY + '<b>')))
         six = [dict(id=c['id'], line='가볼 만해요') for c in self.host['candidates'][:6]]
         self.assertIn('picks_count', self.errors(draft(picks=six)))
+
+    def test_relative_time_words_rejected(self):
+        # The page shows each festival's dates; text says what and where, never when (2026-11-14 review).
+        for word in ('오늘', '내일', '모레', '어제', '이번 주', '이번주', '다음 주', '주말', '평일', '마지막 날', '마지막날',
+                     '막바지', '곧', '임박', '서두르세요'):
+            self.assertIn('relative', self.errors(draft(picks=[dict(id=POHANG, line=f'{word} 불빛 행사')])), word)
+        self.assertIn('relative', self.errors(draft(summary='이번 주말 포항국제불빛축제가 열려요. 밤 불빛 행사를 즐겨 보세요.')))
+        self.assertIn('relative', self.errors(draft(picks=[dict(id=APPLE, line='오늘 마지막 날이에요, 일부 유료')])))
+        self.assertEqual(self.errors(draft()), [])
+
+    def test_summary_free_on_mixed_needs_partial_paid_in_the_same_sentence(self):
+        bad = ('영주 사과축제는 모두 무료로 즐길 수 있어요. 포항국제불빛축제도 열려요.',
+               '영주 사과축제는 무료예요. 일부 체험은 유료예요.',
+               '영주 사과축제는 무료이고 일부 체험도 유료가 아니에요.')
+        for summary in bad:
+            self.assertIn('free', self.errors(draft(summary=summary)), summary)
+        self.assertEqual(self.errors(draft(summary='영주 사과축제는 무료이고 일부 체험만 유료예요. 포항 쪽 행사도 있어요.')), [])
+
+    def test_negated_free_or_paid_rejected(self):
+        mixed = '47cc094e-78e5-4ebc-a7d5-f65430621719'
+        for i, line in ((POHANG, '무료 아님'), (POHANG, '무료가 아니에요'), (APPLE, '무료, 일부 유료가 아님'),
+                        (APPLE, '무료, 일부 유료 아니에요')):
+            self.assertIn('free', self.errors(draft(picks=[dict(id=i, line=line), dict(id=mixed, line='무료, 일부 유료')])), line)
+        self.assertIn('free', self.errors(draft(summary='포항국제불빛축제는 무료가 아니에요. 밤 불빛 행사를 보러 가요.')))
+
+    def test_control_characters_are_markup(self):
+        for ch in ('\t', '\x00', '\x1f', '\x0b'):
+            self.assertIn('markup', self.errors(draft(picks=[dict(id=POHANG, line=f'무료{ch}불빛')])), repr(ch))
+        self.assertIn('markup', self.errors(draft(summary=SUMMARY + '\t')))
 
     def test_claim_words(self):
         for word in ('보장', '무조건', '최저가', '확실', '선착순', '매진', '완판', '100%'):
@@ -267,6 +296,25 @@ class PublicTests(unittest.TestCase):
         self.assertEqual((pick['source'], [p['id'] for p in pick['picks']]), ('rule', [POHANG]))
         none = fp.public(stored(), make_bundle([ROWS[9]]), [], day)
         self.assertIsNone(none)
+
+    def test_public_is_idempotent_after_a_dropped_line(self):
+        later = datetime.fromisoformat('2026-11-16T07:00:00+09:00')
+        four = [dict(id=BUSAN, line='하루 무료 공연'), dict(id=POHANG, line='무료, 밤 불빛 행사'),
+                dict(id=GAME, line='무료 전시'), dict(id='47cc094e-78e5-4ebc-a7d5-f65430621719', line='무료, 일부 유료')]
+        first = fp.public(stored(picks=four, generated=later - timedelta(hours=1)), BUNDLE, [], later)
+        self.assertEqual((first['source'], first['summary']), ('ai', None))
+        again = fp.public(first, BUNDLE, [], later)
+        self.assertEqual(again, first)
+        bad = dict(first, picks=[dict(p, line='무료 아님') for p in first['picks']])
+        self.assertEqual(fp.public(bad, BUNDLE, [], later)['source'], 'rule')  # lines are still re-checked
+
+    def test_old_rule_pick_is_rebuilt_from_current_candidates(self):
+        weeks = datetime.fromisoformat('2026-12-05T07:00:00+09:00')
+        old = stored(source='rule', picks=[dict(id=APPLE, line=None), dict(id=POHANG, line=None),
+                                           dict(id='b3b7a23c-c7f6-45db-930a-b139e4d8cd9f', line=None)])
+        pick = fp.public(old, BUNDLE, [], weeks)
+        self.assertEqual(pick, fp.rule_pick(fp.host(BUNDLE, weeks), weeks))
+        self.assertEqual(pick['day'], '2026-12-05')
 
     def test_rule_source_ids_must_be_current(self):
         later = datetime.fromisoformat('2026-11-16T07:00:00+09:00')

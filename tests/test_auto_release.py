@@ -808,6 +808,24 @@ class TabPickRecheckTests(unittest.TestCase):
         self.assertNotIn(gone['url'], [p['url'] for p in out['benefit_pick']['picks']])
         self.assertIsNone(out['benefit_pick']['summary'])
 
+    def test_rechecking_twice_keeps_a_dropped_line_pick(self):
+        tb, tf, bp, fp = self.tb, self.tf, self.bp, self.fp
+        extra = tb.row('seoul', 'https://x.kr/1', '제철 차 학습라운지', '무료 교육 운영', '16개 프로그램 무료 운영', 'free')
+        bpick = tb.stored(picks=tb.draft()['picks'] + [dict(id=bp.item_id(extra), line='학습라운지 교육')])
+        fpicks = [dict(id=tf.APPLE, line='무료, 일부 체험 유료'), dict(id=tf.POHANG, line='무료, 밤 불빛 행사'),
+                  dict(id=tf.GAME, line='무료 전시'), dict(id=tf.BUSAN, line='하루 무료 공연')]
+        data = {'items': list(tb.ITEMS) + [extra], 'festivals': tf.BUNDLE,
+                'benefit_pick': bp.public(bpick, list(tb.ITEMS) + [extra], [], tb.NOW),
+                'festival_pick': fp.public(tf.stored(picks=fpicks), tf.BUNDLE, [], tf.NOW)}
+        self.assertEqual((data['benefit_pick']['source'], data['festival_pick']['source']), ('ai', 'ai'))
+        data['items'] = [r for r in data['items'] if r is not tb.COGPE]
+        data['festivals'] = dict(tf.BUNDLE, items=[r for r in tf.BUNDLE['items'] if r['id'] != tf.BUSAN])
+        once = auto_release.recheck_tab_picks(data, [], tb.NOW)
+        twice = auto_release.recheck_tab_picks(deepcopy(once), [], tb.NOW)
+        for key in ('benefit_pick', 'festival_pick'):
+            self.assertEqual((once[key]['source'], once[key]['summary'], len(once[key]['picks'])), ('ai', None, 3), key)
+            self.assertEqual(twice[key], once[key], key)
+
     def test_takedowns_mute_the_ai_text(self):
         takedowns = [{'kind': 'benefit_pick_text', 'day': '2026-11-14'}, {'kind': 'festival_pick_text', 'day': '2026-11-14'}]
         out = auto_release.recheck_tab_picks(deepcopy(self.data), takedowns, self.tb.NOW)

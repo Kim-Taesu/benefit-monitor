@@ -40,7 +40,7 @@ YOGA = row('eshare', 'https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.
            'paid')
 ITEMS = [YOGA, ROOM, BUS, COGPE]
 CID, BID, RID, YID = (bp.item_id(r) for r in (COGPE, BUS, ROOM, YOGA))
-SUMMARY = '서울사랑상품권 추가 페이백 행사가 곧 끝나니 결제를 챙겨 보세요.'
+SUMMARY = '서울사랑상품권 추가 페이백 행사로 결제를 챙겨 보고, 청계 야간 자율주행버스도 타 보세요.'
 
 
 def draft(summary=SUMMARY, picks=None):
@@ -136,6 +136,21 @@ class ReviewTests(unittest.TestCase):
         for text in ('11/15에 끝나요 서울사랑상품권 결제', '이번 주말 서울사랑상품권 결제를 챙기세요 꼭이요'):
             self.assertIn('number', bp.review(draft(summary=text), HOST), text)
 
+    def test_urgency_words_rejected(self):
+        # The page shows the deadline; text never pushes (2026-11-14 review).
+        for word in ('마감 임박', '곧 끝나요', '곧끝나요', '곧 마감', '막바지', '서두르세요', '마지막 기회', '놓치기 전에'):
+            self.assertIn('urgency', bp.review(one(BID, '버스 체험, ' + word), HOST), word)
+        self.assertIn('urgency', bp.review(draft(summary='서울사랑상품권 페이백 행사가 곧 끝나니 결제를 챙겨 보세요.'), HOST))
+        self.assertEqual(bp.review(draft(), HOST), [])
+
+    def test_money_word_variants_are_price(self):
+        for line in ('돈없이 이용', '돈으로 받아요', '돈 없이', '돈이 들어요', '돈만 내요', '돈'):
+            self.assertIn('price', bp.review(one(BID, line), HOST), line)
+
+    def test_control_characters_are_markup(self):
+        for ch in ('\t', '\x00', '\x1f'):
+            self.assertIn('markup', bp.review(one(BID, f'버스{ch}체험'), HOST), repr(ch))
+
     def test_shape_ids_lengths_and_markup(self):
         self.assertEqual(bp.review({'summary': SUMMARY}, HOST), ['draft_shape'])
         self.assertEqual(bp.review(draft(picks=[dict(id=CID, line='x', extra=1)]), HOST), ['draft_shape'])
@@ -183,6 +198,25 @@ class PublicTests(unittest.TestCase):
         self.assertEqual(pick['source'], 'ai')
         self.assertIsNone(pick['summary'])
         self.assertEqual([p['id'] for p in pick['picks']], [BID, RID, bp.item_id(extra)])
+
+    def test_public_is_idempotent_after_a_dropped_line(self):
+        extra = row('seoul', 'https://x.kr/1', '제철 차 학습라운지', '무료 교육 운영', '16개 프로그램 무료 운영', 'free')
+        four = draft(picks=draft()['picks'] + [dict(id=bp.item_id(extra), line='학습라운지 교육')])['picks']
+        items = [r for r in ITEMS + [extra] if r is not COGPE]
+        first = bp.public(stored(picks=four), items, [], NOW)
+        self.assertEqual((first['source'], first['summary']), ('ai', None))
+        self.assertEqual(bp.public(first, items, [], NOW), first)
+        self.assertEqual(bp.public(bp.public(first, items, [], NOW), items, [], NOW), first)
+
+    def test_old_rule_pick_is_rebuilt_from_current_candidates(self):
+        weeks = datetime.fromisoformat('2026-12-05T07:00:00+09:00')
+        items = ITEMS + [row('seoul', f'https://x.kr/{i}', f'혜택 번호 {i}', '요약', '조건', 'free') for i in range(3)]
+        old = stored(source='rule', picks=[dict(id=CID, line=None), dict(id=BID, line=None)])
+        pick = bp.public(old, items, [], weeks)
+        expected = bp._fill(bp.rule_pick(bp._input(bp._rows(items, weeks), weeks), weeks), items, weeks)
+        self.assertEqual(pick, expected)
+        self.assertEqual(pick['day'], '2026-12-05')
+        self.assertNotIn(CID, [p['id'] for p in pick['picks']])
 
     def test_stale_and_mute(self):
         old = bp.public(stored(generated=NOW - timedelta(hours=37)), ITEMS, [], NOW)

@@ -27,10 +27,12 @@ TAKEDOWN_KIND = 'benefit_pick_text'
 SUMMARY_MIN, SUMMARY_MAX = 20, 200
 LINE_MIN, LINE_MAX = 1, 50
 CONDITIONS_MAX = 200
-MARKUP = re.compile(r'[<>\n\r]|https?:|www\.')
+MARKUP = re.compile(r'[<>\x00-\x1f]|https?:|www\.')  # control chars too: the page rejects them
 CLAIMS = ('누구나', '받을 수 있', '확실', '보장', '무조건', '100%', '최대', '누구든', '전원', '반드시', '신청하면', '바로 받',
           '모두 받')
 STOCK = ('남은', '잔여', '소진 전', '자리 있')
+# The page shows the deadline; text never pushes (2026-11-14 review).
+URGENCY = re.compile(r'임박|곧\s?끝|곧\s?마감|막바지|서두르|마지막|놓치기 전')
 PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
 
@@ -75,7 +77,7 @@ def host(items, now):
 
 # The page shows cost from fee_status (per-line badge); model text must not talk about price at all.
 PRICE = re.compile(r'무료|공짜|무상|유료|비용|참가비|수강료|입장료|요금|가격|면제|반값|반액|절반|퍼센트|할인율|[천만억]\s*원'
-                   r'|(?<![가-힣])돈(?:[을이은도만]|\s|$)|부담\s*(?:없|덜|이\s*없|스럽지\s*않)'
+                   r'|(?<![가-힣])돈(?![가-힣]{2,})|(?<![가-힣])돈(?:[을이은도만]|으로|없|\s|$)|부담\s*(?:없|덜|이\s*없|스럽지\s*않)'
                    r'|free|공으로|(?:구매|결제)(?:하지)?\s*(?:안|않|없|말)', re.IGNORECASE)
 DIGITS = re.compile('[0-9\uff10-\uff19]')
 RELATIVE = re.compile(r'오늘|내일|모레|이번\s?주|다음\s?주|주말|월말|연말')
@@ -129,6 +131,8 @@ def _check(summary, picks, host):
         errors.append('claim')
     if any(word in t for t in texts for word in STOCK):
         errors.append('stock')
+    if any(URGENCY.search(t) for t in texts):
+        errors.append('urgency')
     # Dates, amounts and deadlines are shown by the page from the data, never typed by the model.
     if any(DIGITS.search(t) or RELATIVE.search(t) for t in texts):
         errors.append('number')
@@ -191,19 +195,16 @@ def _public(pick, items, takedowns, now):
     if not all(isinstance(p, dict) and set(p) == {'id', 'line'} and isinstance(p['id'], str) for p in pick['picks']):
         return rule_pick(current, now)
     if pick['source'] == 'rule':
-        kept = [dict(p) for p in pick['picks'] if p['id'] in ids]
-        if pick['summary'] is not None or not 1 <= len(pick['picks']) <= RULE_PICKS \
-                or any(p['line'] is not None for p in pick['picks']) or not kept:
-            return rule_pick(current, now)
-        return dict(pick, picks=kept)
-    if not isinstance(pick['summary'], str) or any(not isinstance(p['line'], str) for p in pick['picks']) \
+        return rule_pick(current, now)  # No model text: always today's candidates.
+    if not (pick['summary'] is None or isinstance(pick['summary'], str)) \
+            or any(not isinstance(p['line'], str) for p in pick['picks']) \
             or now - generated > timedelta(hours=MAX_AGE_HOURS):
         return rule_pick(current, now)
     kept = [dict(p) for p in pick['picks'] if p['id'] in ids]
     dropped = len(kept) < len(pick['picks'])
     if dropped and len(kept) < min(3, len(pick['picks'])) or not kept:
         return rule_pick(current, now)
-    summary = None if dropped else pick['summary']
+    summary = None if dropped else pick['summary']  # None already: an earlier re-check dropped a line.
     if _check(summary, kept, current):
         return rule_pick(current, now)
     return apply_mute(dict(pick, summary=summary, picks=kept), items, takedowns, now)
