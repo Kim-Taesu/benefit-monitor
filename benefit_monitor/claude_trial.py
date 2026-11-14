@@ -312,6 +312,26 @@ def validate_host(host, kind, root):
         if program is None or health_host(program, now) != host:
             raise ValueError('health input differs from the stored health bundle')
         return
+    if kind in ('festival', 'benefit'):
+        # Only the input the code rebuilds from today's data may reach a paid request (2026-11-14):
+        # festivals from the festival cache, benefits from the items today's publication would show.
+        from .store import load
+        if set(host) != {'schema_version','mode','synthetic','now','day','candidates'}:
+            raise ValueError('unexpected host fields; private data must not be sent')
+        now = datetime.fromisoformat(host['now'])
+        if now.tzinfo is None:
+            raise ValueError('host timestamp requires timezone')
+        if kind == 'festival':
+            from .festival_pick import host as festival_host
+            from .festivals import sanitize as festivals
+            expected = festival_host(festivals(load(Path(root)/'cache/festivals.json', None), now), now)
+        else:
+            from .benefit_pick import host as benefit_host
+            from . import publish
+            expected = benefit_host(publish.payload(Path(root), now)['items'], now)
+        if expected is None or host != expected:
+            raise ValueError(kind + ' input differs from current data')
+        return
     if kind == 'grocery':
         # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
         from .grocery_pick import host as grocery_host
@@ -437,6 +457,15 @@ def evaluate_draft(draft, host, kind, required_version=None):
         from .health_notes import review as health_review
         errors = health_review(draft, host)
         return draft, {'valid': not errors, 'errors': errors}
+    if kind == 'festival':
+        # Bundle-wide festival names are checked again in festival_pick.refresh and at publication.
+        from .festival_pick import review as festival_review
+        errors = festival_review(draft, host)
+        return draft, {'valid': not errors, 'errors': errors}
+    if kind == 'benefit':
+        from .benefit_pick import review as benefit_review
+        errors = benefit_review(draft, host)
+        return draft, {'valid': not errors, 'errors': errors}
     if kind == 'grocery':
         # Bundle-wide item names are checked again in grocery_pick.refresh and at publication.
         from .grocery_pick import review as grocery_review
@@ -460,7 +489,8 @@ def evaluate_draft(draft, host, kind, required_version=None):
 
 
 SYSTEM_PROMPTS = {'research':'research-system.md', 'topic':'topic-system.md', 'verify':'verify-system.md',
-                  'grocery':'grocery-system.md', 'health':'health-system.md'}
+                  'grocery':'grocery-system.md', 'health':'health-system.md',
+                  'festival':'festival-system.md', 'benefit':'benefit-system.md'}
 
 
 def system_prompt(root, kind):
@@ -484,6 +514,8 @@ TASKS = {
               '근거 조각을 먼저 고른 뒤 판정한다.',
     'topic': '위 `<input>`의 승인 항목과 승인 사실만으로 오늘의 생활 주제 카드를 만들어라.',
     'grocery': '위 `<input>`의 `candidates`만으로 이번 주 장보기 추천 카드를 써라.',
+    'festival': '위 `<input>`의 `candidates`만으로 이번 주말 나들이 추천 카드를 써라.',
+    'benefit': '위 `<input>`의 `candidates`만으로 이번 주 놓치면 아쉬운 혜택 카드를 써라.',
     'health': '위 `<input>`의 `page_text`에서 이 사업을 설명하는 구절을 먼저 그대로 복사하고, '
               '그 구절만으로 상태와 문장을 정하라.',
 }
@@ -516,7 +548,7 @@ def main():
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
     parser.add_argument('--repair-from')
-    parser.add_argument('--kind', choices=('research','topic','verify','grocery','health'))
+    parser.add_argument('--kind', choices=('research','topic','verify','grocery','health','festival','benefit'))
     parser.add_argument('--input', type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
@@ -571,6 +603,8 @@ def main():
         model_input = verify_model_input(host)
     elif args.kind == 'grocery':
         model_input = {'survey_date': host['survey_date'], 'candidates': host['candidates']}
+    elif args.kind in ('festival', 'benefit'):
+        model_input = {'today': host['day'], 'candidates': host['candidates']}
     elif args.kind == 'health':
         model_input = {k: host[k] for k in ('district','center','program','page_text')} | {'today': host['now'][:10]}
     else:
@@ -614,7 +648,8 @@ def main():
                 'preflight':client.last_preflight,
                 'schema_sha256':hashlib.sha256(json.dumps(schema,ensure_ascii=False,sort_keys=True).encode()).hexdigest(),
                 'model_output_contract':{'research':wire_format.RESEARCH_WIRE,'topic':wire_format.TOPIC_WIRE,'verify':'verify-wire-v1',
-                                         'grocery':wire_format.GROCERY_WIRE,'health':wire_format.HEALTH_WIRE}[args.kind]}
+                                         'grocery':wire_format.GROCERY_WIRE,'health':wire_format.HEALTH_WIRE,
+                                         'festival':wire_format.FESTIVAL_WIRE,'benefit':wire_format.BENEFIT_WIRE}[args.kind]}
     (destination/'metadata.json').write_text(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n')
     (destination/'input.json').write_text(json.dumps(host,ensure_ascii=False,indent=2)+'\n')
     (destination/'prompt.txt').write_text(system)
