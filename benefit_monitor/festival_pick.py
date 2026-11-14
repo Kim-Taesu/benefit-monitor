@@ -200,14 +200,13 @@ def muted(takedowns, day):
     return any(isinstance(t, dict) and t.get('kind') == TAKEDOWN_KIND and t.get('day') == day for t in takedowns or [])
 
 
-def apply_mute(pick, bundle, takedowns, now=None):
+def apply_mute(pick, bundle, takedowns, now):
     """Admin mute for that day: the same rule card on every publish path (no model text)."""
     if not isinstance(pick, dict) or pick.get('source') != 'ai' or not muted(takedowns, pick.get('day')):
         return pick
     try:
-        at = now or datetime.fromisoformat(pick['generated_at'])
-        rows = _candidates(bundle, at)
-        return rule_pick(_input(rows, at), at) if rows else None
+        rows = _candidates(bundle, now)
+        return rule_pick(_input(rows, now), now) if rows else None
     except (KeyError, TypeError, ValueError):
         return None
 

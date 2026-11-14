@@ -171,7 +171,7 @@ def apply_mute(pick, items, takedowns, now):
     return rule_pick(_input(rows, now), now) if len(rows) >= MIN_CANDIDATES else None
 
 
-def _fill(pick, items, now):
+def _fill(pick, items):
     """Public lines: {'id','source','url','line'} taken from the current items."""
     by_id = {item_id(row): row for row in items or []}
     lines = [dict(id=p['id'], source=by_id[p['id']]['source'], url=by_id[p['id']]['url'], line=p['line'])
@@ -228,7 +228,7 @@ def public(pick, items, takedowns, now):
     """Re-check a stored (or already public) pick against the current items; None when it cannot be shown today."""
     try:
         result = _public(_stored_form(pick), items, takedowns, now)
-        return _fill(result, items, now) if result else None
+        return _fill(result, items) if result else None
     except (KeyError, TypeError, ValueError):
         return None
 

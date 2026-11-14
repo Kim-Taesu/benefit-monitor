@@ -277,7 +277,7 @@ class PublicTests(unittest.TestCase):
         self.assertEqual((pick['source'], pick['summary']), ('rule', None))
         other = [{'kind': 'festival_pick_text', 'day': '2026-11-13'}]
         self.assertEqual(fp.public(stored(), BUNDLE, other, NOW)['source'], 'ai')
-        self.assertEqual(fp.apply_mute(stored(), BUNDLE, mute)['source'], 'rule')
+        self.assertEqual(fp.apply_mute(stored(), BUNDLE, mute, NOW)['source'], 'rule')
 
     def test_rule_pick_order_and_size(self):
         host = fp.host(BUNDLE, NOW)

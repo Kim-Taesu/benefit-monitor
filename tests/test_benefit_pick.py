@@ -213,7 +213,7 @@ class PublicTests(unittest.TestCase):
         items = ITEMS + [row('seoul', f'https://x.kr/{i}', f'혜택 번호 {i}', '요약', '조건', 'free') for i in range(3)]
         old = stored(source='rule', picks=[dict(id=CID, line=None), dict(id=BID, line=None)])
         pick = bp.public(old, items, [], weeks)
-        expected = bp._fill(bp.rule_pick(bp._input(bp._rows(items, weeks), weeks), weeks), items, weeks)
+        expected = bp._fill(bp.rule_pick(bp._input(bp._rows(items, weeks), weeks), weeks), items)
         self.assertEqual(pick, expected)
         self.assertEqual(pick['day'], '2026-12-05')
         self.assertNotIn(CID, [p['id'] for p in pick['picks']])
