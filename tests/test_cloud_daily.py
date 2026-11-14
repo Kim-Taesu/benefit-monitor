@@ -211,6 +211,19 @@ class CloudDailyTests(unittest.TestCase):
         self.assertIs(seen['snapshot'],snapshot)
         policy=load(self.root/'ai-automation.json',{})
         self.assertEqual((policy['max_ai_verifications_per_day'],policy['max_ai_candidates_per_day']),(40,40))
+        self.assertIs(policy['investigate_missing_conditions'],False)
+
+    def test_manual_investigation_flag_preserves_existing_daily_and_budget_admission(self):
+        m=self.module()
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',return_value={'status':'completed'}),patch.object(m.collection_snapshot,'restore',return_value=None),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),investigate=True)
+        policy=load(self.root/'ai-automation.json',{})
+        self.assertIs(policy['investigate_missing_conditions'],True)
+        self.assertEqual(policy['max_ai_candidates_per_day'],40)
+        self.assertEqual(result['status'],'completed')
+        with patch.dict(os.environ,{'GITHUB_EVENT_NAME':'schedule'}):
+            with self.assertRaisesRegex(ValueError,'manual dispatch'):
+                m.cloud_run(self.root,now=NOW,store=self.fixture.store(),investigate=True)
 
     def test_todays_refresh_counts_collecting_runs_and_ignores_other_days(self):
         m=self.module()

@@ -103,6 +103,7 @@ class OfficialReader:
     def __init__(self,root,now):
         if now.tzinfo is None:raise ValueError('timezone required')
         self.root,self.now=Path(root).resolve(),now
+        self.request_budget=None
         config=load(project_path(root,'sources.yaml'),None)
         cost_policy.require_free(config)
         self.sources={s['id']:s for s in config['sources']}
@@ -123,6 +124,7 @@ class OfficialReader:
         remaining=delay-(time.time()-host_state.get('last_request_epoch',0))
         if remaining>15:raise ValueError('crawl-delay requires deferred fetch')
         if remaining>0:time.sleep(remaining)
+        if self.request_budget is not None:self.request_budget.consume()
         cost_policy.budget.consume()
         host_state['last_request_epoch']=time.time()
         try:

@@ -12,6 +12,10 @@ on:
     - cron: '*/15 0-14,21-23 * * *'
   workflow_dispatch:
     inputs:
+      investigate_missing_conditions:
+        description: '이번 수동 실행의 나들이 후보만 추가 조사 (하루 40회·월 원장 안, 후보당 최대 3회)'
+        type: boolean
+        default: false
       check_only:
         description: '복원·Secret·원격 저장만 검증, Claude 호출 없음'
         type: boolean
@@ -69,6 +73,7 @@ jobs:
           RESUME_REVIEWED_HALT: ${{ github.event_name == 'workflow_dispatch' && inputs.resume_reviewed_halt && 'true' || 'false' }}
           CLOSE_UNRESOLVED_RESERVATION: ${{ github.event_name == 'workflow_dispatch' && inputs.close_unresolved_reservation && 'true' || 'false' }}
           RETRY_REJECTED_DAY: ${{ github.event_name == 'workflow_dispatch' && inputs.retry_rejected_day && 'true' || 'false' }}
+          INVESTIGATE_MISSING_CONDITIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.investigate_missing_conditions && 'true' || 'false' }}
           GRAMMAR_PROBE_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.grammar_probe_only && 'true' || 'false' }}
         run: |
           python scripts/run_ai_cloud.py

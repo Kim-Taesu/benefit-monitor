@@ -346,7 +346,7 @@ def validate_host(host, kind, root):
         if expected is None or host != expected:
             raise ValueError('grocery input differs from current groceries bundle')
         return
-    allowed_fields = ({'schema_version','mode','synthetic','now','output_schema_version','budget','candidates','documents','unverified_links'}
+    allowed_fields = ({'schema_version','mode','synthetic','now','output_schema_version','budget','candidates','documents','unverified_links','investigation'}
                       if kind == 'research' else
                       {'schema_version','mode','synthetic','now','evaluation_only','source_review_id','gate_owner','gate_description',
                        'snapshot_id','approved_items','approved_claims','excluded_items','allowed_topic_ids','allowed_topic_titles','previous_topics'})
@@ -362,6 +362,9 @@ def validate_host(host, kind, root):
             raise ValueError('unknown research contract')
         config = json.loads((Path(root)/'sources.yaml').read_text())
         sources = {s['id']:s['domains'] for s in config['sources']}
+        if 'investigation' in host:
+            from .investigation_contract import validate_context
+            validate_context(host,{s['id']:s for s in config['sources']})
         if not 1 <= len(host['candidates']) <= 10 or not 1 <= len(host['documents']) <= 50:
             raise ValueError('invalid trial input size')
         docs = {d['id']:d for d in host['documents']}
@@ -604,6 +607,11 @@ def main():
     # Raises before any reservation when no topic has eligible items.
     schema = wire_format.schema_for(args.kind, host)
     system = system_prompt(root, args.kind)
+    if args.kind=='research' and 'investigation' in host:
+        from .investigation_contract import schema as investigation_schema
+        schema=investigation_schema(schema)
+        wire_format.check_limits(schema)
+        system+='\n\n'+(Path(__file__).resolve().parents[1]/'docs/ai/prompts/investigation-system.md').read_text()
     if args.kind == 'verify':
         from .verify_contract import model_input as verify_model_input
         model_input = verify_model_input(host)
@@ -674,6 +682,9 @@ def main():
                                        required_version='research-extraction-v3' if args.kind == 'research' else None)
         if not report['valid']:
             raise ValueError('output contract failed')
+        if args.kind=='research' and 'investigation' in host:
+            from .investigation_contract import decision
+            decision(wire,host,wire_format.from_wire(args.kind,wire,host))
         (destination/'result.json').write_text(json.dumps(draft,ensure_ascii=False,indent=2)+'\n')
         (destination/'validation.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
         print(json.dumps({'status':'validated_draft','publication_approved':False,'semantic_review':'required','cached':client.last_cached,'run_id':run_id,'output':str(destination),'usage':result['usage']},ensure_ascii=False))

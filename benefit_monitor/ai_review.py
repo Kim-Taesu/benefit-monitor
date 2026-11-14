@@ -2,6 +2,7 @@
 from datetime import datetime,timedelta
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -208,8 +209,9 @@ def stored_candidates(root,now,present):
     return out
 
 
-def review_candidates(root,candidates,now,max_candidates=2,execute=False):
+def review_candidates(root,candidates,now,max_candidates=2,execute=False,investigate=False):
     root=Path(root).resolve()
+    if type(investigate) is not bool:raise ValueError('investigate must be boolean')
     if type(max_candidates) is not int or not 1<=max_candidates<=MAX_RESEARCH:raise ValueError('candidate limit 1..'+str(MAX_RESEARCH))
     project_path(root,'cache/ai_review')
     result=dict(queued=0,rejected=0,awaiting_api=0,skipped_unchanged=0,changed_ids=[],failures=[],rows=[],
@@ -234,6 +236,8 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
         today=now.date().isoformat()
         for cid,candidate in ordered:
             if attempted>=max_candidates or cost_policy.budget.used>=cost_policy.budget.limit:break
+            active_investigation=investigate and bool(re.search(r'나들이|축제|전시|공연|문화|체험|공원',candidate.get('title','')+' '+candidate.get('summary','')))
+            reader.request_budget=cost_policy.RequestBudget(12) if active_investigation else None
             previous_checked=state['items'].get(cid,{}).get('last_checked_at','')
             state['items'].setdefault(cid,{})['last_checked_at']=now.isoformat()
             try:doc=reader.read(candidate)
@@ -245,10 +249,26 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             peers=[c for pid,c in unique.items() if pid!=cid]
             domains=allowed_domains(reader.sources)
             unverified=[u for u in doc.get('links') or [] if not official(u,domains)][:10]
-            docs=[doc]+_related_docs(reader,cid,candidate,doc,peers,result['failures'])
-            docs=[{**d,'links':[]} for d in docs]
+            if active_investigation:
+                from . import investigation
+                docs=[doc]
+                try:
+                    urls=state['items'][cid].get('investigation_urls',[])
+                    if not isinstance(urls,list) or len(urls)>3:raise ValueError('invalid stored investigation links')
+                    for url in urls:
+                        source=next((sid for sid,s in reader.sources.items() if s.get('ai_review') is not False and official(url,s['domains'])),None)
+                        if source is None:raise ValueError('unapproved stored investigation URL')
+                        docs.append(reader.read({'source':source,'url':url,'title':''}))
+                except Exception:
+                    result['failures'].append({'candidate_id':cid,'code':'investigation_reread_failed'})
+                    continue
+                candidate_prompt=prompt+'\n'+investigation.fingerprint()
+            else:
+                docs=[doc]+_related_docs(reader,cid,candidate,doc,peers,result['failures'])
+                docs=[{**d,'links':[]} for d in docs]
+                candidate_prompt=prompt
             hashes=','.join(sorted(d['body_hash'] for d in docs))
-            signature=hashlib.sha256((cid+'\n'+hashes+'\n'+prompt).encode()).hexdigest()
+            signature=hashlib.sha256((cid+'\n'+hashes+'\n'+candidate_prompt).encode()).hexdigest()
             previous=state['items'].get(cid,{})
             same_signature=previous.get('signature')==signature
             # The signature also covers the prompt. The pages themselves are compared separately, from
@@ -258,7 +278,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             if previous.get('body_hash') and (stored[0] if stored else previous['body_hash'])!=doc['body_hash']:
                 result['changed_ids'].append(cid)
             # A rejected answer gets one more try on a later day (same input); then it waits for a body change.
-            retry=(previous.get('model_status')=='rejected_draft' and previous.get('attempts',1)<2
+            retry=(not previous.get('investigation_file') and previous.get('model_status')=='rejected_draft' and previous.get('attempts',1)<2
                    and previous_checked[:10]<today)
             validated=previous.get('model_status')=='validated_draft' and bool(previous.get('run_id'))
             settled=same_signature and previous.get('model_status') in ('validated_draft','rejected_draft','stopped_before_result') and not retry
@@ -269,7 +289,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
                 # A withdrawn record counts as not published: with its pages back as researched,
                 # the stored answer is decided again and can return without a model call.
                 published=bool((previous.get('auto_publish') or {}).get('publish')) and cid not in withdrawn
-                if validated and not published:
+                if validated and not published and previous.get('investigation_status','sufficient_evidence')=='sufficient_evidence':
                     decision=auto_decide(root,previous['run_id'],now,reread=True)
                     # A missing or unreadable stored run (contract) keeps the earlier decision as it was.
                     if decision['reasons']!=['contract'] and (
@@ -288,29 +308,44 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
                       output_schema_version='research-draft-v1',budget={'http_remaining':max(0,cost_policy.budget.limit-cost_policy.budget.used),'llm_api_remaining':1},
                       candidates=[dict(candidate_id=cid,source_id=candidate['source'],title=candidate['title'],document_ids=[d['id'] for d in docs],
                                        research_reason='공식 원문 여러 곳을 대조해 전체 조건·요약/상세 차이·비용·기간·선정·미확인을 v3로 추출. 사실/공개 승인은 사람 검토.')],documents=docs,unverified_links=unverified)
-            input_path=project_path(root,'.tools/ai-inputs/'+signature+'.json')
-            if input_path.exists():
-                existing=load(input_path,None)
-                if (len(existing['candidates'])!=1 or existing['candidates'][0]['candidate_id']!=cid
-                        or [(d['id'],d['body_hash'],d['body']) for d in existing['documents']]
-                        !=[(d['id'],d['body_hash'],d['body']) for d in docs]):
-                    raise ValueError('staged AI input changed; manual review required')
-                host=existing
+            investigation_result=None
+            if active_investigation:
+                investigation_result=investigation.run(root,host,reader,now,execute=execute,max_requests=max_candidates-attempted)
+                host=investigation_result['host'];docs=host['documents'];input_path=investigation_result['input_path']
+                model=investigation_result['model'];attempted+=max(1,investigation_result['report']['model_calls'])
+                hashes=','.join(sorted(d['body_hash'] for d in docs))
+                signature=hashlib.sha256((cid+'\n'+hashes+'\n'+candidate_prompt).encode()).hexdigest()
             else:
-                save(input_path,host)
-            attempted+=1
-            model=invoke(root,'research',input_path) if execute else {'status':'awaiting_api_authorization','run_id':None}
+                input_path=project_path(root,'.tools/ai-inputs/'+signature+'.json')
+                if input_path.exists():
+                    existing=load(input_path,None)
+                    if (len(existing['candidates'])!=1 or existing['candidates'][0]['candidate_id']!=cid
+                            or [(d['id'],d['body_hash'],d['body']) for d in existing['documents']]
+                            !=[(d['id'],d['body_hash'],d['body']) for d in docs]):
+                        raise ValueError('staged AI input changed; manual review required')
+                    host=existing
+                else:
+                    save(input_path,host)
+                model=invoke(root,'research',input_path) if execute else {'status':'awaiting_api_authorization','run_id':None}
+                attempted+=1
             if model['status']=='credit_exhausted':
                 # Stop the day's remaining paid research; keep results already received and retry this one later.
                 result['credit_exhausted']=True
-                state['items'][cid].pop('last_checked_at',None)
-                break
+                if not investigation_result:
+                    state['items'][cid].pop('last_checked_at',None)
+                    break
             review_file='cache/ai_review/queue/'+signature+'.json'
             row=dict(candidate_id=cid,source=candidate['source'],url=candidate['url'],body_hash=doc['body_hash'],signature=signature,
                      input_file=str(input_path.relative_to(root)),model_status=model['status'],run_id=model['run_id'],
                      review_status='pending_human_review',publication_approved=False,observed_at=now.isoformat())
+            if investigation_result:
+                row['investigation_urls']=[d['requested_url'] for d in docs[1:]]
+                row['investigation_file']=investigation_result['report_file']
+                row['investigation_status']=investigation_result['report']['status']
             if model['status']=='validated_draft':
                 decision=auto_decide(root,model['run_id'],now)
+                if investigation_result and investigation_result['report']['status']!='sufficient_evidence':
+                    decision={'publish':False,'reasons':['investigation_'+investigation_result['report']['status']],'record':None}
                 row['auto_publish']={'publish':decision['publish'],'reasons':decision['reasons']}
                 _store_decision(root,cid,decision,row,now)
                 result['auto_published']=result.get('auto_published',0)+decision['publish']
@@ -320,6 +355,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False):
             result['queued']+=1
             result['rejected']+=model['status']=='rejected_draft'
             result['awaiting_api']+=model['status']=='awaiting_api_authorization'
-            result['rows'].append({'candidate_id':cid,'status':model['status'],'review_file':review_file})
+            result['rows'].append({'candidate_id':cid,'status':model['status'],'review_file':review_file,**({'investigation_status':row['investigation_status']} if investigation_result else {})})
+            if model['status']=='credit_exhausted':break
         save(project_path(root,'cache/ai_review/state.json'),state)
     return result

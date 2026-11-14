@@ -20,7 +20,7 @@ from . import observability as obs
 from .briefing import build as build_briefing, write as write_briefing
 
 @obs.entry
-def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2, snapshot=None, ai_max_verify=0):
+def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2, snapshot=None, ai_max_verify=0, ai_investigate=False):
     if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=40):raise ValueError("AI candidate limit 1..40")
     if ai_execute and not ai_review:raise ValueError("AI spend requires explicit review stage")
     if ai_review and not online:raise ValueError("AI body review requires explicit online collection")
@@ -147,7 +147,7 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
             listed = {Benefit(**{k: v for k, v in c.items() if k in Benefit.__dataclass_fields__}).id for c in ai_candidates}
             ai_candidates += [c for c in stored_candidates(root, now, listed) if c['source'] in sources and researchable(c)]
             ai_result = review_candidates(root, ai_candidates, now,
-                                          max_candidates=ai_max_candidates, execute=ai_execute)
+                                          max_candidates=ai_max_candidates, execute=ai_execute,**({'investigate':True} if ai_investigate else {}))
             for cid in ai_result['changed_ids']:
                 operational_state.setdefault('items',{}).setdefault(cid,{}).update(
                     hold_at=now.isoformat(),hold_reason='body_changed')

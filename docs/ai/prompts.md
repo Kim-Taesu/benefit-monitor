@@ -9,6 +9,7 @@
 | kind | 지침 파일 | 모델에 전달하는 핵심 맥락 | 호스트 검사 |
 |---|---|---|---|
 | research | `prompts/research-system.md` | 후보와 원문 조각, 기준 시각 | `wire_format`, `research_extraction`, `auto_publish` |
+| research + investigation | `prompts/research-system.md` + `prompts/investigation-system.md` | 공통 목적·목표 필드·읽은 문서의 링크 ID·남은 예산 | 기존 연구 게이트 + `investigation_contract` |
 | verify | `prompts/verify-system.md` | audit/triage 목적, 주장, 원문 조각 | `verify_contract`, `ai_verify` |
 | topic | `prompts/topic-system.md` | 승인 항목·사실·주제 근거 | `ai_contract`, `topic_semantics`, 공개 게이트 |
 | grocery | `prompts/grocery-system.md` | `survey_date`, 가격 후보 | `grocery_pick.review` |
@@ -41,3 +42,7 @@
 - 공통 footer·TASKS를 바꿀 때는 영향을 받는 kind를 확인한다. 현재 조사 fingerprint가 전체 유효 프롬프트를 포괄하는 것은 아니다. Phase 1에서 실행별 시스템+사용자 입력+스키마 해시를 평가 기록에 남긴다.
 - 추천 문구 변경은 기존 저장 결과를 즉시 무효화하지 않는다. 이미 생성한 같은 날 카드의 유지·유효시간 정책을 따른다. 이번 작업은 운영 호출·재배포를 실행하지 않는다.
 - 스키마·공개 게이트 변경은 별도 변경으로 다루고 필요한 승인 해시를 검사한다. 테스트를 통과시키기 위해 공개 기준을 낮추지 않는다.
+
+## 추가 조사 모드
+
+`claude_trial`은 research 호스트에 검증된 `investigation`이 있을 때만 지침과 next_step 출력 계약을 덧붙인다. 기존 기본 research 지침·wire 파일·스키마는 유지한다. 링크 ID의 실제 출처와 누락 필드는 모델이 아닌 호스트가 검사한다. 임의 URL·예산 변경·개인 프로필은 입력 계약으로 허용하지 않는다. 상세는 [추가 조사 계약](investigation.md)을 따른다.

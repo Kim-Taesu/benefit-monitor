@@ -233,8 +233,9 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     return {'status':'dispatched_not_yet_verified','snapshot_commit':commit,'code_sha':code,'ref':'main'}
 
 
-def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False):
+def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=False):
     trusted_environment()
+    if type(investigate) is not bool:raise ValueError('investigate must be boolean')
     root=Path(root).resolve();now=now or datetime.now(SEOUL)
     if now.tzinfo is None:raise ValueError('timezone required')
     now=now.astimezone(SEOUL)
@@ -244,7 +245,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     # Trusted runner applies the approved limit revision once with its short-lived token.
     revised=preflight.apply_limit_revision()
     resumed=False
-    if (resume or retry or probe_only or close_unresolved) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
+    if (resume or retry or probe_only or close_unresolved or investigate) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
         raise ValueError('halt review, day retry, reservation close and grammar probe require a manual dispatch')
     if close_unresolved and (check_only or retry or probe_only):
         raise ValueError('closing a reservation runs the day itself; turn off check_only, retry and probe')
@@ -272,7 +273,11 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         if full:return dict(summary,**full)
         client=ClaudeClient(safe_path(root,'.tools/claude-trial/live'),
                             TrialBudget(safe_path(root,BUDGET),checkpoint=session.checkpoint_budget),key)
-        probe=client.grammar_probe(research_wire_schema())
+        schema=research_wire_schema()
+        if investigate:
+            from .investigation_contract import schema as investigation_schema
+            schema=investigation_schema(schema)
+        probe=client.grammar_probe(schema)
         session.save_runtime()
         return dict(summary,status='probe_'+probe['status'],probe=probe)
     if check_only:
@@ -307,7 +312,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     if not retried:session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
          'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH,
-         'max_ai_verifications_per_day':MAX_DAILY_VERIFY})
+         'max_ai_verifications_per_day':MAX_DAILY_VERIFY,'investigate_missing_conditions':investigate})
     try:
         # Today's free collection, when uploaded, replaces a second listing collection.
         snapshot=collection_snapshot.restore(store,now)

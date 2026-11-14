@@ -63,6 +63,13 @@ class AIDailyTests(unittest.TestCase):
             result=self.run_daily(online=True,allow_spend=True)
         self.assertEqual((result['status'],seen),('credit_exhausted',[False]))
 
+    def test_opt_in_investigation_reaches_collection_without_raising_daily_allowance(self):
+        self.policy.update(investigate_missing_conditions=True);self.save()
+        with patch('benefit_monitor.ai_daily.collect',return_value={}) as collect,patch('benefit_monitor.ai_daily.refresh',return_value={'topics':[]}):
+            self.run_daily(online=True)
+        self.assertIs(collect.call_args.kwargs['ai_investigate'],True)
+        self.assertEqual(collect.call_args.kwargs['ai_max_candidates'],2)
+
     def test_crash_does_not_repeat_paid_daily_attempt(self):
         self.policy['recurring_spend_approved']=True;self.save()
         with patch('benefit_monitor.ai_daily.collect',side_effect=SystemExit('crash')):

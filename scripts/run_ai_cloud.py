@@ -23,6 +23,7 @@ def main():
                          resume=os.environ.get('RESUME_REVIEWED_HALT')=='true',
                          retry=os.environ.get('RETRY_REJECTED_DAY')=='true',
                          probe_only=os.environ.get('GRAMMAR_PROBE_ONLY')=='true',
+                         investigate=os.environ.get('INVESTIGATE_MISSING_CONDITIONS')=='true',
                          close_unresolved=os.environ.get('CLOSE_UNRESOLVED_RESERVATION')=='true')
         print(json.dumps(result,sort_keys=True));return exit_code(result)
     except Exception as error:
