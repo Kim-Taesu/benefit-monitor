@@ -233,7 +233,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     return {'status':'dispatched_not_yet_verified','snapshot_commit':commit,'code_sha':code,'ref':'main'}
 
 
-def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=False):
+def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=True):
     trusted_environment()
     if type(investigate) is not bool:raise ValueError('investigate must be boolean')
     root=Path(root).resolve();now=now or datetime.now(SEOUL)
@@ -245,7 +245,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     # Trusted runner applies the approved limit revision once with its short-lived token.
     revised=preflight.apply_limit_revision()
     resumed=False
-    if (resume or retry or probe_only or close_unresolved or investigate) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
+    if (resume or retry or probe_only or close_unresolved) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
         raise ValueError('halt review, day retry, reservation close and grammar probe require a manual dispatch')
     if close_unresolved and (check_only or retry or probe_only):
         raise ValueError('closing a reservation runs the day itself; turn off check_only, retry and probe')

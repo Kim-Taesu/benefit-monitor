@@ -70,6 +70,17 @@ class AIDailyTests(unittest.TestCase):
         self.assertIs(collect.call_args.kwargs['ai_investigate'],True)
         self.assertEqual(collect.call_args.kwargs['ai_max_candidates'],2)
 
+    def test_investigation_defaults_on_and_explicit_false_disables_it(self):
+        for enabled in (None, False):
+            with self.subTest(enabled=enabled):
+                if enabled is not None:self.policy['investigate_missing_conditions']=enabled
+                self.save()
+                state=self.root/'cache/ai_daily/days.json'
+                if state.exists():state.unlink()
+                with patch('benefit_monitor.ai_daily.collect',return_value={}) as collect,patch('benefit_monitor.ai_daily.refresh',return_value={'topics':[]}):
+                    self.run_daily(online=True)
+                self.assertIs(collect.call_args.kwargs.get('ai_investigate',False),enabled is None)
+
     def test_crash_does_not_repeat_paid_daily_attempt(self):
         self.policy['recurring_spend_approved']=True;self.save()
         with patch('benefit_monitor.ai_daily.collect',side_effect=SystemExit('crash')):
