@@ -27,10 +27,10 @@ async function noOverflow(page:any){
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
 }
 
-for(const width of [390,1440])test(`festival pick card sits above the filters ${width}`,async({page})=>{
+for(const width of [390,1440])test(`festival pick card sits between the filters and the list ${width}`,async({page})=>{
  await open(page,width,{festival_pick:festivalPick});
  await page.getByRole('tab',{name:'축제'}).click();
- const card=page.locator('#festivals .grocery-pick');
+ const card=page.locator('#festivals .pick-card');
  await expect(card.locator('h3')).toHaveText('이번 주말 나들이 추천');
  await expect(card.locator('.grocery-badge').first()).toHaveText('AI 작성');
  await expect(card).toContainText('[테스트] 이번 주말은 두 축제를 둘러보세요.');
@@ -38,7 +38,9 @@ for(const width of [390,1440])test(`festival pick card sits above the filters ${
  await expect(card.locator('li').nth(1)).not.toContainText('→');
  await expect(card).toContainText('AI가 공개 정보 안에서 쓴 문장이에요.');
  const [c,f]=await Promise.all([card.boundingBox(),page.locator('.festival-filters').boundingBox()]);
- expect(c!.y).toBeLessThan(f!.y);
+ expect(c!.y).toBeGreaterThan(f!.y);
+ expect(c!.y).toBeLessThan((await page.locator('#festivals .card-grid').boundingBox())!.y);
+ await expect(card.locator('li a').first()).toHaveAttribute('href',FESTIVAL_DETAIL+fid(1));
  await noOverflow(page);
  if(width===390)await page.screenshot({path:`${SHOTS}/festival-390.png`,fullPage:false});
 });
@@ -46,9 +48,9 @@ for(const width of [390,1440])test(`festival pick card sits above the filters ${
 test('festival rule pick shows the auto badge and no summary',async({page})=>{
  await open(page,390,{festival_pick:{...festivalPick,source:'rule',summary:null,picks:festivalPick.picks.map(p=>({...p,line:null}))}});
  await page.getByRole('tab',{name:'축제'}).click();
- const card=page.locator('#festivals .grocery-pick');
+ const card=page.locator('#festivals .pick-card');
  await expect(card.locator('.grocery-badge').first()).toHaveText('자동 선정');
- await expect(card.locator('.grocery-pick-summary')).toHaveCount(0);
+ await expect(card.locator('.pick-summary')).toHaveCount(0);
  await expect(card.locator('.fine-print')).toHaveText('수도권 먼저, 가까운 날짜 순으로 자동 선정했어요.');
 });
 
@@ -67,8 +69,10 @@ for(const width of [390,1440])test(`benefit pick card shows 5 lines then the res
  await expect(first).toContainText('→ 살펴볼 만해요');
  const more=card.getByRole('button',{name:'더 보기 (2개 남음)'});
  expect((await more.boundingBox())!.height).toBeGreaterThanOrEqual(44);
- const [c,b]=await Promise.all([card.boundingBox(),page.locator('.beta-panel, #topics, [aria-label*="주제"]').first().boundingBox().catch(()=>null)]);
- if(b)expect(c!.y).toBeLessThan(b.y);
+ const [c,d,r]=await Promise.all([card.boundingBox(),page.locator('.discovery').boundingBox(),page.locator('#results').boundingBox()]);
+ expect(c!.y).toBeGreaterThan(d!.y);
+ expect(c!.y).toBeLessThan(r!.y);
+ await expect(card.locator('.fine-print')).toHaveCount(1);
  await noOverflow(page);
  if(width===390)await page.screenshot({path:`${SHOTS}/benefit-390.png`,fullPage:false});
  await more.click();
@@ -81,11 +85,11 @@ test('no card without a pick, and an invalid pick is ignored',async({page})=>{
  await open(page,390,{});
  await expect(page.locator('.benefit-pick')).toHaveCount(0);
  await page.getByRole('tab',{name:'축제'}).click();
- await expect(page.locator('#festivals .grocery-pick')).toHaveCount(0);
+ await expect(page.locator('#festivals .pick-card')).toHaveCount(0);
  await page.unroute('**/briefing.json');
  await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(items,{festivals,festival_pick:{...festivalPick,schema_version:2},benefit_pick:benefitPick({summary:'<b>x</b>'})})}));
  await page.reload();
  await expect(page.locator('.benefit-pick')).toHaveCount(0);
  await page.getByRole('tab',{name:'축제'}).click();
- await expect(page.locator('#festivals .grocery-pick')).toHaveCount(0);
+ await expect(page.locator('#festivals .pick-card')).toHaveCount(0);
 });

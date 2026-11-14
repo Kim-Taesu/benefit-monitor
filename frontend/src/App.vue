@@ -122,13 +122,13 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     <section class="hero" aria-labelledby="hero-title"><h1 id="hero-title">오늘의 혜택, <span>한눈에.</span></h1><p class="hero-description">로그인 없이 탐색하고, 조건은 공식 안내에서 확인하세요.</p></section>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="t.id==='benefits'&&!loading" class="tab-count">{{ all.length }}</span></button></div></nav>
     <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits">
-    <BenefitPick :raw="raw" :items="recommendation.items" :personalized="recommendation.personalized" />
     <BetaPanel ref="topicPanel" :items="all" :now="now" :query="filters.q" :published-data="raw" @select-topic="selectTopic" @recommendation="updateRecommendation" />
     <section class="discovery" aria-label="혜택 검색 및 필터">
       <div class="search-box"><span aria-hidden="true" class="search-icon">⌕</span><label for="search" class="sr-only">혜택·조건·지역·기관 검색</label><input id="search" v-model="draft" type="search" maxlength="200" placeholder="혜택·조건·지역·기관을 검색하세요" autocomplete="off" aria-controls="results"></div>
       <div class="filter-row"><div class="filter-field"><label for="region">지역</label><select id="region" v-model="filters.region"><option value="">서울시 전체</option><option v-for="region in regions" :key="region">{{ region }}</option></select></div><div class="quick-filters" aria-label="상태 필터"><button type="button" :aria-pressed="filters.status==='urgent'" @click="filters.status=filters.status==='urgent'?'':'urgent'">마감 임박 <span>{{ urgent }}</span></button><button type="button" :aria-pressed="filters.status==='new'" @click="filters.status=filters.status==='new'?'':'new'">24시간 내 확인</button></div><button v-if="active" class="reset" type="button" @click="reset">필터 초기화</button></div>
     </section>
     <p class="region-hint">지역은 안내 범위이며 개인 자격을 보장하지 않습니다.</p>
+    <BenefitPick :raw="raw" :items="recommendation.items" :personalized="recommendation.personalized" />
 
     <div v-if="loading" class="notice" role="status"><span class="status-dot" aria-hidden="true"></span><div><strong>공개 데이터를 확인하고 있어요</strong><p>검증 시각과 표시기한을 함께 확인합니다.</p></div></div>
     <div v-else-if="notice" class="notice warning" role="status"><span aria-hidden="true">!</span><div><strong>{{ notice.title }}</strong><p>{{ notice.body }}</p><button type="button" @click="load">다시 불러오기</button></div></div>

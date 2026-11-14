@@ -24,12 +24,12 @@ function setStatus(value:''|'ongoing'|'upcoming'){status.value=status.value===va
   <section v-if="bundle" id="festivals" class="festivals" aria-labelledby="festivals-title">
     <div class="results-heading"><h2 id="festivals-title">전국 축제 <span aria-live="polite" aria-atomic="true">{{ filtered.length }}건</span></h2></div>
     <p class="festival-notice">{{ bundle.notice }} 수집 <time :datetime="bundle.fetchedAt">{{ formatDate(bundle.fetchedAt) }}</time></p>
-    <FestivalPick :raw="raw" :bundle="bundle" />
     <div class="filter-row festival-filters">
       <div class="filter-field"><label for="festival-region">시·도</label><select id="festival-region" v-model="province" @change="shown=PAGE"><option value="">전국</option><option v-for="name in regions" :key="name">{{ name }}</option></select></div>
       <div class="quick-filters" aria-label="축제 개최 상태"><button type="button" :aria-pressed="status==='ongoing'" @click="setStatus('ongoing')">개최중</button><button type="button" :aria-pressed="status==='upcoming'" @click="setStatus('upcoming')">개최예정</button></div>
     </div>
     <p v-if="query.trim()" class="fine-print festival-query">위 검색어 "{{ query.trim() }}"도 함께 적용됩니다.</p>
+    <FestivalPick :raw="raw" :bundle="bundle" />
     <div v-if="visible.length" class="card-grid">
       <article v-for="item in visible" :key="item.id" class="benefit-card festival-card">
         <div class="card-meta"><span class="category">{{ item.culture_tourism?'문화관광축제':'축제' }}</span><span class="timing" :class="{urgent:festivalStatus(item,now).ongoing}">{{ festivalStatus(item,now).label }}</span></div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, nextTick } from 'vue';
 import GroceryQuickCheck from './GroceryQuickCheck.vue';
+import PickCard from './PickCard.vue';
 import { featuredRows, verdict, guideFor, wikiLink, won, CATEGORIES, BASIS_LABEL, KAMIS_SOURCE, EKAPE_SOURCE, type PriceRow, type BasketItem, quickMatch, type FeaturedRow, type GroceryBundle, type WeeklyPick, type DiscountLink } from './groceries';
 import GroceryCalc from './GroceryCalc.vue';
 import { formatDate } from './benefits';
@@ -61,18 +62,16 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
       <div class="quick-filters"><button type="button" :aria-pressed="cheapOnly" @click="cheapOnly=!cheapOnly;shown=PAGE">평년보다 싼 것만</button></div>
     </div>
     <GroceryQuickCheck :q="q" :basket="basketItems" :rows="bundle.rows" :produce-date="bundle.produceDate" :meat-date="bundle.meatDate" :discounts="discounts" @pick="pickName" @more="emit('more')" />
-    <article v-if="weekly" class="grocery-pick" aria-labelledby="grocery-pick-title">
-      <div class="card-meta"><h3 id="grocery-pick-title">이번 주 장보기 추천</h3><span class="grocery-badge" :class="weekly.source==='ai'?'ai':'normal'">{{ weekly.source==='ai'?'AI 작성':'자동 선정' }}</span></div>
-      <p v-if="weekly.summary" class="grocery-pick-summary">{{ weekly.summary }}</p>
-      <ul>
-        <li v-for="p in weekly.picks" :key="p.row.kind+p.row.id">
+    <PickCard v-if="weekly" id="grocery-pick" title="이번 주 장보기 추천" :source="weekly.source" :summary="weekly.summary" :count="weekly.picks.length" v-slot="{limit}"
+      :note="weekly.source==='ai'?'AI가 공식 조사값 안에서 쓴 문장이에요. 문장 속 숫자와 품목은 공개 전에 코드가 원본과 대조했어요.':'평년보다 많이 싼 순서로 자동 선정했어요.'">
+      <ul class="pick-list">
+        <li v-for="p in weekly.picks.slice(0,limit)" :key="p.row.kind+p.row.id">
           <strong>{{ p.row.name }}</strong> {{ won(p.row.current) }}<small> / {{ p.row.unit.replace(/^원\//,'') }}</small>
           <span v-if="level(p.row)" class="grocery-badge" :class="level(p.row)!.level">{{ level(p.row)!.label }}</span>
-          <span v-if="p.menu" class="grocery-pick-menu">→ {{ p.menu }}</span>
+          <span v-if="p.menu" class="pick-line">→ {{ p.menu }}</span>
         </li>
       </ul>
-      <p class="fine-print">{{ weekly.source==='ai'?'AI가 공식 조사값 안에서 쓴 문장이에요. 문장 속 숫자와 품목은 공개 전에 코드가 원본과 대조했어요.':'평년보다 많이 싼 순서로 자동 선정했어요.' }}</p>
-    </article>
+    </PickCard>
     <div class="quick-filters grocery-tabs" role="group" aria-label="부류">
       <button v-for="c in tabs" :key="c" type="button" :aria-pressed="!q.trim()&&category===c" @click="pick(c)">{{ c }}</button>
     </div>
