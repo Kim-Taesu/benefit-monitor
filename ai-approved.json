@@ -39,7 +39,11 @@
       "original_body_hash": "d8e21627b344ee29badd228e04b4befd98f6fedf12fa02219b6dbae09abedfef"
     },
     "title_key": "서울가족학교'아버지교실'안내|보건소공지",
-    "decided_at": "2026-11-13T06:59:41.852286+09:00"
+    "decided_at": "2026-11-13T06:59:41.852286+09:00",
+    "status": "withdrawn",
+    "withdrawn_reason": "body_changed",
+    "withdrawn_at": "2026-11-14T12:01:22.040577+09:00",
+    "recheck_priority": true
   },
   "45a5c9fcd2650b69652dcdf8": {
     "schema_version": 1,
