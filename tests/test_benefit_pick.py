@@ -1,6 +1,7 @@
 import json
 import tempfile
 import unittest
+from copy import deepcopy
 from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import patch
@@ -156,6 +157,16 @@ class PublicTests(unittest.TestCase):
         for line in pick['picks']:
             self.assertEqual(set(line), {'id', 'source', 'url', 'line'})
             self.assertEqual((line['source'], line['url']), (by_id[line['id']]['source'], by_id[line['id']]['url']))
+
+    def test_public_accepts_its_own_output(self):
+        # Snapshot and admin republish re-check an already public pick (lines carry source/url).
+        first = bp.public(stored(), ITEMS, [], NOW)
+        again = bp.public(first, ITEMS, [], NOW)
+        self.assertEqual(again, first)
+        self.assertEqual(again['source'], 'ai')
+        forged = deepcopy(first)
+        forged['picks'][0]['url'] = 'https://example.com/other'
+        self.assertEqual(bp.public(forged, ITEMS, [], NOW)['source'], 'rule')
 
     def test_public_drops_missing_items(self):
         pick = bp.public(stored(), [r for r in ITEMS if r is not COGPE], [], NOW)

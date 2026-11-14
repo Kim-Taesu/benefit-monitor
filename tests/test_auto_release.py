@@ -782,5 +782,52 @@ class StoreDecisionTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     mirror.save_ai(root, 'Kim-Taesu/benefit-monitor')
 
+
+class TabPickRecheckTests(unittest.TestCase):
+    """Festival and benefit picks (2026-11-14) are re-checked on every publish path."""
+
+    def setUp(self):
+        import test_benefit_pick as tb, test_festival_pick as tf
+        from benefit_monitor import benefit_pick as bp, festival_pick as fp
+        self.tb, self.tf, self.bp, self.fp = tb, tf, bp, fp
+        self.data = {'items': list(tb.ITEMS), 'festivals': tf.BUNDLE,
+                     'benefit_pick': bp.public(tb.stored(), tb.ITEMS, [], tb.NOW),
+                     'festival_pick': fp.public(tf.stored(), tf.BUNDLE, [], tf.NOW)}
+
+    def test_unchanged_picks_survive(self):
+        out = auto_release.recheck_tab_picks(deepcopy(self.data), [], self.tb.NOW)
+        self.assertEqual(out['benefit_pick'], self.data['benefit_pick'])
+        self.assertEqual(out['festival_pick'], self.data['festival_pick'])
+        self.assertEqual(out['benefit_pick']['source'], 'ai')
+
+    def test_removed_item_drops_its_line_and_the_summary(self):
+        data = deepcopy(self.data)
+        gone = self.data['benefit_pick']['picks'][0]
+        data['items'] = [r for r in data['items'] if (r['source'], r['url']) != (gone['source'], gone['url'])]
+        out = auto_release.recheck_tab_picks(data, [], self.tb.NOW)
+        self.assertNotIn(gone['url'], [p['url'] for p in out['benefit_pick']['picks']])
+        self.assertIsNone(out['benefit_pick']['summary'])
+
+    def test_takedowns_mute_the_ai_text(self):
+        takedowns = [{'kind': 'benefit_pick_text', 'day': '2026-11-14'}, {'kind': 'festival_pick_text', 'day': '2026-11-14'}]
+        out = auto_release.recheck_tab_picks(deepcopy(self.data), takedowns, self.tb.NOW)
+        self.assertEqual((out['benefit_pick']['source'], out['festival_pick']['source']), ('rule', 'rule'))
+
+    def test_missing_data_removes_the_pick(self):
+        data = deepcopy(self.data)
+        data['items'] = []
+        data.pop('festivals')
+        out = auto_release.recheck_tab_picks(data, [], self.tb.NOW)
+        self.assertNotIn('benefit_pick', out)
+        self.assertNotIn('festival_pick', out)
+
+    def test_apply_takedowns_rechecks_the_benefit_pick(self):
+        data = deepcopy(self.data)
+        for row in data['items']:
+            row.setdefault('review', {'kind': 'human'})
+        out = auto_release.apply_takedowns(data, [{'kind': 'benefit_pick_text', 'day': '2026-11-14'}], now=self.tb.NOW)
+        self.assertEqual(out['benefit_pick']['source'], 'rule')
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -391,4 +391,35 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(age_state,'MAX_FILES',0):
             self.assertEqual(age_state.runtime_headroom(self.root),'runtime_over_limit')
 
+
+class TabPickUploadTests(unittest.TestCase):
+    """Festival and benefit picks (2026-11-14) go to briefing-data like the grocery pick."""
+    setUp,module=CloudDailyTests.setUp,CloudDailyTests.module
+
+    def test_upload_tab_picks_writes_each_existing_pick(self):
+        import base64
+        from benefit_monitor.store import save
+        m=self.module()
+        save(self.root/'cache/festival_pick/pick.json',{'source':'ai','day':'2026-11-06'})
+        save(self.root/'cache/benefit_pick/pick.json',None)
+        calls=[]
+        class Fake:
+            def _api(self,path,body=None):
+                calls.append((path,body))
+                if body is None:raise ValueError('404')
+                return {}
+        self.assertEqual(m.upload_tab_picks(self.root,Fake()),['ai-festival-pick.json'])
+        written=[(p,b) for p,b in calls if b is not None]
+        self.assertEqual([p for p,_ in written],['contents/ai-festival-pick.json'])
+        self.assertEqual(written[0][1]['branch'],'briefing-data')
+        self.assertEqual(json.loads(base64.b64decode(written[0][1]['content'])),{'source':'ai','day':'2026-11-06'})
+
+    def test_upload_failure_is_swallowed(self):
+        from benefit_monitor.store import save
+        m=self.module()
+        save(self.root/'cache/benefit_pick/pick.json',{'source':'rule'})
+        class Broken:
+            def _api(self,path,body=None):raise RuntimeError('network')
+        self.assertEqual(m.upload_tab_picks(self.root,Broken()),[])
+
 if __name__=='__main__':unittest.main()

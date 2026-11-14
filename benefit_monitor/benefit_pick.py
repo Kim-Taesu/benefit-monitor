@@ -209,10 +209,24 @@ def _public(pick, items, takedowns, now):
     return apply_mute(dict(pick, summary=summary, picks=kept), items, takedowns, now)
 
 
+def _stored_form(pick):
+    """A public pick (lines with source/url) back to its stored form, so every publish path can re-check it.
+    A line whose source/url does not hash to its id is left as is and fails the shape check (rule card)."""
+    if not isinstance(pick, dict) or not isinstance(pick.get('picks'), list):
+        return pick
+    lines = []
+    for p in pick['picks']:
+        if isinstance(p, dict) and set(p) == {'id', 'source', 'url', 'line'} \
+                and p['id'] == item_id({'source': p['source'], 'url': p['url']}):
+            p = {'id': p['id'], 'line': p['line']}
+        lines.append(p)
+    return dict(pick, picks=lines)
+
+
 def public(pick, items, takedowns, now):
-    """Re-check a stored pick against the current items; None when it cannot be shown today."""
+    """Re-check a stored (or already public) pick against the current items; None when it cannot be shown today."""
     try:
-        result = _public(pick, items, takedowns, now)
+        result = _public(_stored_form(pick), items, takedowns, now)
         return _fill(result, items, now) if result else None
     except (KeyError, TypeError, ValueError):
         return None

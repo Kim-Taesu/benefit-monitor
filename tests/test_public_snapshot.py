@@ -196,4 +196,15 @@ class PublicSnapshotTests(unittest.TestCase):
         self.assertNotIn('grocery_baselines',clean);self.assertNotIn('groceries',clean)
 
 
+    def test_tab_picks_are_rechecked_against_the_clean_snapshot(self):
+        import test_benefit_pick as tb, test_festival_pick as tf
+        raw=publish.payload(self.root,now=NOW)
+        raw['benefit_pick']=tb.stored()  # its items are not in this snapshot
+        raw['festival_pick']=tf.stored()  # no festivals bundle in this snapshot
+        (self.root/'report.json').unlink()
+        clean=self.stage(raw)
+        self.assertNotIn('benefit_pick',clean)
+        self.assertNotIn('festival_pick',clean)
+
+
 if __name__=='__main__':unittest.main()
