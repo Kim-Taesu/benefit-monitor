@@ -349,6 +349,19 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual((state['requests'][0]['status'],state['requests'][0]['error_code']),('failed','http_400'))
         self.assertIn('grammar',first['detail'])
 
+    def test_variant_probe_is_cached_apart_from_the_plain_schema_probe(self):
+        from benefit_monitor.wire_format import schema_for
+        sent=[]
+        def provider(request):
+            sent.append(json.loads(request.data));return self.response(self.message(usage={'input_tokens':700,'output_tokens':16}))
+        schema=schema_for('festival',None)
+        with patch('benefit_monitor.claude_trial.network_open',side_effect=provider):
+            self.client().grammar_probe(schema)
+            first=self.client().grammar_probe(schema,variant='adaptive-high')
+            again=self.client().grammar_probe(schema,variant='adaptive-high')
+        self.assertEqual((first['cached'],again['cached'],len(sent)),(False,True,2))
+        self.assertEqual((sent[1]['thinking'],sent[1]['output_config']['effort'],sent[1]['max_tokens']),({'type':'adaptive'},'high',16))
+
     def test_grammar_probe_pass_is_cached_and_server_errors_still_halt(self):
         from benefit_monitor.wire_format import research_wire_schema
         reply=self.message(content=[{'type':'text','text':'{"w'}],stop_reason='max_tokens',usage={'input_tokens':700,'output_tokens':16})

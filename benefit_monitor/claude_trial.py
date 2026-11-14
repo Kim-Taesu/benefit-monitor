@@ -286,17 +286,21 @@ class ClaudeClient:
         rows.append({'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(), 'code':code, 'detail':detail})
         path.write_text(json.dumps(rows[-50:], ensure_ascii=False, indent=2) + '\n')
 
-    def grammar_probe(self, schema):
+    def grammar_probe(self, schema, variant='baseline'):
         """Paid, tiny request that only proves the provider compiles this schema's grammar.
 
         count_tokens accepted schemas the provider later refused to compile, so each new
-        schema is probed once (16 output tokens). Results are cached by schema hash."""
+        schema is probed once (16 output tokens). Results are cached by schema hash.
+        With a measurement variant it also proves the provider accepts those request settings
+        together with structured output; that result is cached per schema and variant."""
         key = hashlib.sha256(json.dumps(schema, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+        if variant != 'baseline':
+            key = hashlib.sha256((key + '\n' + variant).encode()).hexdigest()
         path = self.root / 'grammar-probes.json'
         rows = json.loads(path.read_text()) if path.is_file() else {}
         if key in rows:
             return dict(rows[key], schema_sha256=key, cached=True)
-        payload = self.payload(PROBE_SYSTEM, 'probe', PROBE_MAX_TOKENS, schema)
+        payload = self.payload(PROBE_SYSTEM, 'probe', PROBE_MAX_TOKENS, schema, variant)
         try:
             result = self._request('/v1/messages', payload, probe=True)
             row = {'status':'passed', 'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
