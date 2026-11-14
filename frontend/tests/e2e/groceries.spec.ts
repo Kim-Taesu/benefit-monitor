@@ -24,15 +24,15 @@ test('weekly pick card shows the AI summary, linked prices and the rule fallback
  await page.route('**/briefing.json',route=>route.fulfill({json:snapshot(undefined,{groceries,grocery_pick:pick})}));
  await page.goto('./');
  await page.getByRole('tab',{name:'장보기'}).click();
- const card=page.locator('.grocery-pick');
+ const card=page.locator('#groceries .pick-card');
  await expect(card.locator('.grocery-badge').first()).toHaveText('AI 작성');
  await expect(card).toContainText('[테스트] 이번 주는 파(2,597원)가 싸요.');
  await expect(card.locator('li')).toHaveText([/파 2,597원.*파전/,/양파 1,893원.*양파볶음/,/돼지 삼겹살 2,768원.*수육/]);
  pick={...weekly,source:'rule',summary:null,picks:weekly.picks.map(p=>({...p,menu:null}))};
  await page.reload();
  await expect(card.locator('.grocery-badge').first()).toHaveText('자동 선정');
- await expect(card.locator('.grocery-pick-summary')).toHaveCount(0);
- await expect(card.locator('.grocery-pick-menu')).toHaveCount(0);
+ await expect(card.locator('.pick-summary')).toHaveCount(0);
+ await expect(card.locator('.pick-line')).toHaveCount(0);
 });
 
 // 2026-11-14: the weekly pick is no longer pinned above the tabs; it shows inside the grocery tab only.
@@ -51,7 +51,7 @@ for(const width of [390,1440])test(`weekly pick shows only inside the grocery ta
  await page.getByRole('tab',{name:'장보기'}).click();
  await expect(page.locator('#results')).toBeHidden();
  expect(new URL(page.url()).hash).toBe('#groceries');
- const card=page.locator('.grocery-pick');
+ const card=page.locator('#groceries .pick-card');
  await expect(card).toBeVisible();
  await expect(page.getByText('이번 주 장보기 추천')).toHaveCount(1);
  await expect(card.locator('li')).toHaveText([/파 2,597원.*파전/,/양파 1,893원/,/돼지 삼겹살 2,768원/]);
@@ -151,7 +151,7 @@ for(const [width,height] of [[360,800],[390,844]])test(`quick check card answers
  await expect(card.locator('.grocery-badge')).toBeInViewport({ratio:1});
  await expect(card.locator('.grocery-quick-note')).toBeInViewport({ratio:1});
  await expect(page.locator('#groceries [role=status]')).toContainText('돼지 삼겹살 전국 평균 소매가 2,768원 /100g');
- const [c,p]=await Promise.all([card.boundingBox(),page.locator('.grocery-pick').boundingBox()]);
+ const [c,p]=await Promise.all([card.boundingBox(),page.locator('#groceries .pick-card').boundingBox()]);
  expect(c!.y).toBeLessThan(p!.y);
  const [m,d]=kst(1).slice(5).split('-').map(Number);
  await expect(card.locator('h3')).toHaveText('돼지 삼겹살 · 전국 평균 소매가');
