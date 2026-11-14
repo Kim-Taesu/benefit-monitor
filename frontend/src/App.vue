@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, reactive, ref, watch } from
 import BenefitCard from './BenefitCard.vue';
 import BetaPanel from './BetaPanel.vue';
 import FestivalSection from './FestivalSection.vue';
+import BenefitPick from './BenefitPick.vue';
 import HealthSection from './HealthSection.vue';
 import GrocerySection from './GrocerySection.vue';
 import GradeHelp from './GradeHelp.vue';
@@ -119,6 +120,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     <section class="hero" aria-labelledby="hero-title"><h1 id="hero-title">오늘의 혜택, <span>한눈에.</span></h1><p class="hero-description">로그인 없이 탐색하고, 조건은 공식 안내에서 확인하세요.</p></section>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="t.id==='benefits'&&!loading" class="tab-count">{{ all.length }}</span></button></div></nav>
     <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits">
+    <BenefitPick :raw="raw" :items="all" />
     <BetaPanel ref="topicPanel" :items="all" :now="now" :query="filters.q" :published-data="raw" @select-topic="selectTopic" />
     <section class="discovery" aria-label="혜택 검색 및 필터">
       <div class="search-box"><span aria-hidden="true" class="search-icon">⌕</span><label for="search" class="sr-only">혜택·조건·지역·기관 검색</label><input id="search" v-model="draft" type="search" maxlength="200" placeholder="혜택·조건·지역·기관을 검색하세요" autocomplete="off" aria-controls="results"></div>
