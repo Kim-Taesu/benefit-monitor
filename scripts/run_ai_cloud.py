@@ -22,6 +22,7 @@ def main():
         result=cloud_run(ROOT,check_only=os.environ.get('CHECK_ONLY','true')!='false',
                          resume=os.environ.get('RESUME_REVIEWED_HALT')=='true',
                          retry=os.environ.get('RETRY_REJECTED_DAY')=='true',
+                         refresh_completed=os.environ.get('REFRESH_COMPLETED_DAY')=='true',
                          probe_only=os.environ.get('GRAMMAR_PROBE_ONLY')=='true',
                          investigate=os.environ.get('INVESTIGATE_MISSING_CONDITIONS','true')=='true',
                          close_unresolved=os.environ.get('CLOSE_UNRESOLVED_RESERVATION')=='true')

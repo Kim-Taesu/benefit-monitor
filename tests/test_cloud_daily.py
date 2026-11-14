@@ -29,6 +29,45 @@ class CloudDailyTests(unittest.TestCase):
         try:return importlib.import_module('benefit_monitor.cloud_daily')
         except ModuleNotFoundError:self.fail('cloud 일일 제어가 아직 구현되지 않음')
 
+    def test_manual_refresh_preserves_ledger_and_previous_outcome_and_runs_once(self):
+        m=self.module();store=self.fixture.store()
+        before=json.loads(store.read('control')[0])
+        before['days'][NOW.date().isoformat()]={'status':'completed','marker':'original'}
+        _,sha=store.read('control');store.write('control',json.dumps(before).encode(),sha)
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',return_value={'status':'completed'}) as run,patch.object(m.collection_snapshot,'restore',return_value=None),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=store,refresh_completed=True)
+            self.assertEqual(result['status'],'completed');run.assert_called_once()
+            after=json.loads(store.read('control')[0])
+            self.assertEqual(after['budget'],before['budget'])
+            self.assertEqual(after['days'][NOW.date().isoformat()]['manual_refresh_of'],before['days'][NOW.date().isoformat()])
+            with self.assertRaisesRegex(ValueError,'already refreshed'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=store,refresh_completed=True)
+            self.assertEqual(run.call_count,1)
+
+    def test_recovery_keeps_refresh_marker_and_original_completion(self):
+        from benefit_monitor.cloud_state import CloudSession
+        store=self.fixture.store();session=CloudSession.restore(self.root,store)
+        day=NOW.date().isoformat()
+        session.mark_day(day);session.finish(day,'completed')
+        session.refresh_completed_day(day,NOW)
+        session.close_unresolved(day,NOW);session.finish(day,'completed')
+        row=session.control['days'][day]
+        self.assertEqual(row['manual_refresh_of']['status'],'completed')
+        with self.assertRaisesRegex(ValueError,'already refreshed'):session.refresh_completed_day(day,NOW)
+
+    def test_manual_refresh_requires_dispatch_and_no_recovery_flags(self):
+        m=self.module()
+        with patch.object(m,'daily',side_effect=AssertionError('no spend')):
+            for flag in ('check_only','resume','retry','probe_only','close_unresolved'):
+                kwargs={'check_only':False,flag:True}
+                with self.subTest(flag=flag),self.assertRaisesRegex(ValueError,'without recovery'):
+                    m.cloud_run(self.root,now=NOW,store=self.fixture.store(),refresh_completed=True,**kwargs)
+            for event in ('schedule','workflow_run'):
+                with patch.dict(os.environ,{'GITHUB_EVENT_NAME':event}),self.assertRaisesRegex(ValueError,'manual dispatch'):
+                    m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),refresh_completed=True)
+            with patch.object(m,'todays_refresh',return_value='ready'),self.assertRaisesRegex(ValueError,'completed day'):
+                m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),refresh_completed=True)
+
     def test_cloud_key_is_explicit_and_trusted(self):
         from benefit_monitor import claude_trial
         self.assertTrue(hasattr(claude_trial,'configured_key'),'명시적 cloud key loader 필요')

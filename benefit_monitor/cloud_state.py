@@ -262,7 +262,7 @@ class CloudSession:
             record={'status':row['status'],'request_ids':[r['id'] for r in closed],'retried_at':now.isoformat(),
                     'reason':'manual_closed_unverified' if closed else 'manual_reopened_stuck_day'}
             if 'retry_of' in row:record['previous']=row['retry_of']
-            data['days'][day]={'status':'attempted','retry_of':record}
+            data['days'][day]=dict(row,status='attempted',retry_of=record)
         self._commit(data);return retry
 
     def retry_rejected_day(self,day,now):
@@ -277,8 +277,18 @@ class CloudSession:
         if not same or any(r['status']!='failed' or r['charged_microdollars']!=0
                            or not re.fullmatch('http_4[0-9]{2}',r.get('error_code','')) for r in same):
             raise ValueError('only days whose requests were all rejected unbilled can be retried')
-        data['days'][day]={'status':'attempted','retry_of':{'status':row['status'],'request_ids':[r['id'] for r in same],
-                                                            'retried_at':now.isoformat()}}
+        data['days'][day]=dict(row,status='attempted',retry_of={'status':row['status'],'request_ids':[r['id'] for r in same],
+                                                            'retried_at':now.isoformat()})
+        self._commit(data);return True
+
+    def refresh_completed_day(self,day,now):
+        """One explicitly requested extra pass; retain the completed outcome and every ledger row."""
+        self._reload();data=deepcopy(self.control);row=data['days'].get(day)
+        if not row or row['status']!='completed' or 'manual_refresh_of' in row:
+            raise ValueError('manual refresh requires a completed day not already refreshed')
+        if data['budget']['halted'] or any(r['status']=='reserved' for r in data['budget']['requests']):
+            raise ValueError('unresolved budget cannot be refreshed')
+        data['days'][day]={'status':'attempted','manual_refresh_of':row,'refreshed_at':now.isoformat()}
         self._commit(data);return True
 
     def checkpoint_budget(self,budget):

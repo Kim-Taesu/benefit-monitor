@@ -233,8 +233,10 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     return {'status':'dispatched_not_yet_verified','snapshot_commit':commit,'code_sha':code,'ref':'main'}
 
 
-def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=True):
+def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=True,refresh_completed=False):
     trusted_environment()
+    if type(refresh_completed) is not bool:raise ValueError('refresh_completed must be boolean')
+    if refresh_completed and (check_only or resume or retry or probe_only or close_unresolved):raise ValueError('manual refresh requires execute without recovery flags')
     if type(investigate) is not bool:raise ValueError('investigate must be boolean')
     root=Path(root).resolve();now=now or datetime.now(SEOUL)
     if now.tzinfo is None:raise ValueError('timezone required')
@@ -245,7 +247,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
     # Trusted runner applies the approved limit revision once with its short-lived token.
     revised=preflight.apply_limit_revision()
     resumed=False
-    if (resume or retry or probe_only or close_unresolved) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
+    if (resume or retry or probe_only or close_unresolved or refresh_completed) and os.environ.get('GITHUB_EVENT_NAME')!='workflow_dispatch':
         raise ValueError('halt review, day retry, reservation close and grammar probe require a manual dispatch')
     if close_unresolved and (check_only or retry or probe_only):
         raise ValueError('closing a reservation runs the day itself; turn off check_only, retry and probe')
@@ -290,7 +292,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
                     month_exposure_microdollars=TrialBudget.month_exposure(data['budget'],now))
     if not session.control['active']:return {'status':'handoff_required'}
     # No clock gate: today's completed free collection (todays_refresh) decides when the day runs.
-    if not retry and not closed_retry and day in session.control['days']:
+    if not retry and not closed_retry and not refresh_completed and day in session.control['days']:
         return {'status':'already_completed_today' if session.control['days'][day]['status']=='completed' else 'previous_attempt_requires_review'}
     # Before the day (or its one retry) is used: a state too large to save afterwards never spends.
     full=runtime_room(root,now)
@@ -309,6 +311,9 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         dispatch_refresh(store);return {'status':'refresh_dispatched'}  # Its completion triggers this workflow.
     if refresh!='ready':return {'status':'waiting_for_existing_refresh','refresh':refresh}
     public_lease=restore_public(root,store,now)
+    if refresh_completed:
+        retried=session.refresh_completed_day(day,now)
+        save(safe_path(root,'cache/ai_daily/days.json'),{'days':{k:v for k,v in session.control['days'].items() if k!=day}})
     if not retried:session.mark_day(day)
     save(safe_path(root,'ai-automation.json'),{'enabled':True,'recurring_spend_approved':True,
          'public_application_approved':True,'remote_delivery_approved':False,'max_ai_candidates_per_day':MAX_DAILY_RESEARCH,
