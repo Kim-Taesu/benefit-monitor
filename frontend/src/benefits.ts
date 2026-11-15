@@ -175,3 +175,24 @@ export function filterUrl(current:URL,filters:Filters):URL {
 export function regionOptions(items:Benefit[]):string[] {
  return [...new Set(items.flatMap(i=>i.regions).concat(items.some(i=>matchesRegion(i,'서울'))?['서울']:[]))].sort((a,b)=>a.localeCompare(b,'ko'));
 }
+const monthDay=(ms:number)=>{const d=new Date(ms+9*3600000);return `${d.getUTCMonth()+1}.${d.getUTCDate()}`;};
+/** 카드 배지용 짧은 기간 표현. 판정은 timing과 같고 문구만 짧다. */
+export function timingBadge(item:Benefit,now:number):{label:string;urgent:boolean} {
+ const t=timing(item,now),application=timestamp(item.deadline_at),end=dateValue(item.valid_until);
+ const soon=t.days!==null&&t.days<=7;
+ if(Number.isFinite(application))return {label:t.days===0?'오늘 신청 마감':soon?`신청 마감 ${t.days}일 남음`:`${monthDay(application)} 신청 마감`,urgent:t.urgent};
+ if(t.upcoming)return {label:`${kstDay(dateValue(item.valid_from))-kstDay(now)}일 뒤 시작`,urgent:false};
+ if(Number.isFinite(end))return {label:t.days===0?'오늘 끝남':soon?`${t.days}일 남음`:`${monthDay(end)}까지`,urgent:t.urgent};
+ return {label:item.validity_kind==='ongoing'?'상시':'기간 미확인',urgent:false};
+}
+/** 확인한 지 며칠 됐는지. 신뢰도 등급(grade.ts)과 같은 24시간 단위로 센다. */
+export function verifiedAge(item:Benefit,now:number):string {
+ const days=Math.floor((now-timestamp(item.verified_at))/DAY);
+ return days<=0?'오늘 확인':`${days}일 전 확인`;
+}
+/** 헤더의 갱신 시각: 오늘이면 시각만, 아니면 날짜까지. */
+export function updatedLabel(v:string|null|undefined,now:number):string {
+ const n=timestamp(v);if(!Number.isFinite(n))return '';
+ const local=new Date(n+9*3600000).toISOString(),clock=local.slice(11,16);
+ return kstDay(n)===kstDay(now)?`오늘 ${clock} 갱신`:`${monthDay(n)} ${clock} 갱신`;
+}

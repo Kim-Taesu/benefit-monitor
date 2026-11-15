@@ -1,5 +1,5 @@
-import type {Benefit,Filters} from './benefits.ts';
-import {filterUrl,safeOfficial} from './benefits.ts';
+import type {Benefit} from './benefits.ts';
+import {safeOfficial} from './benefits.ts';
 export const FAVORITES_KEY='benefit-monitor:favorites:v1';
 type FavoriteStorage=Pick<Storage,'getItem'|'setItem'|'removeItem'>;
 export const benefitKey=(item:Pick<Benefit,'source'|'url'>)=>item.source+'\n'+item.url;
@@ -19,8 +19,3 @@ export function clearFavorites(storage:FavoriteStorage|null):boolean{
  try{if(!storage)return false;storage.removeItem(FAVORITES_KEY);return true;}catch{return false;}
 }
 export function visibleFavorites(items:Benefit[],ids:string[]):Benefit[]{const saved=new Set(ids);return items.filter(item=>saved.has(benefitKey(item)));}
-export function searchShareUrl(current:URL,filters:Filters):URL{
- const url=filterUrl(new URL(current.pathname,current.origin),filters);
- // An explicit default sort keeps a recipient's remembered interests from changing an all-regions link.
- url.searchParams.set('sort',filters.sort);return url;
-}

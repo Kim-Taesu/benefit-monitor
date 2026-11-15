@@ -25,7 +25,7 @@ test('weekly pick card shows the AI summary, linked prices and the rule fallback
  await page.goto('./');
  await page.getByRole('tab',{name:'장보기'}).click();
  const card=page.locator('#groceries .pick-card');
- await expect(card.locator('.grocery-badge').first()).toHaveText('AI 작성');
+ await expect(card.locator('.grocery-badge').first()).toHaveText('🤖 AI 작성');
  await expect(card).toContainText('[테스트] 이번 주는 파(2,597원)가 싸요.');
  await expect(card.locator('li')).toHaveText([/파 2,597원.*파전/,/양파 1,893원.*양파볶음/,/돼지 삼겹살 2,768원.*수육/]);
  pick={...weekly,source:'rule',summary:null,picks:weekly.picks.map(p=>({...p,menu:null}))};
@@ -46,7 +46,7 @@ for(const width of [390,1440])test(`weekly pick shows only inside the grocery ta
  await expect(page.getByText('이번 주 장보기 추천')).toBeHidden();
  await expect(page.locator('#groceries')).toBeHidden();
  // Nothing sits between the page heading and the tabs.
- const [hero,tabs]=await Promise.all([page.locator('.hero').boundingBox(),page.locator('#site-tabs').boundingBox()]);
+ const [hero,tabs]=await Promise.all([page.locator('.intro').boundingBox(),page.locator('#site-tabs').boundingBox()]);
  expect(tabs!.y-(hero!.y+hero!.height)).toBeLessThan(40);
  await page.getByRole('tab',{name:'장보기'}).click();
  await expect(page.locator('#results')).toBeHidden();
@@ -80,11 +80,21 @@ for(const width of [390,1440])test(`grocery section: featured rows, calculator a
  await page.getByRole('tab',{name:'장보기'}).click();
  await expect(section).toBeVisible();
  // 자주 사는 품목: listed produce and one card per meat cut (pork before 한우), without paging; 레몬 waits in the 과일 tab.
+ // 기본 정렬은 평년보다 많이 싼 순이고, 비교값이 없는 육류는 공식 순서대로 뒤에 온다. 품목 앞에는 이모지가 붙는다.
+ await expect(section.getByLabel('정렬',{exact:true})).toHaveValue('cheap');
+ await expect(section.locator('article h3')).toHaveText([/^🥬 파/,/^🧅 양파/,/^🥩 돼지 삼겹살/,/한우 등심\s*1\+등급/]);
+ await section.getByLabel('정렬',{exact:true}).selectOption('official');
  await expect(section.locator('article h3')).toHaveText([/양파/,/파/,/돼지 삼겹살/,/한우 등심\s*1\+등급/]);
+ // 한 줄 목록: 비교·계산·고르는 법은 누른 품목만 펼친다.
+ await expect(section.locator('.grocery-more')).toHaveCount(0);
  const beef=section.locator('article',{hasText:'한우 등심'});
  await expect(beef.locator('.grocery-price strong')).toHaveText('13,676원');
+ await beef.locator('.grocery-toggle').click();await expect(beef.locator('.grocery-toggle')).toHaveAttribute('aria-expanded','true');
  await expect(beef.locator('.grocery-others')).toHaveText('다른 등급: 1++등급 15,645원 · 1등급 12,140원');
- await expect(section.locator('article',{hasText:'돼지 삼겹살'}).locator('.grocery-others')).toHaveCount(0);
+ const pork=section.locator('article',{hasText:'돼지 삼겹살'});await pork.locator('.grocery-toggle').click();
+ await expect(pork.locator('.grocery-more')).toBeVisible();await expect(pork.locator('.grocery-others')).toHaveCount(0);
+ await beef.locator('.grocery-toggle').click();await expect(beef.locator('.grocery-more')).toHaveCount(0);
+ expect((await beef.locator('.grocery-toggle').boundingBox())!.height).toBeGreaterThanOrEqual(44);
  // The 육류·계란 tab still lists every grade on its own card.
  await section.getByRole('button',{name:'육류·계란'}).click();
  await expect(section.locator('article h3')).toHaveText([/돼지 삼겹살/,/한우 등심\s*1\+\+등급/,/한우 등심\s*1\+등급/,/한우 등심\s*1등급/]);
@@ -93,12 +103,12 @@ for(const width of [390,1440])test(`grocery section: featured rows, calculator a
  await expect(section).toContainText('일부 품목 미수집: 한우 갈비');
  const onion=section.locator('article',{hasText:'양파'});
  await expect(onion.locator('.grocery-badge')).toHaveText('평년 수준 (9% 쌈)');
- await onion.getByText('이 가격 싼가요?').click();
+ await onion.locator('.grocery-toggle').click();
  await onion.getByLabel('가격(원)').fill('3500');
  await onion.getByLabel('양').fill('1.5');
  await expect(onion.locator('.grocery-calc-result')).toContainText('1kg당 2,333원');
  await expect(onion.locator('.grocery-calc-result')).toContainText('평년보다 12% 비쌈');
- await onion.getByText('좋은 품질 · 고르는 법').click();
+ await expect(onion.getByRole('heading',{name:'좋은 품질 · 고르는 법'})).toBeVisible();
  await expect(onion.locator('.grocery-guide')).toContainText('단단');
  await expect(onion.locator('.grocery-guide a')).toHaveAttribute('href',/itemSn=24$/);
  await section.getByRole('button',{name:'과일'}).click();

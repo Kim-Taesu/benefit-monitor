@@ -1,5 +1,19 @@
 # 개선 진행 기록
 
+## 2026-11-15 — 화면 개편(얇은 헤더·한 줄 필터·한 줄 장보기 목록)과 개인화 제거
+
+- 작업 단위와 범위: 브랜치 `feat/web-redesign`(main `6099214` 기준), 프런트만. 사용자가 운영 화면 피드백 → 시안 확인 → "ok 이대로하자"로 승인했다. 승인 문구와 범위는 [정책 대응표](policy-map.md)의 2026-11-15 화면 개편 항목.
+- 변경 파일과 이유:
+  - `App.vue`: 헤더를 갱신 시각 한 줄로 줄이고, 첫 방문 소개·재방문 요약, 건수 붙은 고정 탭, 검색·내 지역·정렬과 필터 칩 한 줄, 바닥글 한 곳으로 모은 한계 안내를 넣었다.
+  - `BenefitCard.vue`: 카드 전체가 눌리고 즐겨찾기는 모서리 아이콘이다. 상세는 본문과 하단 버튼이 겹치지 않는 시트다.
+  - `topics.ts`(새 파일, `beta.ts`·`published-topics.ts` 대체), `visit.ts`(새 파일): 주제 묶음과 방문 기록.
+  - `GrocerySection.vue`: 추천 타일과 한 줄 목록. `FestivalSection.vue`: 추천을 카드에 합침. `HealthSection.vue`: 필터 줄·내 지역 연동·경고 표시.
+  - 삭제: `BetaPanel.vue`, `BenefitPick.vue`, `FestivalPick.vue`, `GradeHelp.vue`, `beta.ts`, `published-topics.ts`와 그 테스트.
+- 실제 실행한 검사·결과·검증 시각(2026-11-15): `frontend`에서 `npm test` 126개 통과, `npm run typecheck` 통과, `npm run build` 통과, `BENEFIT_TEST_BROWSER_CHANNEL=chrome npx playwright test` 83개 통과. `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` 1033개 통과. 2026-11-15 공개 `briefing.json`을 로컬 빌드에 물려 390px·1440px에서 네 탭 화면을 확인했다(모바일 길이: 혜택 4,789→2,909px, 장보기 15,660→5,229px).
+- 미검증·실패·관측 한계: 실제 휴대폰 기기와 카카오 인앱 브라우저에서는 보지 않았다. `style.css`에 이전 화면용 규칙이 남아 있다(동작에는 영향 없음). 배포는 하지 않았다.
+- 결정과 근거: 기존 테스트가 쓰는 클래스·id(`.benefit-card`, `.card-open`, `#results` 등)는 가능한 한 유지해 판정 로직 테스트를 그대로 통과시켰다. 개인화·공유·등급 모달 테스트는 기능 제거에 맞춰 지우거나 새 화면 기준으로 다시 썼다.
+- 다음 작업과 주의사항: `style.css`의 쓰지 않는 규칙 정리, 실제 기기 확인. 방문 기록에 항목 지문을 함께 저장한 점은 사용자가 "ok"로 승인했다.
+
 ## 2026-11-15 — 보류된 사람 승인 항목 조사·기간 주장 문구·보건소 상시 사업 후보 제외
 
 - 작업 단위와 범위: 브랜치 `fix/held-items-research-and-health-programs`(main `6d5974a` 기준). 2026-11-15 결과 점검 뒤 사용자가 "123 모두 진행"으로 승인했다. 승인 문구와 범위는 [정책 대응표](policy-map.md)의 2026-11-15 항목.

@@ -8,7 +8,7 @@
 
 - [개선 단계와 완료 기준](docs/ai/improvement-phases.md)
 - [현재 진행·검증 기록](docs/ai/progress.md)
-- [브라우저 개인화 동작과 보관 범위](docs/ai/personalization.md)
+- [브라우저 저장 범위(즐겨찾기·내 지역·방문 기록)](docs/ai/personalization.md)
 - [제한된 추가 조사와 실행 경계](docs/ai/investigation.md)
 - [작업 지침](AGENTS.md) · [정책 대응표](docs/ai/policy-map.md)
 - 기존 상세 설명은 [이전 README](README.history.md)에 보존했습니다. 과거 상태를 설명하는 내용이 있으므로 현행 정책은 위 문서와 구현을 확인합니다.
@@ -57,7 +57,7 @@ npm run test:e2e
 - `*_pick.py`, `health_notes.py`: 공통 추천과 안내 문장. 모델이 실패하면 각 작업의 규칙 결과로 대체합니다.
 - `publish.py`, `public_snapshot.py`, `auto_release.py`: 공개 조립·스냅샷·철회 반영.
 - `cloud_daily.py`, `.github/workflows`: 기존 Actions 실행·상태 보존·배포.
-- `frontend/src`: 표시와 브라우저 내부 관심사·피드백·즐겨찾기.
+- `frontend/src`: 표시와 브라우저 내부 즐겨찾기·내 지역·방문 기록.
 
 검증 전 후보를 곧바로 공개 혜택으로 올리지 않습니다. AI 초안은 코드 게이트를 모두 통과할 때만 자동 공개되며, 부족한 근거·지난 날짜·충돌은 보류됩니다. 공식 확인은 본인의 자격·남은 자리·재고를 보장하지 않습니다.
 
