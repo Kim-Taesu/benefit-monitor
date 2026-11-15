@@ -5,7 +5,8 @@ screenings and vaccinations "are not announced well and get missed". Only the fi
 page of each board is read (anonymous GET, robots, host allowlist). Board titles, dates and
 departments are shown as published, labelled "사람 검증 전". Titles that look like a health
 benefit (검진·접종·무료 …) also become ordinary review candidates so the existing AI research,
-auto-publish gate and human review decide whether they become benefit cards.
+auto-publish gate and human review decide whether they become benefit cards. Standing programme
+pages are shown on the tab only; since 2026-11-15 they are not review candidates.
 
 Collection runs in its own daily workflow (about 30 requests) because the daily briefing run
 is already near its HTTP cap; the daily run only restores the stored bundle.
@@ -405,11 +406,9 @@ def candidates(bundle, now):
                 out.append(dict(source=SOURCE, url=item["url"], title=item["title"],
                                 summary=f"{board['name']} 공지({item['date']}) 후보. 대상·기간·비용은 원문 확인 필요.",
                                 districts=[board["district"]], needs_recheck=True))
-    for program in clean["programs"]:
-        if program["status"] == "checked":
-            out.append(dict(source=SOURCE, url=program["url"], title=f"{program['center']} {program['name']}",
-                            summary=f"{program['center']} 상시 사업 안내 페이지 후보. 대상·비용·운영 시간은 원문 확인 필요.",
-                            districts=[program["district"]], needs_recheck=True))
+    # Standing programme pages are not candidates (approved 2026-11-15). They have no dates and one
+    # page each, so the auto-publish gate never passed one, while they took the whole daily research
+    # run (13 of 13 on 2026-11-15). They stay on the health tab with their AI sentence (health_notes).
     return out
 
 

@@ -58,6 +58,20 @@ class WireTests(unittest.TestCase):
         self.assertEqual(c1['quotes'], ['GOLD / SILVER / WHITE / 일반 1,000원당 50원 차감 할인.'])
         self.assertEqual(c1['claim_text'], 'VVIP·VIP·GOLD는 1천 원당 100원')
 
+    def test_period_claim_names_each_date_for_what_it_is(self):
+        # 2026-11-15: "기간 2026-10-28~2026-12-05" was judged contradicted for an item whose
+        # applications open 10-28 and whose programme runs 11-09~12-05.
+        from benefit_monitor.ai_verify import claims_of
+        from benefit_monitor.models import Benefit
+        def period(**dates):
+            item = Benefit(source='seoul', url='https://mediahub.seoul.go.kr/archives/1', title='다감', summary='무료 교육', **dates)
+            return [c['text'] for c in claims_of(item) if c['field'] == 'period']
+        self.assertEqual(period(valid_from='2026-10-28', valid_until='2026-12-05'),
+                         ['신청 또는 이용 시작일 2026-10-28, 종료일 2026-12-05'])
+        self.assertEqual(period(valid_until='2026-12-05'), ['종료일 2026-12-05'])
+        self.assertEqual(period(valid_from='2026-10-28'), ['신청 또는 이용 시작일 2026-10-28'])
+        self.assertEqual(period(), [])
+
     def test_unknown_segment_missing_or_extra_claim_is_rejected(self):
         for bad in (wire(claims=[('c1', 'supported', ['d9s9'], ''), ('c2', 'supported', ['d1s4'], '')]),
                     wire(claims=[('c1', 'supported', ['d1s3'], '')]),
@@ -160,11 +174,16 @@ class PipelineTests(unittest.TestCase):
             return {'status': 'validated_draft', 'run_id': host['purpose']}
         def fake_result(run_id):
             return decisions[run_id]
+        # 2026-11-15: an approved item held as ai_contradicted goes to research in the same run.
+        self.researched = []
+        def fake_research(root, kind, path):
+            self.researched.append(json.loads(Path(path).read_text())['documents'][0]['requested_url'])
+            return {'status': 'rejected_draft', 'run_id': 'c'*64}
         with patch('benefit_monitor.official_reader.network_open', side_effect=self.transport), \
              patch('benefit_monitor.cli.collect', return_value=[self.candidate]), \
              patch('benefit_monitor.ai_verify.invoke', side_effect=fake_invoke), \
              patch('benefit_monitor.ai_verify._result', side_effect=fake_result), \
-             patch('benefit_monitor.ai_review.invoke', **(research or {'side_effect': AssertionError('no research call')})):
+             patch('benefit_monitor.ai_review.invoke', **(research or {'side_effect': fake_research})):
             report = cli.run(self.root, self.root/'inputs/items.json', True, now, ai_review=True,
                              ai_execute=True, ai_max_candidates=1, ai_max_verify=5)
         return report, calls
@@ -191,6 +210,8 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(reasons, {'ai_contradicted'})
         findings = json.loads((self.root/'cache/ai_verify/findings.json').read_text())
         self.assertEqual(list(findings.values())[0]['claims'][0]['official_quotes'], ['GOLD 1,000원당 50원 차감 할인.'])
+        # The held item is read by research at once; the ended candidate is not.
+        self.assertEqual(self.researched, [self.approved['url']])
 
     def test_public_quality_summary_has_no_model_text(self):
         from benefit_monitor.publish import ai_quality
@@ -206,6 +227,7 @@ class PipelineTests(unittest.TestCase):
         self.run_ai({'audit': self.contradiction(), 'triage': self.ended()})
         report, calls = self.run_ai({}, NOW + timedelta(days=AUDIT_DAYS_PLUS))
         self.assertEqual(calls, [])  # audit within 7 days unchanged; dismissed candidate never triaged or researched
+        self.assertNotIn(self.candidate['url'], self.researched)
         self.assertEqual(report['ai_verify']['unchanged'], 0)
 
     def test_three_calls_without_result_stop_the_day(self):

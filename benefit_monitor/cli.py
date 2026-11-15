@@ -129,22 +129,13 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         explicit_items = operations.observe(operational_state, incoming, explicit_items, now)
         ai_result = None
         if ai_review:
-            from .ai_review import review_candidates, stored_candidates
+            from .ai_review import research_pool, review_candidates, stored_candidates
             # Collection ran under the configured limit; research gets the rest up to the project max of 100.
             cost_policy.budget.limit=100
-            # Sources whose details hold conditions only in images are not sent to paid research.
-            # Human-approved items are audited by verification instead, and candidates that
-            # verification confirmed ended or not a benefit are not researched.
-            approved_ids = {i.id for i in explicit_items if i.verified_at}
-            records = operational_state.get('items', {})
-            def researchable(c):
-                cid = Benefit(**{k: v for k, v in c.items() if k in Benefit.__dataclass_fields__}).id
-                return (sources.get(c['source'], {}).get('ai_review', True) and cid not in approved_ids
-                        and not records.get(cid, {}).get('ai_dismissed'))
-            ai_candidates = [c for c in incoming + [i.data() for i in explicit_items if not i.verified_at] if researchable(c)]
+            ai_candidates, listed, researchable = research_pool(incoming, explicit_items, sources, operational_state.get('items', {}),
+                                                                today=now.date().isoformat())
             # Approved 2026-11-14: held drafts the gate would now publish and withdrawn auto-published
             # records are settled even after the listing dropped them (same filters as above).
-            listed = {Benefit(**{k: v for k, v in c.items() if k in Benefit.__dataclass_fields__}).id for c in ai_candidates}
             ai_candidates += [c for c in stored_candidates(root, now, listed) if c['source'] in sources and researchable(c)]
             ai_result = review_candidates(root, ai_candidates, now,
                                           max_candidates=ai_max_candidates, execute=ai_execute,**({'investigate':True} if ai_investigate else {}))

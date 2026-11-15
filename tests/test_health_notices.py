@@ -232,10 +232,12 @@ class ProgramTests(unittest.TestCase):
         self.assertEqual([p['status'] for p in second['programs']], ['checked'] * 3)
         self.assertEqual({p['checked_at'] for p in second['programs']}, {NOW.isoformat()})
 
-    def test_checked_programmes_become_candidates_and_sanitize_validates_them(self):
+    def test_checked_programmes_are_not_candidates_and_sanitize_validates_them(self):
+        # 2026-11-15: standing programme pages took the whole research run and never passed the gate.
         bundle, _ = self.run_at(NOW, self.pages())
-        titles = {c['title'] for c in h.candidates(bundle, NOW)}
-        self.assertIn('강서구보건소 대사증후군 관리', titles)
+        self.assertEqual([p['status'] for p in bundle['programs']], ['checked'] * 3)
+        programme_urls = {p['url'] for p in bundle['programs']}
+        self.assertFalse(programme_urls & {c['url'] for c in h.candidates(bundle, NOW)})
         bundle['programs'][0]['district'] = '없는구'
         self.assertIsNone(h.sanitize(bundle, NOW))
 
