@@ -207,6 +207,28 @@ def _ready(root,row,now):
             and auto_decide(root,row['run_id'],now,reread=True)['publish'])
 
 
+def research_pool(incoming,explicit_items,sources,records,today=''):
+    """Candidates that may go to paid research today.
+
+    Sources whose details hold conditions only in images are left out, and so are candidates that
+    verification confirmed ended or not a benefit. Human-approved items are audited by verification
+    instead, with one exception (approved 2026-11-15): an approved item that verification holds as
+    ai_contradicted is no longer public and nobody re-reads it, so it is researched like any other
+    candidate. The human record stays held and is not edited; only the deterministic auto-publish
+    gate can show the page again, from the official text read now. An item whose stored end date
+    (today: YYYY-MM-DD) has passed is not worth a call."""
+    def cid(c):
+        return Benefit(**{k:v for k,v in c.items() if k in Benefit.__dataclass_fields__}).id
+    held={i.id for i in explicit_items if i.verified_at and (records.get(i.id) or {}).get('hold_at')
+          and records[i.id].get('hold_reason')=='ai_contradicted' and not (i.valid_until and i.valid_until<today)}
+    approved={i.id for i in explicit_items if i.verified_at}-held
+    def researchable(c):
+        return (sources.get(c['source'],{}).get('ai_review',True) and cid(c) not in approved
+                and not (records.get(cid(c)) or {}).get('ai_dismissed'))
+    pool=[c for c in incoming+[i.data() for i in explicit_items if not i.verified_at or i.id in held] if researchable(c)]
+    return pool,{cid(c) for c in pool},researchable
+
+
 def stored_candidates(root,now,present):
     """Candidates today's collection no longer lists but that still have something to settle
     (approved 2026-11-14): withdrawn auto-published records, and held drafts the current gate would

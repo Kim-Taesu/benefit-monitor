@@ -161,6 +161,56 @@ class AIReviewTests(unittest.TestCase):
         pages=[u for u in self.requests if not u.endswith('/robots.txt')]
         self.assertEqual(pages,['https://www.seoul.go.kr/news/7'])
 
+    def test_held_contradicted_approved_item_is_researched_other_approved_items_are_not(self):
+        # 2026-11-15: 24 human-approved items held as ai_contradicted since 11-10 were never read again.
+        from benefit_monitor.ai_review import research_pool
+        from benefit_monitor.models import Benefit
+        def item(n,verified=True):
+            return Benefit(source='seoul',url=f'https://www.seoul.go.kr/news/{n}',title=f'항목 {n}',summary='요약',
+                           verified_at=NOW.isoformat() if verified else None)
+        public,held,changed,dismissed,unverified=item(1),item(2),item(3),item(4),item(5,False)
+        stamp=(NOW+timedelta(hours=1)).isoformat()
+        records={held.id:{'hold_at':stamp,'hold_reason':'ai_contradicted'},
+                 changed.id:{'hold_at':stamp,'hold_reason':'body_changed'},
+                 dismissed.id:{'hold_at':stamp,'hold_reason':'ai_contradicted','ai_dismissed':{'reason':'ended'}}}
+        listed_again={'source':'seoul','url':held.url,'title':held.title,'summary':held.summary}
+        sources={'seoul':{}}
+        pool,ids,researchable=research_pool([listed_again],[public,held,changed,dismissed,unverified],sources,records)
+        self.assertEqual(ids,{held.id,unverified.id})
+        self.assertEqual(sorted(c['url'] for c in pool),sorted([held.url,held.url,unverified.url]))
+        self.assertFalse(researchable(public.data()))
+        self.assertFalse(researchable(changed.data()))
+        self.assertEqual(research_pool([],[held],{'seoul':{'ai_review':False}},records)[0],[])
+        from dataclasses import replace
+        over=replace(held,valid_until='2026-11-04')
+        self.assertEqual(research_pool([],[over],sources,records,today='2026-11-04')[1],{held.id})
+        self.assertEqual(research_pool([],[over],sources,records,today='2026-11-05')[1],set())
+
+    def test_cli_researches_a_held_contradicted_approved_item(self):
+        from benefit_monitor.cli import run
+        from benefit_monitor.models import Benefit
+        approved=dict(self.candidate,needs_recheck=False,verified_at=(NOW-timedelta(days=2)).isoformat(),
+                      conditions='누구나 참여',evidence='공식 원문 확인',valid_until='2026-11-30',fee_status='free')
+        cid=Benefit(source='seoul',url=approved['url'],title=approved['title'],summary=approved['summary']).id
+        def go(records):
+            self.requests.clear();cost_policy.reset(60)
+            (self.root/'cache').mkdir(exist_ok=True)
+            (self.root/'cache/operational_state.json').write_text(json.dumps({'schema_version':1,'sources':{},'items':records}))
+            path=self.root/'incoming.json';path.write_text(json.dumps([approved]))
+            with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport), \
+                 patch('benefit_monitor.ai_review.auto_decide',return_value={'publish':False,'reasons':['test'],'record':None}), \
+                 patch('benefit_monitor.ai_review.invoke',return_value={'status':'validated_draft','run_id':'b'*64}) as model:
+                report=run(self.root,path,online=True,now=NOW,ai_review=True,ai_execute=True)
+            return model.call_count,report
+        self.assertEqual(go({})[0],0)  # Public human-approved item: verification audits it, research does not.
+        calls,report=go({cid:{'source':'seoul','first_seen_at':(NOW-timedelta(days=3)).isoformat(),
+                              'hold_at':(NOW-timedelta(days=1)).isoformat(),'hold_reason':'ai_contradicted'}})
+        self.assertEqual(calls,1)
+        self.assertEqual([r['candidate_id'] for r in report['ai_review']['rows']],[cid])
+        # The human record is still held: research never releases or edits it.
+        state=json.loads((self.root/'cache/operational_state.json').read_text())['items'][cid]
+        self.assertEqual(state['hold_reason'],'ai_contradicted')
+
     def test_image_only_event_sources_never_reach_paid_research(self):
         from benefit_monitor.cli import run
         self.config['sources'][0]['ai_review']=False

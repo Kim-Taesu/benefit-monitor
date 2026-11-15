@@ -3,6 +3,8 @@
 1. audit: human-approved public items, least recently checked first (each at most every
    AUDIT_DAYS). A code-confirmed contradiction holds the item (hold_reason ai_contradicted) until a
    human re-verifies it; nothing is edited. A changed official body is reported in changed_ids.
+   Since 2026-11-15 a held item is also researched (ai_review.research_pool): the hold stays, and
+   only the auto-publish gate can show the page again.
 2. triage: review candidates never triaged, or not for TRIAGE_DAYS. Code-confirmed ended or
    not_benefit takes the candidate out of the review queue (ai_dismissed, keyed to the body hash);
    ongoing/upcoming raise its queue priority (ai_triage).
@@ -42,8 +44,13 @@ def claims_of(item):
     """Short checkable claims from a human-approved item (summary, condition sentences, dates)."""
     rows = [('summary', item.summary)]
     rows += [('conditions', s.strip()) for s in SENTENCE.findall(item.conditions or '') if len(s.strip()) >= 6]
-    if item.valid_from or item.valid_until:
-        rows.append(('period', f"기간 {item.valid_from or ''}~{item.valid_until or ''}".strip()))
+    # valid_from is the day the item can first be used OR applied for, whichever the reviewer stored.
+    # Said as "기간 A~B" the model read it as the event period and marked a correct item contradicted
+    # (2026-11-15: applications from 10-28, programme 11-09~12-05), so each end is named for what it is.
+    dates = [text for text in (f'신청 또는 이용 시작일 {item.valid_from}' if item.valid_from else '',
+                               f'종료일 {item.valid_until}' if item.valid_until else '') if text]
+    if dates:
+        rows.append(('period', ', '.join(dates)))
     if item.deadline_at:
         rows.append(('deadline', f'신청 마감 {item.deadline_at}'))
     rows = [(f, t[:vc.MAX_CLAIM_TEXT]) for f, t in rows if t and t.strip()][:vc.MAX_CLAIMS]
