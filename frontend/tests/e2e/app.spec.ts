@@ -31,7 +31,7 @@ for(const width of [360,390,768,1440])test(`responsive ${width}px, semantics, ax
  await page.addScriptTag({path:axePath});
  const accessibility=await page.evaluate(async()=>await (window as any).axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa','wcag22aa']}}));
  expect(accessibility.violations).toEqual([]);
- const topic=await page.locator('.topic-button').first().boundingBox();if(width<768)expect(topic!.y+topic!.height).toBeLessThan(844);
+ const firstCard=await page.locator('article').first().boundingBox();if(width<768)expect(firstCard!.y).toBeLessThan(844);
  await capture(page,`home-${width}`);
  await page.keyboard.press('Tab');await expect(page.getByRole('link',{name:'혜택 목록으로 건너뛰기'})).toBeFocused();
  await page.keyboard.press('Enter');await expect(page.locator('#results')).toBeFocused();
@@ -41,16 +41,18 @@ for(const width of [360,390,768,1440])test(`responsive ${width}px, semantics, ax
 });
 test('search, combined filters, sort, URL reload, back and reset',async({page})=>{
  await setup(page);await page.goto('./');
- await page.getByLabel('혜택·조건·지역·기관 검색').fill('문화 회원');
- await page.getByLabel('지역',{exact:true}).selectOption('강서구');
+ await page.getByLabel('검색',{exact:true}).fill('문화 회원');
+ await page.getByLabel('내 지역',{exact:true}).selectOption('강서구');
 
- await page.getByLabel('혜택 정렬').selectOption('verified');
- await expect(page.locator('article')).toHaveCount(2);
- await expect(page).toHaveURL(/q=/);await page.reload();await expect(page.locator('article')).toHaveCount(2);
- await expect(page.getByLabel('혜택 정렬')).toHaveValue('verified');
- await page.getByLabel('혜택 정렬').selectOption('title');await page.goBack();await expect(page.getByLabel('혜택 정렬')).toHaveValue('verified');
- await page.getByRole('button',{name:'필터 초기화',exact:true}).first().click();await expect(page.locator('article')).toHaveCount(6);
- await page.getByRole('button',{name:/마감 임박/}).click();await expect(page.locator('article')).toHaveCount(4);
+ await page.getByLabel('정렬',{exact:true}).selectOption('verified');
+ await expect(page.locator('article')).toHaveCount(5);await expect(page.locator('#results')).not.toContainText('생활지원 신청 안내');
+ await expect(page).toHaveURL(/q=/);await page.reload();await expect(page.locator('article')).toHaveCount(5);
+ await expect(page.getByLabel('정렬',{exact:true})).toHaveValue('verified');
+ await page.getByLabel('정렬',{exact:true}).selectOption('title');await page.goBack();await expect(page.getByLabel('정렬',{exact:true})).toHaveValue('verified');
+ await page.getByRole('button',{name:'필터 초기화',exact:true}).first().click();await expect(page.locator('article')).toHaveCount(5);
+ await expect(page.getByLabel('내 지역',{exact:true})).toHaveValue('강서구');
+ await page.getByLabel('내 지역',{exact:true}).selectOption('');await expect(page.locator('article')).toHaveCount(6);
+ await page.getByRole('button',{name:/곧 끝남/}).click();await expect(page.locator('article')).toHaveCount(4);await expect(page).toHaveURL(/status=urgent/);
 });
 test('official links and complete detail conditions',async({page})=>{
  await setup(page);await page.goto('./');
@@ -60,7 +62,7 @@ test('official links and complete detail conditions',async({page})=>{
  await expect(card.locator('.detail-list')).not.toContainText('결제 재원');
  await page.getByRole('dialog').getByRole('button',{name:'상세 조건 닫기'}).click();
  const plain=page.locator('article').filter({hasNot:page.locator('.payment-terms')}).first();await plain.locator('.card-open').click();
- await expect(plain.locator('.detail-list')).toContainText('결제 조건 따로 정리 안 됨');await expect(plain).not.toContainText('결제 재원');
+ await expect(plain.getByRole('dialog')).toContainText(/따로 정리되지 않은 항목: .*결제 조건/);await expect(plain).not.toContainText('결제 재원');
  await capture(page,'details-plain');await page.getByRole('dialog').getByRole('button',{name:'상세 조건 닫기'}).click();
  await card.locator('.card-open').click();
  for(const link of await card.locator('a').all()){
@@ -84,7 +86,7 @@ for(const [name,body,title]of [
 });
 test('empty search, filter reset and partial collection warning',async({page})=>{
  await setup(page);await page.goto('./');await expect(page.getByText(/수집 실패 1곳/)).toBeVisible();
- await page.getByLabel('혜택·조건·지역·기관 검색').fill('존재하지않는검색어');
+ await page.getByLabel('검색',{exact:true}).fill('존재하지않는검색어');
  await expect(page.locator('article')).toHaveCount(0);await expect(page.getByText('조건에 맞는 검증 항목이 없어요')).toBeVisible();await capture(page,'state-no-results');
  await page.getByRole('button',{name:'필터 초기화',exact:true}).last().click();await expect(page.locator('article')).toHaveCount(6);
 });
@@ -105,30 +107,32 @@ test('open tab gates the whole file when valid_through passes',async({page})=>{
  await setup(page,snapshot(items,{valid_through:'2026-11-04T12:00:03+09:00'}));await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
  await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.getByText('최신 브리핑을 기다리고 있어요',{exact:true})).toBeVisible();
 });
-test('remembered interests persist locally, shared URLs win, and stored defaults can be deleted',async({page})=>{
+test('my district is remembered automatically, shared URLs win, and stored values can be deleted',async({page})=>{
  await setup(page);await page.goto('./');
- await page.getByLabel('지역',{exact:true}).selectOption('강서구');
- await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역 저장'}).click();
- await expect(page.getByText('이 브라우저에 지역을 저장했습니다.',{exact:true})).toBeVisible();
- await page.goto('./');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('강서구');await expect(page.locator('article')).toHaveCount(2);
+ await page.getByLabel('내 지역',{exact:true}).selectOption('강서구');
+ await expect(page.locator('.region-hint')).toContainText('강서구 혜택과 서울·전국 공통 혜택을 함께');
+ await page.goto('./');await expect(page.getByLabel('내 지역',{exact:true})).toHaveValue('강서구');await expect(page.locator('article')).toHaveCount(5);
  await expect(page).toHaveURL(/region=/);
- await page.goto('./?q=생활지원');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('');await expect(page.locator('article')).toHaveCount(1);
- await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'저장값 삭제'}).click();
- await expect(page.getByText('저장값을 삭제했습니다. 현재 검색 필터는 유지됩니다.',{exact:true})).toBeVisible();
- await page.goto('./');await expect(page.getByLabel('지역',{exact:true})).toHaveValue('');await expect(page.locator('article')).toHaveCount(6);
+ await page.goto('./?q=생활지원');await expect(page.getByLabel('내 지역',{exact:true})).toHaveValue('');await expect(page.locator('article')).toHaveCount(1);
+ await page.getByRole('button',{name:'저장한 것 모두 지우기'}).click();
+ await expect(page.getByText('이 브라우저에 저장한 즐겨찾기·내 지역·방문 기록을 지웠습니다.',{exact:true})).toBeVisible();
+ await page.goto('./');await expect(page.getByLabel('내 지역',{exact:true})).toHaveValue('');await expect(page.locator('article')).toHaveCount(6);
 });
-test('blocked localStorage preserves discovery and announces save failure',async({page})=>{
+test('blocked localStorage preserves discovery and announces delete failure',async({page})=>{
+ const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
  await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new DOMException('Blocked','SecurityError');}}));
  await setup(page);await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
- await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'현재 지역 저장'}).click();
- await expect(page.getByText('저장하지 못했습니다.',{exact:false})).toBeVisible();await expect(page.locator('article')).toHaveCount(6);
+ await page.getByLabel('내 지역',{exact:true}).selectOption('강서구');await expect(page.locator('article')).toHaveCount(5);
+ await page.getByRole('button',{name:'저장한 것 모두 지우기'}).click();
+ await expect(page.getByText('일부를 지우지 못했습니다.',{exact:false})).toBeVisible();await expect(page.locator('article')).toHaveCount(5);
+ expect(errors).toEqual([]);
 });
 
-test('corrupt stored preferences can still be explicitly deleted',async({page})=>{
- await page.addInitScript(()=>localStorage.setItem('benefit-monitor:interests:v1','broken'));
+test('corrupt stored preferences are ignored and can still be explicitly deleted',async({page})=>{
+ await page.addInitScript(()=>{if(!sessionStorage.getItem('seeded')){sessionStorage.setItem('seeded','1');localStorage.setItem('benefit-monitor:interests:v1','broken');}});
  await setup(page);await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
- await page.locator('.interest-settings summary').click();await expect(page.getByText('저장한 관심 설정이 없습니다.',{exact:true})).toBeVisible();
- await page.getByRole('button',{name:'저장값 삭제'}).click();
+ await expect(page.getByLabel('내 지역',{exact:true})).toHaveValue('');
+ await page.getByRole('button',{name:'저장한 것 모두 지우기'}).click();
  expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:interests:v1'))).toBeNull();
 });
 test('favorites persist, remain filterable and return focus after removal',async({page})=>{
@@ -149,21 +153,9 @@ test('blocked favorite storage never shows a false saved state',async({page})=>{
  await setup(page);await page.goto('./');const button=page.getByRole('button',{name:'[테스트] 문화 체험 안내 즐겨찾기',exact:true});await button.click();
  await expect(button).toHaveAttribute('aria-pressed','false');await expect(page.getByText('저장하지 못했습니다. 최대 200개 한도와 브라우저 저장소 설정을 확인하세요.',{exact:true})).toBeVisible();
 });
-test('sharing flushes pending search and copies only current search filters',async({page})=>{
- await page.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async(value:string)=>{(window as any).__copiedSearch=value;}}}));
- await setup(page);await page.goto('./?tracking=private#results');await page.getByLabel('혜택·조건·지역·기관 검색').fill('문화 회원');await page.getByRole('button',{name:'검색 조건 공유'}).click();
- await expect(page.getByText('검색 조건 링크를 복사했습니다. 즐겨찾기는 공유되지 않습니다.',{exact:true})).toBeVisible();
- const copied=await page.evaluate(()=>(window as any).__copiedSearch);const url=new URL(copied);expect(url.searchParams.get('q')).toBe('문화 회원');expect(url.searchParams.has('tracking')).toBe(false);expect(url.searchParams.get('sort')).toBe('deadline');expect(url.hash).toBe('');
-});
-test('clipboard denial leaves a selectable read-only share link',async({page})=>{
- await page.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw new DOMException('Denied','NotAllowedError');}}}));
- await setup(page);await page.goto('./');await page.getByRole('button',{name:'검색 조건 공유'}).click();
- await expect(page.getByText('자동 복사를 사용할 수 없습니다. 아래 링크를 선택해 직접 복사하세요.',{exact:true})).toBeVisible();
- const link=page.getByLabel('공유할 검색 링크');await expect(link).toHaveAttribute('readonly','');await link.focus();expect(await link.evaluate((input:HTMLInputElement)=>input.selectionEnd!-input.selectionStart!)).toBe((await link.inputValue()).length);
-});
 test('all favorites can be cleared even when the stored record is corrupt',async({page})=>{
  await page.addInitScript(()=>localStorage.setItem('benefit-monitor:favorites:v1','broken'));await setup(page);await page.goto('./');
- await page.locator('.interest-settings summary').click();await page.getByRole('button',{name:'즐겨찾기 모두 해제'}).click();
+ await page.getByRole('button',{name:'저장한 것 모두 지우기'}).click();
  expect(await page.evaluate(()=>localStorage.getItem('benefit-monitor:favorites:v1'))).toBeNull();await expect(page.locator('article')).toHaveCount(6);
 });
 const reviewedValue={kind:'discount_rate',value:10,qualifier:'up_to',conditions:'[테스트] 최소 결제와 지정 재원 조건을 확인하세요. <img src=x onerror=alert(1)>',evidence_url:'https://mediahub.seoul.go.kr/archives/1',evidence_quote:'최대 10% 할인'};
@@ -188,12 +180,12 @@ test('numerical highlight disappears with item validity rather than surviving as
 test('compact header and Seoul-only filters ignore legacy hidden categories',async({page})=>{
  await setup(page);await page.goto('./?region=서울%206개%20야간%20상권&category=문화·체험');
  await expect(page.locator('#region option')).toHaveCount(26);
- await expect(page.locator('#region option').first()).toHaveText('서울시 전체');
+ await expect(page.locator('#region option').first()).toHaveText('서울 전체');
  await expect(page.locator('#category')).toHaveCount(0);
  await expect(page.locator('article')).toHaveCount(6);
- await expect(page.locator('header .overview')).toContainText('공개 혜택');
- await expect(page.locator('header .overview')).toContainText('데이터 갱신');
- await expect(page.locator('header .overview')).toContainText('마지막 사람 승인');
+ await expect(page.locator('header .updated')).toHaveText('오늘 06:55 갱신');
+ await expect(page.locator('header')).not.toContainText('마지막 사람 승인');
+ await expect(page.getByRole('tab',{name:/혜택/})).toContainText('6');
  await expect(page).not.toHaveURL(/category=/);
 });
 
@@ -213,9 +205,10 @@ test('AI 자동 공개 항목은 배지와 대조 원문 목록을 보이고 사
  await expect(page.locator('article')).toHaveCount(2);
  await expect(page.locator('.ai-badge')).toHaveCount(1);
  const card=page.locator('article',{hasText:'[테스트] AI 정리 항목'});
- await expect(card.locator('.ai-badge')).toHaveText('AI 정리 · 공식 원문 2곳 대조');
+ await expect(card.locator('.ai-badge')).toHaveText('AI 정리');
  await expect(page.locator('article').filter({hasNot:page.locator('.ai-badge')})).toHaveCount(1);
  await card.locator('.card-open').click();
+ await expect(card.getByRole('dialog').locator('.ai-review h3')).toHaveText('AI 정리 · 공식 원문 2곳 대조');
  const links=card.getByRole('dialog').locator('.ai-review a');
  await expect(links).toHaveCount(2);
  await expect(links.first()).toHaveAttribute('href','https://mediahub.seoul.go.kr/archives/20');

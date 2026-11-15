@@ -122,3 +122,18 @@ test('AI quality summary keeps counts and only official-link findings', () => {
   assert.deepEqual(q.findings[0].claims, [{ claim: 'GOLD 100원', quotes: ['GOLD 50원'] }]);
   assert.deepEqual(adapt(snapshot([item()]), NOW).aiQuality, { checked: null, held: 0, dismissed: 0, prioritized: 0, findings: [] });
 });
+test('card badge, verified age and header time are short forms of the same dates', async () => {
+ const {timingBadge,verifiedAge,updatedLabel}=await import('../src/benefits.ts');
+ const one=(o:Record<string,unknown>)=>adapt(snapshot([item(o)]),NOW).items[0];
+ assert.deepEqual(timingBadge(one({}),NOW),{label:'신청 마감 2일 남음',urgent:true});
+ assert.deepEqual(timingBadge(one({deadline_at:'2026-11-04T18:00:00+09:00',display_until:'2026-11-04T18:00:00+09:00'}),NOW),{label:'오늘 신청 마감',urgent:true});
+ assert.deepEqual(timingBadge(one({deadline_at:null,valid_until:'2026-11-04'}),NOW),{label:'오늘 끝남',urgent:true});
+ assert.deepEqual(timingBadge(one({deadline_at:null,valid_until:'2026-11-06'}),NOW),{label:'2일 남음',urgent:true});
+ assert.deepEqual(timingBadge(one({deadline_at:null,valid_until:'2026-12-31',display_until:'2026-11-10T00:00:00+09:00'}),NOW),{label:'12.31까지',urgent:false});
+ assert.deepEqual(timingBadge(one({deadline_at:null,valid_from:null,valid_until:null,validity_kind:'ongoing'}),NOW),{label:'상시',urgent:false});
+ assert.equal(verifiedAge(one({}),NOW),'오늘 확인');
+ assert.equal(verifiedAge(one({verified_at:'2026-10-25T06:00:00+09:00'}),NOW),'10일 전 확인');
+ assert.equal(updatedLabel('2026-11-04T05:08:14+09:00',NOW),'오늘 05:08 갱신');
+ assert.equal(updatedLabel('2026-11-03T05:08:14+09:00',NOW),'11.3 05:08 갱신');
+ assert.equal(updatedLabel(null,NOW),'');
+});

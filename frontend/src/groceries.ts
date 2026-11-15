@@ -283,3 +283,12 @@ export function discountStatus(d:{shown:DiscountLink[];more:number}):string{
  if(!d.shown.length)return '';
  return '진행 중인 공식 할인행사 '+d.shown.map(discountLine).join('; ')+(d.more?` 외 ${d.more}건`:'');
 }
+
+// 품목 앞 이모지(2026-11-15). 딱 맞는 이모지가 없으면 부류 대표 이모지를 쓴다. 장식일 뿐 가격·판정과 무관하다.
+export const CATEGORY_EMOJI:Record<string,string>={'채소':'🥬','과일':'🍎','육류·계란':'🥩','수산':'🐟','곡물·견과':'🌾','가공식품':'🥫'};
+export const GROCERY_EMOJI_FALLBACK='🛒';
+const FOOD_EMOJI:[string,string][]=[['토마토','🍅'],['양파','🧅'],['감자','🥔'],['고구마','🍠'],['당근','🥕'],['오이','🥒'],['마늘','🧄'],['고추','🌶️'],['브로콜리','🥦'],['파프리카','🫑'],['피망','🫑'],['가지','🍆'],['버섯','🍄'],['생강','🫚'],['콩나물','🌱'],['옥수수','🌽'],['사과','🍎'],['포도','🍇'],['샤인머스켓','🍇'],['귤','🍊'],['오렌지','🍊'],['바나나','🍌'],['딸기','🍓'],['수박','🍉'],['참외','🍈'],['멜론','🍈'],['복숭아','🍑'],['키위','🥝'],['레몬','🍋'],['망고','🥭'],['파인애플','🍍'],['체리','🍒'],['블루베리','🫐'],['아보카도','🥑'],['닭','🍗'],['계란','🥚'],['오징어','🦑'],['새우','🦐'],['굴','🦪'],['쌀','🍚'],['땅콩','🥜'],['밤','🌰'],['콩','🫘'],['우유','🥛'],['라면','🍜'],['치즈','🧀']];
+export function foodEmoji(name:string,category:string):string{
+ if(name==='배')return '🍐';
+ return FOOD_EMOJI.find(([word])=>name.includes(word))?.[1]??CATEGORY_EMOJI[category]??GROCERY_EMOJI_FALLBACK;
+}

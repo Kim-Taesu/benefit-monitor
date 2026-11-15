@@ -14,14 +14,17 @@ for(const width of [390,1440])test(`published cards and expiry fallback ${width}
   return route.continue();
  });
  await page.goto('./');
- await expect(page.locator('[data-topic="culture"]')).toContainText('문화·체험');
+ await page.getByRole('button',{name:/주제 더보기/}).click();
+ await expect(page.locator('[data-topic="culture"]')).toContainText('🎨 문화·체험');
+ await expect(page.locator('.topic-chip')).toHaveCount(1);
  await page.locator('[data-topic="culture"]').click();
  await expect(page.locator('#results article')).toHaveCount(1);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  mkdirSync('../.tools/goal-screenshots',{recursive:true});
  await page.screenshot({path:`../.tools/goal-screenshots/published-${width}.png`,fullPage:true});
  await page.clock.fastForward(2*3600000);
- await expect(page.locator('[data-topic="culture"]')).toContainText('전시·문화 체험');
+ // 승인 기한이 지나면 제목 단어 규칙으로 묶는다: 같은 항목이 다른 주제에도 잡힌다.
+ await expect(page.locator('[data-topic="culture"]')).toContainText('문화·체험');
  await expect(page.locator('#results article')).toHaveCount(1);
  expect(requests.every(x=>x===new URL(String(test.info().project.use.baseURL)).origin)).toBe(true);
 });

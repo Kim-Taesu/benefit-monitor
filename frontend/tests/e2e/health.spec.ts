@@ -72,7 +72,7 @@ for(const width of [390,1440])test(`health weekly card filters by kind and distr
  await expect(card).not.toContainText('전화로 예약하고');
  await expect(card).toContainText('새 공지 1건');
  await expect(card.locator('.health-weekly-district')).toHaveCount(3);
- await expect(card.locator('.grocery-badge.ai')).toHaveText(['AI 작성']);
+ await expect(card.locator('.grocery-badge.ai')).toHaveText(['🤖 AI 작성']);
  for(const d of await card.locator('.health-weekly-district').all())expect(await d.locator('.pick-line').count()).toBeLessThanOrEqual(1);
  await expect(card.getByText(/^외:/)).toHaveCount(1);
  await expect(card.getByRole('link',{name:/임신 준비 검사/})).toHaveAttribute('target','_blank');

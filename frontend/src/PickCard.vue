@@ -9,7 +9,7 @@ const rest=computed(()=>props.count-props.first);
 </script>
 <template>
   <article class="pick-card" :aria-labelledby="id+'-title'">
-    <div class="card-meta"><h3 :id="id+'-title'">{{ title }}</h3><span class="grocery-badge" :class="source==='ai'?'ai':'normal'">{{ source==='ai'?'AI 작성':'자동 선정' }}</span></div>
+    <div class="card-meta"><h3 :id="id+'-title'">{{ title }}</h3><span class="grocery-badge" :class="source==='ai'?'ai':'normal'">{{ source==='ai'?'🤖 AI 작성':'자동 선정' }}</span></div>
     <p v-if="summary" class="pick-summary">{{ summary }}</p>
     <slot :limit="limit" />
     <button v-if="!expanded&&rest>0" type="button" class="pick-more" @click="expanded=true">더 보기 ({{ rest }}{{ unit }} 남음)</button>
