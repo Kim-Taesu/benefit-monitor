@@ -1,5 +1,13 @@
 # 개선 진행 기록
 
+## 2026-11-16 — 혜택 추천 프롬프트 v3: 요약문에 후보의 "무료"를 옮겨 쓰지 않게
+
+- 작업 단위와 범위: 브랜치 `fix/benefit-prompt-no-free-in-summary`(main `6730344` 기준). PR #62 머지 뒤 `refresh_completed_day`로 오늘을 한 번 더 실행해 얻은 `picks.benefit`(`errors: [price]`, `detail: [summary:무료]`)이 근거다. 사용자가 "1번 진행"으로 승인했다([정책 대응표](policy-map.md) 2026-11-16 항목).
+- 변경 파일과 이유: `docs/ai/prompts/benefit-system.md`(v2→v3, 규칙 한 줄과 통과 예시 한 개 추가). 후보 제목·요약에 "무료"가 있어도 요약과 줄에 쓰지 않도록 한다. 검사 코드는 바꾸지 않았다.
+- 실제 실행한 검사·결과(2026-11-16): `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` → 실패 0(예시가 `benefit_pick.review`를 통과하는지 포함).
+- 미검증·관측 한계: 새 프롬프트에서 모델이 실제로 "무료"를 빼는지는 다음 AI 실행에서만 안다. 유료 호출은 하지 않았다.
+- 다음 작업과 주의사항: 머지 뒤 실행의 `picks.benefit`을 본다. 그래도 요약문이 탈락하면 소유자 판정 완화(예전 방식)를 별도 승인 사항으로 다시 검토한다.
+
 ## 2026-11-16 — 혜택 추천: 무료 혜택 줄의 "무료" 허용, 거절 사유를 실행 요약에 표시
 
 - 작업 단위와 범위: 브랜치 `fix/benefit-pick-free-line`(main `d092dea` 기준). 2026-11-16 혜택 추천이 규칙 카드로 나와 원인을 조사했고, 사용자가 제안 두 가지를 "ok"로 승인했다. 승인 범위는 [정책 대응표](policy-map.md)의 2026-11-16 항목.
