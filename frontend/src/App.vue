@@ -119,7 +119,12 @@ const notices:Record<string,{title:string;body:string}>={
  collection_failed:{title:'이번 수집을 완료하지 못했습니다',body:'수집 실패 또는 연결 미완료 상태입니다. 유효한 최신 목록을 확인할 수 없습니다.'},
  awaiting_verification:{title:'검증된 공개 혜택을 준비하고 있어요',body:'공개 승인된 검증 항목이 아직 없습니다. 실제 혜택이 없다는 뜻은 아닙니다.'},
 };
-const notice=computed(()=>notices[state.value]);
+// 만료 안내에는 마지막으로 갱신된 시각을 함께 보여 준다. 지난 항목 자체는 계속 숨긴다.
+const notice=computed(()=>{
+ const n=notices[state.value];
+ if(!n||state.value!=='stale'||!updated.value)return n;
+ return {...n,body:`마지막 갱신은 ${formatDate(updated.value)}입니다. 새 브리핑이 올라오면 자동으로 채워지니 잠시 뒤 다시 불러와 보세요. 이전 항목을 오늘의 유효한 혜택으로 표시하지 않습니다.`};
+});
 // 탭 옆 건수. 각 탭이 처음 보여 주는 목록의 건수와 같다.
 const counts=computed<Record<Tab,number|null>>(()=>({benefits:all.value.length,groceries:groceries.value?featuredRows(groceries.value.rows).length:null,festivals:parseFestivals(raw.value,groceryMinute.value)?.items.length??null,health:parseHealth(raw.value,groceryMinute.value)?.items.length??null}));
 // 보건소 탭의 지역은 내 지역과 함께 움직인다. 서울 25개 구가 아닌 곳(성남시)은 그 탭 안에서만 쓴다.
