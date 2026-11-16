@@ -65,7 +65,9 @@ def pack_runtime(root):
 # Paid work starts only with room for a full day of new runtime files under every limit.
 PREFLIGHT_FILES=MAX_FILES*3//4
 PREFLIGHT_BYTES=MAX_RUNTIME_BYTES*3//4
-PREFLIGHT_PACKED=6*1024*1024  # The encrypted file limit is 8 MiB.
+# 6 -> 7.5 MiB (approved 2026-11-16). The 0.5 MiB left is the margin for one run; its real growth per run
+# is not measured, so read the packed size from the next runs before raising this again.
+PREFLIGHT_PACKED=15*1024*1024//2  # The encrypted file limit is 8 MiB.
 
 
 def runtime_headroom(root):

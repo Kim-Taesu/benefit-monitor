@@ -53,6 +53,14 @@ class AgeStateTests(unittest.TestCase):
                 with self.assertRaises(ValueError):module.install(self.root,'Darwin','arm64')
         self.assertFalse((self.root/'.tools/bin/age').exists())
 
+    def test_packed_preflight_keeps_margin_under_the_encrypted_limit(self):
+        module=self.module('benefit_monitor.age_state')
+        self.assertEqual(module.PREFLIGHT_PACKED,7.5*1024*1024)  # 2026-11-16 approval; the encrypted limit is 8 MiB
+        folder=self.root/'cache/ai_review/documents';folder.mkdir(parents=True)
+        (folder/'a.json').write_text('{}')
+        with patch.object(module,'PREFLIGHT_PACKED',10):
+            self.assertEqual(module.runtime_headroom(self.root),'runtime_packed_near_limit')
+
     def test_many_small_artifacts_roundtrip_with_existing_byte_limits(self):
         module=self.module('benefit_monitor.age_state')
         folder=self.root/'cache/ai_review/documents';folder.mkdir(parents=True)
