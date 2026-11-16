@@ -104,7 +104,19 @@ class ReviewTests(unittest.TestCase):
                      '참가비 면제', '유료 아닙니다', '반액', '구매하면 돈 안 들어요', '오 퍼센트 할인', '천원', '무료', '공짜 수업',
                      '돈 안 들어요', '부담 없이', '부담이 없어요', '무상 지원', '입장료 안내', 'FREE 혜택', '공으로 받아요', '결제 없이 이용', '절반 가격'):
             self.assertIn('price', bp.review(one(CID, line), HOST), line)
-        self.assertIn('price', bp.review(one(BID, '무료 버스'), HOST))
+        # A paid or unknown benefit's line may never say it is free.
+        self.assertIn('price', bp.review(one(YID, '무료 요가 강좌'), HOST))
+
+    def test_free_benefit_line_may_say_free(self):
+        # 2026-11-16: the card shows the same fee_status beside the line, so the word adds no new claim.
+        for line in ('무료 버스', '무료 야간 자율주행버스', '공짜로 타는 버스', '무상 운행 버스'):
+            self.assertEqual(bp.review(one(BID, line), HOST), [], line)
+        # Other price words stay banned on a free benefit, and so does any price word in the summary.
+        for line in ('무료, 비용 없어요', '부담 없이 타는 무료 버스', '요금 안내'):
+            self.assertIn('price', bp.review(one(BID, line), HOST), line)
+        self.assertIn('price', bp.review(draft(summary='서울사랑상품권 행사와 청계 무료 야간 자율주행버스를 챙겨 보세요.'), HOST))
+        self.assertEqual(bp.price_hits('무료 버스예요', [dict(id=BID, line='무료 버스'), dict(id=CID, line='무료 행사')], HOST),
+                         ['line:무료', 'summary:무료'])
         self.assertIn('price', bp.review(draft(summary='요가 강좌와 화상면접실은 무료예요 한번 확인해 보세요.'), HOST))
         self.assertIn('price', bp.review(draft(summary='서울사랑상품권 행사와 화상면접실 모두 무료예요 확인해 보세요.'), HOST))
 
@@ -237,7 +249,7 @@ class PublicTests(unittest.TestCase):
         self.assertIsNone(bp.public(stored(), ITEMS[:2], [], NOW))  # below the 3-line floor
 
     def test_public_rereviews_against_current_items(self):
-        bad = stored(picks=[dict(id=CID, line='결제액 추가 페이백'), dict(id=BID, line='무료 버스'), dict(id=RID, line='화상면접실 이용')])
+        bad = stored(picks=[dict(id=CID, line='결제액 추가 페이백'), dict(id=BID, line='요금 없는 버스'), dict(id=RID, line='화상면접실 이용')])
         self.assertEqual(bp.public(bad, ITEMS, [], NOW)['source'], 'rule')
 
     def test_rule_pick_order_and_size(self):
@@ -282,6 +294,16 @@ class RefreshTests(unittest.TestCase):
         result, _, pick, _ = self.run_refresh(model=one(CID, '최대 15% 할인'))
         self.assertEqual(pick['source'], 'rule')
         self.assertIn('claim', result['errors'])
+
+    def test_refresh_reports_why_a_draft_was_rejected(self):
+        tmp = tempfile.TemporaryDirectory(dir=Path(bp.__file__).resolve().parents[1])
+        self.addCleanup(tmp.cleanup)
+        root = Path(tmp.name)
+        run = root / '.tools/claude-trial/live/runs/run2'
+        save(run / 'validation.json', {'valid': False, 'errors': ['price']})
+        save(run / 'rejected-result.json', one(CID, '참가비 면제'))
+        result, _, pick, _ = self.run_refresh(root=root, invoke_result={'status': 'rejected_draft', 'run_id': 'run2'})
+        self.assertEqual((pick['source'], result['errors'], result['detail']), ('rule', ['price'], ['line:참가비', 'line:면제']))
 
     def test_no_spend_without_execute(self):
         _, calls, pick, _ = self.run_refresh(execute=False)
