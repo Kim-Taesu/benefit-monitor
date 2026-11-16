@@ -109,6 +109,17 @@ TAB_PICKS=(('cache/festival_pick/pick.json','ai-festival-pick.json','Update AI f
            ('cache/benefit_pick/pick.json','ai-benefit-pick.json','Update AI benefit pick'))
 
 
+def pick_report(result):
+    """Why today's festival and benefit cards are AI or rule text: source, model status and error codes only."""
+    report={}
+    for name in ('festival','benefit'):
+        row=result.get(name) if isinstance(result.get(name),dict) else {}
+        model=row.get('model') if isinstance(row.get('model'),dict) else {}
+        report[name]={'status':row.get('status'),'source':row.get('source'),'model':model.get('status'),
+                      'errors':row.get('errors') or [],'detail':row.get('detail') or []}
+    return report
+
+
 def upload_tab_picks(root,store):
     """Best effort copy of today's festival and benefit picks (2026-11-14) to briefing-data, so collection-only
     runs keep the AI text. Returns the names written; a failure skips that file and never raises."""
@@ -357,7 +368,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
         session.finish(day,'completed')
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
-                'halted':after['halted'],'retried_day':retried,'measurement':{k:v for k,v in measurement.items() if k!='request_ids'}}
+                'halted':after['halted'],'retried_day':retried,'picks':pick_report(result),'measurement':{k:v for k,v in measurement.items() if k!='request_ids'}}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')

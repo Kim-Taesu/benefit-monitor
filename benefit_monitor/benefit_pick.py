@@ -2,8 +2,8 @@
 
 Approved 2026-11-14 (same exception as grocery_pick and festival_pick): the model's summary and one-line notes may be
 published with an "AI 작성" label, only after review() confirms every date and number belongs to the benefit it
-describes, "무료" matches the benefit's fee status, a paid benefit's line states its cost, and no guarantee, eligibility
-or stock claim appears. Titles, links and conditions on the page always come from the published items. Any failure falls
+describes, no price word appears (a free benefit's own line may say it is free, 2026-11-16), and no guarantee,
+eligibility or stock claim appears. Titles, links and conditions on the page always come from the published items. Any failure falls
 back to rule_pick(): no model text. A pick never changes which benefits are published or their order.
 """
 from datetime import datetime, timedelta
@@ -79,6 +79,9 @@ def host(items, now):
 PRICE = re.compile(r'무료|공짜|무상|유료|비용|참가비|수강료|입장료|요금|가격|면제|반값|반액|절반|퍼센트|할인율|[천만억]\s*원'
                    r'|(?<![가-힣])돈(?![가-힣]{2,})|(?<![가-힣])돈(?:[을이은도만]|으로|없|\s|$)|부담\s*(?:없|덜|이\s*없|스럽지\s*않)'
                    r'|free|공으로|(?:구매|결제)(?:하지)?\s*(?:안|않|없|말)', re.IGNORECASE)
+# 2026-11-16: a free benefit's own line may say it is free. The card shows the same fee_status next to it, so the word
+# adds no new claim. The summary and every other price word stay banned.
+FREE = re.compile(r'무료|공짜|무상')
 DIGITS = re.compile('[0-9\uff10-\uff19]')
 RELATIVE = re.compile(r'오늘|내일|모레|이번\s?주|다음\s?주|주말|월말|연말')
 QUOTED = re.compile(r"['\"‘’“”]([^'\"‘’“”]{2,})['\"‘’“”]")
@@ -136,11 +139,23 @@ def _check(summary, picks, host):
     # Dates, amounts and deadlines are shown by the page from the data, never typed by the model.
     if any(DIGITS.search(t) or RELATIVE.search(t) for t in texts):
         errors.append('number')
-    if any(PRICE.search(t) for t in texts):
+    if price_hits(summary, picks, host):
         errors.append('price')
     if summary is not None and any(c['id'] not in ids for _, c in _mentions(summary, host['candidates'])):
         errors.append('summary_item')
     return errors
+
+
+def price_hits(summary, picks, host):
+    """['line:무료', 'summary:부담 없'] for every banned price word; empty when the text may be shown."""
+    by_id = {c['id']: c for c in host['candidates']}
+    hits = []
+    for p in picks:
+        line = p['line'] or ''
+        if (by_id.get(p['id']) or {}).get('fee_status') == 'free':
+            line = FREE.sub(' ', line)
+        hits += ['line:' + m.group() for m in PRICE.finditer(line)]
+    return hits + ['summary:' + m.group() for m in PRICE.finditer(summary or '')]
 
 
 def review(draft, host):
@@ -262,7 +277,7 @@ def refresh(root, now, execute=False, items=None):
         state = load(project_path(root, 'cache/benefit_pick/days.json'), {'days': {}})
         day = now.date().isoformat()
         previous = load(out, None)
-        pick, model, errors = None, {'status': 'not_requested', 'run_id': None}, []
+        pick, model, errors, detail = None, {'status': 'not_requested', 'run_id': None}, [], []
         if current is not None and execute and day not in state['days']:
             digest = hashlib.sha256(json.dumps(current, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:16]
             input_path = project_path(root, f'.tools/ai-benefit-inputs/{day}-{digest}.json')
@@ -280,10 +295,20 @@ def refresh(root, now, execute=False, items=None):
                                     summary=draft['summary'], picks=draft['picks'])
                 except (OSError, ValueError, KeyError, TypeError):
                     errors = ['draft_unreadable']
+            elif model['status'] == 'rejected_draft':
+                # The trial CLI already ran review(); copy its codes so the run summary says why today is a rule card.
+                try:
+                    folder = TRIAL_RUNS / model['run_id']
+                    errors = [str(e)[:80] for e in load(folder / 'validation.json', {}).get('errors', [])][:20]
+                    rejected = load(folder / 'rejected-result.json', None)
+                    if 'price' in errors:
+                        detail = price_hits(rejected['summary'], rejected['picks'], current)[:20]
+                except (OSError, ValueError, KeyError, TypeError, AttributeError):
+                    errors = errors or ['rejection_unreadable']
             state['days'][day].update(model)
             save(project_path(root, 'cache/benefit_pick/days.json'), state)
         elif isinstance(previous, dict) and _keep(previous, day, now):
             pick = previous  # Publication re-checks it against the live items.
         pick = pick or rule_pick(_input(rows, now), now)
         save(out, pick)
-        return {'status': 'completed', 'source': pick['source'], 'model': model, 'errors': errors}
+        return {'status': 'completed', 'source': pick['source'], 'model': model, 'errors': errors, 'detail': detail}

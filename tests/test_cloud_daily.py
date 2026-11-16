@@ -312,7 +312,15 @@ class CloudDailyTests(unittest.TestCase):
             result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
         self.assertEqual((result['status'],result['provider_failures'],result['halted']),('completed',[],False))
         self.assertEqual(result['measurement'],{'today':[],'summary':[],'provider_failures':['http_400']})
+        self.assertEqual(result['picks']['benefit'],{'status':None,'source':None,'model':None,'errors':[],'detail':[]})
         self.assertEqual(m.exit_code(result),0)
+
+    def test_pick_report_keeps_codes_only(self):
+        from benefit_monitor.cloud_daily import pick_report
+        report=pick_report({'benefit':{'status':'completed','source':'rule','model':{'status':'rejected_draft','run_id':'r'},
+                                       'errors':['price'],'detail':['line:무료']},'festival':None})
+        self.assertEqual(report['benefit'],{'status':'completed','source':'rule','model':'rejected_draft','errors':['price'],'detail':['line:무료']})
+        self.assertEqual(report['festival'],{'status':None,'source':None,'model':None,'errors':[],'detail':[]})
 
     def test_provider_rejection_finishes_day_but_exits_red(self):
         m=self.module()
