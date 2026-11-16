@@ -1,5 +1,13 @@
 # 개선 진행 기록
 
+## 2026-11-16 — 실행 상태 용량: 사전 압축 한도 7.5 MiB, 산출물 보관 5일
+
+- 작업 단위와 범위: 브랜치 `fix/runtime-headroom-retention`(main `8fbc7d0` 기준). 혜택 추천 프롬프트 v3 머지 뒤 오늘 재실행이 `runtime_packed_near_limit`(압축 6 MiB 사전 점검)으로 유료 호출 없이 멈췄다. 사용자가 "7 MiB보다 넉넉하게"와 "5일로 줄여"로 승인했다([정책 대응표](policy-map.md)).
+- 변경 파일과 이유: `age_state.py`(`PREFLIGHT_PACKED` 6→7.5 MiB, 암호문 상한 8 MiB는 그대로), `runtime_retention.py`(`KEEP_DAYS` 7→5), 테스트 `test_age_state.py`·`test_runtime_retention.py`, 문서 `automation.md`.
+- 실제 실행한 검사·결과(2026-11-16): `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` → 1037개 실행, 실패 0.
+- 미검증·관측 한계: 실제 압축 크기와 실행 한 번당 증가량은 암호화돼 있어 보지 못했다. 정리 0건의 이유(참조 중인지, 오래된 것이 없는지)도 확인하지 못했다. 응답 캐시는 원장이 가리켜 정리 대상이 아니라 이 변경으로 증가가 멈추지는 않는다.
+- 다음 작업과 주의사항: 다음 실행들에서 `retention` 건수를 보고, 7.5 MiB 가까이 계속 오르면 응답 캐시 정리 방안을 사람이 검토한다.
+
 ## 2026-11-16 — 혜택 추천 프롬프트 v3: 요약문에 후보의 "무료"를 옮겨 쓰지 않게
 
 - 작업 단위와 범위: 브랜치 `fix/benefit-prompt-no-free-in-summary`(main `6730344` 기준). PR #62 머지 뒤 `refresh_completed_day`로 오늘을 한 번 더 실행해 얻은 `picks.benefit`(`errors: [price]`, `detail: [summary:무료]`)이 근거다. 사용자가 "1번 진행"으로 승인했다([정책 대응표](policy-map.md) 2026-11-16 항목).

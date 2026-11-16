@@ -9,7 +9,7 @@ from benefit_monitor.store import save
 
 NOW = datetime.fromisoformat('2026-11-30T07:00:00+09:00')
 OLD = (NOW - timedelta(days=8)).isoformat()
-NEW = (NOW - timedelta(days=6)).isoformat()  # KEEP_DAYS is 7 (2026-11-14)
+NEW = (NOW - timedelta(days=4)).isoformat()  # KEEP_DAYS is 5 (2026-11-16)
 
 
 def h(char):
