@@ -106,6 +106,7 @@ test('no JavaScript exposes dated text alternative',async({browser})=>{
 test('open tab gates the whole file when valid_through passes',async({page})=>{
  await setup(page,snapshot(items,{valid_through:'2026-11-04T12:00:03+09:00'}));await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
  await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.getByText('최신 브리핑을 기다리고 있어요',{exact:true})).toBeVisible();
+ await expect(page.getByText(/마지막 갱신은 20\d\d\.\d\d\.\d\d \d\d:\d\d \(KST\)입니다/)).toBeVisible();
 });
 test('my district is remembered automatically, shared URLs win, and stored values can be deleted',async({page})=>{
  await setup(page);await page.goto('./');
