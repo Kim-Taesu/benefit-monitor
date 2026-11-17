@@ -498,7 +498,7 @@ def main(argv=None, now=None):
             print(" ", item["steps"][0]["start"], item["area"], item["district"] or "-", item["name"], item["detail"], item["trade_status"],
                   [(r["label"], r["trade"]) for r in item["types"] if r["trade"]])
         return 0
-    try:  # 실거래 캐시는 비공개 보조 자료: 저장 실패가 청약 묶음 저장을 막지 않는다
+    try:  # 실거래 캐시는 briefing.json에 싣지 않는 보조 자료: 저장 실패가 청약 묶음 저장을 막지 않는다
         _, trade_sha = mirror._get(args.repository, real_trades.NAME)
         mirror._put(args.repository, real_trades.NAME, trade_cache, trade_sha)
     except Exception:
