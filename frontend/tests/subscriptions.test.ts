@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseSubscriptions,groupByDay,timeline,badge,formatPrice,formatArea,filterSubs,isMine,typeSplit,specialSummary,priceOne} from '../src/subscriptions.ts';
+import {parseSubscriptions,groupByDay,timeline,badge,formatPrice,formatArea,filterSubs,isMine,typeSplit,specialSummary,priceOne,tradeText} from '../src/subscriptions.ts';
 
 const NOW=Date.parse('2026-11-17T09:00:00+09:00');
 const APT='https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000497&pblancNo=2026000497';
@@ -8,8 +8,8 @@ const item=(over:Record<string,unknown>={})=>({id:'2026000497',name:'중화역 �
  area_min:45.02,area_max:126.81,price_min:65800,price_max:202100,move_in:'2029-02',regulation:['투기과열지구'],
  steps:[{label:'특별공급',start:'2026-11-16',end:'2026-11-16'},{label:'1순위',start:'2026-11-17',end:'2026-11-18'},{label:'2순위',start:'2026-11-19',end:'2026-11-19'}],
  announce:'2026-11-25',contract_start:'2026-12-07',contract_end:'2026-12-09',url:APT,detail:'checked',checked_at:'2026-11-17T00:12:00+09:00',
- supply:'아파트 분양',notice_date:'2026-11-06',types:[{label:'45',area:45.02,pyeong:18,general:4,special:3,price:65800},{label:'84',area:84.99,pyeong:33,general:15,special:20,price:127700}],
- special_kinds:[{name:'신혼부부',count:20},{name:'다자녀가구',count:13},{name:'생애최초',count:9},{name:'신생아',count:9},{name:'노부모부양',count:3}],
+ supply:'아파트 분양',notice_date:'2026-11-06',types:[{label:'45',area:45.02,pyeong:18,general:4,special:3,price:65800,trade:null},{label:'84',area:84.99,pyeong:33,general:15,special:20,price:127700,trade:{amount:296000,month:'2026-07',kind:'매매'}}],
+ trade_status:'checked',special_kinds:[{name:'신혼부부',count:20},{name:'다자녀가구',count:13},{name:'생애최초',count:9},{name:'신생아',count:9},{name:'노부모부양',count:3}],
  notice_pdf:'https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000497&pblancNo=2026000497&atchmnflSeqNo=2015048&atchmnflSn=2',...over});
 const raw=(items:unknown[],over:Record<string,unknown>={})=>({subscriptions:{schema_version:1,source:'subscriptions',fetched_at:'2026-11-17T00:12:00+09:00',window_days:14,notice:'청약홈',items,...over}});
 const step=(label:string,start:string,end=start)=>({label,start,end});
@@ -84,11 +84,22 @@ test('per-type rows, special supply summary and notice PDF link',()=>{
  const r=parseSubscriptions(raw([item()]),NOW)!.items[0];
  assert.equal(r.noticePdf?.startsWith('https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?'),true);
  assert.equal(typeSplit(r.types[0]),'일반 4 · 특공 3');
- assert.equal(typeSplit({label:'84D',area:84.96,pyeong:34,general:0,special:1,price:185607}),'특공 1');
- assert.equal(typeSplit({label:'74A',area:74,pyeong:null,general:null,special:null,price:null}),'');
+ assert.equal(typeSplit({label:'84D',area:84.96,pyeong:34,general:0,special:1,price:185607,trade:null}),'특공 1');
+ assert.equal(typeSplit({label:'74A',area:74,pyeong:null,general:null,special:null,price:null,trade:null}),'');
  assert.equal(specialSummary(r.specialKinds),'특공 54세대: 신혼부부 20 · 다자녀가구 13 · 생애최초 9 · 신생아 9 외 1종');
  assert.equal(priceOne(null),'문의');
  assert.equal(priceOne(110548),'11.1억');
  assert.equal(parseSubscriptions(raw([item({notice_pdf:'https://evil.example/x.pdf'})]),NOW),null);
- assert.equal(parseSubscriptions(raw([item({types:[{label:'<b>',area:1,pyeong:null,general:null,special:null,price:null}]})]),NOW),null);
+ assert.equal(parseSubscriptions(raw([item({types:[{label:'<b>',area:1,pyeong:null,general:null,special:null,price:null,trade:null}]})]),NOW),null);
+});
+
+test('trade cell text and bad trade rejected',()=>{
+ const r=parseSubscriptions(raw([item()]),NOW)!.items[0];
+ assert.equal(r.tradeStatus,'checked');
+ assert.deepEqual(tradeText(r.types[1].trade),{price:'29.6억',note:'매매 26.07'});
+ assert.equal(tradeText(null),null);
+ const bad=(trade:unknown)=>raw([item({types:[{label:'45',area:45.02,pyeong:18,general:4,special:3,price:65800,trade}]})]);
+ assert.equal(parseSubscriptions(bad({amount:1,month:'2026-07',kind:'시세'}),NOW),null);
+ assert.equal(parseSubscriptions(bad({amount:1,month:'2026-07',kind:'매매',buyer:'개인'}),NOW),null);
+ assert.equal(parseSubscriptions(raw([item({trade_status:'maybe'})]),NOW),null);
 });

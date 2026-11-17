@@ -2,10 +2,11 @@
 // (dates, district, units, area and top-price ranges). Eligibility and win chances are never judged here.
 export type SubKind='apt'|'remain'|'officetel'|'rental';
 export interface SubStep{label:string;start:string;end:string}
-export interface SubType{label:string;area:number;pyeong:number|null;general:number|null;special:number|null;price:number|null}
+export interface SubTrade{amount:number;month:string;kind:'입주권'|'분양권'|'매매'}
+export interface SubType{label:string;area:number;pyeong:number|null;general:number|null;special:number|null;price:number|null;trade:SubTrade|null}
 export interface SubKindCount{name:string;count:number}
 export interface Subscription{id:string;name:string;area:'서울'|'경기';district:string|null;kind:SubKind;supply:string;units:number|null;
- noticeDate:string|null;types:SubType[];specialKinds:SubKindCount[];noticePdf:string|null;
+ noticeDate:string|null;types:SubType[];specialKinds:SubKindCount[];noticePdf:string|null;tradeStatus:'checked'|'unavailable';
  areaMin:number|null;areaMax:number|null;priceMin:number|null;priceMax:number|null;moveIn:string|null;regulation:string[];
  steps:SubStep[];announce:string|null;contractStart:string|null;contractEnd:string|null;url:string;detail:'checked'|'failed';checkedAt:string|null}
 export interface SubscriptionBundle{fetchedAt:string;notice:string;windowDays:number;items:Subscription[]}
@@ -13,7 +14,7 @@ export interface TimelineStep{label:string;text:string;state:'done'|'now'|'next'
 export interface SubGroup{key:string;label:string;items:Subscription[]}
 export type KindFilter=''|'apt'|'remain'|'etc';
 
-const KEYS=['id','name','area','district','kind','supply','units','notice_date','types','special_kinds','notice_pdf','area_min','area_max','price_min','price_max','move_in','regulation','steps',
+const KEYS=['id','name','area','district','kind','supply','units','notice_date','types','special_kinds','notice_pdf','trade_status','area_min','area_max','price_min','price_max','move_in','regulation','steps',
  'announce','contract_start','contract_end','url','detail','checked_at'];
 const KINDS:SubKind[]=['apt','remain','officetel','rental'];
 const DATE=/^\d{4}-\d{2}-\d{2}$/;
@@ -42,12 +43,19 @@ function parseItem(v:unknown):Subscription|null{
  }
  if(!day(v.announce)||!day(v.contract_start)||!day(v.contract_end)||!day(v.notice_date))return null;
  if(typeof v.supply!=='string'||!v.supply||v.supply.length>20)return null;
+ if(v.trade_status!=='checked'&&v.trade_status!=='unavailable')return null;
  if(!Array.isArray(v.types)||v.types.length>40||!Array.isArray(v.special_kinds)||v.special_kinds.length>12)return null;
  const types:SubType[]=[];
  for(const x of v.types){
-  if(!record(x)||Object.keys(x).length!==6||typeof x.label!=='string'||!/^\d{1,3}[A-Z]{0,4}$/.test(x.label)||typeof x.area!=='number'||!num(x.area,1000)||!num(x.pyeong,400)||!num(x.price,1e7))return null;
+  if(!record(x)||Object.keys(x).length!==7||typeof x.label!=='string'||!/^\d{1,3}[A-Z]{0,4}$/.test(x.label)||typeof x.area!=='number'||!num(x.area,1000)||!num(x.pyeong,400)||!num(x.price,1e7))return null;
   if(!count(x.general)||!count(x.special))return null;
-  types.push({label:x.label,area:x.area,pyeong:x.pyeong,general:x.general,special:x.special,price:x.price});
+  let trade:SubTrade|null=null;
+  if(x.trade!==null){
+   const r=x.trade;
+   if(!record(r)||Object.keys(r).length!==3||typeof r.amount!=='number'||!num(r.amount,1e7)||typeof r.month!=='string'||!/^\d{4}-(0[1-9]|1[0-2])$/.test(r.month)||!['입주권','분양권','매매'].includes(r.kind as string))return null;
+   trade={amount:r.amount,month:r.month,kind:r.kind as SubTrade['kind']};
+  }
+  types.push({label:x.label,area:x.area,pyeong:x.pyeong,general:x.general,special:x.special,price:x.price,trade});
  }
  const specialKinds:SubKindCount[]=[];
  for(const x of v.special_kinds){
@@ -63,7 +71,7 @@ function parseItem(v:unknown):Subscription|null{
  try{url=new URL(String(v.url));}catch{return null;}
  if(url.protocol!=='https:'||url.hostname!=='www.applyhome.co.kr'||url.username||url.password)return null;
  return {id:v.id,name:v.name,area:v.area,district:v.district as string|null,kind:v.kind as SubKind,supply:v.supply,units:v.units,
-  noticeDate:v.notice_date,types,specialKinds,noticePdf:pdf,areaMin:v.area_min,areaMax:v.area_max,
+  noticeDate:v.notice_date,types,specialKinds,noticePdf:pdf,tradeStatus:v.trade_status,areaMin:v.area_min,areaMax:v.area_max,
   priceMin:v.price_min,priceMax:v.price_max,moveIn:v.move_in as string|null,regulation:[...v.regulation as string[]],steps,announce:v.announce,
   contractStart:v.contract_start,contractEnd:v.contract_end,url:url.href,detail:v.detail,checkedAt:v.checked_at as string|null};
 }
@@ -169,3 +177,8 @@ export function specialSummary(kinds:SubKindCount[],max=4):string{
  return `특공 ${total}세대: ${shown.join(' · ')}${kinds.length>max?` 외 ${kinds.length-max}종`:''}`;
 }
 export function priceOne(manwon:number|null):string{return manwon===null?'문의':formatPrice(manwon,manwon)!;}
+/** 실거래 칸: '43.0억' + '입주권 26.07'. */
+export function tradeText(t:SubTrade|null):{price:string;note:string}|null{
+ if(!t)return null;
+ return {price:formatPrice(t.amount,t.amount)!,note:`${t.kind} ${t.month.slice(2,4)}.${t.month.slice(5,7)}`};
+}

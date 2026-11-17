@@ -58,10 +58,11 @@ SUPPLY_BY_CODE = {"01": "아파트 분양", "02": "아파트 분양", "03": "아
 LABELS = set(STEP_LABELS.values()) | {"일반공급"}
 PDF_HOST = "static.applyhome.co.kr"
 PDF = re.compile(r'href="(https://static\.applyhome\.co\.kr/ai/aia/getAtchmnfl\.do\?[^"<>\s]+)"')
-TYPE_KEYS = {"label", "area", "pyeong", "general", "special", "price"}
+TYPE_KEYS = {"label", "area", "pyeong", "general", "special", "price", "trade"}
+TRADE_KINDS = ("입주권", "분양권", "매매")
 PYEONG = 3.3058
 REGULATIONS = ("투기과열지구", "청약과열지역", "조정대상지역", "분양가상한제")
-ITEM_KEYS = {"id", "name", "area", "district", "kind", "supply", "units", "notice_date", "types", "special_kinds", "notice_pdf", "area_min", "area_max", "price_min", "price_max",
+ITEM_KEYS = {"id", "name", "area", "district", "kind", "supply", "units", "notice_date", "types", "special_kinds", "notice_pdf", "trade_status", "area_min", "area_max", "price_min", "price_max",
              "move_in", "regulation", "steps", "announce", "contract_start", "contract_end", "url", "detail", "checked_at"}
 DETAIL_KEYS = ("district", "units", "area_min", "area_max", "price_min", "price_max", "move_in", "regulation",
                "announce", "contract_start", "contract_end", "notice_date", "types", "special_kinds", "notice_pdf")
@@ -296,7 +297,7 @@ def collect(source, now, previous=None):
     for g in group(rows, today):
         base = dict(id=g["id"], name=g["name"], area=g["area"], kind=g["kind"], supply=g["supply"], steps=g["steps"],
                     url=public_url(g), detail="failed", checked_at=None, **{k: None for k in DETAIL_KEYS})
-        base.update(regulation=[], types=[], special_kinds=[])
+        base.update(regulation=[], types=[], special_kinds=[], trade_status="unavailable")
         try:
             _check(base)
         except BAD:
@@ -324,6 +325,7 @@ def collect(source, now, previous=None):
                 exhausted = True  # 요청 예산 소진: 남은 단지는 달력 정보만
             except Exception:
                 pass
+        item["types"] = [dict(row, trade=row.get("trade")) for row in item["types"]]
         try:
             _check(item)
         except BAD:
@@ -386,6 +388,14 @@ def _check(item):
         for key in ("general", "special"):
             if row[key] is not None and (type(row[key]) is not int or not 0 <= row[key] < 100000):
                 raise ValueError("Bad count")
+        trade = row["trade"]
+        if trade is not None:
+            if (not isinstance(trade, dict) or set(trade) != {"amount", "month", "kind"} or trade["kind"] not in TRADE_KINDS
+                    or not isinstance(trade["month"], str) or not re.fullmatch(r"20\d\d-(0[1-9]|1[0-2])", trade["month"])):
+                raise ValueError("Bad trade")
+            _number(trade["amount"], 0, 10 ** 7, (int,))
+    if item["trade_status"] not in ("checked", "unavailable"):
+        raise ValueError("Bad trade status")
     if not isinstance(item["special_kinds"], list) or len(item["special_kinds"]) > 12:
         raise ValueError("Bad special kinds")
     for row in item["special_kinds"]:
@@ -435,7 +445,7 @@ def sanitize(bundle, now, allow_stale=False):
             seen.add(item["id"])
             if max(s["end"] for s in item["steps"]) >= today:
                 items.append(dict(item, steps=[dict(s) for s in item["steps"]], regulation=list(item["regulation"]),
-                                  types=[dict(x) for x in item["types"]], special_kinds=[dict(x) for x in item["special_kinds"]]))
+                                  types=[dict(x, trade=dict(x["trade"]) if x["trade"] else None) for x in item["types"]], special_kinds=[dict(x) for x in item["special_kinds"]]))
         return {"schema_version": 1, "source": SOURCE, "fetched_at": fetched.isoformat(), "window_days": WINDOW_DAYS,
                 "notice": NOTICE, "items": items}
     except BAD:
@@ -461,17 +471,38 @@ def main(argv=None, now=None):
     source = next(s for s in config["sources"] if s["id"] == SOURCE)
     cost_policy.reset(MAX_REQUESTS)
     previous, sha = (None, None) if args.dry_run else mirror._get(args.repository, NAME)
-    bundle = sanitize(collect(source, now, previous), now)
+    collected = collect(source, now, previous)
+    used = cost_policy.budget.used
+    # 같은 단지 실거래(2026-11-17 승인, 별도 상한 300회). 키는 환경 변수에서만 읽고 어디에도 남기지 않는다.
+    import os
+    from . import real_trades
+    trade_cache = None
+    if not args.dry_run:
+        try:
+            trade_cache, _ = mirror._get(args.repository, real_trades.NAME)
+        except Exception:
+            trade_cache = None
+    trade_cache, trade_requests = real_trades.update(collected["items"], now, trade_cache, os.environ.get(real_trades.ENV, ""),
+                                                     source["domains"])
+    real_trades.attach(collected["items"], trade_cache, now)
+    bundle = sanitize(collected, now)
     if bundle is None:
         print("Subscription bundle failed validation; nothing saved")
         return 1
     summary = ("complexes", len(bundle["items"]), "details checked", sum(i["detail"] == "checked" for i in bundle["items"]),
-               "requests", cost_policy.budget.used)
+               "requests", used, "trade requests", trade_requests,
+               "types with trade", sum(bool(r["trade"]) for i in bundle["items"] for r in i["types"]))
     if args.dry_run:
         print("Dry run:", *summary)
         for item in bundle["items"]:
-            print(" ", item["steps"][0]["start"], item["area"], item["district"] or "-", item["name"], item["detail"])
+            print(" ", item["steps"][0]["start"], item["area"], item["district"] or "-", item["name"], item["detail"], item["trade_status"],
+                  [(r["label"], r["trade"]) for r in item["types"] if r["trade"]])
         return 0
+    try:  # 실거래 캐시는 비공개 보조 자료: 저장 실패가 청약 묶음 저장을 막지 않는다
+        _, trade_sha = mirror._get(args.repository, real_trades.NAME)
+        mirror._put(args.repository, real_trades.NAME, trade_cache, trade_sha)
+    except Exception:
+        print("Real-trade cache not saved; next run refetches")
     for attempt in range(2):
         if mirror._put(args.repository, NAME, bundle, sha):
             save(args.root / FILE, bundle)

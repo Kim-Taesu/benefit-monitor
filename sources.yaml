@@ -933,7 +933,8 @@
       "name": "청약홈 청약 일정",
       "tier": "A",
       "domains": [
-        "www.applyhome.co.kr"
+        "www.applyhome.co.kr",
+        "apis.data.go.kr"
       ],
       "routes": [
         "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do"
@@ -941,7 +942,7 @@
       "feed_url": null,
       "collector": "subscriptions",
       "ai_review": false,
-      "collection_scope": "청약홈 청약 달력(이번 달·다음 달) 중 서울·경기, 2주 안 접수 단지 · 입주자모집공고 요약(위치·세대수·면적·최고가·일정) · 신청 자격·경쟁률 미확인"
+      "collection_scope": "청약홈 청약 달력(이번 달·다음 달) 중 서울·경기, 2주 안 접수 단지 · 입주자모집공고 요약(위치·세대수·면적·최고가·일정) · 신청 자격·경쟁률 미확인 · 같은 단지·같은 전용면적 실거래(공공데이터포털 국토부 API, 인증키)"
     },
     {
       "id": "kfes",

@@ -7,7 +7,8 @@
   "collect": {
     "tier": "A",
     "domains": [
-      "www.applyhome.co.kr"
+      "www.applyhome.co.kr",
+      "apis.data.go.kr"
     ],
     "routes": [
       "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do"
@@ -15,7 +16,7 @@
     "feed_url": null,
     "collector": "subscriptions",
     "ai_review": false,
-    "collection_scope": "청약홈 청약 달력(이번 달·다음 달) 중 서울·경기, 2주 안 접수 단지 · 입주자모집공고 요약(위치·세대수·면적·최고가·일정) · 신청 자격·경쟁률 미확인"
+    "collection_scope": "청약홈 청약 달력(이번 달·다음 달) 중 서울·경기, 2주 안 접수 단지 · 입주자모집공고 요약(위치·세대수·면적·최고가·일정) · 신청 자격·경쟁률 미확인 · 같은 단지·같은 전용면적 실거래(공공데이터포털 국토부 API, 인증키)"
   },
   "monitoring": {
     "expect": "working"
@@ -34,7 +35,8 @@
       "notes": [
         "2026-11-17 실사: robots.txt는 404 대신 200 + HTML 'not found'를 돌려준다(규칙 없음으로 해석).",
         "달력 selectSubscrptCalender.do는 청약홈 화면 자신이 보내는 POST JSON 조회({inqirePd: YYYYMM}). 키·로그인 없음.",
-        "상세: HOUSE_SECD 01·09는 GET으로 열린다(사람용 링크). 04·06·11(무순위 등)과 그 외(오피스텔 등)는 POST에서만 내용이 나와 사람용 링크는 달력 페이지로 둔다."
+        "상세: HOUSE_SECD 01·09는 GET으로 열린다(사람용 링크). 04·06·11(무순위 등)과 그 외(오피스텔 등)는 POST에서만 내용이 나와 사람용 링크는 달력 페이지로 둔다.",
+        "2026-11-17 승인: 공공데이터포털 국토교통부 실거래가 API(아파트 분양권전매 RTMSDataSvcSilvTrade, 아파트 매매 RTMSDataSvcAptTrade). 인증키는 Actions Secret REAL_ESTATE_TRANSACTION, 하루 상한 300회. rt.molit.go.kr은 이용안내가 자동 수집을 금지해 쓰지 않는다."
       ]
     },
     "extraction": [
@@ -57,7 +59,8 @@
     ],
     "code": [
       "benefit_monitor/subscriptions.py",
-      ".github/workflows/subscriptions.yml"
+      ".github/workflows/subscriptions.yml",
+      "benefit_monitor/real_trades.py"
     ]
   }
 }

@@ -270,6 +270,19 @@ class SanitizeTests(unittest.TestCase):
             b['items'][0].update(change)
             self.assertIsNone(s.sanitize(b, NOW), change)
 
+    def test_trade_on_type_rows_is_validated(self):
+        b = self.bundle()
+        apt = b['items'][0]
+        self.assertEqual(apt['trade_status'], 'unavailable')
+        self.assertTrue(all(r['trade'] is None for r in apt['types']))
+        apt['trade_status'] = 'checked'
+        apt['types'][0]['trade'] = dict(amount=238000, month='2026-06', kind='입주권')
+        self.assertEqual(s.sanitize(b, NOW)['items'][0]['types'][0]['trade']['amount'], 238000)
+        for bad in (dict(amount=1, month='2026-06', kind='시세'), dict(amount=1, month='2026-13', kind='매매'),
+                    dict(amount=10 ** 8, month='2026-06', kind='매매'), dict(amount=1, month='2026-06', kind='매매', buyer='개인')):
+            apt['types'][0]['trade'] = bad
+            self.assertIsNone(s.sanitize(b, NOW), bad)
+
     def test_rejects_unknown_keys(self):
         b = self.bundle()
         b['items'][0]['phone'] = '1555-6223'
@@ -316,7 +329,7 @@ class PublishTests(unittest.TestCase):
         from benefit_monitor.store import load
         config = load(ROOT / 'sources.yaml', None)
         source = next(x for x in config['sources'] if x['id'] == 'subscriptions')
-        self.assertEqual((source['collector'], source['domains']), ('subscriptions', ['www.applyhome.co.kr']))
+        self.assertEqual((source['collector'], source['domains']), ('subscriptions', ['www.applyhome.co.kr', 'apis.data.go.kr']))
         policy = json.loads((ROOT / 'frontend/src/source-policy.json').read_text())
         self.assertIn('www.applyhome.co.kr', json.dumps(policy))
 

@@ -156,7 +156,8 @@
     "subscriptions": {
       "name": "청약홈 청약 일정",
       "domains": [
-        "www.applyhome.co.kr"
+        "www.applyhome.co.kr",
+        "apis.data.go.kr"
       ]
     },
     "kfes": {
