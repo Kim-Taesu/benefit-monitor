@@ -375,6 +375,7 @@ def run(root, now=None, failure=False):
         if bundle is not None:data['festivals'] = bundle
         attach_groceries(root,data,now)
         attach_health_notices(root,data,now)
+        attach_subscriptions(root,data,now)
         attach_tab_picks(root,data,now)
     return write_export(root,data)
 
@@ -410,6 +411,13 @@ def attach_health_notices(root,data,now):
     except Exception:
         notes = []
     if notes:data['health_notes'] = notes
+
+
+def attach_subscriptions(root,data,now):
+    """Seoul·Gyeonggi 청약 schedule section of the benefits tab (approved 2026-11-17); dropped when stale or malformed."""
+    from .subscriptions import sanitize, FILE
+    bundle = sanitize(load(Path(root)/FILE, None), now)
+    if bundle is not None:data['subscriptions'] = bundle
 
 
 def attach_groceries(root,data,now):

@@ -60,6 +60,7 @@ def restore(root, repository, now=None, env=None):
     restore_baselines(root,repository,env)
     restore_health_notices(root,repository,env)
     restore_health_notes(root,repository,env)
+    restore_subscriptions(root,repository,env)
     restore_grocery_pick(root,repository,env)
     restore_tab_picks(root,repository,env)
     return envelope.get("sha")
@@ -88,6 +89,22 @@ def restore_health_notices(root, repository, env=None):
     """Download the daily health-centre notice bundle. Never raises: failure leaves no local copy."""
     from .store import save
     from .health_notices import NAME, FILE, SOURCE
+    path = Path(root) / FILE
+    try:
+        bundle, _ = _get(repository, NAME, env)
+        if isinstance(bundle, dict) and bundle.get("schema_version") == 1 and bundle.get("source") == SOURCE:
+            save(path, bundle)
+            return True
+    except Exception:
+        pass
+    path.unlink(missing_ok=True)
+    return False
+
+
+def restore_subscriptions(root, repository, env=None):
+    """Download the daily 청약 schedule bundle. Never raises: failure leaves no local copy."""
+    from .store import save
+    from .subscriptions import NAME, FILE, SOURCE
     path = Path(root) / FILE
     try:
         bundle, _ = _get(repository, NAME, env)

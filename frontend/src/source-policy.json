@@ -153,6 +153,12 @@
         "www.dongjak.go.kr"
       ]
     },
+    "subscriptions": {
+      "name": "청약홈 청약 일정",
+      "domains": [
+        "www.applyhome.co.kr"
+      ]
+    },
     "kfes": {
       "name": "전국 축제(한국관광공사)",
       "domains": [

@@ -1,0 +1,63 @@
+{
+  "$schema": "../schema/source.schema.json",
+  "schema_version": 1,
+  "id": "subscriptions",
+  "name": "청약홈 청약 일정",
+  "status": "active",
+  "collect": {
+    "tier": "A",
+    "domains": [
+      "www.applyhome.co.kr"
+    ],
+    "routes": [
+      "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do"
+    ],
+    "feed_url": null,
+    "collector": "subscriptions",
+    "ai_review": false,
+    "collection_scope": "청약홈 청약 달력(이번 달·다음 달) 중 서울·경기, 2주 안 접수 단지 · 입주자모집공고 요약(위치·세대수·면적·최고가·일정) · 신청 자격·경쟁률 미확인"
+  },
+  "monitoring": {
+    "expect": "working"
+  },
+  "runbook": {
+    "checked_at": "2026-11-17",
+    "entry_urls": [
+      "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000497&pblancNo=2026000497"
+    ],
+    "access": {
+      "robots": "allowed",
+      "rendering": "search_post",
+      "detail_access": "get",
+      "conditions_in": "text",
+      "notes": [
+        "2026-11-17 실사: robots.txt는 404 대신 200 + HTML 'not found'를 돌려준다(규칙 없음으로 해석).",
+        "달력 selectSubscrptCalender.do는 청약홈 화면 자신이 보내는 POST JSON 조회({inqirePd: YYYYMM}). 키·로그인 없음.",
+        "상세: HOUSE_SECD 01·09는 GET으로 열린다(사람용 링크). 04·06·11(무순위 등)과 그 외(오피스텔 등)는 POST에서만 내용이 나와 사람용 링크는 달력 페이지로 둔다."
+      ]
+    },
+    "extraction": [
+      "달력 행(날짜×접수구분)을 공고번호(HOUSE_MANAGE_NO)로 묶어 단지 하나 = 카드 하나로 만든다. RESTDE_AT=Y(공휴일) 행은 버린다.",
+      "접수구분 RCEPT_SE: 01 특별공급, 02 1순위, 03 2순위, 04 공공지원민간임대, 05 오피스텔 등, 06 무순위, 07 불법행위재공급, 08~10 사전청약, 11 임의공급 (청약홈 페이지 스크립트 houseSeClass).",
+      "상세 요약에서 공급위치→시·구, 공급규모, 청약일정, 주택형(전용) 범위, 공급금액(최고가 기준) 범위, 입주예정월, 특이사항의 규제지역 단어만 읽는다. 전화번호·지번은 저장하지 않는다."
+    ],
+    "pitfalls": [
+      "같은 단지라도 아파트와 오피스텔은 공고번호가 다르다. 이름이 아니라 공고번호로 묶는다.",
+      "금액은 최고가 기준이다. 층·호별 금액, 자격, 경쟁률은 확인하지 않는다.",
+      "상세를 못 읽어도 달력 일정만으로 카드를 보인다(실패가 아니라 강등)."
+    ],
+    "manual_check": [
+      "python3 -m benefit_monitor.subscriptions --dry-run",
+      "Actions의 Subscriptions 실행 로그에서 단지 수와 상세 확인 수를 본다."
+    ],
+    "on_failure": [
+      "\"Unexpected calendar payload\"이면 달력 JSON 구조가 바뀐 것이다. 이전 묶음이 30시간 동안 유지된 뒤 화면에서 빠진다.",
+      "상세 확인 수가 0이면 상세 페이지 표 구조(공급위치·청약접수 행)가 바뀐 것이다."
+    ],
+    "code": [
+      "benefit_monitor/subscriptions.py",
+      ".github/workflows/subscriptions.yml"
+    ]
+  }
+}
