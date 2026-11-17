@@ -2,7 +2,10 @@
 // (dates, district, units, area and top-price ranges). Eligibility and win chances are never judged here.
 export type SubKind='apt'|'remain'|'officetel'|'rental';
 export interface SubStep{label:string;start:string;end:string}
-export interface Subscription{id:string;name:string;area:'서울'|'경기';district:string|null;kind:SubKind;units:number|null;
+export interface SubType{label:string;area:number;pyeong:number|null;general:number|null;special:number|null;price:number|null}
+export interface SubKindCount{name:string;count:number}
+export interface Subscription{id:string;name:string;area:'서울'|'경기';district:string|null;kind:SubKind;supply:string;units:number|null;
+ noticeDate:string|null;types:SubType[];specialKinds:SubKindCount[];noticePdf:string|null;
  areaMin:number|null;areaMax:number|null;priceMin:number|null;priceMax:number|null;moveIn:string|null;regulation:string[];
  steps:SubStep[];announce:string|null;contractStart:string|null;contractEnd:string|null;url:string;detail:'checked'|'failed';checkedAt:string|null}
 export interface SubscriptionBundle{fetchedAt:string;notice:string;windowDays:number;items:Subscription[]}
@@ -10,7 +13,7 @@ export interface TimelineStep{label:string;text:string;state:'done'|'now'|'next'
 export interface SubGroup{key:string;label:string;items:Subscription[]}
 export type KindFilter=''|'apt'|'remain'|'etc';
 
-const KEYS=['id','name','area','district','kind','units','area_min','area_max','price_min','price_max','move_in','regulation','steps',
+const KEYS=['id','name','area','district','kind','supply','units','notice_date','types','special_kinds','notice_pdf','area_min','area_max','price_min','price_max','move_in','regulation','steps',
  'announce','contract_start','contract_end','url','detail','checked_at'];
 const KINDS:SubKind[]=['apt','remain','officetel','rental'];
 const DATE=/^\d{4}-\d{2}-\d{2}$/;
@@ -19,6 +22,7 @@ export const KIND_LABELS:Record<Exclude<KindFilter,''>,string>={apt:'아파트 �
 
 function record(v:unknown):v is Record<string,unknown>{return !!v&&typeof v==='object'&&!Array.isArray(v);}
 function num(v:unknown,max:number):v is number|null{return v===null||(typeof v==='number'&&Number.isFinite(v)&&v>0&&v<max);}
+function count(v:unknown):v is number|null{return v===null||(typeof v==='number'&&Number.isInteger(v)&&v>=0&&v<100000);}
 function day(v:unknown):v is string|null{return v===null||(typeof v==='string'&&DATE.test(v));}
 export function kstDate(now:number):string{return new Date(now+9*3600000).toISOString().slice(0,10);}
 
@@ -36,12 +40,30 @@ function parseItem(v:unknown):Subscription|null{
   if(!record(s)||Object.keys(s).length!==3||typeof s.label!=='string'||!s.label||s.label.length>20||!day(s.start)||!day(s.end)||!s.start||!s.end||s.start>s.end)return null;
   steps.push({label:s.label,start:s.start,end:s.end});
  }
- if(!day(v.announce)||!day(v.contract_start)||!day(v.contract_end))return null;
+ if(!day(v.announce)||!day(v.contract_start)||!day(v.contract_end)||!day(v.notice_date))return null;
+ if(typeof v.supply!=='string'||!v.supply||v.supply.length>20)return null;
+ if(!Array.isArray(v.types)||v.types.length>40||!Array.isArray(v.special_kinds)||v.special_kinds.length>12)return null;
+ const types:SubType[]=[];
+ for(const x of v.types){
+  if(!record(x)||Object.keys(x).length!==6||typeof x.label!=='string'||!/^\d{1,3}[A-Z]{0,4}$/.test(x.label)||typeof x.area!=='number'||!num(x.area,1000)||!num(x.pyeong,400)||!num(x.price,1e7))return null;
+  if(!count(x.general)||!count(x.special))return null;
+  types.push({label:x.label,area:x.area,pyeong:x.pyeong,general:x.general,special:x.special,price:x.price});
+ }
+ const specialKinds:SubKindCount[]=[];
+ for(const x of v.special_kinds){
+  if(!record(x)||Object.keys(x).length!==2||typeof x.name!=='string'||!x.name||x.name.length>10||typeof x.count!=='number'||!num(x.count,100000))return null;
+  specialKinds.push({name:x.name,count:x.count});
+ }
+ let pdf:string|null=null;
+ if(v.notice_pdf!==null){
+  try{const u=new URL(String(v.notice_pdf));if(u.protocol!=='https:'||u.hostname!=='static.applyhome.co.kr'||u.pathname!=='/ai/aia/getAtchmnfl.do'||u.username||u.password)return null;pdf=u.href;}catch{return null;}
+ }
  if(v.checked_at!==null&&(typeof v.checked_at!=='string'||!Number.isFinite(Date.parse(v.checked_at))))return null;
  let url:URL;
  try{url=new URL(String(v.url));}catch{return null;}
  if(url.protocol!=='https:'||url.hostname!=='www.applyhome.co.kr'||url.username||url.password)return null;
- return {id:v.id,name:v.name,area:v.area,district:v.district as string|null,kind:v.kind as SubKind,units:v.units,areaMin:v.area_min,areaMax:v.area_max,
+ return {id:v.id,name:v.name,area:v.area,district:v.district as string|null,kind:v.kind as SubKind,supply:v.supply,units:v.units,
+  noticeDate:v.notice_date,types,specialKinds,noticePdf:pdf,areaMin:v.area_min,areaMax:v.area_max,
   priceMin:v.price_min,priceMax:v.price_max,moveIn:v.move_in as string|null,regulation:[...v.regulation as string[]],steps,announce:v.announce,
   contractStart:v.contract_start,contractEnd:v.contract_end,url:url.href,detail:v.detail,checkedAt:v.checked_at as string|null};
 }
@@ -135,3 +157,15 @@ export function filterSubs(items:Subscription[],f:{area:''|'서울'|'경기';kin
   &&(!f.kind||(f.kind==='etc'?i.kind==='officetel'||i.kind==='rental':i.kind===f.kind))
   &&(!q||i.name.includes(q)||(i.district||'').includes(q)||i.area.includes(q)));
 }
+
+/** 표 한 줄의 '구분': 일반·특공 세대수가 있으면 보이고, 없으면 빈칸. */
+export function typeSplit(t:SubType):string{
+ if(t.general===null||t.special===null)return '';
+ return [t.general?`일반 ${t.general}`:'',t.special?`특공 ${t.special}`:''].filter(Boolean).join(' · ');
+}
+export function specialSummary(kinds:SubKindCount[],max=4):string{
+ if(!kinds.length)return '';
+ const total=kinds.reduce((a,k)=>a+k.count,0),shown=kinds.slice(0,max).map(k=>`${k.name} ${k.count}`);
+ return `특공 ${total}세대: ${shown.join(' · ')}${kinds.length>max?` 외 ${kinds.length-max}종`:''}`;
+}
+export function priceOne(manwon:number|null):string{return manwon===null?'문의':formatPrice(manwon,manwon)!;}

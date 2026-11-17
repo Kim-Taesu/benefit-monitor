@@ -6,7 +6,8 @@ const CAL='https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do';
 const sub=(over:Record<string,unknown>={})=>({id:'2026000497',name:'[테스트] 중화역 센트로',area:'서울',district:'중랑구',kind:'apt',units:113,
  area_min:45.02,area_max:126.81,price_min:65800,price_max:202100,move_in:'2029-02',regulation:['투기과열지구'],
  steps:[{label:'특별공급',start:'2026-11-03',end:'2026-11-03'},{label:'1순위',start:'2026-11-04',end:'2026-11-05'},{label:'2순위',start:'2026-11-06',end:'2026-11-06'}],
- announce:'2026-11-12',contract_start:'2026-11-24',contract_end:'2026-11-26',url:APT,detail:'checked',checked_at:'2026-11-04T00:12:00+09:00',...over});
+ announce:'2026-11-12',contract_start:'2026-11-24',contract_end:'2026-11-26',url:APT,detail:'checked',checked_at:'2026-11-04T00:12:00+09:00',
+ supply:'아파트 분양',notice_date:'2026-10-27',types:[],special_kinds:[],notice_pdf:null,...over});
 const bundle=(items:unknown[])=>({schema_version:1,source:'subscriptions',fetched_at:'2026-11-04T00:12:00+09:00',window_days:14,notice:'[테스트] 청약홈',items});
 const ITEMS=[sub(),
  sub({id:'2026910275',name:'[테스트] 분당 무순위',area:'경기',district:'성남시 분당구',kind:'remain',units:null,area_min:null,area_max:null,price_min:null,price_max:null,
@@ -106,4 +107,32 @@ test('chip falls back to all when the bundle goes stale while the page is open',
  await expect(page.getByRole('button',{name:/🏠 청약 일정/})).toHaveCount(0);
  await expect(page.locator('section.subs')).toHaveCount(0);
  await expect(page.locator('#results-title')).not.toContainText('청약');
+});
+
+const PDF='https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026930045&pblancNo=2026930045&atchmnflSeqNo=2023023&atchmnflSn=9';
+for(const width of [360,1280])test(`card shows per-type table, supply type and notice PDF ${width}`,async({page})=>{
+ await page.setViewportSize({width,height:900});
+ const jamsil=sub({id:'2026930045',name:'[테스트] 잠실 재공급',district:'송파구',kind:'remain',supply:'계약취소 재공급',units:3,
+  steps:[{label:'특별공급',start:'2026-11-05',end:'2026-11-05'},{label:'일반공급',start:'2026-11-06',end:'2026-11-06'}],notice_date:'2026-11-04',notice_pdf:PDF,url:CAL,
+  types:[{label:'43',area:43.73,pyeong:20,general:1,special:0,price:110548},{label:'59A',area:59.47,pyeong:26,general:1,special:0,price:157939},
+   {label:'84D',area:84.96,pyeong:34,general:0,special:1,price:185607},{label:'99',area:99.1,pyeong:40,general:1,special:0,price:null}],
+  special_kinds:[{name:'신혼부부',count:1}]});
+ await open(page,snapshot(undefined,{subscriptions:bundle([jamsil])}));
+ await page.getByRole('button',{name:/🏠 청약 일정/}).click();
+ const card=page.locator('.subs-card').first();
+ await expect(card).toContainText('계약취소 재공급');
+ await expect(card).toContainText('총 3세대 · 공고 11/4');
+ const rows=card.locator('.subs-types tbody tr');
+ await expect(rows).toHaveCount(3);
+ await expect(rows.nth(0)).toContainText(/일반 1.*43.*20평.*11\.1억/);
+ await expect(rows.nth(2)).toContainText(/특공 1.*84D.*34평.*18\.6억/);
+ await card.getByRole('button',{name:'주택형 1개 더 보기'}).click();
+ await expect(rows).toHaveCount(4);
+ await expect(rows.nth(3)).toContainText('문의');
+ await expect(card).toContainText('특공 1세대: 신혼부부 1');
+ await expect(card.locator('.subs-steps')).toContainText('일반공급 11/6');
+ await expect(card.getByRole('link',{name:/모집공고문 PDF/})).toHaveAttribute('href',PDF);
+ await card.scrollIntoViewIfNeeded();
+ await page.screenshot({path:`../.ax/plans/shots/subscriptions-card-${width}.png`});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
 });

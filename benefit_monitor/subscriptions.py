@@ -15,6 +15,7 @@ from html.parser import HTMLParser
 from urllib.error import HTTPError
 from urllib.parse import urlencode, urlsplit
 from zoneinfo import ZoneInfo
+import html as htmlmod
 import json
 import re
 
@@ -50,12 +51,20 @@ STEP_LABELS = {"01": "특별공급", "02": "1순위", "03": "2순위", "04": "�
 KIND_BY_CODE = {"01": "apt", "02": "apt", "03": "apt", "08": "apt", "09": "apt", "10": "apt",
                 "06": "remain", "07": "remain", "11": "remain", "05": "officetel", "04": "rental"}
 KINDS = ("apt", "remain", "officetel", "rental")
-LABELS = set(STEP_LABELS.values())
+# 공급 유형마다 신청 자격이 달라 카드에 따로 보인다(커뮤니티 점검 목록 1순위, 2026-11-17 조사).
+SUPPLY_BY_CODE = {"01": "아파트 분양", "02": "아파트 분양", "03": "아파트 분양", "08": "사전청약", "09": "사전청약",
+                  "10": "사전청약", "04": "공공지원민간임대", "05": "오피스텔·도시형 등", "06": "무순위(사후접수)",
+                  "07": "계약취소 재공급", "11": "임의공급"}
+LABELS = set(STEP_LABELS.values()) | {"일반공급"}
+PDF_HOST = "static.applyhome.co.kr"
+PDF = re.compile(r'href="(https://static\.applyhome\.co\.kr/ai/aia/getAtchmnfl\.do\?[^"<>\s]+)"')
+TYPE_KEYS = {"label", "area", "pyeong", "general", "special", "price"}
+PYEONG = 3.3058
 REGULATIONS = ("투기과열지구", "청약과열지역", "조정대상지역", "분양가상한제")
-ITEM_KEYS = {"id", "name", "area", "district", "kind", "units", "area_min", "area_max", "price_min", "price_max",
+ITEM_KEYS = {"id", "name", "area", "district", "kind", "supply", "units", "notice_date", "types", "special_kinds", "notice_pdf", "area_min", "area_max", "price_min", "price_max",
              "move_in", "regulation", "steps", "announce", "contract_start", "contract_end", "url", "detail", "checked_at"}
 DETAIL_KEYS = ("district", "units", "area_min", "area_max", "price_min", "price_max", "move_in", "regulation",
-               "announce", "contract_start", "contract_end")
+               "announce", "contract_start", "contract_end", "notice_date", "types", "special_kinds", "notice_pdf")
 DATE = re.compile(r"(20\d\d)-(\d\d)-(\d\d)")
 AREA = re.compile(r"^(\d{1,3}\.\d{2,4})[A-Z]*$")
 MOBILE = re.compile(r"(?<!\d)01[016789][- ]?\d{3,4}[- ]?\d{4}(?!\d)")
@@ -106,7 +115,7 @@ def group(rows, today, days=WINDOW_DAYS):
     by = {}
     for r in sorted(rows, key=lambda r: (r["date"], r["code"])):
         g = by.setdefault(r["id"], dict(id=r["id"], pblanc=r["pblanc"], name=r["name"], area=r["area"], secd=r["secd"],
-                                        kind=KIND_BY_CODE[r["code"]], steps=[], days=[]))
+                                        kind=KIND_BY_CODE[r["code"]], supply=SUPPLY_BY_CODE[r["code"]], steps=[], days=[]))
         g["days"].append(r["date"])
         _add_step(g["steps"], STEP_LABELS[r["code"]], r["date"], r["date"])
     out = []
@@ -182,7 +191,7 @@ def parse_detail(body):
             if not row or not dates:
                 continue
             label = row[0]
-            for name in ("특별공급", "1순위", "2순위"):
+            for name in ("특별공급", "1순위", "2순위", "일반공급"):
                 if label.startswith(name):
                     _add_step(steps, name, min(dates), max(dates))
             if label == "청약접수":
@@ -191,20 +200,55 @@ def parse_detail(body):
                 announce = dates[0]
             elif label.startswith("계약일"):
                 contract = (dates[0], dates[-1])
-    areas, prices = [], []
+    types, keys = [], []
     area_table = next((t for t in p.tables if any(c in ("주택형", "전용면적") for row in t for c in row)), [])
     for row in area_table:
-        match = next((AREA.match(c) for c in row if AREA.match(c)), None)
-        if match:
-            areas.append(round(float(match.group(1)), 2))
+        k = next((n for n, c in enumerate(row) if AREA.match(c)), None)
+        if k is None:
+            continue
+        match = AREA.match(row[k])
+        named = row[k - 1] if k and re.fullmatch(r"\d{1,3}[A-Z]{0,4}", row[k - 1]) else None  # 오피스텔 '41OA'
+        suffix = row[k][len(match.group(1)):]
+        rest, supply = row[k + 1:], None
+        if rest and re.fullmatch(r"\d{1,3}\.\d{2,4}", rest[0]):
+            supply, rest = float(rest[0]), rest[1:]
+        counts = []
+        for c in rest:
+            if not c.isdigit():
+                break
+            counts.append(int(c))
+        keys.append(named or row[k])
+        types.append(dict(label=named or f"{int(float(match.group(1)))}{suffix}", area=round(float(match.group(1)), 2),
+                          pyeong=int(supply / PYEONG) if supply else None,
+                          general=counts[0] if len(counts) >= 3 else None, special=counts[1] if len(counts) >= 3 else None,
+                          price=None))
+    prices = []
     for t in p.tables:
         # 가격 표 머리글은 '공급금액' 또는 '공급금액(최고가 기준)'. 무순위 비고의 '공급금액 : 사업주체 문의'는 아니다.
         head = next(((n, row) for n, row in enumerate(t)
                      if any(c == "공급금액" or c.startswith("공급금액(") for c in row)), None)
         if head:
             col = next(i for i, c in enumerate(head[1]) if c == "공급금액" or c.startswith("공급금액("))
-            prices += [int(row[col].replace(",", "")) for row in t[head[0] + 1:]
-                       if len(row) > col and re.fullmatch(r"\d{1,3}(,\d{3})+|\d{4,}", row[col])]
+            for row in t[head[0] + 1:]:
+                if len(row) > col and re.fullmatch(r"\d{1,3}(,\d{3})+|\d{4,}", row[col]):
+                    price = int(row[col].replace(",", ""))
+                    prices.append(price)
+                    for n, key in enumerate(keys):
+                        if key in row and types[n]["price"] is None:
+                            types[n]["price"] = price
+    kinds = {}
+    kind_table = next((t for t in p.tables if any("신혼부부" in row for row in t)), [])
+    head = next((row for row in kind_table if "신혼부부" in row), [])
+    for row in kind_table:
+        if row and AREA.match(row[0]):
+            for name, value in zip(head, row[1:]):
+                if name != "계" and value.isdigit():
+                    kinds[name] = kinds.get(name, 0) + int(value)
+    order = {name: n for n, name in enumerate(head)}
+    special_kinds = [dict(name=k, count=v) for k, v in sorted(kinds.items(), key=lambda kv: (-kv[1], order[kv[0]])) if v]
+    pdf = PDF.search(body)
+    notice = DATE.search(info.get("모집공고일", ""))
+    areas = [x["area"] for x in types]
     text = " ".join(" ".join(p.text).split())
     move = re.search(r"입주예정월\s*:\s*(20\d\d)[.-](\d{1,2})", text)
     special = text[text.find("특이사항"):][:300] if "특이사항" in text else ""
@@ -214,7 +258,9 @@ def parse_detail(body):
                 area_min=min(areas) if areas else None, area_max=max(areas) if areas else None,
                 price_min=min(prices) if prices else None, price_max=max(prices) if prices else None,
                 move_in=f"{move.group(1)}-{int(move.group(2)):02d}" if move else None,
-                regulation=sorted((r for r in REGULATIONS if r in special), key=special.find))
+                regulation=sorted((r for r in REGULATIONS if r in special), key=special.find),
+                notice_date="-".join(notice.groups()) if notice else None, types=types[:40], special_kinds=special_kinds[:12],
+                notice_pdf=htmlmod.unescape(pdf.group(1)) if pdf else None)
 
 
 def _robots(domains):
@@ -248,9 +294,9 @@ def collect(source, now, previous=None):
     old = {i["id"]: i for i in kept["items"]} if kept else {}
     items, used, exhausted = [], 0, False
     for g in group(rows, today):
-        base = dict(id=g["id"], name=g["name"], area=g["area"], kind=g["kind"], steps=g["steps"], url=public_url(g),
-                    detail="failed", checked_at=None, **{k: None for k in DETAIL_KEYS})
-        base["regulation"] = []
+        base = dict(id=g["id"], name=g["name"], area=g["area"], kind=g["kind"], supply=g["supply"], steps=g["steps"],
+                    url=public_url(g), detail="failed", checked_at=None, **{k: None for k in DETAIL_KEYS})
+        base.update(regulation=[], types=[], special_kinds=[])
         try:
             _check(base)
         except BAD:
@@ -325,6 +371,32 @@ def _check(item):
         raise ValueError("Bad move-in month")
     if not isinstance(item["regulation"], list) or any(r not in REGULATIONS for r in item["regulation"]):
         raise ValueError("Bad regulation")
+    if item["supply"] not in SUPPLY_BY_CODE.values():
+        raise ValueError("Bad supply type")
+    _day(item["notice_date"])
+    if not isinstance(item["types"], list) or len(item["types"]) > 40:
+        raise ValueError("Bad types")
+    for row in item["types"]:
+        if (not isinstance(row, dict) or set(row) != TYPE_KEYS or not isinstance(row["label"], str)
+                or not re.fullmatch(r"\d{1,3}[A-Z]{0,4}", row["label"])):
+            raise ValueError("Bad type row")
+        _number(row["area"], 0, 1000, (int, float))
+        _number(row["pyeong"], 0, 400, (int,))
+        _number(row["price"], 0, 10 ** 7, (int,))
+        for key in ("general", "special"):
+            if row[key] is not None and (type(row[key]) is not int or not 0 <= row[key] < 100000):
+                raise ValueError("Bad count")
+    if not isinstance(item["special_kinds"], list) or len(item["special_kinds"]) > 12:
+        raise ValueError("Bad special kinds")
+    for row in item["special_kinds"]:
+        if (not isinstance(row, dict) or set(row) != {"name", "count"} or not isinstance(row["name"], str)
+                or not 0 < len(row["name"]) <= 10 or MOBILE.search(row["name"])):
+            raise ValueError("Bad special kind")
+        _number(row["count"], 0, 100000, (int,))
+    if item["notice_pdf"] is not None:
+        pdf = urlsplit(item["notice_pdf"]) if isinstance(item["notice_pdf"], str) else None
+        if not pdf or pdf.scheme != "https" or pdf.hostname != PDF_HOST or pdf.path != "/ai/aia/getAtchmnfl.do" or pdf.username:
+            raise ValueError("Bad notice link")
     steps = item["steps"]
     if not isinstance(steps, list) or not 0 < len(steps) <= 12:
         raise ValueError("Bad steps")
@@ -362,7 +434,8 @@ def sanitize(bundle, now, allow_stale=False):
                 return None
             seen.add(item["id"])
             if max(s["end"] for s in item["steps"]) >= today:
-                items.append(dict(item, steps=[dict(s) for s in item["steps"]], regulation=list(item["regulation"])))
+                items.append(dict(item, steps=[dict(s) for s in item["steps"]], regulation=list(item["regulation"]),
+                                  types=[dict(x) for x in item["types"]], special_kinds=[dict(x) for x in item["special_kinds"]]))
         return {"schema_version": 1, "source": SOURCE, "fetched_at": fetched.isoformat(), "window_days": WINDOW_DAYS,
                 "notice": NOTICE, "items": items}
     except BAD:

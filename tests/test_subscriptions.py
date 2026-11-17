@@ -87,6 +87,41 @@ class DetailTests(unittest.TestCase):
         self.assertEqual((d['price_min'], d['price_max'], d['move_in']), (17800, 54800, '2029-02'))
         self.assertEqual(d['announce'], '2026-12-02')
 
+    def test_resupply_detail_keeps_general_step_and_per_type_rows(self):
+        d = s.parse_detail(text('detail_resupply.html'))
+        # 이미지(잠실 래미안아이파크)와 같은 값: 43·59 일반, 84 특공, 20·26·34평, 11.1·15.8·18.6억
+        self.assertEqual(d['steps'], [dict(label='특별공급', start='2026-11-23', end='2026-11-23'),
+                                      dict(label='일반공급', start='2026-11-24', end='2026-11-24')])
+        self.assertEqual(d['notice_date'], '2026-11-17')
+        self.assertEqual(d['types'], [
+            dict(label='43', area=43.73, pyeong=20, general=1, special=0, price=110548),
+            dict(label='59A', area=59.47, pyeong=26, general=1, special=0, price=157939),
+            dict(label='84D', area=84.96, pyeong=34, general=0, special=1, price=185607)])
+        self.assertEqual(d['special_kinds'], [])
+        self.assertEqual(d['notice_pdf'], 'https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026930045'
+                                          '&pblancNo=2026930045&atchmnflSeqNo=2023023&atchmnflSn=9')
+
+    def test_apartment_special_supply_kinds_are_summed(self):
+        d = s.parse_detail(text('detail_apt.html'))
+        self.assertEqual(len(d['types']), 10)
+        self.assertEqual(d['types'][4], dict(label='73T', area=73.47, pyeong=30, general=1, special=0, price=119200))
+        kinds = dict((k['name'], k['count']) for k in d['special_kinds'])
+        self.assertEqual(sum(kinds.values()), 60)
+        self.assertEqual(d['special_kinds'][0]['name'], '신혼부부')
+        self.assertNotIn('계', kinds)
+
+    def test_remain_and_officetel_types_have_totals_only(self):
+        r = s.parse_detail(text('detail_remain.html'))
+        self.assertEqual(r['types'][0], dict(label='74A', area=74.0, pyeong=None, general=None, special=None, price=None))
+        o = s.parse_detail(text('detail_officetel.html'))
+        self.assertEqual(o['types'][0], dict(label='20OA', area=20.16, pyeong=None, general=None, special=None, price=17800))
+        self.assertEqual([x['label'] for x in o['types']][1:3], ['41OA', '41OB'])
+
+    def test_number_only_type_names_still_get_their_price(self):
+        d = s.parse_detail(text('detail_urban.html'))
+        self.assertEqual([x['label'] for x in d['types']], ['19A', '19B', '24A', '24B', '29', '34', '59A', '59B'])
+        self.assertEqual([x['price'] for x in d['types']], [30510, 29300, 38130, 37360, 45590, 49420, 86700, 95460])
+
     def test_page_without_location_is_rejected(self):
         with self.assertRaises(ValueError):
             s.parse_detail('<html><body>점검 중</body></html>')
