@@ -4,6 +4,8 @@ import BenefitCard from './BenefitCard.vue';
 import FestivalSection from './FestivalSection.vue';
 import HealthSection from './HealthSection.vue';
 import GrocerySection from './GrocerySection.vue';
+import SubscriptionSection from './SubscriptionSection.vue';
+import {parseSubscriptions,CALENDAR_PAGE} from './subscriptions';
 import {parseGroceries,parsePick,parseBaselines,parseDiscounts,featuredRows} from './groceries';
 import {parseFestivals} from './festivals';
 import {parseHealth} from './health';
@@ -12,9 +14,9 @@ import {parseBenefitPick} from './picks';
 import {loadVisit,saveVisit,clearVisit,nextVisit,visitKey} from './visit';
 import type {Visit} from './visit';
 // 탭(2026-11-10): 혜택·장보기·축제, 2026-11-11 보건소 추가. 주소의 #groceries·#festivals·#health로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
-type Tab='benefits'|'groceries'|'festivals'|'health';
-const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'},{id:'health',label:'보건소'}];
-const tabFromHash=(hash:string):Tab=>hash==='#groceries'?'groceries':hash==='#festivals'?'festivals':hash==='#health'?'health':'benefits';
+type Tab='benefits'|'subscriptions'|'groceries'|'festivals'|'health';
+const TABS:{id:Tab;label:string}[]=[{id:'benefits',label:'혜택'},{id:'subscriptions',label:'청약'},{id:'groceries',label:'장보기'},{id:'festivals',label:'축제'},{id:'health',label:'보건소'}];
+const tabFromHash=(hash:string):Tab=>hash==='#subscriptions'?'subscriptions':hash==='#groceries'?'groceries':hash==='#festivals'?'festivals':hash==='#health'?'health':'benefits';
 const tab=ref<Tab>(tabFromHash(location.hash));
 function setTab(next:Tab,scroll=false){
  tab.value=next;
@@ -39,6 +41,8 @@ const groceries=computed(()=>parseGroceries(raw.value,groceryMinute.value));
 const basket=computed(()=>parseBaselines(raw.value,groceryMinute.value));
 const discounts=computed(()=>parseDiscounts(raw.value,groceryMinute.value));
 const groceryPick=computed(()=>groceries.value?parsePick(raw.value,groceries.value):null);
+// 서울·경기 청약 일정(2026-11-17): 혜택과 같은 레벨의 '청약' 탭(#subscriptions).
+const subs=computed(()=>parseSubscriptions(raw.value,groceryMinute.value));
 function pageFilters(search:string){const value=readFilters(search);return {...value,category:'',region:DISTRICTS.includes(value.region)?value.region:''};}
 const filters=reactive(pageFilters(location.search));
 let localStore:Storage|null=null;
@@ -126,7 +130,7 @@ const notice=computed(()=>{
  return {...n,body:`마지막 갱신은 ${formatDate(updated.value)}입니다. 새 브리핑이 올라오면 자동으로 채워지니 잠시 뒤 다시 불러와 보세요. 이전 항목을 오늘의 유효한 혜택으로 표시하지 않습니다.`};
 });
 // 탭 옆 건수. 각 탭이 처음 보여 주는 목록의 건수와 같다.
-const counts=computed<Record<Tab,number|null>>(()=>({benefits:all.value.length,groceries:groceries.value?featuredRows(groceries.value.rows).length:null,festivals:parseFestivals(raw.value,groceryMinute.value)?.items.length??null,health:parseHealth(raw.value,groceryMinute.value)?.items.length??null}));
+const counts=computed<Record<Tab,number|null>>(()=>({benefits:all.value.length,subscriptions:subs.value?.items.length??null,groceries:groceries.value?featuredRows(groceries.value.rows).length:null,festivals:parseFestivals(raw.value,groceryMinute.value)?.items.length??null,health:parseHealth(raw.value,groceryMinute.value)?.items.length??null}));
 // 보건소 탭의 지역은 내 지역과 함께 움직인다. 서울 25개 구가 아닌 곳(성남시)은 그 탭 안에서만 쓴다.
 const healthDistrict=ref(filters.region);
 watch(()=>filters.region,value=>{healthDistrict.value=value;});
@@ -157,7 +161,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
   <header class="site-header"><div class="header-inner"><a class="brand" href="./" aria-label="Benefit Monitor 홈"><span class="brand-mark" aria-hidden="true">b<span>m</span></span>Benefit Monitor</a><span v-if="!loading&&updated" class="updated">{{ updatedLabel(updated,now) }}</span><button type="button" class="saved-button" :aria-pressed="chip==='saved'" :aria-label="'즐겨찾기만 보기 '+savedItems.length" @click="toggleSaved"><span aria-hidden="true">{{ chip==='saved'?'★':'☆' }} 저장 <b>{{ savedItems.length }}</b></span></button></div></header>
   <main class="container">
     <h1 id="hero-title" class="sr-only">Benefit Monitor · 서울 생활 혜택</h1>
-    <section v-if="showIntro" class="intro" aria-label="서비스 소개"><div><strong>서울에서 챙길 수 있는 생활 혜택을 매일 모아 드려요</strong><p>서울시·구청·보건소 같은 공식 출처에서 혜택, 장보기 시세, 축제, 보건소 소식을 가져옵니다. 로그인 없이 바로 볼 수 있어요.</p></div><button type="button" @click="closeIntro">닫기</button></section>
+    <section v-if="showIntro" class="intro" aria-label="서비스 소개"><div><strong>서울에서 챙길 수 있는 생활 혜택을 매일 모아 드려요</strong><p>서울시·구청·보건소 같은 공식 출처에서 혜택, 서울·경기 청약 일정, 장보기 시세, 축제, 보건소 소식을 가져옵니다. 로그인 없이 바로 볼 수 있어요.</p></div><button type="button" @click="closeIntro">닫기</button></section>
     <p v-else-if="since&&(freshCount||urgent)" class="since"><span>{{ since }} 방문 이후</span><button v-if="freshCount" type="button" class="chip" @click="goChip('new')">새 혜택<small>{{ freshCount }}</small></button><button v-if="urgent" type="button" class="chip" @click="goChip('urgent')">곧 끝남<small>{{ urgent }}</small></button></p>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="!loading&&counts[t.id]!==null" class="tab-count">{{ counts[t.id] }}</span></button></div></nav>
     <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits" class="panel">
@@ -189,6 +193,10 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       <div v-if="results.length" class="card-grid"><BenefitCard v-for="item in results" :key="item.source+'\n'+item.url" :item="item" :now="now" :saved="favorites.includes(benefitKey(item))" :failures="data?.sourceFailures" :pick="pickOf.get(benefitKey(item))" :fresh="isFresh(item)" @toggle-favorite="toggleFavorite(item)" /></div>
       <div v-else-if="!loading" class="empty-state"><span class="empty-symbol" aria-hidden="true">⌕</span><h3>{{ chip==='saved'?'현재 조건에 맞는 즐겨찾기가 없어요':all.length?'조건에 맞는 검증 항목이 없어요':state==='partial'?'현재 표시 가능한 검증 항목이 없어요':'확인된 목록이 준비되면 여기에 표시됩니다' }}</h3><p>{{ all.length?'다른 검색어나 지역으로 찾아보세요.':'개별 표시기한 경과 또는 검증 보류일 수 있습니다. 실제 혜택이 없거나 행사가 종료됐다는 뜻은 아닙니다.' }}</p><button v-if="active" type="button" class="primary-button" @click="reset">필터 초기화</button></div>
     </section>
+    </div>
+    <div id="panel-subscriptions" v-show="tab==='subscriptions'" role="tabpanel" aria-labelledby="tab-subscriptions">
+      <SubscriptionSection v-if="subs" v-model:region="filters.region" :bundle="subs" :now="groceryMinute" />
+      <p v-else-if="!loading" class="empty-state">이번 실행에서 청약 일정을 가져오지 못했어요. <a :href="CALENDAR_PAGE" target="_blank" rel="noopener noreferrer">청약홈 달력 보기 ↗</a></p>
     </div>
     <div id="panel-groceries" v-show="tab==='groceries'" role="tabpanel" aria-labelledby="tab-groceries">
       <GrocerySection v-if="groceries" :bundle="groceries" :weekly="groceryPick" :basket="basket" :discounts="discounts" @more="setTab('benefits',true)" />

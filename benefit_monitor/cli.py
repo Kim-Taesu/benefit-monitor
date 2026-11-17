@@ -86,6 +86,15 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                             else:
                                 failures.append(dict(source=s["id"], reason="HealthNoticesUnavailable", detail="No fresh health notice bundle"))
                             continue
+                        if online and s.get("collector") == "subscriptions":
+                            # Collected by its own daily workflow (subscriptions.yml) and restored before this
+                            # run; a display-only section of the benefits tab, never review candidates or AI.
+                            from . import subscriptions
+                            if subscriptions.sanitize(load(root/subscriptions.FILE, None), now) is not None:
+                                successful_sources.append(s["id"])
+                            else:
+                                failures.append(dict(source=s["id"], reason="SubscriptionsUnavailable", detail="No fresh 청약 schedule bundle"))
+                            continue
                         if online and s.get("collector") == "kfes_festivals":
                             # Separate display channel: never review candidates, AI research or topic cards.
                             try:

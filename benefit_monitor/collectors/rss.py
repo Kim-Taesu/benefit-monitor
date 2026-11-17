@@ -19,14 +19,16 @@ class Redirect(urllib.request.HTTPRedirectHandler):
         cost_policy.budget.consume()
         return super().redirect_request(req, fp, code, msg, headers, newurl)
 
-def fetch(url, domains):
+def fetch(url, domains, data=None, headers=None):
+    """GET, or POST when data is given (청약홈's own read-only lookups, approved 2026-11-17)."""
     if not official(url, domains):
         raise ValueError("Unapproved URL")
     opener = urllib.request.build_opener(Redirect(domains))
     for attempt in range(2):
         try:
             cost_policy.budget.consume()
-            with opener.open(urllib.request.Request(url, headers={"User-Agent": AGENT}), timeout=15) as r:
+            request = urllib.request.Request(url, data=data, headers={**(headers or {}), "User-Agent": AGENT})
+            with opener.open(request, timeout=15) as r:
                 body = r.read(LIMIT+1)
                 if len(body) > LIMIT:
                     raise ValueError("Response too large")

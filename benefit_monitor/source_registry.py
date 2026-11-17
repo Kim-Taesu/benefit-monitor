@@ -141,6 +141,11 @@ def probe(root, source_id, budget=10):
                  for b in bundle["boards"] for i in b["items"]]
         items += [dict(title=f"[{b['district']} {b['status']}] {b['reason']}", url=b["home_url"])
                   for b in bundle["boards"] if b["status"] != "checked"]
+    elif source.get("collector") == "subscriptions":
+        from .subscriptions import collect as collect_subscriptions
+        bundle = collect_subscriptions(source, datetime.now(ZoneInfo(config["timezone"])))
+        items = [dict(title=f"[{i['area']} {i['district'] or '-'} {i['detail']}] {i['steps'][0]['start']} {i['name']}", url=i["url"])
+                 for i in bundle["items"]]
     elif source.get("collector") == "grocery_prices":
         from .groceries import collect as collect_groceries, KAMIS_DAILY, EKAPE_REGION
         bundle = collect_groceries(source, datetime.now(ZoneInfo(config["timezone"])))

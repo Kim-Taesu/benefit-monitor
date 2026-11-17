@@ -139,7 +139,8 @@
             "heritage_events",
             "kfes_festivals",
             "grocery_prices",
-            "health_notices"
+            "health_notices",
+            "subscriptions"
           ]
         },
         "health_boards": {
