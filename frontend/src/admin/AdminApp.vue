@@ -52,9 +52,14 @@ const token=ref(''),draft=ref(''),remember=ref(false),items=ref<AutoItem[]>([]),
 const takedowns=ref<Takedown[]|null>(null),takedownError=ref(''),message=ref(''),busy=ref(false);
 const notes=ref<Record<string,string>>({});
 const groceryPick=ref<GroceryPick>(null),groceryMutes=ref<string[]>([]),groceryNote=ref('');
-const festivalPick=ref<DayPick>(null),benefitPick=ref<DayPick>(null),festivalMutes=ref<string[]>([]),benefitMutes=ref<string[]>([]);
-const festivalNote=ref(''),benefitNote=ref('');
-const subscriptionPick=ref<DayPick>(null),subscriptionMutes=ref<string[]>([]),subscriptionNote=ref('');
+// Festival, benefit and 청약 pick text switches share one shape (2026-11-18). Mutes are listed by their own day:
+// a muted AI pick is republished as a rule card dated the publish day, so the card's day cannot find the mute.
+const PICKS=[{kind:'festival_pick_text',key:'festival_pick',id:'festival',title:'AI 축제 문구',label:'축제',empty:'지금 공개된 축제 추천이 없습니다.'},
+ {kind:'benefit_pick_text',key:'benefit_pick',id:'benefit',title:'AI 혜택 문구',label:'혜택',empty:'지금 공개된 혜택 추천이 없습니다.'},
+ {kind:'subscription_pick_text',key:'subscription_pick',id:'subscription',title:'AI 청약 문구',label:'청약',empty:'지금 공개된 청약 요약이 없습니다.'}] as const satisfies readonly {kind:PickKind;key:string;id:string;title:string;label:string;empty:string}[];
+const dayPicks=ref<Record<PickKind,DayPick>>({festival_pick_text:null,benefit_pick_text:null,subscription_pick_text:null});
+const pickMutes=ref<Record<PickKind,string[]>>({festival_pick_text:[],benefit_pick_text:[],subscription_pick_text:[]});
+const pickNotes=ref<Record<PickKind,string>>({festival_pick_text:'',benefit_pick_text:'',subscription_pick_text:''});
 const healthNotes=ref<HealthNote[]>([]),healthMutes=ref<string[]>([]),healthMemo=ref<Record<string,string>>({});
 
 const statusLine=computed(()=>{
@@ -76,12 +81,12 @@ async function loadBriefing(){
   const response=await fetch(import.meta.env.BASE_URL+'briefing.json',{cache:'no-store',credentials:'omit'});
   if(!response.ok)throw new Error('HTTP');
   const raw:unknown=await response.json();
-  items.value=parseItems(raw);aiStatus.value=parseStatus(raw);groceryPick.value=parsePick(raw);festivalPick.value=parseDayPick(raw,'festival_pick');benefitPick.value=parseDayPick(raw,'benefit_pick');subscriptionPick.value=parseDayPick(raw,'subscription_pick');healthNotes.value=parseHealthNotes(raw);
+  items.value=parseItems(raw);aiStatus.value=parseStatus(raw);groceryPick.value=parsePick(raw);dayPicks.value=Object.fromEntries(PICKS.map(x=>[x.kind,parseDayPick(raw,x.key)])) as Record<PickKind,DayPick>;healthNotes.value=parseHealthNotes(raw);
  }catch{briefingError.value=true;}
 }
 async function loadTakedowns(){
- if(!token.value){takedowns.value=null;groceryMutes.value=[];healthMutes.value=[];festivalMutes.value=[];benefitMutes.value=[];subscriptionMutes.value=[];return;}
- try{const state=await readAdminState(token.value);takedowns.value=state.list;groceryMutes.value=state.mutes;healthMutes.value=state.healthMutes;festivalMutes.value=state.festivalMutes;benefitMutes.value=state.benefitMutes;subscriptionMutes.value=state.subscriptionMutes;takedownError.value='';}
+ if(!token.value){takedowns.value=null;groceryMutes.value=[];healthMutes.value=[];pickMutes.value={festival_pick_text:[],benefit_pick_text:[],subscription_pick_text:[]};return;}
+ try{const state=await readAdminState(token.value);takedowns.value=state.list;groceryMutes.value=state.mutes;healthMutes.value=state.healthMutes;pickMutes.value={festival_pick_text:state.festivalMutes,benefit_pick_text:state.benefitMutes,subscription_pick_text:state.subscriptionMutes};takedownError.value='';}
  catch(e){takedowns.value=null;takedownError.value=e instanceof Error?e.message:'내림 목록을 읽지 못했습니다';}
 }
 async function saveToken(){
@@ -114,12 +119,10 @@ const muteGrocery=()=>groceryPick.value&&run(()=>muteGroceryText(token.value,gro
 const unmuteGrocery=()=>groceryPick.value&&run(()=>unmuteGroceryText(token.value,groceryPick.value!.surveyDate),
  '다시 켰습니다. 이미 내린 오늘 문구는 돌아오지 않고, 다음 AI 실행(보통 다음 날 새벽)부터 새 AI 문구가 공개됩니다.');
 
-const festivalMuted=computed(()=>!!festivalPick.value&&festivalMutes.value.includes(festivalPick.value.day));
-const benefitMuted=computed(()=>!!benefitPick.value&&benefitMutes.value.includes(benefitPick.value.day));
-const subscriptionMuted=computed(()=>!!subscriptionPick.value&&subscriptionMutes.value.includes(subscriptionPick.value.day));
-const mutePick=(kind:PickKind,pick:DayPick,memo:string,label:string)=>pick&&run(()=>mutePickText(token.value,kind,pick.day,memo),
- `AI ${label} 문구를 껐습니다. 2~3분 뒤 카드가 문구 없이 자동 선정 목록만 보이게 바뀝니다.`);
-const unmutePick=(kind:PickKind,pick:DayPick,label:string)=>pick&&run(()=>unmutePickText(token.value,kind,pick.day),
+const pickMuted=(kind:PickKind)=>{const p=dayPicks.value[kind];return !!p&&pickMutes.value[kind].includes(p.day);};
+const mutePick=(kind:PickKind,label:string)=>{const p=dayPicks.value[kind];return p&&run(()=>mutePickText(token.value,kind,p.day,pickNotes.value[kind]),
+ `AI ${label} 문구를 껐습니다. 2~3분 뒤 카드가 문구 없이 자동 선정 목록만 보이게 바뀝니다.`);};
+const unmutePick=(kind:PickKind,day:string,label:string)=>run(()=>unmutePickText(token.value,kind,day),
  `다시 켰습니다. 이미 내린 문구는 돌아오지 않고, 다음 AI 실행부터 새 ${label} 문구가 공개됩니다.`);
 
 const muteHealth=(n:HealthNote)=>run(()=>muteHealthNote(token.value,n.url,healthMemo.value[n.url]||''),
@@ -175,55 +178,23 @@ onMounted(async()=>{token.value=loadToken();await Promise.all([loadBriefing(),lo
    </template>
   </section>
 
-  <section aria-labelledby="festival-heading">
-   <h2 id="festival-heading">AI 축제 문구</h2>
-   <p v-if="!festivalPick">지금 공개된 축제 추천이 없습니다.</p>
+  <section v-for="x in PICKS" :key="x.kind" :aria-labelledby="x.id+'-heading'">
+   <h2 :id="x.id+'-heading'">{{x.title}}</h2>
+   <p v-if="!dayPicks[x.kind]">{{x.empty}}</p>
    <template v-else>
-    <p>추천일 {{festivalPick.day}} · {{festivalPick.source==='ai'?'AI 작성 문구 공개 중':'자동 선정(문구 없음)'}}</p>
-    <blockquote v-if="festivalPick.summary">{{festivalPick.summary}}</blockquote>
-    <p v-if="festivalMuted" class="pending">이 날짜의 AI 문구는 꺼져 있습니다.</p>
-    <p v-if="festivalPick.source==='rule'&&!festivalMuted">지금은 문장 없는 자동 선정 카드입니다.</p>
-    <div v-else class="row">
-     <label for="festival-note">메모 (공개 저장소에 기록됩니다)</label>
-     <input id="festival-note" v-model="festivalNote" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">
-     <button v-if="!festivalMuted" type="button" :disabled="!token||busy" @click="mutePick('festival_pick_text',festivalPick,festivalNote,'축제')">AI 축제 문구 끄기</button>
-     <button v-else type="button" :disabled="!token||busy" @click="unmutePick('festival_pick_text',festivalPick,'축제')">다시 켜기</button>
+    <p>추천일 {{dayPicks[x.kind]!.day}} · {{dayPicks[x.kind]!.source==='ai'?'AI 작성 문구 공개 중':'자동 선정(문구 없음)'}}</p>
+    <blockquote v-if="dayPicks[x.kind]!.summary">{{dayPicks[x.kind]!.summary}}</blockquote>
+    <p v-if="pickMuted(x.kind)" class="pending">이 날짜의 AI 문구는 꺼져 있습니다.</p>
+    <p v-else-if="dayPicks[x.kind]!.source==='rule'&&!pickMutes[x.kind].length">지금은 문장 없는 자동 선정 카드입니다.</p>
+    <div v-if="dayPicks[x.kind]!.source==='ai'&&!pickMuted(x.kind)" class="row">
+     <label :for="x.id+'-note'">메모 (공개 저장소에 기록됩니다)</label>
+     <input :id="x.id+'-note'" v-model="pickNotes[x.kind]" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">
+     <button type="button" :disabled="!token||busy" @click="mutePick(x.kind,x.label)">AI {{x.label}} 문구 끄기</button>
     </div>
    </template>
-  </section>
-
-  <section aria-labelledby="benefit-heading">
-   <h2 id="benefit-heading">AI 혜택 문구</h2>
-   <p v-if="!benefitPick">지금 공개된 혜택 추천이 없습니다.</p>
-   <template v-else>
-    <p>추천일 {{benefitPick.day}} · {{benefitPick.source==='ai'?'AI 작성 문구 공개 중':'자동 선정(문구 없음)'}}</p>
-    <blockquote v-if="benefitPick.summary">{{benefitPick.summary}}</blockquote>
-    <p v-if="benefitMuted" class="pending">이 날짜의 AI 문구는 꺼져 있습니다.</p>
-    <p v-if="benefitPick.source==='rule'&&!benefitMuted">지금은 문장 없는 자동 선정 카드입니다.</p>
-    <div v-else class="row">
-     <label for="benefit-note">메모 (공개 저장소에 기록됩니다)</label>
-     <input id="benefit-note" v-model="benefitNote" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">
-     <button v-if="!benefitMuted" type="button" :disabled="!token||busy" @click="mutePick('benefit_pick_text',benefitPick,benefitNote,'혜택')">AI 혜택 문구 끄기</button>
-     <button v-else type="button" :disabled="!token||busy" @click="unmutePick('benefit_pick_text',benefitPick,'혜택')">다시 켜기</button>
-    </div>
-   </template>
-  </section>
-
-  <section aria-labelledby="subscription-heading">
-   <h2 id="subscription-heading">AI 청약 문구</h2>
-   <p v-if="!subscriptionPick">지금 공개된 청약 요약이 없습니다.</p>
-   <template v-else>
-    <p>추천일 {{subscriptionPick.day}} · {{subscriptionPick.source==='ai'?'AI 작성 문구 공개 중':'자동 선정(문구 없음)'}}</p>
-    <blockquote v-if="subscriptionPick.summary">{{subscriptionPick.summary}}</blockquote>
-    <p v-if="subscriptionMuted" class="pending">이 날짜의 AI 문구는 꺼져 있습니다.</p>
-    <p v-if="subscriptionPick.source==='rule'&&!subscriptionMuted">지금은 문장 없는 자동 선정 카드입니다.</p>
-    <div v-else class="row">
-     <label for="subscription-note">메모 (공개 저장소에 기록됩니다)</label>
-     <input id="subscription-note" v-model="subscriptionNote" :maxlength="NOTE_MAX" placeholder="끄는 이유(선택)">
-     <button v-if="!subscriptionMuted" type="button" :disabled="!token||busy" @click="mutePick('subscription_pick_text',subscriptionPick,subscriptionNote,'청약')">AI 청약 문구 끄기</button>
-     <button v-else type="button" :disabled="!token||busy" @click="unmutePick('subscription_pick_text',subscriptionPick,'청약')">다시 켜기</button>
-    </div>
-   </template>
+   <ul v-if="pickMutes[x.kind].length" class="mutes">
+    <li v-for="d in pickMutes[x.kind]" :key="d">{{d}} AI 문구 꺼짐 <button type="button" :disabled="!token||busy" :aria-label="d+' 다시 켜기'" @click="unmutePick(x.kind,d,x.label)">다시 켜기</button></li>
+   </ul>
   </section>
 
   <section aria-labelledby="health-heading">

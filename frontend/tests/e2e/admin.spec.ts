@@ -141,6 +141,24 @@ test('a rule pick has no text to mute, so its mute buttons are hidden',async({pa
  await expect(benefit).not.toContainText('지금은 문장 없는 자동 선정 카드입니다.');
 });
 
+test('a mute from an earlier day stays listed and can be switched back on after the card moved to today',async({page})=>{
+ // A muted AI pick is republished as a rule card dated the publish day (2026-11-18 PR #67 review), so the switch
+ // must come from the mute list, not from the card's day.
+ const rule={schema_version:1,generated_at:'2026-11-05T07:00:00+09:00',day:'2026-11-05',source:'rule',summary:null,picks:[]};
+ const seen=await setup(page,snapshot([auto],{subscription_pick:rule,benefit_pick:rule}),
+  [{kind:'subscription_pick_text',day:'2026-11-04',taken_down_at:'2026-11-04T08:00:00+09:00'}]);
+ await page.goto('./admin.html');
+ await page.getByLabel('GitHub 토큰').fill(TOKEN);
+ await page.getByRole('button',{name:'토큰 저장'}).click();
+ const subs=page.locator('section[aria-labelledby="subscription-heading"]');
+ await expect(subs).toContainText('2026-11-04 AI 문구 꺼짐');
+ await subs.getByRole('button',{name:'2026-11-04 다시 켜기'}).click();
+ await expect.poll(()=>seen.github.some(c=>c.method==='PUT')).toBe(true);
+ const put=seen.github.find(c=>c.method==='PUT')!;
+ expect(JSON.parse(Buffer.from((put.body as {content:string}).content,'base64').toString())).toEqual([]);
+ await expect(page.locator('section[aria-labelledby="benefit-heading"]').getByRole('button')).toHaveCount(0);
+});
+
 test('a muted day turns into a rule card but can still be switched back on',async({page})=>{
  const pick=(source:string)=>({schema_version:1,generated_at:'2026-11-04T07:00:00+09:00',day:'2026-11-04',source,summary:source==='ai'?'[테스트] 요약':null,picks:[]});
  const seen=await setup(page,snapshot([auto],{festival_pick:pick('rule'),benefit_pick:pick('rule')}),
@@ -151,7 +169,7 @@ test('a muted day turns into a rule card but can still be switched back on',asyn
  const festival=page.locator('section[aria-labelledby="festival-heading"]'),benefit=page.locator('section[aria-labelledby="benefit-heading"]');
  await expect(festival).toContainText('이 날짜의 AI 문구는 꺼져 있습니다.');
  await expect(festival).not.toContainText('지금은 문장 없는 자동 선정 카드입니다.');
- await festival.getByRole('button',{name:'다시 켜기'}).click();
+ await festival.getByRole('button',{name:'2026-11-04 다시 켜기'}).click();
  await expect.poll(()=>seen.github.some(c=>c.method==='PUT')).toBe(true);
  const put=seen.github.find(c=>c.method==='PUT')!;
  expect(JSON.parse(Buffer.from((put.body as {content:string}).content,'base64').toString())).toEqual([]);
