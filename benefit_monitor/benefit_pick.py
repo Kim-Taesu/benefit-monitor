@@ -7,15 +7,15 @@ describes and no guarantee, eligibility or stock claim appears. Cost words (free
 or unknown benefit free. Titles, links and conditions on the page always come from the published items. Any failure falls
 back to rule_pick(): no model text. A pick never changes which benefits are published or their order.
 """
-from datetime import datetime, timedelta
+from datetime import timedelta
 import hashlib
-import json
 from pathlib import Path
 import re
 
+from . import pick_common as common
 from .ai_review import invoke
 from .official_reader import project_path
-from .store import load, lock, save, save_text
+from .store import load, lock, save
 
 TRIAL_RUNS = Path(__file__).resolve().parents[1] / '.tools/claude-trial/live/runs'
 
@@ -34,7 +34,6 @@ CLAIMS = ('누구나', '받을 수 있', '확실', '보장', '무조건', '100%'
 STOCK = ('남은', '잔여', '소진 전', '자리 있')
 # The page shows the deadline; text never pushes (2026-11-14 review).
 URGENCY = re.compile(r'임박|곧\s?끝|곧\s?마감|막바지|서두르|서둘러|마지막|놓치기\s?전')
-PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
 
 def item_id(row):
@@ -163,7 +162,7 @@ def rule_pick(host, now):
 
 
 def muted(takedowns, day):
-    return any(isinstance(t, dict) and t.get('kind') == TAKEDOWN_KIND and t.get('day') == day for t in takedowns or [])
+    return common.muted(takedowns, TAKEDOWN_KIND, day)
 
 
 def apply_mute(pick, items, takedowns, now):
@@ -183,12 +182,8 @@ def _fill(pick, items):
 
 
 def _public(pick, items, takedowns, now):
-    if not isinstance(pick, dict) or set(pick) != PICK_FIELDS or pick['schema_version'] != 1 \
-            or pick['source'] not in ('ai', 'rule') or not isinstance(pick['picks'], list) \
-            or not isinstance(pick['day'], str):
-        return None
-    generated = datetime.fromisoformat(pick['generated_at'])
-    if generated.tzinfo is None or generated > now:
+    generated = common.stored_header(pick, now)
+    if generated is None:
         return None
     rows = _rows(items, now)
     if len(rows) < MIN_CANDIDATES:
@@ -236,16 +231,6 @@ def public(pick, items, takedowns, now):
         return None
 
 
-def _keep(previous, day, now):
-    try:
-        if previous.get('day') == day:
-            return True
-        return previous.get('source') == 'ai' \
-            and now - datetime.fromisoformat(previous['generated_at']) <= timedelta(hours=MAX_AGE_HOURS)
-    except (KeyError, TypeError, ValueError):
-        return False
-
-
 def refresh(root, now, execute=False, items=None):
     """At most one paid call a day; writes cache/benefit_pick/pick.json (AI pick, rule pick or None)."""
     root = Path(root).resolve()
@@ -262,38 +247,14 @@ def refresh(root, now, execute=False, items=None):
         if len(rows) < MIN_CANDIDATES:
             save(out, None)
             return {'status': 'no_candidates', 'source': None, 'model': None, 'errors': []}
-        state = load(project_path(root, 'cache/benefit_pick/days.json'), {'days': {}})
-        day = now.date().isoformat()
         previous = load(out, None)
-        pick, model, errors, detail = None, {'status': 'not_requested', 'run_id': None}, [], []
-        if current is not None and execute and day not in state['days']:
-            digest = hashlib.sha256(json.dumps(current, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:16]
-            input_path = project_path(root, f'.tools/ai-benefit-inputs/{day}-{digest}.json')
-            save_text(input_path, json.dumps(current, ensure_ascii=False, separators=(',', ':')))
-            # Persist before calling: a crash cannot open another paid attempt today.
-            state['days'][day] = {'status': 'attempted', 'input_file': str(input_path.relative_to(root))}
-            save(project_path(root, 'cache/benefit_pick/days.json'), state)
-            model = invoke(root, 'benefit', input_path)
-            if model['status'] == 'validated_draft':
-                try:
-                    draft = load(TRIAL_RUNS / model['run_id'] / 'result.json', None)
-                    errors = review(draft, current)
-                    if not errors:
-                        pick = dict(schema_version=1, generated_at=now.isoformat(), day=day, source='ai',
-                                    summary=draft['summary'], picks=draft['picks'])
-                except (OSError, ValueError, KeyError, TypeError):
-                    errors = ['draft_unreadable']
-            elif model['status'] == 'rejected_draft':
-                # The trial CLI already ran review(); copy its codes so the run summary says why today is a rule card.
-                try:
-                    folder = TRIAL_RUNS / model['run_id']
-                    errors = [str(e)[:80] for e in load(folder / 'validation.json', {}).get('errors', [])][:20]
-                except (OSError, ValueError, KeyError, TypeError, AttributeError):
-                    errors = errors or ['rejection_unreadable']
-            state['days'][day].update(model)
-            save(project_path(root, 'cache/benefit_pick/days.json'), state)
-        elif isinstance(previous, dict) and _keep(previous, day, now):
+        pick, model, errors = None, {'status': 'not_requested', 'run_id': None}, []
+        if current is not None and execute and not common.already_tried(root, 'benefit_pick', now):
+            pick, model, errors = common.daily_draft(root, 'benefit_pick', 'benefit', current,
+                                                     lambda draft: review(draft, current), now, invoke, TRIAL_RUNS)
+        elif isinstance(previous, dict) and common.keep(previous, now.date().isoformat(), now, MAX_AGE_HOURS):
             pick = previous  # Publication re-checks it against the live items.
         pick = pick or rule_pick(_input(rows, now), now)
         save(out, pick)
-        return {'status': 'completed', 'source': pick['source'], 'model': model, 'errors': errors, 'detail': detail}
+        # detail: kept for the run summary's shape (pick_report); price words are no longer a rejection (2026-11-18).
+        return {'status': 'completed', 'source': pick['source'], 'model': model, 'errors': errors, 'detail': []}

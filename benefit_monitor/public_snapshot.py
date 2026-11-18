@@ -141,7 +141,8 @@ def validate(root,data,now,auto=None):
                 if notes:clean['health_notes']=notes
     if clean['status']!='collection_failed':
         # Festival and benefit picks (2026-11-14), 청약 pick (2026-11-18): re-checked against the clean bundles only.
-        for key in ('festival_pick','benefit_pick','subscription_pick'):
+        from .tab_picks import KEYS
+        for key in KEYS:
             if isinstance(data.get(key),dict):clean[key]=data[key]
         auto_release.recheck_tab_picks(clean,(auto if auto is not None else auto_release.load(root))[1],now)
     if data.get('groceries') and clean['status']!='collection_failed':

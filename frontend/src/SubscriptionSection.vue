@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { CALENDAR_PAGE, KIND_LABELS, badge, filterSubs, formatArea, formatPrice, groupByDay, isMine, kakaoMapUrl, kstDate, naverMapUrl, priceOne, specialSummary, timeline, tradeText, typeSplit } from './subscriptions';
+import { CALENDAR_PAGE, KIND_LABELS, badge, filterSubs, formatArea, formatPrice, groupByDay, isMine, kakaoMapUrl, kstDate, naverMapUrl, placeLabel, priceOne, specialSummary, timeline, tradeText, typeSplit } from './subscriptions';
 import type { SubscriptionPick } from './picks';
 import PickCard from './PickCard.vue';
 import type { KindFilter, Subscription, SubscriptionBundle } from './subscriptions';
@@ -40,7 +40,7 @@ function extra(i:Subscription){return [...i.regulation,i.moveIn?`입주 ${i.move
       :note="pick.source==='ai'?'개인 정보 없이 AI가 공개된 청약 일정 안에서 쓴 요약이에요. 날짜는 청약홈 데이터 그대로이고, 신청 자격·당첨 가능성은 판단하지 않아요.':'접수가 가까운 순으로 자동 선정했어요. 신청 자격·당첨 가능성은 판단하지 않아요.'">
       <ul class="pick-list">
         <li v-for="p in pick.picks.slice(0,limit)" :key="p.item.id">
-          <strong><span aria-hidden="true">🏠</span> {{ p.item.name }}</strong> <small>{{ p.item.district?`${p.item.area} ${p.item.district}`:p.item.area }} · {{ badge(p.item,today).text }}</small>
+          <strong><span aria-hidden="true">🏠</span> {{ p.item.name }}</strong> <small>{{ placeLabel(p.item) }} · {{ badge(p.item,today).text }}</small>
           <span v-if="p.line" class="pick-line">→ {{ p.line }}</span>
         </li>
       </ul>
@@ -74,7 +74,7 @@ function extra(i:Subscription){return [...i.regulation,i.moveIn?`입주 ${i.move
       <h3 class="subs-day">{{ g.label }} <span>{{ g.items.length }}곳</span></h3>
       <ul class="subs-grid">
         <li v-for="{i,badge:b,steps,mine} in g.cards" :key="i.id" class="benefit-card subs-card" :class="{mine}">
-          <p class="bcard-top"><span class="badge timing" :class="{urgent:b.tone==='urgent',soon:b.tone==='soon'}">{{ b.text }}</span><span class="badge supply-badge">{{ i.supply }}</span><span class="category">{{ i.district?`${i.area} ${i.district}`:i.area }}</span><span v-if="mine" class="badge mine-badge">📍 내 지역</span></p>
+          <p class="bcard-top"><span class="badge timing" :class="{urgent:b.tone==='urgent',soon:b.tone==='soon'}">{{ b.text }}</span><span class="badge supply-badge">{{ i.supply }}</span><span class="category">{{ placeLabel(i) }}</span><span v-if="mine" class="badge mine-badge">📍 내 지역</span></p>
           <h4 class="subs-name"><a class="subs-map" :href="kakaoMapUrl(i)" target="_blank" rel="noopener noreferrer">{{ i.name }}<span aria-hidden="true"> 📍</span><span class="sr-only"> (카카오맵에서 위치 검색, 새 창)</span></a> <a class="subs-map-alt" :href="naverMapUrl(i)" target="_blank" rel="noopener noreferrer">네이버지도<span class="sr-only">에서 {{ i.name }} 검색 (새 창)</span></a></h4>
           <p v-if="facts(i)" class="subs-facts">{{ facts(i) }}</p>
           <p v-else class="subs-facts muted">세대수·면적·금액은 공고에서 확인하세요</p>

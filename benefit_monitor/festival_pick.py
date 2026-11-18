@@ -5,15 +5,14 @@ Approved 2026-11-14 (same exception as grocery_pick): the model's summary and on
 is a candidate, "무료" matches the listed fee status and no guarantee or sale claim appears. Names, dates, regions and
 fees on the page always come from the festivals bundle. Any failure falls back to rule_pick(): no model text.
 """
-from datetime import datetime, timedelta
-import hashlib
-import json
+from datetime import timedelta
 from pathlib import Path
 import re
 
+from . import pick_common as common
 from .ai_review import invoke
 from .official_reader import project_path
-from .store import load, lock, save, save_text
+from .store import load, lock, save
 
 TRIAL_RUNS = Path(__file__).resolve().parents[1] / '.tools/claude-trial/live/runs'
 
@@ -29,7 +28,6 @@ MARKUP = re.compile(r'[<>\x00-\x1f]|https?:|www\.')  # control chars too: the pa
 # The page shows each festival's dates, so text never says when (2026-11-14 review).
 RELATIVE = re.compile(r'오늘|내일|모레|어제|이번\s?주|다음\s?주|주말|평일|마지막\s?날|막바지|곧|임박|서두르|서둘러')
 FORBIDDEN = ('보장', '무조건', '최저가', '확실', '선착순', '매진', '완판', '100%')
-PICK_FIELDS = {'schema_version', 'generated_at', 'day', 'source', 'summary', 'picks'}
 
 
 def _candidates(bundle, now):
@@ -197,7 +195,7 @@ def rule_pick(host, now):
 
 
 def muted(takedowns, day):
-    return any(isinstance(t, dict) and t.get('kind') == TAKEDOWN_KIND and t.get('day') == day for t in takedowns or [])
+    return common.muted(takedowns, TAKEDOWN_KIND, day)
 
 
 def apply_mute(pick, bundle, takedowns, now):
@@ -214,12 +212,8 @@ def apply_mute(pick, bundle, takedowns, now):
 def public(pick, bundle, takedowns, now):
     """Re-check a stored pick against the same festivals bundle; None when it cannot be shown today."""
     try:
-        if not isinstance(pick, dict) or set(pick) != PICK_FIELDS or pick['schema_version'] != 1 \
-                or pick['source'] not in ('ai', 'rule') or not isinstance(pick['picks'], list) \
-                or not isinstance(pick['day'], str):
-            return None
-        generated = datetime.fromisoformat(pick['generated_at'])
-        if generated.tzinfo is None or generated > now:
+        generated = common.stored_header(pick, now)
+        if generated is None:
             return None
         rows = _candidates(bundle, now)
         if not rows:
@@ -260,41 +254,14 @@ def refresh(root, now, execute=False):
         if not rows:
             save(out, None)
             return {'status': 'no_candidates', 'source': None, 'model': None, 'errors': []}
-        state = load(project_path(root, 'cache/festival_pick/days.json'), {'days': {}})
-        day = now.date().isoformat()
         previous = load(out, None)
         pick, model, errors = None, {'status': 'not_requested', 'run_id': None}, []
-        if current is not None and execute and day not in state['days']:
-            digest = hashlib.sha256(json.dumps(current, ensure_ascii=False, sort_keys=True).encode()).hexdigest()[:16]
-            input_path = project_path(root, f'.tools/ai-festival-inputs/{day}-{digest}.json')
-            save_text(input_path, json.dumps(current, ensure_ascii=False, separators=(',', ':')))
-            # Persist before calling: a crash cannot open another paid attempt today.
-            state['days'][day] = {'status': 'attempted', 'input_file': str(input_path.relative_to(root))}
-            save(project_path(root, 'cache/festival_pick/days.json'), state)
-            model = invoke(root, 'festival', input_path)
-            if model['status'] == 'validated_draft':
-                try:
-                    draft = load(TRIAL_RUNS / model['run_id'] / 'result.json', None)
-                    errors = review(draft, current, known_names(bundle))
-                    if not errors:
-                        pick = dict(schema_version=1, generated_at=now.isoformat(), day=day, source='ai',
-                                    summary=draft['summary'], picks=draft['picks'])
-                except (OSError, ValueError, KeyError, TypeError):
-                    errors = ['draft_unreadable']
-            state['days'][day].update(model)
-            save(project_path(root, 'cache/festival_pick/days.json'), state)
-        elif isinstance(previous, dict) and _keep(previous, day, now):
+        if current is not None and execute and not common.already_tried(root, 'festival_pick', now):
+            names = known_names(bundle)
+            pick, model, errors = common.daily_draft(root, 'festival_pick', 'festival', current,
+                                                     lambda draft: review(draft, current, names), now, invoke, TRIAL_RUNS)
+        elif isinstance(previous, dict) and common.keep(previous, now.date().isoformat(), now, MAX_AGE_HOURS):
             pick = previous  # Publication re-checks it against the live bundle.
         pick = pick or rule_pick(_input(rows, now), now)
         save(out, pick)
         return {'status': 'completed', 'source': pick['source'], 'model': model, 'errors': errors}
-
-
-def _keep(previous, day, now):
-    try:
-        if previous.get('day') == day:
-            return True
-        return previous.get('source') == 'ai' \
-            and now - datetime.fromisoformat(previous['generated_at']) <= timedelta(hours=MAX_AGE_HOURS)
-    except (KeyError, TypeError, ValueError):
-        return False

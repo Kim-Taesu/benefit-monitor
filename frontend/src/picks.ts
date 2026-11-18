@@ -23,53 +23,47 @@ function line(source:unknown,v:unknown):string|null|undefined{
  return source==='rule'?null:v;
 }
 
-export function parseFestivalPick(raw:unknown,bundle:FestivalBundle):FestivalPick|null{
- if(!record(raw)||!record(raw.festival_pick))return null;
- const p=raw.festival_pick;
- if(!head(p))return null;
- const byId=new Map(bundle.items.map(f=>[f.id,f] as const));
- const picks:FestivalPick['picks']=[],seen=new Set<string>();
+/** The pick's lines whose key finds a current item, first occurrence only, plus whether any line was dropped
+ *  (unknown key, bad line). `id` turns a raw line into the lookup key, or null when it has the wrong shape. */
+function lines<T>(p:Record<string,unknown>,id:(x:Record<string,unknown>)=>string|null,byId:Map<string,T>){
+ const picks:{item:T;line:string|null}[]=[],seen=new Set<string>();
  for(const x of p.picks as unknown[]){
-  if(!record(x)||typeof x.id!=='string')continue;
-  const festival=byId.get(x.id),l=line(p.source,x.line);
-  if(festival&&l!==undefined&&!seen.has(x.id)){seen.add(x.id);picks.push({festival,line:l});}
+  if(!record(x))continue;
+  const k=id(x),item=k===null?undefined:byId.get(k),l=line(p.source,x.line);
+  if(k!==null&&item&&l!==undefined&&!seen.has(k)){seen.add(k);picks.push({item,line:l});}
  }
- return picks.length?{source:p.source as 'ai'|'rule',summary:p.source==='ai'?p.summary as string|null:null,picks}:null;
+ return {picks,dropped:picks.length<(p.picks as unknown[]).length};
+}
+function pickOf(raw:unknown,key:string):Record<string,unknown>|null{
+ if(!record(raw)||!record(raw[key]))return null;
+ return head(raw[key] as Record<string,unknown>)?raw[key] as Record<string,unknown>:null;
+}
+const source=(p:Record<string,unknown>)=>p.source as 'ai'|'rule';
+const byStringId=(x:Record<string,unknown>)=>typeof x.id==='string'?x.id:null;
+
+/** Festival: the summary stays when a line is dropped (it was always shown that way). */
+export function parseFestivalPick(raw:unknown,bundle:FestivalBundle):FestivalPick|null{
+ const p=pickOf(raw,'festival_pick');if(!p)return null;
+ const {picks}=lines(p,byStringId,new Map(bundle.items.map(f=>[f.id,f] as const)));
+ return picks.length?{source:source(p),summary:p.source==='ai'?p.summary as string|null:null,picks:picks.map(x=>({festival:x.item,line:x.line}))}:null;
 }
 
 export function parseBenefitPick(raw:unknown,items:Benefit[]):BenefitPick|null{
- if(!record(raw)||!record(raw.benefit_pick))return null;
- const p=raw.benefit_pick;
- if(!head(p))return null;
+ const p=pickOf(raw,'benefit_pick');if(!p)return null;
  const key=(source:string,url:string)=>source+'\n'+url;
- const bySource=new Map(items.map(i=>[key(i.source,i.url),i] as const));
- const picks:BenefitPick['picks']=[],seen=new Set<string>();
- for(const x of p.picks as unknown[]){
-  if(!record(x)||typeof x.source!=='string'||typeof x.url!=='string')continue;
-  const k=key(x.source,x.url),item=bySource.get(k),l=line(p.source,x.line);
-  if(item&&l!==undefined&&!seen.has(k)){seen.add(k);picks.push({item,line:l});}
- }
  // Items here are Seoul-filtered, the backend picked from all public items: a summary may name a dropped line.
- const total=(p.picks as unknown[]).length,dropped=picks.length<total;
+ const {picks,dropped}=lines(p,x=>typeof x.source==='string'&&typeof x.url==='string'?key(x.source,x.url):null,
+  new Map(items.map(i=>[key(i.source,i.url),i] as const)));
+ const total=(p.picks as unknown[]).length;
  if(!picks.length||picks.length<Math.min(3,total))return null;
- return {source:p.source as 'ai'|'rule',summary:p.source==='ai'&&!dropped?p.summary as string|null:null,picks};
+ return {source:source(p),summary:p.source==='ai'&&!dropped?p.summary as string|null:null,picks};
 }
 
 /** 청약 pick (2026-11-18). A complex that closed since publication drops its line and, like benefits, the summary. */
 export function parseSubscriptionPick(raw:unknown,bundle:SubscriptionBundle):SubscriptionPick|null{
- if(!record(raw)||!record(raw.subscription_pick))return null;
- const p=raw.subscription_pick;
- if(!head(p))return null;
- const byId=new Map(bundle.items.map(i=>[i.id,i] as const));
- const picks:SubscriptionPick['picks']=[],seen=new Set<string>();
- for(const x of p.picks as unknown[]){
-  if(!record(x)||typeof x.id!=='string')continue;
-  const item=byId.get(x.id),l=line(p.source,x.line);
-  if(item&&l!==undefined&&!seen.has(x.id)){seen.add(x.id);picks.push({item,line:l});}
- }
- if(!picks.length)return null;
- const dropped=picks.length<(p.picks as unknown[]).length;
- return {source:p.source as 'ai'|'rule',summary:p.source==='ai'&&!dropped?p.summary as string|null:null,picks};
+ const p=pickOf(raw,'subscription_pick');if(!p)return null;
+ const {picks,dropped}=lines(p,byStringId,new Map(bundle.items.map(i=>[i.id,i] as const)));
+ return picks.length?{source:source(p),summary:p.source==='ai'&&!dropped?p.summary as string|null:null,picks}:null;
 }
 
 const md=(date:string)=>`${Number(date.slice(5,7))}/${Number(date.slice(8,10))}`;

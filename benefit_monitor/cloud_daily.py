@@ -105,15 +105,14 @@ def upload_grocery_pick(root,store):
         return False
 
 
-TAB_PICKS=(('cache/festival_pick/pick.json','ai-festival-pick.json','Update AI festival pick'),
-           ('cache/benefit_pick/pick.json','ai-benefit-pick.json','Update AI benefit pick'),
-           ('cache/subscription_pick/pick.json','ai-subscription-pick.json','Update AI subscription pick'))
+from .tab_picks import TAB_PICKS as _PICKS
+TAB_PICKS=tuple((p.local,p.remote,f'Update AI {p.name} pick') for p in _PICKS)
 
 
 def pick_report(result):
     """Why today's festival, benefit and 청약 cards are AI or rule text: source, model status and error codes only."""
     report={}
-    for name in ('festival','benefit','subscription'):
+    for name in (p.name for p in _PICKS):
         row=result.get(name) if isinstance(result.get(name),dict) else {}
         model=row.get('model') if isinstance(row.get('model'),dict) else {}
         report[name]={'status':row.get('status'),'source':row.get('source'),'model':model.get('status'),
