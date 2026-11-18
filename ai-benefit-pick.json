@@ -1,10 +1,14 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-18T08:10:42.870508+09:00",
-  "day": "2026-11-18",
+  "generated_at": "2026-11-19T07:46:03.180380+09:00",
+  "day": "2026-11-19",
   "source": "rule",
   "summary": null,
   "picks": [
+    {
+      "id": "dcba573fdf30",
+      "line": null
+    },
     {
       "id": "f0b397c6695a",
       "line": null
@@ -14,15 +18,11 @@
       "line": null
     },
     {
-      "id": "915d04f9b0de",
+      "id": "25f65fd95f5c",
       "line": null
     },
     {
       "id": "9fbb7918c507",
-      "line": null
-    },
-    {
-      "id": "f020f634e275",
       "line": null
     }
   ]
