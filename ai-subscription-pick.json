@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-19T07:46:03.180380+09:00",
+  "day": "2026-11-19",
+  "source": "rule",
+  "summary": null,
+  "picks": [
+    {
+      "id": "2026940249",
+      "line": null
+    },
+    {
+      "id": "2026940256",
+      "line": null
+    },
+    {
+      "id": "2026000497",
+      "line": null
+    }
+  ]
+}
