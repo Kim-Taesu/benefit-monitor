@@ -73,7 +73,9 @@ class _Anchors(HTMLParser):
 
 
 # Page header posting dates that code (not the model) reads; checked 2026-11-09 on live pages.
-PAGE_DATES={'mediahub.seoul.go.kr':re.compile(r'<p class="date">\s*발행일\s*<span class="num">\s*(\d{4})\.(\d{1,2})\.(\d{1,2})\.')}
+PAGE_DATES={'mediahub.seoul.go.kr':re.compile(r'<p class="date">\s*발행일\s*<span class="num">\s*(\d{4})\.(\d{1,2})\.(\d{1,2})\.'),
+            # 2026-11-18: the post header of a 신세계 newsroom article ("2026.11.05"), not the related list under it.
+            'www.shinsegaegroupnewsroom.com':re.compile(r'<ul class="post-info">\s*<li>\s*<span class="date">(\d{4})\.(\d{1,2})\.(\d{1,2})</span>')}
 
 
 def page_published(html,url):

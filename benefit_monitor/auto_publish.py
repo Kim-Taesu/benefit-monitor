@@ -4,6 +4,7 @@ Every rule must pass; any doubt holds the item in the private review queue. Mode
 (unknown_reason, summaries) never decide anything here: only claim status, structured values,
 host document bodies/hashes/timestamps and the current time do.
 """
+import calendar
 from datetime import date, datetime, time, timedelta
 import json
 from pathlib import Path
@@ -13,7 +14,12 @@ from zoneinfo import ZoneInfo
 
 KST = ZoneInfo('Asia/Seoul')
 PROJECT = Path(__file__).resolve().parents[1]
-PAST_SIGNAL = re.compile(r'종료|마감되었|마감됨|결과\s*발표|지난\s*(?:차수|행사)|\d{4}년\s*(?:행사|차)\s*(?:종료|결과)')
+# 2026-11-18 (user "ok"): a bare "종료" held schedule lines ("운영 종료 30분 전", "사업 종료시 반납", "모집 종료일",
+# "결과발표 12월 중"). Only wording that says something has ended counts; result announcements count in the title.
+PAST_SIGNAL = re.compile(r'종료(?:되었|됐|했|하였|됨|되어)'
+                         r'|(?:행사|접수|모집|신청|운영|사업|이벤트|판매|공모|이용)\s*(?:이|가)?\s*종료(?!\s*(?:일|예정|후|시|전|될|되면|까지|\d))'
+                         r'|마감되었|마감됨|지난\s*(?:차수|행사)|\d{4}년\s*(?:행사|차)\s*(?:종료|결과)')
+PAST_TITLE = re.compile(r'결과\s*발표|당첨자\s*발표|선정\s*결과')
 # Ongoing items must not hide an ending the model did not report (e.g. year-less "11월 30일까지").
 _DATE = (r'(?<![\d./-])(?:(?:\d{4}\s*[./년-]\s*)?\d{1,2}\s*[./월-]\s*\d{1,2}\s*일?\.?'
          r'|(?:\d{4}\s*[./년-]\s*)?\d{1,2}\s*월\s*말|\d{1,2}\s*일)')
@@ -226,14 +232,32 @@ def _with_month(body, match):
     return body[before[-1].start():match.end()]
 
 
+def _posting_month_days(text, posted):
+    """Dates of day-only tokens in a text that writes no month at all, read in the posting month and only on or
+    after the posting day ("12일(목)부터 18일(수)까지" posted 11-05 -> 11-12, 11-18). An earlier day may be this
+    month's past or next month's future, so it is unreadable (2026-11-18, user "ok")."""
+    if posted is None or any(t['m'] for t in DATE_TOKEN.finditer(text)):
+        return []
+    out = []
+    for token in DATE_TOKEN.finditer(text):
+        day = int(token['dd'])
+        if day < posted.day or day > calendar.monthrange(posted.year, posted.month)[1]:
+            return []
+        out.append(date(posted.year, posted.month, day))
+    return out
+
+
 def _from_posting(text, posted):
     """Last date of a year-less ending phrase, its year taken from the page posting date.
-    A year written in the extended text itself is read as written."""
+    A year written in the extended text itself is read as written; a day with no month reads as the posting month."""
     if FOUR_DIGIT_YEAR.search(text):
         return phrase_end(text)
     pairs = _month_days(text)
-    if posted is None or not pairs:
+    if posted is None:
         return None
+    if not pairs:
+        days = _posting_month_days(text, posted)
+        return days[-1] if days else None
     return year_from_posting(*pairs[-1], posted)
 
 
@@ -323,9 +347,10 @@ def decide(draft, host, now, takedowns):
         current = end['moment'] > now if end['moment'] else end['day'] >= today
         # The year itself must be written in the cited official text, not only in the model value.
         stated = any(str(end['day'].year) in q for q in end['quotes']) or any(
-            (end['day'].month, end['day'].day) in _month_days(e['quote'])
-            and year_from_posting(end['day'].month, end['day'].day,
-                                  _posted(docs[e['source_ref']], today) or date.min) == end['day']
+            ((end['day'].month, end['day'].day) in _month_days(e['quote'])
+             and year_from_posting(end['day'].month, end['day'].day,
+                                   _posted(docs[e['source_ref']], today) or date.min) == end['day'])
+            or end['day'] in _posting_month_days(e['quote'], _posted(docs[e['source_ref']], today))
             for e in facts[end['field']]['evidence'] if _posted(docs[e['source_ref']], today))
         period_ok = period_ok and current and stated
         # Grade A (approved 2026-11-10): one official document suffices for a fixed period because the
@@ -352,7 +377,10 @@ def decide(draft, host, now, takedowns):
         # _year_from_same_document). Year-dated ones are read: a past or unreadable one holds (no_current_evidence); a current
         # one is kept so the item is hidden after the earliest of them (and after its time, if any).
         if supported('application_period') is None:
-            for d in host['documents']:
+            # Only documents the draft cites (2026-11-18, user "ok"): other notices on a listing page and a
+            # newsroom's related articles carry their own, unrelated dates.
+            cited = {e['source_ref'] for f in facts.values() if f['status'] == 'supported' for e in f['evidence']}
+            for d in (x for x in host['documents'] if x['id'] in cited):
                 found = [m for m in ENDING_DATE.finditer(d['body']) if not _reference_range(m.group(), today)]
                 matches = [m.group() for m in found]
                 for match in found:
@@ -400,7 +428,8 @@ def decide(draft, host, now, takedowns):
         reasons.append('single_source')
     if year_trap:
         reasons.append('year_trap')
-    if any(PAST_SIGNAL.search(d['body']) for d in host['documents']) or PAST_SIGNAL.search(candidate.get('title', '')):
+    title = candidate.get('title', '')
+    if any(PAST_SIGNAL.search(d['body']) for d in host['documents']) or PAST_SIGNAL.search(title) or PAST_TITLE.search(title):
         reasons.append('past_signal')
 
     labels = {}  # v3 drafts carry no labels; organizer falls back to the source name.

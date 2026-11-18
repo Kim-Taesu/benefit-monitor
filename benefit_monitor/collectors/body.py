@@ -10,12 +10,13 @@ SKIP = {'script', 'style', 'nav', 'footer'}
 
 
 class BodyText(HTMLParser):
-    def __init__(self, seoul_scope=False):
+    def __init__(self, seoul_scope=False, newsroom_scope=False):
         super().__init__()
         self.frames = []
         self.parts = []
-        self.regions = {'seoul_news': [], 'main': [], 'article': []}
+        self.regions = {'seoul_news': [], 'newsroom': [], 'main': [], 'article': []}
         self.seoul_scope = seoul_scope
+        self.newsroom_scope = newsroom_scope
 
     def handle_starttag(self, tag, attrs):
         if len(self.frames) >= 256:
@@ -23,8 +24,12 @@ class BodyText(HTMLParser):
         skip = tag in SKIP or bool(self.frames and self.frames[-1][1])
         region = None
         key = tag if tag in ('main', 'article') else None
-        if self.seoul_scope and tag == 'div' and 'news_detail_cont' in (dict(attrs).get('class') or '').split():
+        classes = (dict(attrs).get('class') or '').split()
+        if self.seoul_scope and tag == 'div' and 'news_detail_cont' in classes:
             key = 'seoul_news'
+        # 신세계 newsroom article (2026-11-18): the post itself, not the related articles listed under it.
+        if self.newsroom_scope and tag == 'article' and 'type-post' in classes:
+            key = 'newsroom'
         if key and not skip:
             region = {'parts': [], 'closed': False}
             self.regions[key].append(region)
@@ -50,7 +55,7 @@ class BodyText(HTMLParser):
 
     def result(self):
         # Multiple/unclosed scopes are ambiguous: compare the full document instead.
-        for tag in ('seoul_news', 'main', 'article'):
+        for tag in ('seoul_news', 'newsroom', 'main', 'article'):
             regions = self.regions[tag]
             if regions:
                 if len(regions) == 1 and regions[0]['closed']:
@@ -73,7 +78,8 @@ def stable_text(text):
 def extract_body(page, target=''):
     seoul_scope = bool(target and official(target, ['mediahub.seoul.go.kr'])
                        and re.fullmatch(r'/archives/[0-9]+', urlsplit(target).path))
-    parser = BodyText(seoul_scope)
+    newsroom_scope = bool(target and official(target, ['www.shinsegaegroupnewsroom.com']))
+    parser = BodyText(seoul_scope, newsroom_scope)
     parser.feed(page)
     parser.close()
     return parser.result()

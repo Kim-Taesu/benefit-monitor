@@ -222,9 +222,40 @@ class AutoPublishTests(unittest.TestCase):
         self.assertIn('past_signal', result['reasons'])
 
     def test_past_signal_pattern_is_verbatim(self):
-        from benefit_monitor.auto_publish import PAST_SIGNAL
+        from benefit_monitor.auto_publish import PAST_SIGNAL, PAST_TITLE
         self.assertEqual(PAST_SIGNAL.pattern,
-                         r'종료|마감되었|마감됨|결과\s*발표|지난\s*(?:차수|행사)|\d{4}년\s*(?:행사|차)\s*(?:종료|결과)')
+                         r'종료(?:되었|됐|했|하였|됨|되어)'
+                         r'|(?:행사|접수|모집|신청|운영|사업|이벤트|판매|공모|이용)\s*(?:이|가)?\s*종료(?!\s*(?:일|예정|후|시|전|될|되면|까지|\d))'
+                         r'|마감되었|마감됨|지난\s*(?:차수|행사)|\d{4}년\s*(?:행사|차)\s*(?:종료|결과)')
+        self.assertEqual(PAST_TITLE.pattern, r'결과\s*발표|당첨자\s*발표|선정\s*결과')
+
+    def test_schedule_lines_mentioning_an_end_are_not_past_signals(self):
+        # 2026-11-18 (user "ok"): 11 of 12 past_signal holds were schedule lines, not ended items.
+        for line in ('입장은 운영 종료 30분 전까지 가능합니다.', '포인트는 각 챌린지 종료 후 일괄 지급합니다.',
+                     '자동혈압계 대여(사업 종료시 반납)', '모집 시작일 2026-06-01 모집 종료일 2026-12-31',
+                     '결과발표 12월 중(추후 공지 예정)', '예산 소진 시 조기 종료', '올해 말 종료 예정인 감면을 연장합니다.'):
+            with self.subTest(line=line):
+                result = self.decide(host(D1 + '\n' + line, D2), period_facts())
+                self.assertTrue(result['publish'], result['reasons'])
+
+    def test_ended_wording_and_result_titles_still_hold(self):
+        for line in ('지난 행사가 종료되었습니다.', '접수가 마감되었습니다.', '행사가 종료됐습니다.', '선착순 모집 종료',
+                     '접수 종료', '이벤트가 종료되어 감사드립니다.'):
+            with self.subTest(line=line):
+                self.assertIn('past_signal', self.decide(host(D1 + '\n' + line, D2), period_facts())['reasons'])
+        for title in ('[건강도시 이벤트] 식생활편 당첨자 발표', '공모전 결과 발표', '2026 지원사업 선정 결과'):
+            with self.subTest(title=title):
+                self.assertIn('past_signal', self.decide(host(D1, D2, title=title), period_facts())['reasons'])
+
+    def test_unreported_deadlines_are_read_only_in_cited_documents(self):
+        # 2026-11-18 (user "ok"): a page listing other notices ("풋살장 대여 - 11월16일") or a newsroom's related
+        # articles held items whose own cited text was current.
+        other = '같은 페이지의 다른 공지.\n풋살장 대여 접수는 2026-11-05까지였습니다.'
+        result = self.decide(host(D1, D2, other), period_facts())
+        self.assertTrue(result['publish'], result['reasons'])
+        cited = self.decide(host(D1, D2 + '\n사전 접수는 2026-11-05까지였습니다.'), period_facts(
+            event_period=sup({'start': '2026-11-01', 'end': '2026-11-30'}, 'd1s2', 'd2s2')))
+        self.assertIn('no_current_evidence', cited['reasons'])
 
     def test_ongoing_needs_recent_published_and_two_docs(self):
         result = self.decide(host(O1, O2, title='도서 대출'), ongoing_facts())
@@ -831,11 +862,29 @@ class DateReadingTests(unittest.TestCase):
         result = self.year_less('2026-11-05', body_extra='\n사전 신청은 11월 5일까지 받았습니다.')
         self.assertIn('no_current_evidence', result['reasons'])
 
-    def test_day_only_phrase_without_nearby_month_holds(self):
-        # The month is borrowed only from a date written just before, in the same sentence.
+    def test_day_only_phrase_reads_the_posting_month_only_after_the_posting_day(self):
+        # 2026-11-12 rule narrowed 2026-11-18 (user "ok"): a day with no month anywhere near it reads as the posting
+        # month when it falls on or after the posting day ("오는 17일까지" posted 11-05 is 11-17). An earlier day
+        # could be this month's past or next month's future, so it still holds.
         for extra in ('\n신청은 17일까지 받습니다.', '\n11월 12일 개막. 신청은 17일까지 받습니다.'):
             with self.subTest(extra=extra):
-                self.assertIn('no_current_evidence', self.year_less('2026-11-05', body_extra=extra)['reasons'])
+                result = self.year_less('2026-11-05', body_extra=extra)
+                self.assertTrue(result['publish'], result['reasons'])
+                self.assertEqual(result['record']['valid_until'], '2026-11-17')
+        self.assertIn('no_current_evidence', self.year_less('2026-11-05', body_extra='\n신청은 3일까지 받습니다.')['reasons'])
+        self.assertIn('no_current_evidence', self.year_less(None, body_extra='\n신청은 17일까지 받습니다.')['reasons'])
+
+    def test_day_only_period_quote_reads_the_posting_month(self):
+        # 이마트 김장 행사: "12일(목)부터 18일(수)까지" with no month, posted 11-05.
+        d1 = '이마트 김장 행사 안내.\n12일(목)부터 18일(수)까지 김장재료를 할인합니다.\n관람료는 무료입니다.\n누구나 참여할 수 있습니다.'
+        docs = [doc(1, d1), doc(2, D2)]
+        docs[0]['published_at'] = '2026-11-05'
+        result = self.decide(host(docs=docs), period_facts(event_period=sup({'start': '2026-11-12', 'end': '2026-11-18'}, 'd1s2')))
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual(result['record']['valid_until'], '2026-11-18')
+        docs[0]['published_at'] = None
+        self.assertIn('no_current_evidence', self.decide(host(docs=docs), period_facts(
+            event_period=sup({'start': '2026-11-12', 'end': '2026-11-18'}, 'd1s2')))['reasons'])
 
     def test_year_less_date_near_new_year_reads_next_year(self):
         from benefit_monitor.auto_publish import year_from_posting

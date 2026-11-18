@@ -50,6 +50,34 @@ class SeoulBodyScopeTests(unittest.TestCase):
         self.assertEqual(extract_body(page), ('조회 99 조건 1,000원', 'main'))
 
 
+class NewsroomBodyScopeTests(unittest.TestCase):
+    """2026-11-18 (user "ok"): a 신세계 newsroom article page carries four related articles under it, whose dates
+    ("11월 8일(일)까지") held the article's own current sale."""
+    URL = 'https://www.shinsegaegroupnewsroom.com/emart-wine-fair/'
+    PAGE = ('<main><article class="post-151762 post type-post status-publish"><ul class="post-info"><li>'
+            '<span class="date">2026.11.11</span></li></ul><p>이마트가 오는 11월 12일(목)부터 18일(수)까지 와인장터를 연다.</p></article>'
+            '<div class="sec-bottom-contents"><h3 class="sec-title">연관 콘텐츠</h3><ul class="item-list">'
+            '<li><article class="item">이마트가 11월 8일(일)까지 쓱데이</article></li>'
+            '<li><article class="item">어그는 이달 13일부터 22일까지</article></li></ul></div></main>')
+
+    def test_article_page_keeps_only_the_post(self):
+        self.assertEqual(extract_body(self.PAGE, self.URL),
+                         ('2026.11.11 이마트가 오는 11월 12일(목)부터 18일(수)까지 와인장터를 연다.', 'newsroom'))
+
+    def test_other_hosts_and_listing_pages_keep_main(self):
+        for url in ('https://other.example/emart-wine-fair/', None):
+            with self.subTest(url=url):
+                self.assertEqual(extract_body(self.PAGE, url)[1], 'main')
+        listing = '<main><article class="item">A</article><article class="item">B</article></main>'
+        self.assertEqual(extract_body(listing, 'https://www.shinsegaegroupnewsroom.com/family/emart/'), ('A B', 'main'))
+
+    def test_posting_date_is_read_from_the_post_header(self):
+        from benefit_monitor.official_reader import page_published
+        self.assertEqual(page_published(self.PAGE, self.URL), '2026-11-11')
+        self.assertIsNone(page_published(self.PAGE.replace('2026.11.11', '2026.13.40'), self.URL))
+        self.assertIsNone(page_published(self.PAGE, 'https://other.example/emart-wine-fair/'))
+
+
 class StableTextTests(unittest.TestCase):
     """2026-11-14: view counters changed the body hash every day and withdrew published items."""
 
