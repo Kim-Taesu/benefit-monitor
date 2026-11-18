@@ -122,7 +122,7 @@ test('grocery text mute adds a dated entry, keeps other entries and redeploys; u
  assert.deepEqual(await readGroceryMutes(TOKEN,{fetch:fn}),['2026-11-06']);
  const {readAdminState}=await import('../src/admin/github.ts');
  ({fn,calls}=fake([json(200,{encoding:'base64',sha:'sha2',content:encode([existing,mute])})]));
- assert.deepEqual(await readAdminState(TOKEN,{fetch:fn}),{list:[existing],mutes:['2026-11-06'],healthMutes:[],festivalMutes:[],benefitMutes:[]});
+ assert.deepEqual(await readAdminState(TOKEN,{fetch:fn}),{list:[existing],mutes:['2026-11-06'],healthMutes:[],festivalMutes:[],benefitMutes:[],subscriptionMutes:[]});
  assert.equal(calls.length,1);
  ({fn,calls}=fake([json(200,{encoding:'base64',sha:'sha2',content:encode([existing,mute])}),json(200,{}),new Response(null,{status:204})]));
  await unmuteGroceryText(TOKEN,'2026-11-06',{fetch:fn});
@@ -147,7 +147,7 @@ test('health note mute adds a url entry and redeploys; unmute removes it; bad ur
  await assert.rejects(()=>muteHealthNote(TOKEN,'http://x.kr','',{fetch:fn}),/주소/);
 });
 
-for(const [kind,label] of [['festival_pick_text','festival'],['benefit_pick_text','benefit']] as const){
+for(const [kind,label] of [['festival_pick_text','festival'],['benefit_pick_text','benefit'],['subscription_pick_text','subscription']] as const){
  test(`${label} pick text mute adds once, keeps other kinds, unmute removes only that kind+day`,async()=>{
   const {mutePickText,unmutePickText,readAdminState}=await import('../src/admin/github.ts');
   const other=kind==='festival_pick_text'?'benefit_pick_text':'festival_pick_text';
@@ -165,7 +165,8 @@ for(const [kind,label] of [['festival_pick_text','festival'],['benefit_pick_text
   const later={...mute,day:'2026-11-15'};
   ({fn,calls}=fake([json(200,{encoding:'base64',sha:'s3',content:encode([...keep,mute,later])})]));
   const state=await readAdminState(TOKEN,{fetch:fn});
-  assert.deepEqual(kind==='festival_pick_text'?state.festivalMutes:state.benefitMutes,['2026-11-14','2026-11-15']);
+  const mine={festival_pick_text:state.festivalMutes,benefit_pick_text:state.benefitMutes,subscription_pick_text:state.subscriptionMutes}[kind];
+  assert.deepEqual(mine,['2026-11-14','2026-11-15']);
   assert.deepEqual(kind==='festival_pick_text'?state.benefitMutes:state.festivalMutes,['2026-11-14']);
   ({fn,calls}=fake([json(200,{encoding:'base64',sha:'s3',content:encode([...keep,mute,later])}),json(200,{}),new Response(null,{status:204})]));
   await unmutePickText(TOKEN,kind,'2026-11-14',{fetch:fn});

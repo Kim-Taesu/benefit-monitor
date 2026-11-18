@@ -132,7 +132,8 @@ def restore_grocery_pick(root, repository, env=None):
 
 
 TAB_PICKS = (("ai-festival-pick.json", "cache/festival_pick/pick.json"),
-             ("ai-benefit-pick.json", "cache/benefit_pick/pick.json"))
+             ("ai-benefit-pick.json", "cache/benefit_pick/pick.json"),
+             ("ai-subscription-pick.json", "cache/subscription_pick/pick.json"))
 
 
 def restore_tab_picks(root, repository, env=None):

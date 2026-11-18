@@ -10,7 +10,8 @@ import {parseGroceries,parsePick,parseBaselines,parseDiscounts,featuredRows} fro
 import {parseFestivals} from './festivals';
 import {parseHealth} from './health';
 import {DISTRICTS,isSeoulCandidate,matchesHome,topicsFor,TOPIC_ICONS,TOPIC_ICON_FALLBACK,MAJOR_TOPIC_COUNT} from './topics';
-import {parseBenefitPick} from './picks';
+import {parseBenefitPick,parseSubscriptionPick,benefitDeadline,benefitFeeLabel} from './picks';
+import PickCard from './PickCard.vue';
 import {loadVisit,saveVisit,clearVisit,nextVisit,visitKey} from './visit';
 import type {Visit} from './visit';
 // 탭(2026-11-10): 혜택·장보기·축제, 2026-11-11 보건소 추가. 주소의 #groceries·#festivals·#health로 바로 열고, 바꿀 때 검색 조건은 그대로 둔다.
@@ -32,7 +33,7 @@ function tabKey(event:KeyboardEvent,index:number){
 import type {Benefit} from './benefits';
 import {benefitKey,loadFavorites,saveFavorites,clearFavorites,visibleFavorites} from './favorites';
 import {loadInterests,saveInterests,clearInterests,initialInterests} from './preferences';
-import { adapt, select, timing, coverageLabels, readFilters, filterUrl, formatDate, updatedLabel } from './benefits';
+import { adapt, select, timing, coverageLabels, readFilters, filterUrl, formatDate, updatedLabel, CATEGORY_EMOJI } from './benefits';
 const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.now());
 // Parsed once per minute, not on every 1-second tick. Rounding down stays within the 5-minute
 // future tolerance, so data collected minutes ago is not mistaken for future data (an hour key did that).
@@ -43,6 +44,7 @@ const discounts=computed(()=>parseDiscounts(raw.value,groceryMinute.value));
 const groceryPick=computed(()=>groceries.value?parsePick(raw.value,groceries.value):null);
 // 서울·경기 청약 일정(2026-11-17): 혜택과 같은 레벨의 '청약' 탭(#subscriptions).
 const subs=computed(()=>parseSubscriptions(raw.value,groceryMinute.value));
+const subsPick=computed(()=>subs.value?parseSubscriptionPick(raw.value,subs.value):null);
 function pageFilters(search:string){const value=readFilters(search);return {...value,category:'',region:DISTRICTS.includes(value.region)?value.region:''};}
 const filters=reactive(pageFilters(location.search));
 let localStore:Storage|null=null;
@@ -165,6 +167,15 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     <p v-else-if="since&&(freshCount||urgent)" class="since"><span>{{ since }} 방문 이후</span><button v-if="freshCount" type="button" class="chip" @click="goChip('new')">새 혜택<small>{{ freshCount }}</small></button><button v-if="urgent" type="button" class="chip" @click="goChip('urgent')">곧 끝남<small>{{ urgent }}</small></button></p>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="!loading&&counts[t.id]!==null" class="tab-count">{{ counts[t.id] }}</span></button></div></nav>
     <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits" class="panel">
+    <PickCard v-if="benefitPick" id="benefit-pick" class="benefit-pick" title="이번 주 놓치면 아쉬운 혜택" :source="benefitPick.source" :summary="benefitPick.summary" :count="benefitPick.picks.length" :first="3" v-slot="{limit}"
+      :note="benefitPick.source==='ai'?'개인 프로필 없이 AI가 공개된 혜택 안에서 고른 공통 추천이에요. 마감일과 비용은 공개 데이터 그대로 보여드려요.':'마감이 가까운 순으로 자동 선정했어요. 마감일과 비용은 공개 데이터 그대로예요.'">
+      <ul class="pick-list">
+        <li v-for="p in benefitPick.picks.slice(0,limit)" :key="benefitKey(p.item)">
+          <strong><span aria-hidden="true">{{ CATEGORY_EMOJI[p.item.category]??'📌' }}</span> {{ p.item.summary }}</strong> <small>{{ [benefitDeadline(p.item),benefitFeeLabel(p.item)].filter(Boolean).join(' · ') }}</small>
+          <span v-if="p.line" class="pick-line">→ {{ p.line }}</span>
+        </li>
+      </ul>
+    </PickCard>
     <section class="tools" aria-label="혜택 검색 및 필터">
       <div class="field grow"><label for="search">검색</label><input id="search" v-model="draft" type="search" maxlength="200" placeholder="혜택, 기관, 지역" autocomplete="off" aria-controls="results"></div>
       <div class="field"><label for="region">내 지역</label><select id="region" v-model="filters.region"><option value="">서울 전체</option><option v-for="region in regions" :key="region">{{ region }}</option></select></div>
@@ -182,7 +193,6 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       <button v-if="active" class="reset" type="button" @click="reset">필터 초기화</button>
     </div>
     <p v-if="filters.region" class="region-hint">{{ filters.region }} 혜택과 서울·전국 공통 혜택을 함께 보여줘요. 지역은 안내 범위이며 개인 자격을 보장하지 않습니다.</p>
-    <div v-if="benefitPick?.summary&&chip==='all'&&!filters.q&&!filters.region" class="lead benefit-pick"><span class="badge ai">🤖 AI 작성</span><div><p class="pick-summary">{{ benefitPick.summary }}</p><p class="fine-print">개인 프로필 없이 AI가 공개된 혜택 안에서 고른 공통 추천이에요. 마감일과 비용은 공개 데이터 그대로 카드에 보여드려요.</p></div></div>
 
     <div v-if="loading" class="notice" role="status"><span class="status-dot" aria-hidden="true"></span><div><strong>공개 데이터를 확인하고 있어요</strong><p>검증 시각과 표시기한을 함께 확인합니다.</p></div></div>
     <div v-else-if="notice" class="notice warning" role="status"><span aria-hidden="true">!</span><div><strong>{{ notice.title }}</strong><p>{{ notice.body }}</p><button type="button" @click="load">다시 불러오기</button></div></div>
@@ -195,7 +205,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     </section>
     </div>
     <div id="panel-subscriptions" v-show="tab==='subscriptions'" role="tabpanel" aria-labelledby="tab-subscriptions">
-      <SubscriptionSection v-if="subs" v-model:region="filters.region" :bundle="subs" :now="groceryMinute" />
+      <SubscriptionSection v-if="subs" v-model:region="filters.region" :bundle="subs" :now="groceryMinute" :pick="subsPick" />
       <p v-else-if="!loading" class="empty-state">이번 실행에서 청약 일정을 가져오지 못했어요. <a :href="CALENDAR_PAGE" target="_blank" rel="noopener noreferrer">청약홈 달력 보기 ↗</a></p>
     </div>
     <div id="panel-groceries" v-show="tab==='groceries'" role="tabpanel" aria-labelledby="tab-groceries">

@@ -426,9 +426,9 @@ class CloudDailyTests(unittest.TestCase):
         self.assertEqual((passed['status'],rejected['status']),('probe_passed','probe_rejected'))
         self.assertEqual((m.exit_code(passed),m.exit_code(rejected)),(0,1))
         self.assertEqual(len(made),2);disable.assert_not_called()
-        # Research, the six other kinds, then the two measurement variants on the festival schema.
-        self.assertEqual(probed[:9],['baseline']*7+['adaptive-medium','adaptive-high'])
-        self.assertEqual(set(passed['probes']),{'topic','verify','grocery','health','festival','benefit',
+        # Research, the seven other kinds, then the two measurement variants on the festival schema.
+        self.assertEqual(probed[:10],['baseline']*8+['adaptive-medium','adaptive-high'])
+        self.assertEqual(set(passed['probes']),{'topic','verify','grocery','health','festival','benefit','subscription',
                                                 'festival:adaptive-medium','festival:adaptive-high'})
         self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
 

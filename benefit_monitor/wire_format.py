@@ -36,6 +36,7 @@ GROCERY_WIRE = 'grocery-wire-v1'
 HEALTH_WIRE = 'health-note-wire-v1'
 FESTIVAL_WIRE = 'festival-wire-v1'
 BENEFIT_WIRE = 'benefit-wire-v1'
+SUBSCRIPTION_WIRE = 'subscription-wire-v1'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
 GRAMMAR_UNION_LIMIT = 0
@@ -401,7 +402,11 @@ def benefit_wire_schema(host):
     return _pick_wire_schema(BENEFIT_WIRE)
 
 
-PICK_WIRES = {'festival': FESTIVAL_WIRE, 'benefit': BENEFIT_WIRE}
+def subscription_wire_schema(host):
+    return _pick_wire_schema(SUBSCRIPTION_WIRE)
+
+
+PICK_WIRES = {'festival': FESTIVAL_WIRE, 'benefit': BENEFIT_WIRE, 'subscription': SUBSCRIPTION_WIRE}
 
 
 def festival_from_wire(wire, host):
@@ -410,6 +415,10 @@ def festival_from_wire(wire, host):
 
 def benefit_from_wire(wire, host):
     return _pick_from_wire(wire, BENEFIT_WIRE)
+
+
+def subscription_from_wire(wire, host):
+    return _pick_from_wire(wire, SUBSCRIPTION_WIRE)
 
 
 def _verify_schema(host):
@@ -436,6 +445,7 @@ WIRES = {
     'health': (HEALTH_WIRE, health_wire_schema, health_from_wire, (health_from_wire,)),
     'festival': (FESTIVAL_WIRE, festival_wire_schema, festival_from_wire, (_pick_from_wire,)),
     'benefit': (BENEFIT_WIRE, benefit_wire_schema, benefit_from_wire, (_pick_from_wire,)),
+    'subscription': (SUBSCRIPTION_WIRE, subscription_wire_schema, subscription_from_wire, (_pick_from_wire,)),
 }
 
 

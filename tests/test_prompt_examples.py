@@ -7,7 +7,7 @@ import re
 import unittest
 from pathlib import Path
 
-from benefit_monitor import benefit_pick, festival_pick, grocery_pick, health_notes, wire_format
+from benefit_monitor import benefit_pick, festival_pick, grocery_pick, health_notes, subscription_pick, wire_format
 from benefit_monitor.claude_trial import TASKS, input_from_message, system_prompt, user_message
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -66,10 +66,19 @@ class PromptExampleTests(unittest.TestCase):
             self.assertEqual(list(draft), list(wire_format.benefit_wire_schema(None)['properties'])[1:])
             self.assertEqual(benefit_pick.review(draft, {'candidates': candidates}), [], draft['summary'])
 
+    def test_subscription_examples_pass_review(self):
+        rows = examples('subscription-system.md', 'candidates')
+        self.assertGreaterEqual(len(rows), 2)
+        for raw_input, raw_output in rows:
+            candidates = json.loads(raw_input)
+            draft = json.loads(raw_output)
+            self.assertEqual(list(draft), list(wire_format.subscription_wire_schema(None)['properties'])[1:])
+            self.assertEqual(subscription_pick.review(draft, {'candidates': candidates}), [], draft['summary'])
+
 
 class PromptShapeTests(unittest.TestCase):
     def test_pick_task_does_not_encourage_forbidden_copy(self):
-        for kind in ('festival', 'benefit'):
+        for kind in ('festival', 'benefit', 'subscription'):
             with self.subTest(kind=kind):
                 self.assertNotRegex(TASKS[kind], r'이번 주|주말|놓치면|서두르')
                 self.assertIn('후보', TASKS[kind])

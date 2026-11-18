@@ -383,6 +383,18 @@ def _validate_benefit(host, root):
         raise ValueError('benefit input differs from current data')
 
 
+def _validate_subscription(host, root):
+    # 청약 pick (2026-11-18): only the input rebuilt from the stored subscriptions bundle may be sent.
+    from .subscription_pick import host as subscription_host
+    from .subscriptions import FILE, sanitize
+    from .store import load
+    _only_fields(host, PICK_HOST_FIELDS)
+    now = _host_now(host)
+    expected = subscription_host(sanitize(load(Path(root)/FILE, None), now), now)
+    if expected is None or host != expected:
+        raise ValueError('subscription input differs from current data')
+
+
 def _validate_grocery(host, root):
     # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
     from .grocery_pick import host as grocery_host
@@ -611,6 +623,10 @@ KINDS = {
                     '위 `<input>`의 `candidates` 안에서 후보를 골라 혜택 추천 카드를 써라. '
                     '후보의 이용 목적과 조건을 근거로 소개하고, 시스템 지침의 문장 규칙과 완료 기준을 지켜라.',
                     _pick_input, _validate_benefit, _reviewer('benefit_pick')),
+    'subscription': Kind('subscription-system.md',
+                         '위 `<input>`의 `candidates` 안에서 단지를 골라 청약 일정 요약 카드를 써라. '
+                         '후보의 지역·공급 유형·특별공급 종류를 근거로 소개하고, 시스템 지침의 문장 규칙과 완료 기준을 지켜라.',
+                         _pick_input, _validate_subscription, _reviewer('subscription_pick')),
     'health': Kind('health-system.md',
                    '위 `<input>`의 `page_text`에서 이 사업을 설명하는 구절을 먼저 그대로 복사하고, '
                    '그 구절만으로 상태와 문장을 정하라.',

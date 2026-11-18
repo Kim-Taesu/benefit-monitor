@@ -839,6 +839,20 @@ class TabPickRecheckTests(unittest.TestCase):
         self.assertNotIn('benefit_pick', out)
         self.assertNotIn('festival_pick', out)
 
+    def test_subscription_pick_is_rechecked_too(self):
+        # 청약 pick (2026-11-18): the same re-check against the payload's own subscriptions bundle.
+        import test_subscription_pick as ts
+        from benefit_monitor import subscription_pick as sp
+        data = {'subscriptions': ts.BUNDLE, 'subscription_pick': sp.public(ts.stored(), ts.BUNDLE, [], ts.NOW)}
+        out = auto_release.recheck_tab_picks(deepcopy(data), [], ts.NOW)
+        self.assertEqual((out['subscription_pick']['source'], out['subscription_pick']['summary']), ('ai', ts.SUMMARY))
+        twice = auto_release.recheck_tab_picks(deepcopy(out), [], ts.NOW)
+        self.assertEqual(twice['subscription_pick'], out['subscription_pick'])
+        muted = auto_release.recheck_tab_picks(deepcopy(data), [{'kind': 'subscription_pick_text', 'day': '2026-11-18'}], ts.NOW)
+        self.assertEqual(muted['subscription_pick']['source'], 'rule')
+        gone = auto_release.recheck_tab_picks({'subscription_pick': data['subscription_pick']}, [], ts.NOW)
+        self.assertNotIn('subscription_pick', gone)
+
     def test_apply_takedowns_rechecks_the_benefit_pick(self):
         data = deepcopy(self.data)
         for row in data['items']:

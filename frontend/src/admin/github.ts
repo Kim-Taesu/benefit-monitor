@@ -54,9 +54,9 @@ export async function readTakedowns(token:string,options:Options={}):Promise<Lis
 }
 
 // One read for the admin page: item takedowns and grocery text mutes come from the same file.
-export async function readAdminState(token:string,options:Options={}):Promise<{list:Takedown[];mutes:string[];healthMutes:string[];festivalMutes:string[];benefitMutes:string[]}>{
+export async function readAdminState(token:string,options:Options={}):Promise<{list:Takedown[];mutes:string[];healthMutes:string[];festivalMutes:string[];benefitMutes:string[];subscriptionMutes:string[]}>{
  checkToken(token);const {list,raw}=await read(token,options);
- return {list,mutes:mutesIn(raw),healthMutes:healthMutesIn(raw),festivalMutes:pickMutesIn(raw,'festival_pick_text'),benefitMutes:pickMutesIn(raw,'benefit_pick_text')};
+ return {list,mutes:mutesIn(raw),healthMutes:healthMutesIn(raw),festivalMutes:pickMutesIn(raw,'festival_pick_text'),benefitMutes:pickMutesIn(raw,'benefit_pick_text'),subscriptionMutes:pickMutesIn(raw,'subscription_pick_text')};
 }
 
 // Read, change, write with the sha precondition; on 409/422 re-read once and re-apply the change.
@@ -133,8 +133,8 @@ export async function unmuteGroceryText(token:string,surveyDay:string,options:Op
  await redeploy(token,options);
 }
 
-// Festival / benefit pick AI summary: mute one public pick day (the card keeps its rule-based picks).
-export type PickKind='festival_pick_text'|'benefit_pick_text';
+// Festival / benefit / 청약 pick AI summary: mute one public pick day (the card keeps its rule-based picks).
+export type PickKind='festival_pick_text'|'benefit_pick_text'|'subscription_pick_text';
 const samePick=(kind:PickKind,day:string)=>(t:unknown)=>!!t&&typeof t==='object'&&(t as Record<string,unknown>).kind===kind&&(t as Record<string,unknown>).day===day;
 function pickMutesIn(raw:unknown[],kind:PickKind):string[]{
  return raw.flatMap(t=>{const v=t as Record<string,unknown>;return v&&typeof v==='object'&&v.kind===kind&&typeof v.day==='string'&&DAY.test(v.day)?[v.day]:[];});

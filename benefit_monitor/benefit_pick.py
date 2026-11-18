@@ -2,8 +2,9 @@
 
 Approved 2026-11-14 (same exception as grocery_pick and festival_pick): the model's summary and one-line notes may be
 published with an "AI 작성" label, only after review() confirms every date and number belongs to the benefit it
-describes, no price word appears (a free benefit's own line may say it is free, 2026-11-16), and no guarantee,
-eligibility or stock claim appears. Titles, links and conditions on the page always come from the published items. Any failure falls
+describes and no guarantee, eligibility or stock claim appears. Cost words (free or paid) are allowed since
+2026-11-18 (user decision); the page still shows each line's fee_status from the data, so a line may not call a paid
+or unknown benefit free. Titles, links and conditions on the page always come from the published items. Any failure falls
 back to rule_pick(): no model text. A pick never changes which benefits are published or their order.
 """
 from datetime import datetime, timedelta
@@ -75,12 +76,9 @@ def host(items, now):
     return _input(rows, now, trim=True) if len(rows) >= MIN_CANDIDATES else None
 
 
-# The page shows cost from fee_status (per-line badge); model text must not talk about price at all.
-PRICE = re.compile(r'무료|공짜|무상|유료|비용|참가비|수강료|입장료|요금|가격|면제|반값|반액|절반|퍼센트|할인율|[천만억]\s*원'
-                   r'|(?<![가-힣])돈(?![가-힣]{2,})|(?<![가-힣])돈(?:[을이은도만]|으로|없|\s|$)|부담\s*(?:없|덜|이\s*없|스럽지\s*않)'
-                   r'|free|공으로|(?:구매|결제)(?:하지)?\s*(?:안|않|없|말)', re.IGNORECASE)
-# 2026-11-16: a free benefit's own line may say it is free. The card shows the same fee_status next to it, so the word
-# adds no new claim. The summary and every other price word stay banned.
+# 2026-11-18: cost words are allowed (user decision). Amounts stay numbers, also when spelled out.
+SPELLED = re.compile(r'퍼센트|[천만억]\s*원')
+# A line belongs to one benefit and sits beside its fee_status: it may not call a paid or unknown benefit free.
 FREE = re.compile(r'무료|공짜|무상')
 DIGITS = re.compile('[0-9\uff10-\uff19]')
 RELATIVE = re.compile(r'오늘|내일|모레|이번\s?주|다음\s?주|주말|월말|연말')
@@ -137,25 +135,13 @@ def _check(summary, picks, host):
     if any(URGENCY.search(t) for t in texts):
         errors.append('urgency')
     # Dates, amounts and deadlines are shown by the page from the data, never typed by the model.
-    if any(DIGITS.search(t) or RELATIVE.search(t) for t in texts):
+    if any(DIGITS.search(t) or SPELLED.search(t) or RELATIVE.search(t) for t in texts):
         errors.append('number')
-    if price_hits(summary, picks, host):
-        errors.append('price')
+    if any(FREE.search(p['line']) and (by_id.get(p['id']) or {}).get('fee_status') != 'free' for p in picks):
+        errors.append('free')
     if summary is not None and any(c['id'] not in ids for _, c in _mentions(summary, host['candidates'])):
         errors.append('summary_item')
     return errors
-
-
-def price_hits(summary, picks, host):
-    """['line:무료', 'summary:부담 없'] for every banned price word; empty when the text may be shown."""
-    by_id = {c['id']: c for c in host['candidates']}
-    hits = []
-    for p in picks:
-        line = p['line'] or ''
-        if (by_id.get(p['id']) or {}).get('fee_status') == 'free':
-            line = FREE.sub(' ', line)
-        hits += ['line:' + m.group() for m in PRICE.finditer(line)]
-    return hits + ['summary:' + m.group() for m in PRICE.finditer(summary or '')]
 
 
 def review(draft, host):
@@ -300,9 +286,6 @@ def refresh(root, now, execute=False, items=None):
                 try:
                     folder = TRIAL_RUNS / model['run_id']
                     errors = [str(e)[:80] for e in load(folder / 'validation.json', {}).get('errors', [])][:20]
-                    rejected = load(folder / 'rejected-result.json', None)
-                    if 'price' in errors:
-                        detail = price_hits(rejected['summary'], rejected['picks'], current)[:20]
                 except (OSError, ValueError, KeyError, TypeError, AttributeError):
                     errors = errors or ['rejection_unreadable']
             state['days'][day].update(model)

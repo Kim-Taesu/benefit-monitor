@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useId, onMounted, onBeforeUnmount } from 'vue';
 import type { Benefit } from './benefits';
-import { fees, timing, timingBadge, verifiedAge, formatDate, benefitValueLabel } from './benefits';
+import { fees, timing, timingBadge, verifiedAge, formatDate, benefitValueLabel, categoryLabel } from './benefits';
 import { grade, GRADES } from './grade';
 // pick: 이번 주 추천에 든 항목. line은 AI가 쓴 한 줄(검증 통과분)이고 없으면 규칙으로 고른 항목이다.
 const props=defineProps<{item:Benefit;now:number;saved?:boolean;failures?:Record<string,number>;pick?:{source:'ai'|'rule';line:string|null}|null;fresh?:boolean}>();
@@ -32,7 +32,7 @@ const missing=computed(()=>[['대상',props.item.labels.audience],['신청 마�
 </script>
 <template>
   <article class="benefit-card bcard">
-    <p class="bcard-top"><span class="category">{{ item.category }}</span><span class="badge timing" :class="{urgent:badge.urgent}">{{ badge.label }}</span><span v-if="fresh" class="badge new">새로 올라옴</span><span v-if="pick" class="badge pick-badge" :class="pick.source==='ai'&&pick.line?'ai':''">{{ pick.source==='ai'&&pick.line?'AI 작성':'자동 선정' }}</span><span v-if="aiReview" class="badge ai-badge">AI 정리</span><span v-if="trust.grade==='C'" class="badge urgent recheck" :title="trust.reason">⚠️ 재확인 필요</span></p>
+    <p class="bcard-top"><span class="category">{{ categoryLabel(item.category) }}</span><span class="badge timing" :class="{urgent:badge.urgent}">{{ badge.label }}</span><span v-if="fresh" class="badge new">새로 올라옴</span><span v-if="pick" class="badge pick-badge" :class="pick.source==='ai'&&pick.line?'ai':''">{{ pick.source==='ai'&&pick.line?'AI 작성':'자동 선정' }}</span><span v-if="aiReview" class="badge ai-badge">AI 정리</span><span v-if="trust.grade==='C'" class="badge urgent recheck" :title="trust.reason">⚠️ 재확인 필요</span></p>
     <h3 class="bcard-title"><button ref="opener" class="card-open" type="button" aria-haspopup="dialog" @click="openDetails">{{ item.summary }}</button></h3>
     <p v-if="lead" class="bcard-lead" :class="{'pick-line':pick?.line}">{{ lead }}</p>
     <p class="bcard-facts">{{ [region||'지역 조건 확인 필요',fees[item.fee_status],item.labels.action].filter(Boolean).join(' · ') }}</p>
@@ -41,7 +41,7 @@ const missing=computed(()=>[['대상',props.item.labels.audience],['신청 마�
     <dialog ref="dialog" class="benefit-modal sheet" :aria-labelledby="titleId" @cancel.prevent="closeDetails" @click="backdrop">
       <div class="sheet-head"><h2 :id="titleId">{{ item.summary }}</h2><button type="button" class="modal-close sheet-close" aria-label="상세 조건 닫기" autofocus @click="closeDetails"><span aria-hidden="true">✕</span></button></div>
       <div class="sheet-body details-body">
-        <p class="sheet-tags"><span class="badge">{{ item.category }}</span><span class="badge" :class="{urgent:badge.urgent}">{{ status.label }}</span><span v-if="pick" class="badge" :class="pick.source==='ai'&&pick.line?'ai':''">{{ pick.source==='ai'&&pick.line?'AI 작성':'자동 선정' }}</span></p>
+        <p class="sheet-tags"><span class="badge">{{ categoryLabel(item.category) }}</span><span class="badge" :class="{urgent:badge.urgent}">{{ status.label }}</span><span v-if="pick" class="badge" :class="pick.source==='ai'&&pick.line?'ai':''">{{ pick.source==='ai'&&pick.line?'AI 작성':'자동 선정' }}</span></p>
         <p v-if="pick?.line" class="sheet-pick">{{ pick.line }}</p>
         <section v-if="item.benefitValue" class="value-evidence" aria-label="혜택 수치 근거"><p><strong>{{ benefitValueLabel(item.benefitValue) }}</strong></p><p>수치 적용 조건: {{ item.benefitValue.conditions }}</p><p>근거 문구: {{ item.benefitValue.evidence_quote }}</p><a :href="item.benefitValue.evidence_url" target="_blank" rel="noopener noreferrer">금액 근거 원문<span class="sr-only"> (새 창)</span></a><p class="fine-print">공식 확인 시점의 조건부 수치이며 개인별 수령·절약액을 보장하지 않습니다. 참여 비용·최소 지출·결제 한도와 구분하세요.</p></section>
         <dl class="detail-list">

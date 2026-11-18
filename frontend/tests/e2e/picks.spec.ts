@@ -63,14 +63,19 @@ test('festival rule pick shows the auto badge and no summary',async({page})=>{
  await expect(page.locator('#festivals .festival-pick-note')).toHaveText('추천 표시는 수도권 먼저, 가까운 날짜 순으로 자동 선정했어요.');
 });
 
-for(const width of [390,1440])test(`benefit picks sit on their cards and the AI summary leads the list ${width}`,async({page})=>{
+for(const width of [390,1440])test(`benefit picks sit on their cards and the AI card sits right under the tabs ${width}`,async({page})=>{
  await open(page,width,{benefit_pick:benefitPick()});
  const lead=page.locator('.benefit-pick');
- await expect(lead.locator('.badge')).toHaveText('🤖 AI 작성');
+ await expect(lead.locator('.grocery-badge')).toHaveText('🤖 AI 작성');
  await expect(lead.locator('.pick-summary')).toHaveText('[테스트] 마감이 가까운 혜택을 골랐어요.');
  await expect(lead.locator('.fine-print')).toHaveCount(1);
- const [c,d,r]=await Promise.all([lead.boundingBox(),page.locator('.tools').first().boundingBox(),page.locator('#results').boundingBox()]);
- expect(c!.y).toBeGreaterThan(d!.y);expect(c!.y).toBeLessThan(r!.y);
+ // 2026-11-18: 탭 바로 아래, 검색창보다 위. 줄마다 카테고리 이모지·제목·마감·비용(데이터)과 AI 한 줄.
+ const [t,c,d]=await Promise.all([page.locator('#site-tabs').boundingBox(),lead.boundingBox(),page.locator('.tools').first().boundingBox()]);
+ expect(c!.y).toBeGreaterThan(t!.y);expect(c!.y).toBeLessThan(d!.y);
+ await expect(lead.locator('.pick-list>li')).toHaveCount(3);
+ await expect(lead.locator('.pick-list>li').first()).toContainText('[테스트] 혜택 1');
+ await expect(lead.locator('.pick-list>li').first().locator('.pick-line')).toHaveText('→ 살펴볼 만해요');
+ await lead.getByRole('button',{name:/더 보기/}).click();await expect(lead.locator('.pick-list>li')).toHaveCount(7);
  // 모델 문장이 있는 줄만 "AI 작성", 문장 없이 고른 줄은 "자동 선정"이고 공식 조건 첫 문장을 그대로 보인다.
  const first=page.locator('#results article',{hasText:'[테스트] 혜택 1'}).first();
  await expect(first.locator('.pick-badge')).toHaveText('AI 작성');
@@ -81,13 +86,16 @@ for(const width of [390,1440])test(`benefit picks sit on their cards and the AI 
  await expect(second.locator('.bcard-facts')).toContainText('유료');
  const chip=page.getByRole('button',{name:/이번 주 추천/});
  await expect(chip).toContainText('7');expect((await chip.boundingBox())!.height).toBeGreaterThanOrEqual(44);
- await chip.click();await expect(page.locator('#results article')).toHaveCount(7);await expect(lead).toHaveCount(0);
+ await chip.click();await expect(page.locator('#results article')).toHaveCount(7);await expect(lead).toHaveCount(1);
  await noOverflow(page);
  if(width===390)await page.screenshot({path:`${SHOTS}/benefit-390.png`,fullPage:false});
 });
 test('a rule pick shows 자동 선정 on cards and no model sentence anywhere',async({page})=>{
  await open(page,390,{benefit_pick:benefitPick({source:'rule',summary:null,picks:urls.slice(0,5).map((url,n)=>({id:'b'+n,source:'seoul',url,line:null}))})});
- await expect(page.locator('.benefit-pick')).toHaveCount(0);
+ // The card stays on rule days (2026-11-18): auto badge, no summary, no AI line.
+ const lead=page.locator('.benefit-pick');
+ await expect(lead.locator('.grocery-badge')).toHaveText('자동 선정');
+ await expect(lead.locator('.pick-summary')).toHaveCount(0);await expect(lead.locator('.pick-line')).toHaveCount(0);
  await expect(page.locator('#results .pick-badge')).toHaveText(Array(5).fill('자동 선정'));
  await expect(page.locator('#results .pick-line')).toHaveCount(0);await expect(page.locator('#results .badge.ai')).toHaveCount(0);
 });

@@ -99,26 +99,27 @@ class ReviewTests(unittest.TestCase):
     def test_max_percent_rejected(self):
         self.assertIn('claim', bp.review(one(CID, '최대 15% 할인'), HOST))
 
-    def test_text_must_not_talk_about_price(self):
-        for line in ('비용이 없어요', '비용 이 없어요', '구매 안 해도 돼요', '유료가 아니에요', '유료 아닌 코스', '결제 면제예요', '비용 안 받아요',
-                     '참가비 면제', '유료 아닙니다', '반액', '구매하면 돈 안 들어요', '오 퍼센트 할인', '천원', '무료', '공짜 수업',
-                     '돈 안 들어요', '부담 없이', '부담이 없어요', '무상 지원', '입장료 안내', 'FREE 혜택', '공으로 받아요', '결제 없이 이용', '절반 가격'):
-            self.assertIn('price', bp.review(one(CID, line), HOST), line)
-        # A paid or unknown benefit's line may never say it is free.
-        self.assertIn('price', bp.review(one(YID, '무료 요가 강좌'), HOST))
-
-    def test_free_benefit_line_may_say_free(self):
-        # 2026-11-16: the card shows the same fee_status beside the line, so the word adds no new claim.
-        for line in ('무료 버스', '무료 야간 자율주행버스', '공짜로 타는 버스', '무상 운행 버스'):
+    def test_price_words_are_allowed(self):
+        # 2026-11-18 user decision: summary and lines may talk about cost (free or paid); the page still shows
+        # each line's fee_status from the data. Only spelled-out amounts stay banned, as numbers.
+        for line in ('비용이 없어요', '구매 안 해도 돼요', '유료가 아니에요', '결제 면제예요', '참가비 면제', '반액',
+                     '돈 안 들어요', '부담 없이', '입장료 안내', 'FREE 혜택', '결제 없이 이용', '절반 가격', '돈으로 받아요'):
+            self.assertEqual(bp.review(one(CID, line), HOST), [], line)
+        for line in ('무료 버스', '공짜로 타는 버스', '무상 운행 버스', '무료, 비용 없어요', '부담 없이 타는 무료 버스'):
             self.assertEqual(bp.review(one(BID, line), HOST), [], line)
-        # Other price words stay banned on a free benefit, and so does any price word in the summary.
-        for line in ('무료, 비용 없어요', '부담 없이 타는 무료 버스', '요금 안내'):
-            self.assertIn('price', bp.review(one(BID, line), HOST), line)
-        self.assertIn('price', bp.review(draft(summary='서울사랑상품권 행사와 청계 무료 야간 자율주행버스를 챙겨 보세요.'), HOST))
-        self.assertEqual(bp.price_hits('무료 버스예요', [dict(id=BID, line='무료 버스'), dict(id=CID, line='무료 행사')], HOST),
-                         ['line:무료', 'summary:무료'])
-        self.assertIn('price', bp.review(draft(summary='요가 강좌와 화상면접실은 무료예요 한번 확인해 보세요.'), HOST))
-        self.assertIn('price', bp.review(draft(summary='서울사랑상품권 행사와 화상면접실 모두 무료예요 확인해 보세요.'), HOST))
+        for summary in ('서울사랑상품권 행사와 청계 무료 야간 자율주행버스를 챙겨 보세요.',
+                        '서울사랑상품권 행사는 결제 비용이 들고 화상면접실은 무료예요 확인해 보세요.'):
+            self.assertEqual(bp.review(draft(summary=summary), HOST), [], summary)
+
+    def test_line_must_not_call_a_paid_benefit_free(self):
+        # A line belongs to one benefit, and the page shows its fee_status right beside it: "무료" on a paid or
+        # unknown benefit contradicts the data (evaluation case B02).
+        for cid, line in ((CID, '무료 버스'), (YID, '무료 요가 강좌'), (CID, '공짜 수업'), (YID, '무상 지원')):
+            self.assertIn('free', bp.review(one(cid, line), HOST), line)
+
+    def test_spelled_out_amounts_are_numbers(self):
+        for line in ('오 퍼센트 할인', '천원', '만 원 할인', '삼억 원'):
+            self.assertIn('number', bp.review(one(CID, line), HOST), line)
 
     def test_plain_lines_pass(self):
         for line in ('시민 프로그램 안내', '돈가스 체험', '프로젝트 참여', '프로모션 소개', '돈암동 센터', '부담스럽게 느끼지 않게'):
@@ -154,10 +155,6 @@ class ReviewTests(unittest.TestCase):
             self.assertIn('urgency', bp.review(one(BID, '버스 체험, ' + word), HOST), word)
         self.assertIn('urgency', bp.review(draft(summary='서울사랑상품권 페이백 행사가 곧 끝나니 결제를 챙겨 보세요.'), HOST))
         self.assertEqual(bp.review(draft(), HOST), [])
-
-    def test_money_word_variants_are_price(self):
-        for line in ('돈없이 이용', '돈으로 받아요', '돈 없이', '돈이 들어요', '돈만 내요', '돈'):
-            self.assertIn('price', bp.review(one(BID, line), HOST), line)
 
     def test_control_characters_are_markup(self):
         for ch in ('\t', '\x00', '\x1f'):
@@ -249,7 +246,7 @@ class PublicTests(unittest.TestCase):
         self.assertIsNone(bp.public(stored(), ITEMS[:2], [], NOW))  # below the 3-line floor
 
     def test_public_rereviews_against_current_items(self):
-        bad = stored(picks=[dict(id=CID, line='결제액 추가 페이백'), dict(id=BID, line='요금 없는 버스'), dict(id=RID, line='화상면접실 이용')])
+        bad = stored(picks=[dict(id=CID, line='결제액 추가 페이백'), dict(id=BID, line='누구나 타는 버스'), dict(id=RID, line='화상면접실 이용')])
         self.assertEqual(bp.public(bad, ITEMS, [], NOW)['source'], 'rule')
 
     def test_rule_pick_order_and_size(self):
@@ -300,10 +297,10 @@ class RefreshTests(unittest.TestCase):
         self.addCleanup(tmp.cleanup)
         root = Path(tmp.name)
         run = root / '.tools/claude-trial/live/runs/run2'
-        save(run / 'validation.json', {'valid': False, 'errors': ['price']})
-        save(run / 'rejected-result.json', one(CID, '참가비 면제'))
+        save(run / 'validation.json', {'valid': False, 'errors': ['claim']})
+        save(run / 'rejected-result.json', one(CID, '누구나 받아요'))
         result, _, pick, _ = self.run_refresh(root=root, invoke_result={'status': 'rejected_draft', 'run_id': 'run2'})
-        self.assertEqual((pick['source'], result['errors'], result['detail']), ('rule', ['price'], ['line:참가비', 'line:면제']))
+        self.assertEqual((pick['source'], result['errors'], result['detail']), ('rule', ['claim'], []))
 
     def test_no_spend_without_execute(self):
         _, calls, pick, _ = self.run_refresh(execute=False)
