@@ -32,7 +32,8 @@ RELATIVE = re.compile(r'오늘|내일|모레|어제|이번\s?주|다음\s?주|�
 # The page never judges eligibility, odds or price (2026-11-17 approval); neither does the model.
 CLAIMS = re.compile(r'당첨|확률|가능성|경쟁|누구나|누구든|보장|무조건|확실|반드시|시세|차익|프리미엄|로또|투자|수익|오를|올라|상승'
                     r'|저렴|싸|이득|줍줍|분양가|가격|금액|통장\s*없|필요\s*없|(?:신청|접수|청약)\s*(?:할|하실)?\s*수\s*있'
-                    r'|(?:넣을|받을)\s*수\s*있|100%')
+                    r'|(?:넣을|받을)\s*수\s*있|(?:신청|청약|접수)\s*가능|통장\S{0,3}\s*없'
+                    r'|자격\S{0,2}\s*(?:있|되|돼|됩|충족|갖)|100%')
 # Words that say nothing about one complex; every other word taken from the data is a fact checked per pick.
 GENERIC = {'아파트', '분양', '접수', '청약', '공급', '일반공급', '등', '기타'}
 TOKEN = re.compile(r'[0-9가-힣]+')
@@ -101,14 +102,28 @@ def _strip(text, names):
     return text
 
 
-def _scan(text, scope, rows, others):
-    """Error codes for one text. scope: the picks it may talk about; others: names it must not use."""
+def _spans(text, names):
+    found = []
+    for name in names:
+        i = text.find(name)
+        while i >= 0:
+            found.append((i, i + len(name)))
+            i = text.find(name, i + 1)
+    return found
+
+
+def _names_other(text, own, others):
+    """Whether text names a complex outside `own`; a match inside an own name ('힐스테이트 OO' within
+    '힐스테이트 OO 센트럴') does not count, and an own name inside a longer other name does (PR #67 review)."""
+    mine = _spans(text, own)
+    return any(not any(a <= i and j <= b for a, b in mine) for i, j in _spans(text, others))
+
+
+def _scan(text, allowed, vocab, names):
+    """Error codes for one text: names are the picked names to remove first, allowed the facts it may use."""
     errors = []
-    text = _strip(text, {n for c in scope for n in _names(c['name'])})
-    if any(n in text for n in others):
-        errors.append('item')
-    allowed = set().union(*(_facts(c) for c in scope)) if scope else set()
-    for word in sorted(set().union(*(_facts(c) for c in rows)), key=len, reverse=True):
+    text = _strip(text, names)
+    for word in vocab:
         if word in text:
             if word not in allowed:
                 errors.append('fact')
@@ -141,16 +156,26 @@ def _check(summary, picks, host):
         errors.append('summary_length')
     if any(MARKUP.search(t) for t in texts):
         errors.append('markup')
-    chosen = [by_id[i] for i in dict.fromkeys(ids) if i in by_id]
-    chosen_names = {n for c in chosen for n in _names(c['name'])}
+    facts = {c['id']: _facts(c) for c in rows}
+    names = {c['id']: _names(c['name']) for c in rows}
+    vocab = sorted(set().union(*facts.values()), key=len, reverse=True)
+    every_name = set().union(*names.values())
     for p in picks:
         if p['id'] in by_id:
-            own = by_id[p['id']]
-            others = {n for c in rows for n in _names(c['name'])} - _names(own['name'])
-            errors += ['line_item' if e == 'item' else e for e in _scan(p['line'], [own], rows, others)]
+            own = names[p['id']]
+            if _names_other(p['line'], own, every_name - own):
+                errors.append('line_item')
+            errors += _scan(p['line'], facts[p['id']], vocab, own)
     if summary is not None:
-        others = {n for c in rows for n in _names(c['name'])} - chosen_names
-        errors += ['summary_item' if e == 'item' else e for e in _scan(summary, chosen, rows, others)]
+        chosen = [i for i in dict.fromkeys(ids) if i in by_id]
+        chosen_names = set().union(*(names[i] for i in chosen))
+        if _names_other(summary, chosen_names, every_name - chosen_names):
+            errors.append('summary_item')
+        # A clause's region, supply and special words belong to the complex it names (PR #67 review: swapped facts);
+        # a clause naming none may use any picked complex's facts.
+        for clause in re.split(r'[.!?,]', summary):
+            named = [i for i in chosen if any(n in clause for n in names[i])] or chosen
+            errors += _scan(clause, set().union(*(facts[i] for i in named)), vocab, chosen_names)
     return list(dict.fromkeys(errors))
 
 

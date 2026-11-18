@@ -113,6 +113,29 @@ class ReviewTests(unittest.TestCase):
                         picks=[dict(id=DH, line='서초구 임의공급')])
         self.assertIn('fact', sp.review(only_dh, HOST))
 
+    def test_more_eligibility_wordings(self):
+        # 2026-11-18 PR #67 review.
+        for line in ('무주택이면 신청 가능', '청약 가능해요', '청약통장이 없어도 돼요', '통장 없어도 접수', '자격이 돼요'):
+            self.assertIn('claim', sp.review(one(DH, line), HOST), line)
+        self.assertEqual(sp.review(one(DH, '서초구 임의공급, 조건은 공고문 확인'), HOST), [])
+
+    def test_summary_facts_follow_the_complex_named_in_the_same_clause(self):
+        swapped = draft(summary='중랑구 중화역 라온프라이빗 센트로는 임의공급, 서초구 디에이치 신반포에스테라는 신혼부부 특별공급을 받아요.')
+        self.assertIn('fact', sp.review(swapped, HOST))
+        # A clause that names no complex may use any picked complex's facts.
+        ok = draft(summary='서울 서초구와 중랑구에서 접수가 열려요. 임의공급과 특별공급이 함께 있어요. 조건은 공고문에서 확인하세요.')
+        self.assertEqual(sp.review(ok, HOST), [])
+
+    def test_unpicked_name_containing_a_picked_name_is_caught(self):
+        rows = [dict(c) for c in HOST['candidates']]
+        longer = dict(rows[1], id='2026999001', name=rows[1]['name'] + ' 센트럴')
+        host = dict(HOST, candidates=rows + [longer])
+        bad = draft(summary='서초구 디에이치 신반포에스테라 센트럴은 임의공급 단지예요. 조건은 공고문에서 확인하세요.',
+                    picks=[dict(id=DH, line='서초구 임의공급')])
+        self.assertIn('summary_item', sp.review(bad, host))
+        good = dict(bad, summary='서초구 디에이치 신반포에스테라는 임의공급 단지예요. 조건은 공고문에서 확인하세요.')
+        self.assertEqual(sp.review(good, host), [])
+
     def test_shape_counts_lengths_markup(self):
         self.assertEqual(sp.review({'summary': SUMMARY}, HOST), ['draft_shape'])
         self.assertEqual(sp.review(draft(picks=[dict(id=DH, line='x', extra=1)]), HOST), ['draft_shape'])

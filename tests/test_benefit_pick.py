@@ -102,10 +102,11 @@ class ReviewTests(unittest.TestCase):
     def test_price_words_are_allowed(self):
         # 2026-11-18 user decision: summary and lines may talk about cost (free or paid); the page still shows
         # each line's fee_status from the data. Only spelled-out amounts stay banned, as numbers.
-        for line in ('비용이 없어요', '구매 안 해도 돼요', '유료가 아니에요', '결제 면제예요', '참가비 면제', '반액',
-                     '돈 안 들어요', '부담 없이', '입장료 안내', 'FREE 혜택', '결제 없이 이용', '절반 가격', '돈으로 받아요'):
+        for line in ('결제 비용이 들어요', '상품권 구매 필요', '결제 면제는 아니에요', '반액 페이백', '부담 없이',
+                     '입장료 안내', '절반 가격', '돈으로 받아요', '참가비 있음'):
             self.assertEqual(bp.review(one(CID, line), HOST), [], line)
-        for line in ('무료 버스', '공짜로 타는 버스', '무상 운행 버스', '무료, 비용 없어요', '부담 없이 타는 무료 버스'):
+        for line in ('무료 버스', '공짜로 타는 버스', '무상 운행 버스', '무료, 비용 없어요', '부담 없이 타는 무료 버스',
+                     'FREE 버스', '비용이 없어요', '돈 안 들어요', '결제 없이 타요'):
             self.assertEqual(bp.review(one(BID, line), HOST), [], line)
         for summary in ('서울사랑상품권 행사와 청계 무료 야간 자율주행버스를 챙겨 보세요.',
                         '서울사랑상품권 행사는 결제 비용이 들고 화상면접실은 무료예요 확인해 보세요.'):
@@ -114,7 +115,9 @@ class ReviewTests(unittest.TestCase):
     def test_line_must_not_call_a_paid_benefit_free(self):
         # A line belongs to one benefit, and the page shows its fee_status right beside it: "무료" on a paid or
         # unknown benefit contradicts the data (evaluation case B02).
-        for cid, line in ((CID, '무료 버스'), (YID, '무료 요가 강좌'), (CID, '공짜 수업'), (YID, '무상 지원')):
+        for cid, line in ((CID, '무료 버스'), (YID, '무료 요가 강좌'), (CID, '공짜 수업'), (YID, '무상 지원'),
+                          (CID, 'FREE 혜택'), (CID, '비용이 없어요'), (YID, '돈 안 들어요'), (CID, '결제 없이 이용'),
+                          (YID, '비용 안 들어요')):
             self.assertIn('free', bp.review(one(cid, line), HOST), line)
 
     def test_spelled_out_amounts_are_numbers(self):

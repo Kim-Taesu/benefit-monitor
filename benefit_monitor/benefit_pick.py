@@ -78,8 +78,10 @@ def host(items, now):
 
 # 2026-11-18: cost words are allowed (user decision). Amounts stay numbers, also when spelled out.
 SPELLED = re.compile(r'퍼센트|[천만억]\s*원')
-# A line belongs to one benefit and sits beside its fee_status: it may not call a paid or unknown benefit free.
-FREE = re.compile(r'무료|공짜|무상')
+# A line belongs to one benefit and sits beside its fee_status: it may not call a paid or unknown benefit free,
+# in any wording (PR #67 review: 'FREE', '비용이 없어요', '돈 안 들어요', '결제 없이').
+FREE = re.compile(r'무료|공짜|무상|free|(?:비용|돈)\s*(?:이|은|도)?\s*(?:없|안\s*들|안\s*드)'
+                  r'|(?:결제|구매)\s*(?:없이|안\s*해도|하지\s*않아도)', re.IGNORECASE)
 DIGITS = re.compile('[0-9\uff10-\uff19]')
 RELATIVE = re.compile(r'오늘|내일|모레|이번\s?주|다음\s?주|주말|월말|연말')
 QUOTED = re.compile(r"['\"‘’“”]([^'\"‘’“”]{2,})['\"‘’“”]")
