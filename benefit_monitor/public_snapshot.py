@@ -140,8 +140,8 @@ def validate(root,data,now,auto=None):
                 notes=public_light(data['health_notes'],bundle,(auto if auto is not None else auto_release.load(root))[1],now)
                 if notes:clean['health_notes']=notes
     if clean['status']!='collection_failed':
-        # Festival and benefit picks (2026-11-14): re-checked against the clean festivals and items only.
-        for key in ('festival_pick','benefit_pick'):
+        # Festival and benefit picks (2026-11-14), 청약 pick (2026-11-18): re-checked against the clean bundles only.
+        for key in ('festival_pick','benefit_pick','subscription_pick'):
             if isinstance(data.get(key),dict):clean[key]=data[key]
         auto_release.recheck_tab_picks(clean,(auto if auto is not None else auto_release.load(root))[1],now)
     if data.get('groceries') and clean['status']!='collection_failed':

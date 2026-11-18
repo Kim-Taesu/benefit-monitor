@@ -18,8 +18,9 @@ kind별 설정은 두 표에 한 줄씩 있다(2026-11-14). `claude_trial.KINDS`
 | health | `prompts/health-system.md` | 구·보건소·사업·본문·`today` | `health_notes.review` |
 | festival | `prompts/festival-system.md` | `today`, 축제 후보 | `festival_pick.review` |
 | benefit | `prompts/benefit-system.md` | `today`, 공개 혜택 후보 | `benefit_pick.review` |
+| subscription | `prompts/subscription-system.md` | `today`, 공개 청약 단지 후보 | `subscription_pick.review` |
 
-축제·혜택의 호스트 입력에는 `day`가 있지만 실제 모델 입력은 `today`로 변환한다. 호스트 저장 형식과 모델 입력 형식을 혼동하지 않는다. 추천 작업에는 개인 프로필이 제공되지 않는다. 현재 결과는 공통 추천이다.
+축제·혜택·청약의 호스트 입력에는 `day`가 있지만 실제 모델 입력은 `today`로 변환한다. 호스트 저장 형식과 모델 입력 형식을 혼동하지 않는다. 추천 작업에는 개인 프로필이 제공되지 않는다. 현재 결과는 공통 추천이다.
 
 ## 프롬프트 작성 순서
 

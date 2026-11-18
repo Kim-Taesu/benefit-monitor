@@ -126,6 +126,16 @@ export function badge(item:Subscription,today:string):{text:string;tone:'urgent'
  return {text:`${s.label} D-${days}`,tone:'plain'};
 }
 
+/** Map search words: the district's last 시·군·구 word (not a 택지 '지구') or the area, then the name before any
+ *  parenthesis ('더샵 분당센트로(7차)' in '성남시 분당구' -> '분당구 더샵 분당센트로'). The page only links; it calls no map API. */
+export function mapQuery(item:Subscription):string{
+ const place=(item.district||'').trim().split(/\s+/).filter(w=>/[시군구]$/.test(w)&&!/지구$/.test(w)).pop()||item.area;
+ const name=item.name.split('(')[0].trim()||item.name;
+ return `${place} ${name}`;
+}
+export function kakaoMapUrl(item:Subscription):string{return 'https://map.kakao.com/link/search/'+encodeURIComponent(mapQuery(item));}
+export function naverMapUrl(item:Subscription):string{return 'https://map.naver.com/p/search/'+encodeURIComponent(mapQuery(item));}
+
 export function isMine(item:Subscription,region:string):boolean{return !!region&&item.area==='서울'&&item.district===region;}
 
 export function groupByDay(items:Subscription[],today:string,region:string):SubGroup[]{

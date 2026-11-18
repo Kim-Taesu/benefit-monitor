@@ -381,14 +381,15 @@ def run(root, now=None, failure=False):
 
 
 def attach_tab_picks(root,data,now):
-    """Festival and benefit picks from the AI run (approved 2026-11-14), re-checked against this payload's
-    festivals and items; a missing, stale or broken pick is simply left out, never failing publication."""
+    """Festival and benefit picks (approved 2026-11-14) and the 청약 pick (2026-11-18) from the AI run, re-checked
+    against this payload's festivals, items and subscriptions; a missing, stale or broken pick is simply left out, never failing publication."""
     from . import auto_release
     try:
         takedowns = auto_release.load(root)[1]
     except Exception:
         takedowns = []
-    for key,path in (('festival_pick','cache/festival_pick/pick.json'),('benefit_pick','cache/benefit_pick/pick.json')):
+    for key,path in (('festival_pick','cache/festival_pick/pick.json'),('benefit_pick','cache/benefit_pick/pick.json'),
+                     ('subscription_pick','cache/subscription_pick/pick.json')):
         try:
             pick = load(Path(root)/path, None)
         except Exception:

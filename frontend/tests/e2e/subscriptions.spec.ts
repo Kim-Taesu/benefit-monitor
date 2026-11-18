@@ -74,6 +74,41 @@ for(const width of [360,1280])test(`청약 tab shows Seoul·Gyeonggi schedule ca
 });
 const origin=(page:import('@playwright/test').Page)=>new URL(page.url()).origin;
 
+for(const width of [360,1280])test(`청약 AI card sits right under the tabs; a name opens a map search ${width}`,async({page})=>{
+ await page.setViewportSize({width,height:900});
+ const pick={schema_version:1,generated_at:'2026-11-04T08:00:00+09:00',day:'2026-11-04',source:'ai',summary:'[테스트] 서울 중랑구와 경기 분당에서 접수가 열려요.',
+  picks:[{id:'2026000497',line:'중랑구 1순위·2순위'},{id:'2026910275',line:'분당구 무순위'}]};
+ const requests=await open(page,snapshot(undefined,{subscriptions:bundle(ITEMS),subscription_pick:pick}));
+ await page.getByRole('tab',{name:/청약/}).click();
+ const card=page.locator('.subs-pick');
+ await expect(card.locator('.grocery-badge')).toHaveText('🤖 AI 작성');
+ await expect(card.locator('.pick-summary')).toHaveText('[테스트] 서울 중랑구와 경기 분당에서 접수가 열려요.');
+ await expect(card.locator('.pick-list>li')).toHaveCount(2);
+ await expect(card.locator('.pick-list>li').first()).toContainText('[테스트] 중화역 센트로');
+ await expect(card.locator('.pick-list>li').first()).toContainText('서울 중랑구 · 1순위 접수 중 · 11/5까지');
+ const [t,c,h]=await Promise.all([page.locator('#site-tabs').boundingBox(),card.boundingBox(),page.locator('#subs-title').boundingBox()]);
+ expect(c!.y).toBeGreaterThan(t!.y);expect(c!.y).toBeLessThan(h!.y);
+ const first=page.locator('.subs-card').first();
+ const kakao=first.getByRole('link',{name:/카카오맵/});
+ await expect(kakao).toHaveAttribute('href','https://map.kakao.com/link/search/'+encodeURIComponent('중랑구 [테스트] 중화역 센트로'));
+ await expect(kakao).toHaveAttribute('target','_blank');
+ await expect(first.getByRole('link',{name:/네이버지도/})).toHaveAttribute('href','https://map.naver.com/p/search/'+encodeURIComponent('중랑구 [테스트] 중화역 센트로'));
+ const remain=page.locator('.subs-card').nth(1);
+ await expect(remain.getByRole('link',{name:/카카오맵/})).toHaveAttribute('href',/^https:\/\/map\.kakao\.com\/link\/search\/%EB%B6%84%EB%8B%B9%EA%B5%AC%20/);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
+ if(width===360)await page.screenshot({path:`../.ax/plans/shots/subscriptions-pick-${width}.png`});
+ expect(requests.every(x=>x===origin(page))).toBe(true);  // links only: no map request from the page
+});
+
+test('청약 rule pick keeps the card without any model text',async({page})=>{
+ const pick={schema_version:1,generated_at:'2026-11-04T08:00:00+09:00',day:'2026-11-04',source:'rule',summary:null,picks:[{id:'2026000497',line:null}]};
+ await open(page,snapshot(undefined,{subscriptions:bundle(ITEMS),subscription_pick:pick}));
+ await page.getByRole('tab',{name:/청약/}).click();
+ const card=page.locator('.subs-pick');
+ await expect(card.locator('.grocery-badge')).toHaveText('자동 선정');
+ await expect(card.locator('.pick-summary')).toHaveCount(0);await expect(card.locator('.pick-line')).toHaveCount(0);
+});
+
 test('내 지역 complex goes first and is flagged; search narrows complexes',async({page})=>{
  const requests=await open(page,snapshot(undefined,{subscriptions:bundle([sub({id:'2026000001',name:'[테스트] 가 관악',district:'관악구'}),sub()])}));
  await page.locator('#region').selectOption('중랑구');  // 혜택 탭의 내 지역이 청약 탭에도 이어진다

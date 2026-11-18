@@ -57,7 +57,7 @@ def disable_workflow(store):
 FALLBACK_REFRESH_HOUR=10
 ATTENTION={'completed_with_provider_failure','probe_rejected','credit_exhausted','runtime_too_large'}
 # Per-day paid request limits: verification 40, research 40 (2026-11-10), topic 1, grocery pick 1,
-# health-programme sentences 10 (2026-11-11), festival pick 1, benefit pick 1 (2026-11-14),
+# health-programme sentences 10 (2026-11-11), festival pick 1, benefit pick 1 (2026-11-14), 청약 pick 1 (2026-11-18),
 # grammar probes (one per new schema), request-setting measurement 4 (festival and benefit x 2
 # variants, bounded days; variant_trial).
 MAX_DAILY_RESEARCH=40
@@ -106,13 +106,14 @@ def upload_grocery_pick(root,store):
 
 
 TAB_PICKS=(('cache/festival_pick/pick.json','ai-festival-pick.json','Update AI festival pick'),
-           ('cache/benefit_pick/pick.json','ai-benefit-pick.json','Update AI benefit pick'))
+           ('cache/benefit_pick/pick.json','ai-benefit-pick.json','Update AI benefit pick'),
+           ('cache/subscription_pick/pick.json','ai-subscription-pick.json','Update AI subscription pick'))
 
 
 def pick_report(result):
-    """Why today's festival and benefit cards are AI or rule text: source, model status and error codes only."""
+    """Why today's festival, benefit and 청약 cards are AI or rule text: source, model status and error codes only."""
     report={}
-    for name in ('festival','benefit'):
+    for name in ('festival','benefit','subscription'):
         row=result.get(name) if isinstance(result.get(name),dict) else {}
         model=row.get('model') if isinstance(row.get('model'),dict) else {}
         report[name]={'status':row.get('status'),'source':row.get('source'),'model':model.get('status'),

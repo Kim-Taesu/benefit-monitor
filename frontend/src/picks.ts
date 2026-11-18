@@ -3,9 +3,11 @@
 import type {Festival,FestivalBundle} from './festivals';
 import type {Benefit} from './benefits';
 import {fees} from './benefits.ts';
+import type {Subscription,SubscriptionBundle} from './subscriptions';
 
 export interface FestivalPick{source:'ai'|'rule';summary:string|null;picks:{festival:Festival;line:string|null}[]}
 export interface BenefitPick{source:'ai'|'rule';summary:string|null;picks:{item:Benefit;line:string|null}[]}
+export interface SubscriptionPick{source:'ai'|'rule';summary:string|null;picks:{item:Subscription;line:string|null}[]}
 
 const MAX_PICKS=10;
 function record(v:unknown):v is Record<string,unknown>{return !!v&&typeof v==='object'&&!Array.isArray(v);}
@@ -50,6 +52,23 @@ export function parseBenefitPick(raw:unknown,items:Benefit[]):BenefitPick|null{
  // Items here are Seoul-filtered, the backend picked from all public items: a summary may name a dropped line.
  const total=(p.picks as unknown[]).length,dropped=picks.length<total;
  if(!picks.length||picks.length<Math.min(3,total))return null;
+ return {source:p.source as 'ai'|'rule',summary:p.source==='ai'&&!dropped?p.summary as string|null:null,picks};
+}
+
+/** 청약 pick (2026-11-18). A complex that closed since publication drops its line and, like benefits, the summary. */
+export function parseSubscriptionPick(raw:unknown,bundle:SubscriptionBundle):SubscriptionPick|null{
+ if(!record(raw)||!record(raw.subscription_pick))return null;
+ const p=raw.subscription_pick;
+ if(!head(p))return null;
+ const byId=new Map(bundle.items.map(i=>[i.id,i] as const));
+ const picks:SubscriptionPick['picks']=[],seen=new Set<string>();
+ for(const x of p.picks as unknown[]){
+  if(!record(x)||typeof x.id!=='string')continue;
+  const item=byId.get(x.id),l=line(p.source,x.line);
+  if(item&&l!==undefined&&!seen.has(x.id)){seen.add(x.id);picks.push({item,line:l});}
+ }
+ if(!picks.length)return null;
+ const dropped=picks.length<(p.picks as unknown[]).length;
  return {source:p.source as 'ai'|'rule',summary:p.source==='ai'&&!dropped?p.summary as string|null:null,picks};
 }
 

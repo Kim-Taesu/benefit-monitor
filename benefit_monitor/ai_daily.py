@@ -13,6 +13,7 @@ from .grocery_pick import refresh as grocery_refresh
 from .health_notes import refresh as health_refresh
 from .festival_pick import refresh as festival_refresh
 from .benefit_pick import refresh as benefit_refresh
+from .subscription_pick import refresh as subscription_refresh
 from .remote_delivery import deliver,preceding_refresh
 from . import observability as obs
 
@@ -77,10 +78,11 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
             except Exception as error:  # Optional text: never blocks publishing the day's paid results.
                 health={'status':'failed','error_type':type(error).__name__,'model':None}
             exhausted=exhausted or health.get('status')=='credit_exhausted'
-            # One paid festival pick and one paid benefit pick a day (2026-11-14); without credit they still
-            # write the rule card (no model text). Benefit items come from today's publication payload.
+            # One paid festival pick and one paid benefit pick a day (2026-11-14), one paid 청약 pick (2026-11-18);
+            # without credit they still write the rule card (no model text). Benefit items come from today's
+            # publication payload, complexes from the restored subscriptions bundle.
             picks={}
-            for name,step in (('festival',festival_refresh),('benefit',benefit_refresh)):
+            for name,step in (('festival',festival_refresh),('benefit',benefit_refresh),('subscription',subscription_refresh)):
                 try:
                     picks[name]=obs.call('recommendation',name,step,root,now,execute=allow_spend and not exhausted)
                 except Exception as error:  # Optional cards: never block publishing the day's paid results.
@@ -95,7 +97,7 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
                 measurement={'status':'failed','error_type':type(error).__name__}
             public=obs.call('publication','public_export',publish_briefing,root,now=now) if publish else None
             remote=deliver(root,policy,now=now) if publish and policy.get('remote_delivery_approved') is True else None
-            result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'grocery':grocery,'health':health,'festival':picks['festival'],'benefit':picks['benefit'],'measurement':measurement,'public_exported':public is not None,
+            result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'grocery':grocery,'health':health,'festival':picks['festival'],'benefit':picks['benefit'],'subscription':picks['subscription'],'measurement':measurement,'public_exported':public is not None,
                     'remote_delivery':remote,'recurring_spend_requested':allow_spend,'public_status':public.get('status') if public else None}
             state['days'][day].update(status='failed' if exhausted else 'completed',finished_at=now.isoformat())
             save(project_path(root,'cache/ai_daily/days.json'),state)

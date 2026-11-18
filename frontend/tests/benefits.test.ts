@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { adapt, select, timing, readFilters, filterUrl, safeOfficial, regionOptions } from '../src/benefits.ts';
+import { adapt, select, timing, readFilters, filterUrl, safeOfficial, regionOptions, categories, categoryLabel } from '../src/benefits.ts';
 import { item, snapshot, NOW } from './fixtures.ts';
 
 test('valid approved paid and free records are preserved without invented amounts', () => {
@@ -136,4 +136,9 @@ test('card badge, verified age and header time are short forms of the same dates
  assert.equal(updatedLabel('2026-11-04T05:08:14+09:00',NOW),'오늘 05:08 갱신');
  assert.equal(updatedLabel('2026-11-03T05:08:14+09:00',NOW),'11.3 05:08 갱신');
  assert.equal(updatedLabel(null,NOW),'');
+});
+
+test('every category shows its emoji first', () => {
+  assert.deepEqual(categories.map(categoryLabel), ['💸 할인·적립','🤝 생활지원','🎨 문화·체험','📚 교육·강좌','🙋 공모·참여','📌 기타']);
+  assert.equal(categoryLabel('알 수 없음'), '📌 알 수 없음');
 });

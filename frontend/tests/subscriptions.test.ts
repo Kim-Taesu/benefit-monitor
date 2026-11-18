@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseSubscriptions,groupByDay,timeline,badge,formatPrice,formatArea,filterSubs,isMine,typeSplit,specialSummary,priceOne,tradeText} from '../src/subscriptions.ts';
+import {parseSubscriptions,groupByDay,timeline,badge,formatPrice,formatArea,filterSubs,isMine,typeSplit,specialSummary,priceOne,tradeText,mapQuery,kakaoMapUrl,naverMapUrl} from '../src/subscriptions.ts';
+import {parseSubscriptionPick} from '../src/picks.ts';
 
 const NOW=Date.parse('2026-11-17T09:00:00+09:00');
 const APT='https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000497&pblancNo=2026000497';
@@ -102,4 +103,30 @@ test('trade cell text and bad trade rejected',()=>{
  assert.equal(parseSubscriptions(bad({amount:1,month:'2026-07',kind:'시세'}),NOW),null);
  assert.equal(parseSubscriptions(bad({amount:1,month:'2026-07',kind:'매매',buyer:'개인'}),NOW),null);
  assert.equal(parseSubscriptions(raw([item({trade_status:'maybe'})]),NOW),null);
+});
+
+test('map search: district (last word) plus the name before any parenthesis, for Kakao and Naver',()=>{
+ const r=parseSubscriptions(raw([item(),item({id:'2026940260',name:'더샵 분당센트로(7차)',area:'경기',district:'성남시 분당구'}),
+  item({id:'2026000457',name:'부천대장 하우스토리 디센트(부천대장지구 A2BL) 공공분양주택',area:'경기',district:null}),
+  item({id:'2026940263',name:'이천역 예미지 센트럴파크(4차)',area:'경기',district:'이천시 중리지구'})]),NOW)!;
+ assert.deepEqual(r.items.map(mapQuery),['중랑구 중화역 라온프라이빗 센트로','분당구 더샵 분당센트로','경기 부천대장 하우스토리 디센트','이천시 이천역 예미지 센트럴파크']);
+ assert.equal(kakaoMapUrl(r.items[1]),'https://map.kakao.com/link/search/'+encodeURIComponent('분당구 더샵 분당센트로'));
+ assert.equal(naverMapUrl(r.items[1]),'https://map.naver.com/p/search/'+encodeURIComponent('분당구 더샵 분당센트로'));
+});
+
+test('subscription pick: known complexes only; a dropped line also drops the summary; rule has no text',()=>{
+ const bundle=parseSubscriptions(raw([item(),item({id:'2026940256',name:'디에이치 신반포에스테라',district:'서초구'})]),NOW)!;
+ const pick=(over:Record<string,unknown>={})=>({subscription_pick:{schema_version:1,generated_at:'2026-11-17T08:00:00+09:00',day:'2026-11-17',source:'ai',
+  summary:'서울 중랑구와 서초구에서 접수가 열려요.',picks:[{id:'2026000497',line:'중랑구 1순위·2순위'},{id:'2026940256',line:'서초구 임의공급'}],...over}});
+ const ok=parseSubscriptionPick(pick(),bundle)!;
+ assert.equal(ok.source,'ai');
+ assert.equal(ok.summary,'서울 중랑구와 서초구에서 접수가 열려요.');
+ assert.deepEqual(ok.picks.map(p=>[p.item.id,p.line]),[['2026000497','중랑구 1순위·2순위'],['2026940256','서초구 임의공급']]);
+ const dropped=parseSubscriptionPick(pick({picks:[{id:'2026000497',line:'중랑구'},{id:'2026999999',line:'없는 단지'}]}),bundle)!;
+ assert.deepEqual([dropped.summary,dropped.picks.length],[null,1]);
+ const rule=parseSubscriptionPick(pick({source:'rule',summary:null,picks:[{id:'2026000497',line:null}]}),bundle)!;
+ assert.deepEqual([rule.source,rule.summary,rule.picks[0].line],['rule',null,null]);
+ assert.equal(parseSubscriptionPick(pick({picks:[{id:'2026999999',line:'x'}]}),bundle),null);
+ assert.equal(parseSubscriptionPick(pick({summary:'<b>x</b>'}),bundle),null);
+ assert.equal(parseSubscriptionPick({},bundle),null);
 });
