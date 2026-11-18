@@ -388,10 +388,11 @@ def attach_tab_picks(root,data,now):
         takedowns = auto_release.load(root)[1]
     except Exception:
         takedowns = []
-    for key,path in (('festival_pick','cache/festival_pick/pick.json'),('benefit_pick','cache/benefit_pick/pick.json'),
-                     ('subscription_pick','cache/subscription_pick/pick.json')):
+    from .tab_picks import TAB_PICKS
+    for kind in TAB_PICKS:
+        key = kind.key
         try:
-            pick = load(Path(root)/path, None)
+            pick = load(Path(root)/kind.local, None)
         except Exception:
             pick = None
         if isinstance(pick,dict):data[key] = pick

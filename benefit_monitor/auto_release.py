@@ -266,14 +266,14 @@ def recheck_tab_picks(data, takedowns, now):
     """Re-check the festival, benefit (2026-11-14) and 청약 (2026-11-18) picks of a public payload against its own
     festivals, items and subscriptions: a line never outlives its item, an admin mute gives the rule card, anything that fails
     is removed. Never raises, so a pick can never block publication."""
-    from . import benefit_pick, festival_pick, subscription_pick
-    for key, check, basis in (('festival_pick', festival_pick.public, data.get('festivals')),
-                              ('benefit_pick', benefit_pick.public, data.get('items')),
-                              ('subscription_pick', subscription_pick.public, data.get('subscriptions'))):
+    from importlib import import_module
+    from .tab_picks import TAB_PICKS
+    for kind in TAB_PICKS:
+        key, basis = kind.key, data.get(kind.basis)
         if key not in data:
             continue
         try:
-            pick = check(data[key], basis, takedowns, now) if basis else None
+            pick = import_module('.' + kind.module, __package__).public(data[key], basis, takedowns, now) if basis else None
         except Exception:
             pick = None
         if pick is None:

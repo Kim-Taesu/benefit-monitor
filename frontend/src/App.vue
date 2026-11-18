@@ -33,7 +33,7 @@ function tabKey(event:KeyboardEvent,index:number){
 import type {Benefit} from './benefits';
 import {benefitKey,loadFavorites,saveFavorites,clearFavorites,visibleFavorites} from './favorites';
 import {loadInterests,saveInterests,clearInterests,initialInterests} from './preferences';
-import { adapt, select, timing, coverageLabels, readFilters, filterUrl, formatDate, updatedLabel, CATEGORY_EMOJI } from './benefits';
+import { adapt, select, timing, coverageLabels, readFilters, filterUrl, formatDate, updatedLabel, categoryEmoji } from './benefits';
 const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.now());
 // Parsed once per minute, not on every 1-second tick. Rounding down stays within the 5-minute
 // future tolerance, so data collected minutes ago is not mistaken for future data (an hour key did that).
@@ -171,7 +171,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
       :note="benefitPick.source==='ai'?'개인 프로필 없이 AI가 공개된 혜택 안에서 고른 공통 추천이에요. 마감일과 비용은 공개 데이터 그대로 보여드려요.':'마감이 가까운 순으로 자동 선정했어요. 마감일과 비용은 공개 데이터 그대로예요.'">
       <ul class="pick-list">
         <li v-for="p in benefitPick.picks.slice(0,limit)" :key="benefitKey(p.item)">
-          <strong><span aria-hidden="true">{{ CATEGORY_EMOJI[p.item.category]??'📌' }}</span> {{ p.item.summary }}</strong> <small>{{ [benefitDeadline(p.item),benefitFeeLabel(p.item)].filter(Boolean).join(' · ') }}</small>
+          <strong><span aria-hidden="true">{{ categoryEmoji(p.item.category) }}</span> {{ p.item.summary }}</strong> <small>{{ [benefitDeadline(p.item),benefitFeeLabel(p.item)].filter(Boolean).join(' · ') }}</small>
           <span v-if="p.line" class="pick-line">→ {{ p.line }}</span>
         </li>
       </ul>

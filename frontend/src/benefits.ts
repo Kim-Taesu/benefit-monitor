@@ -3,7 +3,8 @@ import policy from './source-policy.json' with { type: 'json' };
 export const categories=['할인·적립','생활지원','문화·체험','교육·강좌','공모·참여','기타'];
 // Emoji before the category name on cards (2026-11-18). An unknown name gets the 기타 mark.
 export const CATEGORY_EMOJI:Record<string,string>={'할인·적립':'💸','생활지원':'🤝','문화·체험':'🎨','교육·강좌':'📚','공모·참여':'🙋','기타':'📌'};
-export function categoryLabel(category:string):string{return `${CATEGORY_EMOJI[category]??CATEGORY_EMOJI['기타']} ${category}`;}
+export function categoryEmoji(category:string):string{return CATEGORY_EMOJI[category]??CATEGORY_EMOJI['기타'];}
+export function categoryLabel(category:string):string{return `${categoryEmoji(category)} ${category}`;}
 export const fees: Record<string,string>={free:'무료',paid:'유료',mixed:'일부 유료',unknown:'비용 미확인'};
 export const coverageLabels: Record<string,string>={checked:'목록 수집 성공 · 본문 검증 별도',cached:'6시간 내 목록 캐시 · 본문 검증 별도',failed:'이번 수집 실패',not_connected:'자동 수집 미연결',not_checked:'이번 실행 미확인'};
 export interface Filters { q:string; region:string; category:string; sort:string; status:string }

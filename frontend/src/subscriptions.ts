@@ -136,6 +136,8 @@ export function mapQuery(item:Subscription):string{
 export function kakaoMapUrl(item:Subscription):string{return 'https://map.kakao.com/link/search/'+encodeURIComponent(mapQuery(item));}
 export function naverMapUrl(item:Subscription):string{return 'https://map.naver.com/p/search/'+encodeURIComponent(mapQuery(item));}
 
+/** '서울 중랑구', or just the area when the district is unknown. */
+export function placeLabel(item:Subscription):string{return item.district?`${item.area} ${item.district}`:item.area;}
 export function isMine(item:Subscription,region:string):boolean{return !!region&&item.area==='서울'&&item.district===region;}
 
 export function groupByDay(items:Subscription[],today:string,region:string):SubGroup[]{

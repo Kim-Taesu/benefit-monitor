@@ -131,9 +131,8 @@ def restore_grocery_pick(root, repository, env=None):
     return False
 
 
-TAB_PICKS = (("ai-festival-pick.json", "cache/festival_pick/pick.json"),
-             ("ai-benefit-pick.json", "cache/benefit_pick/pick.json"),
-             ("ai-subscription-pick.json", "cache/subscription_pick/pick.json"))
+from .tab_picks import TAB_PICKS as _PICKS
+TAB_PICKS = tuple((p.remote, p.local) for p in _PICKS)
 
 
 def restore_tab_picks(root, repository, env=None):
