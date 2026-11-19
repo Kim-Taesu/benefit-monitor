@@ -35,7 +35,7 @@ jobs:
       - name: Python regression suite
         run: python -m unittest discover -s tests -v
       - name: Cloudflare cron plan tests
-        run: node --test scheduler/cloudflare/test/
+        run: node --test scheduler/cloudflare/test/plan.test.js
       - name: Frontend dependencies, unit tests and build
         working-directory: frontend
         run: |

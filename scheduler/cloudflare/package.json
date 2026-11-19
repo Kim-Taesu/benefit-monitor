@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test test/plan.test.js",
     "deploy": "npx --yes wrangler@4.156.0 deploy"
   }
 }
