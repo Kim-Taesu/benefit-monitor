@@ -96,7 +96,7 @@ for(const width of [390,1440])test(`health weekly card filters by kind and distr
  await expect(card).toHaveCount(1);
  await card.scrollIntoViewIfNeeded();
  if(width===390){
-  await page.screenshot({path:'../.ax/plans/shots/health-weekly-390.png'});
+  await page.screenshot({path:`${process.env.BENEFIT_SCREENSHOT_DIR||'../.ax/plans/shots'}/health-weekly-390.png`});
  }
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
 });
