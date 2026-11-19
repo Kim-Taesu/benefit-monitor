@@ -176,6 +176,44 @@ class ReviewTests(unittest.TestCase):
         self.assertIn('markup', bp.review(draft(summary=SUMMARY + ' https://x.kr'), HOST))
 
 
+# Real 2026-11-19 titles. That day's summary was dropped for "5060 세대" copied from the first one.
+NEXT = row('seoul', 'https://mediahub.seoul.go.kr/archives/2020100', "5060세대의 경험이 인사이트로…'넥스트아카데미' 특강 신청하세요!",
+           '서울시민대학 5060세대 특강', '서울시민대학 특강 신청', 'free')
+FUN = row('seoul', 'https://mediahub.seoul.go.kr/archives/2020101', "'펀스테이션' 9호점 신목동역에 오픈! 러너지원공간·스크린 파크골프장",
+          '양천구 펀스테이션 개관', '러너지원공간 이용', 'free')
+SHORT = row('seoul', 'https://mediahub.seoul.go.kr/archives/2020028', "서울의 매력에 '숏' 빠져봐! 60초 숏폼 공모전…총상금 1천만원",
+            '서울 홍보 숏폼 공모전', '11월 27일까지 접수', 'free', valid_until='2026-11-27')
+NAMED = bp.host([NEXT, FUN, SHORT, BUS, ROOM], NOW)
+NID, FID, SID = (bp.item_id(r) for r in (NEXT, FUN, SHORT))
+
+
+def named(summary, picks):
+    return dict(summary=summary, picks=[dict(id=i, line=l) for i, l in picks])
+
+
+class NameNumberTests(unittest.TestCase):
+    """2026-11-19 (user "123 진행"): a number glued to a name in the benefit's own title may be copied."""
+
+    def test_numbers_that_name_the_benefit_in_its_title_pass(self):
+        for picks in (((NID, '5060 세대 특강'), (FID, '9호점 러너지원공간'), (BID, '야간 자율주행버스 체험')),
+                      ((NID, '5060세대가 듣는 특강'), (FID, '펀스테이션 9호점'), (RID, '화상면접실 이용'))):
+            self.assertEqual(bp.review(named('넥스트아카데미 특강과 펀스테이션 새 지점을 둘러보세요.', picks), NAMED), [], picks)
+        summary = '넥스트아카데미에서 5060세대 특강을 듣고 펀스테이션 9호점도 들러 보세요.'
+        self.assertEqual(bp.review(named(summary, ((NID, '시민대학 특강'), (FID, '러너지원공간'), (BID, '버스 체험'))), NAMED), [])
+
+    def test_dates_amounts_durations_and_other_benefits_numbers_stay_banned(self):
+        base = ((NID, '시민대학 특강'), (FID, '러너지원공간'))
+        for line in ('60초 숏폼 공모전', '총상금 1천만원 공모전', '11월 접수 공모전', '5060세대 공모전'):
+            self.assertIn('number', bp.review(named('넥스트아카데미 특강을 챙겨 보세요 확인하세요.', base + ((SID, line),)), NAMED), line)
+        # A title number used for a benefit whose title does not have it.
+        self.assertIn('number', bp.review(named('넥스트아카데미 특강을 챙겨 보세요 확인하세요.', base + ((BID, '9호점 버스'),)), NAMED))
+        # In the summary, only the picked benefits' title numbers count.
+        self.assertIn('number', bp.review(named('넥스트아카데미와 펀스테이션 9호점을 챙겨 보세요.',
+                                                ((NID, '시민대학 특강'), (BID, '버스 체험'), (RID, '면접실'))), NAMED))
+        # A percent in a title is an amount, not a name (COGPE: "최대 15% 할인").
+        self.assertIn('number', bp.review(one(CID, '15% 할인 결제'), HOST))
+
+
 class PublicTests(unittest.TestCase):
     def test_public_fills_source_url(self):
         pick = bp.public(stored(), ITEMS, [], NOW)

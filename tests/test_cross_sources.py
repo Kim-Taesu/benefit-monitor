@@ -8,7 +8,7 @@ from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 from benefit_monitor import cost_policy
-from benefit_monitor.cross_sources import allowed_domains, related_urls
+from benefit_monitor.cross_sources import allowed_domains, navigation_page, related_urls
 
 ROOT=Path(__file__).resolve().parents[1]
 NOW=datetime(2026,11,7,12,tzinfo=ZoneInfo('Asia/Seoul'))
@@ -43,6 +43,24 @@ class RelatedUrlTests(unittest.TestCase):
         self.assertEqual(related_urls(doc,self.cand(),[],DOMAINS),['https://news.seoul.go.kr/ok'])
         peers=[self.cand('공지','https://www.seoul.go.kr/news/9')]
         self.assertEqual(related_urls({'links':[]},self.cand('공지'),peers,DOMAINS),[])
+
+    def test_home_login_and_copyright_pages_are_not_related_documents(self):
+        # 2026-11-19: the Seoul reservation portal's home page changed overnight and sent an unchanged
+        # item (반려식물병원) to paid research again. Such pages name no benefit and were never cited.
+        domains={'yeyak.seoul.go.kr','sll.seoul.go.kr','www.korea.kr','www.i-sh.co.kr','www.eshare.go.kr',
+                 'mediahub.seoul.go.kr','www.seocho.go.kr','www.sb.go.kr'}
+        skipped=['https://yeyak.seoul.go.kr/web/main.do','https://sll.seoul.go.kr/main/doMainView.do?main_se=ssu',
+                 'https://www.korea.kr/guide/copyRight.do','https://www.i-sh.co.kr/app/index.do',
+                 'https://www.i-sh.co.kr/app/lay2/program/S1T1C219/subMain1.do','https://www.sb.go.kr/yeyak/index.do',
+                 'https://www.i-sh.co.kr/app/lay2/program/S48T1451C1452/m_56/appNoti/appNotiUser_login.do',
+                 'https://www.seocho.go.kr/site/sh/login/Login.do','https://www.seocho.go.kr/site/seocho/user/User_Step_01.do']
+        # Detail pages (also an index.do naming one item) and listing pages stay: listings are cited as evidence.
+        kept=['https://www.eshare.go.kr/UserPortal/Upv/UprResrcEdu/index.do?rsrc_no=EJ29L4611190&rsrc_dcd=CPS001.006',
+              'https://yeyak.seoul.go.kr/web/reservation/selectReservView.do?rsv_svc_id=S250103153915708411',
+              'https://mediahub.seoul.go.kr/news/citizen/citizenTagNewsList.do?tagName=식물']
+        self.assertEqual(related_urls({'links':skipped+kept},self.cand(),[],domains,limit=20),kept)
+        self.assertTrue(all(navigation_page(u) for u in skipped))
+        self.assertFalse(any(navigation_page(u) for u in kept))
 
     def test_allowed_domains(self):
         self.assertEqual(allowed_domains({'a':{'domains':['x.kr']},'b':{'domains':['y.kr','x.kr']}}),{'x.kr','y.kr'})

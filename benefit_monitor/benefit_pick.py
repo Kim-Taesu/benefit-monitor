@@ -82,6 +82,15 @@ SPELLED = re.compile(r'퍼센트|[천만억]\s*원')
 FREE = re.compile(r'무료|공짜|무상|free|(?:비용|돈)\s*(?:이|은|도)?\s*(?:없|안\s*들|안\s*드)'
                   r'|(?:결제|구매)\s*(?:없이|안\s*해도|하지\s*않아도)', re.IGNORECASE)
 DIGITS = re.compile('[0-9\uff10-\uff19]')
+# Approved 2026-11-19 (user "123 진행"): a number glued to a word of the benefit's own title names it
+# ("5060세대", "9호점") and may be copied. A word starting with a unit (date, time, amount, age, count,
+# rank) is a quantity and stays banned even in a title ("60초", "1천만원", "11월", "19세"); a percent too.
+TITLE_NUMBER = re.compile(r'(?<![0-9.,])([0-9][0-9,.]*)\s*([가-힣]+)')
+UNITS = ('원', '만', '천', '억', '월', '일', '년', '시', '분', '초', '세', '살', '명', '회', '번', '개', '건', '곳', '차', '주',
+         '박', '층', '종', '가지', '대', '석', '장', '권', '편', '등', '위', '평', '인', '부', '달', '배', '퍼센트')
+# '세대' (generation) starts with the age unit '세' but is a name.
+NAME_WORDS = ('세대',)
+PARTICLE = re.compile(r'(?:의|은|는|이|가|을|를|에|와|과|도|로|으로|에서|까지|부터)$')
 RELATIVE = re.compile(r'오늘|내일|모레|이번\s?주|다음\s?주|주말|월말|연말')
 QUOTED = re.compile(r"['\"‘’“”]([^'\"‘’“”]{2,})['\"‘’“”]")
 WORD = re.compile(r'[0-9A-Za-z가-힣]+')
@@ -98,6 +107,23 @@ def _names(rows):
         unique = {w for w in words[c['id']] if sum(w in other for other in words.values()) == 1}
         names[c['id']] = set(quoted) | unique or {c['title']}
     return names
+
+
+def _title_numbers(title):
+    """(number, word) pairs of a title where the word is a name, not a unit: ('5060', '세대'), ('9', '호점')."""
+    pairs = set()
+    for number, word in TITLE_NUMBER.findall(title):
+        word = PARTICLE.sub('', word) or word
+        if word.startswith(NAME_WORDS) or not word.startswith(UNITS):
+            pairs.add((number, word))
+    return pairs
+
+
+def _without_title_numbers(text, titles):
+    """text with every title name number ("5060 세대" for title "5060세대의 …") blanked out."""
+    for number, word in set().union(*(_title_numbers(t) for t in titles)) if titles else ():
+        text = re.sub(r'(?<![0-9.,])' + re.escape(number) + r'\s*' + re.escape(word), ' ', text)
+    return text
 
 
 def _mentions(text, rows):
@@ -136,7 +162,12 @@ def _check(summary, picks, host):
     if any(URGENCY.search(t) for t in texts):
         errors.append('urgency')
     # Dates, amounts and deadlines are shown by the page from the data, never typed by the model.
-    if any(DIGITS.search(t) or SPELLED.search(t) or RELATIVE.search(t) for t in texts):
+    # A line may copy its own benefit's title numbers, the summary those of the picked benefits.
+    picked_titles = [by_id[i]['title'] for i in ids if i in by_id]
+    scoped = [_without_title_numbers(p['line'], [(by_id.get(p['id']) or {}).get('title', '')]) for p in picks]
+    if summary is not None:
+        scoped.append(_without_title_numbers(summary, picked_titles))
+    if any(DIGITS.search(s) for s in scoped) or any(SPELLED.search(t) or RELATIVE.search(t) for t in texts):
         errors.append('number')
     if any(FREE.search(p['line']) and (by_id.get(p['id']) or {}).get('fee_status') != 'free' for p in picks):
         errors.append('free')

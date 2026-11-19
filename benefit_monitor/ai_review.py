@@ -12,7 +12,7 @@ from . import cost_policy
 from . import auto_publish
 from . import auto_release
 from .collectors.body import stable_text
-from .cross_sources import allowed_domains, related_urls
+from .cross_sources import allowed_domains, navigation_page, related_urls
 from .models import Benefit
 from .official_reader import OfficialReader, project_path
 from .validation import official
@@ -179,14 +179,29 @@ MAX_RESEARCH=40
 STORED_DAYS=30
 
 
-def _stored_pages(root,row):
+def _navigation(index,document):
+    """A related document that related_urls no longer picks (home, login or copyright page, 2026-11-19)."""
+    return index>0 and navigation_page(document.get('final_url') or document.get('requested_url') or '')
+
+
+def _stored_pages(root,row,drop_navigation=False):
     """Hashes of the pages a stored row was researched from, own page first, view counters dropped
     (rows stored before 2026-11-14 hold bodies with them). None when the input cannot be read."""
     try:
         documents=load(project_path(root,row['input_file']),None)['documents']
-        return [hashlib.sha256(stable_text(d['body']).encode()).hexdigest() for d in documents]
+        return [hashlib.sha256(stable_text(d['body']).encode()).hexdigest() for i,d in enumerate(documents)
+                if not (drop_navigation and _navigation(i,d))]
     except Exception:
         return None
+
+
+def _stored_navigation_hashes(root,row):
+    """Signature hashes of the home pages a stored row's input still holds ([] when none or unreadable)."""
+    try:
+        documents=load(project_path(root,row['input_file']),None)['documents']
+        return [d['body_hash'] for i,d in enumerate(documents) if _navigation(i,d)]
+    except Exception:
+        return []
 
 
 def _rebase(record,docs):
@@ -319,10 +334,16 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False,investi
             hashes=','.join(sorted(d['body_hash'] for d in docs))
             signature,equivalent=_signatures(cid,hashes,prompt,suffix)
             previous=state['items'].get(cid,{})
+            # A row researched with a home page that is no longer read (2026-11-19) keeps its signature
+            # when every page still read is identical: today's hashes plus the stored home page hashes.
+            dropped=[] if active_investigation or not previous.get('input_file') else _stored_navigation_hashes(root,previous)
+            if dropped:
+                equivalent|=_signatures(cid,','.join(sorted([d['body_hash'] for d in docs]+dropped)),prompt,suffix)[1]
             same_signature=previous.get('signature') in equivalent
             # The signature also covers the prompt. The pages themselves are compared separately, from
             # the stored input, so a prompt change (or the 2026-11-14 hashing change) is not a page change.
-            stored=None if same_signature or not previous.get('input_file') else _stored_pages(root,previous)
+            stored=(None if same_signature or not previous.get('input_file')
+                    else _stored_pages(root,previous,drop_navigation=not active_investigation))
             same_pages=same_signature or (stored is not None and sorted(stored)==sorted(d['body_hash'] for d in docs))
             if previous.get('body_hash') and (stored[0] if stored else previous['body_hash'])!=doc['body_hash']:
                 result['changed_ids'].append(cid)
