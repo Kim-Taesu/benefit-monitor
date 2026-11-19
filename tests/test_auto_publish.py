@@ -627,6 +627,42 @@ class AutoPublishIntegrationTests(unittest.TestCase):
         self._research(None, NOW + timedelta(days=1), 'prompt-2', expect_model=True)
         self.assertEqual(self._approved(), {})
 
+    def test_a_home_page_no_longer_read_does_not_send_an_unchanged_item_to_the_model(self):
+        # 2026-11-19 (반려식물병원): the stored input held the reservation portal's home page, whose banners
+        # change daily. That page is no longer read (cross_sources.navigation_page); the other pages are
+        # identical, so the stored answer is decided again without a model call.
+        from benefit_monitor import ai_review
+        candidate = {'source': 'seoul', 'url': 'https://www.seoul.go.kr/news/1', 'title': '서울 미술 전시', 'summary': '검토 대기'}
+        cid = ai_review.Benefit(**candidate).id
+        home = doc(3, '서울 예약 포털 오늘의 배너', url='https://www.seoul.go.kr/main.do')
+        base = host(docs=[doc(1, D1), doc(2, D2), home]); base['candidates'][0]['candidate_id'] = cid
+        docs = base['documents']
+
+        def run(facts, now, related):
+            if facts is not None:
+                draft = draft_for(base, **facts)
+                for record in draft['records']:
+                    record['candidate_id'] = cid
+                self.stored_run = (draft, base)
+            with patch.object(ai_review.OfficialReader, 'read', side_effect=lambda c, **k: dict(docs[0], links=[])), \
+                    patch('benefit_monitor.ai_review._related_docs', return_value=[dict(d, links=[]) for d in related]), \
+                    patch('benefit_monitor.ai_review.fingerprint', return_value='prompt-1'), \
+                    patch('benefit_monitor.ai_review.invoke', return_value={'status': 'validated_draft', 'run_id': 'e' * 64}) as invoke, \
+                    patch('benefit_monitor.ai_review.load_run', side_effect=lambda run: self.stored_run):
+                ai_review.review_candidates(self.root, [candidate], now, 1, True)
+            return invoke.called
+
+        self.assertTrue(run(period_facts(conditions={'unknown_reason': '원문에 없음'}), NOW, docs[1:]))
+        # Still held by the gate: settled, no second call although the home page is gone from today's read.
+        self.assertFalse(run(None, NOW + timedelta(days=1), docs[1:2]))
+        self.assertEqual(self._approved(), {})
+        # A gate that now publishes the stored answer does so without a call.
+        self.assertFalse(run(period_facts(), NOW + timedelta(days=2), docs[1:2]))
+        self.assertEqual(list(self._approved()), [cid])
+        # A change in a page that is still read goes to the model as before.
+        edited = doc(2, D2 + '\n전시 일정이 바뀌었습니다.')
+        self.assertTrue(run(None, NOW + timedelta(days=3), [edited]))
+
     def test_page_that_differs_only_by_its_view_counter_is_the_same_page(self):
         # A row researched before 2026-11-14 holds the body with its counter; today's body has none.
         from benefit_monitor.collectors.body import stable_text
