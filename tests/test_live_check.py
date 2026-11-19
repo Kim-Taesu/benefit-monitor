@@ -61,6 +61,21 @@ class LiveCheckTests(unittest.TestCase):
         data = briefing(groceries={'produce': {'items': []}, 'meat': {'items': [1]}})
         self.assertTrue(any('장보기' in f for f in check(data, now=NOW).failures))
 
+    def test_missing_meat_cuts_are_a_warning(self):
+        # PR #37 incident: the HTTP budget ran out mid-collection and 7 cuts went to `missing` while 19 still showed
+        cuts = ['돼지 앞다리', '돼지 갈비', '닭', '계란', '수입 소', '수입 돼지', '오리']
+        data = briefing(groceries={'produce': {'items': [1]}, 'meat': {'items': [1] * 19, 'missing': cuts}})
+        result = check(data, now=NOW)
+        self.assertEqual(result.failures, [])
+        warning = [w for w in result.warnings if '축산물' in w]
+        self.assertEqual(len(warning), 1)
+        self.assertIn('7개', warning[0])
+        self.assertIn('돼지 앞다리', warning[0])
+
+    def test_empty_missing_list_is_quiet(self):
+        data = briefing(groceries={'produce': {'items': [1]}, 'meat': {'items': [1], 'missing': []}})
+        self.assertFalse(any('축산물' in w for w in check(data, now=NOW).warnings))
+
     def test_missing_pick_without_before_is_only_a_warning(self):
         result = check(briefing(grocery_pick=None), now=NOW)
         self.assertEqual(result.failures, [])
