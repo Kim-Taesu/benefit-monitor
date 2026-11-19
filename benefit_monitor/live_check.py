@@ -65,6 +65,11 @@ def check(data, before=None, now=None, max_age_hours=36):
     facts.append(f'장보기 농산물 {produce}개 · 축산물 {meat}개')
     if not produce or not meat:
         failures.append(f'장보기 가격이 비었습니다 (농산물 {produce}개 · 축산물 {meat}개)')
+    # PR #37: the per-run HTTP budget ran out mid-collection; 7 cuts went missing while the section still showed
+    missing = ((data.get('groceries') or {}).get('meat') or {}).get('missing') or []
+    if missing:
+        names = ', '.join(str(m) for m in missing[:5]) + (' …' if len(missing) > 5 else '')
+        warnings.append(f'축산물 {len(missing)}개 부위 가격을 못 가져왔습니다: {names}')
 
     showing = [k for k in PICK_KEYS if _has_pick(data, k)]
     facts.append('AI 추천 표시: ' + (', '.join(showing) or '없음'))
