@@ -23,6 +23,8 @@ export interface Briefing {
  state:string; items:Benefit[]; generatedAt:string; sourceReportAt:string|null; validThrough:string|null;
  sources:Coverage[]; districts:Coverage[]; scope:string; runLabel:string; pending:number; withheldCount:number;
  aiQuality:AIQuality; sourceFailures:Record<string,number>;
+ /** 파일 표시기한이 지났지만 다음 갱신 전이라 이전 목록을 계속 보여 주는 중(2026-11-20 승인). 항목별 기한은 그대로 적용한다. */
+ carriedOver:boolean; timing:PipelineTiming|null;
 }
 export interface AIFinding { title:string; url:string; claims:{claim:string;quotes:string[]}[] }
 export interface AIQuality { checked:number|null; held:number; dismissed:number; prioritized:number; findings:AIFinding[] }
@@ -51,7 +53,7 @@ function dateValue(v:unknown):number {
  const n=Date.parse(v+'T00:00:00+09:00');
  return Number.isFinite(n)&&new Date(n+9*3600000).toISOString().slice(0,10)===v?n:NaN;
 }
-const kstDay=(n:number)=>Math.floor((n+9*3600000)/DAY);
+export const kstDay=(n:number)=>Math.floor((n+9*3600000)/DAY);
 export function formatDate(v:string|null|undefined):string {
  if(!v)return '공식 안내 확인 필요';
  const n=v.includes('T')?timestamp(v):dateValue(v);
@@ -117,13 +119,28 @@ function coverageRows(value:unknown):Coverage[] {
 function sourceFailures(value:unknown):Record<string,number> {
  return Object.fromEntries(Object.entries(object(value)).map(([k,v])=>[k,count(object(v).consecutive_failures)]));
 }
+/** 그날 준비에 걸린 시간(2026-11-20). GitHub 단계 기록에서 온 값이며 순서가 어긋나거나 미래 시각이면 버린다. */
+export interface PipelineTiming { startedAt:string; publishedAt:string|null; crawlSeconds:number; aiSeconds:number; publishSeconds:number|null }
+export function parseTiming(value:unknown,now:number):PipelineTiming|null {
+ const t=object(value);const keys=['collect_started_at','collect_finished_at','ai_started_at','ai_finished_at'];
+ const at=keys.map(k=>timestamp(t[k]));const published=t.published_at==null?null:timestamp(t.published_at);
+ const order=[...at,...(published===null?[]:[published])];
+ if(!order.every(Number.isFinite)||order.some((v,i)=>i>0&&v<order[i-1]!)||order[order.length-1]!>now)return null;
+ const crawl=t.collect_seconds;
+ if(typeof crawl!=='number'||!Number.isInteger(crawl)||crawl<0||crawl>(at[1]!-at[0]!)/1000+1)return null;
+ return {startedAt:text(t.collect_started_at),publishedAt:published===null?null:text(t.published_at),crawlSeconds:crawl,
+  aiSeconds:Math.round((at[3]!-at[2]!)/1000),publishSeconds:published===null?null:Math.round((published-at[3]!)/1000)};
+}
+/** 90초 → '2분', 40초 → '1분 미만'. */
+export function minutesLabel(seconds:number):string{return seconds<60?'1분 미만':`${Math.round(seconds/60)}분`;}
 export function adapt(value:unknown,now=Date.now()):Briefing {
  const d=object(value); const generated=timestamp(d.generated_at),report=timestamp(d.source_report_at),until=timestamp(d.valid_through);
  if(d.schema_version!==1||!['partial','awaiting_verification','collection_failed'].includes(text(d.status))||!Array.isArray(d.items)||!Number.isFinite(generated)||generated>now)throw new Error('공개 데이터 형식을 확인할 수 없습니다.');
  if(d.status!=='collection_failed'&&(!Number.isFinite(until)||!Number.isFinite(report)||report>generated))throw new Error('공개 데이터 기준 시각을 확인할 수 없습니다.');
- const state=d.status==='collection_failed'?'collection_failed':until<=now?'stale':text(d.status);
+ // 표시기한이 지나도 다음 갱신 전까지 이전 목록을 보인다(사용자 2026-11-20 승인). 끝난 항목은 아래 항목별 기한으로 빠진다.
+ const state=d.status==='collection_failed'?'collection_failed':text(d.status);
  const cov=object(d.coverage);const context=object(d.run_context);
- const result:Briefing={state,items:[],generatedAt:text(d.generated_at),sourceReportAt:text(d.source_report_at)||null,validThrough:text(d.valid_through)||null,sources:coverageRows(cov.sources),districts:coverageRows(cov.districts),scope:text(cov.scope),runLabel:({scheduled_refresh:'정기 실행에서 생성',manual_refresh:'수동 갱신 · 정기 실행 성공과 별도',pre_schedule_snapshot:'정기 수집 예정시각 이전 결과',unavailable:'수집 실행 결과 확인 불가'} as Record<string,string>)[text(context.status)]||'실행 유형 미확인',pending:Math.max(0,Number(object(d.withheld).pending)||0),withheldCount:0,aiQuality:aiQuality(d.ai_quality),sourceFailures:sourceFailures(d.source_health)};
+ const result:Briefing={state,items:[],generatedAt:text(d.generated_at),sourceReportAt:text(d.source_report_at)||null,validThrough:text(d.valid_through)||null,sources:coverageRows(cov.sources),districts:coverageRows(cov.districts),scope:text(cov.scope),runLabel:({scheduled_refresh:'정기 실행에서 생성',manual_refresh:'수동 갱신 · 정기 실행 성공과 별도',pre_schedule_snapshot:'정기 수집 예정시각 이전 결과',unavailable:'수집 실행 결과 확인 불가'} as Record<string,string>)[text(context.status)]||'실행 유형 미확인',pending:Math.max(0,Number(object(d.withheld).pending)||0),withheldCount:0,aiQuality:aiQuality(d.ai_quality),sourceFailures:sourceFailures(d.source_health),carriedOver:state!=='collection_failed'&&until<=now,timing:state==='partial'?parseTiming(d.pipeline_timing,now):null};
  if(state!=='partial')return result;
  const seen=new Set<string>();
  for(const raw of d.items) {
@@ -179,7 +196,7 @@ export function filterUrl(current:URL,filters:Filters):URL {
 export function regionOptions(items:Benefit[]):string[] {
  return [...new Set(items.flatMap(i=>i.regions).concat(items.some(i=>matchesRegion(i,'서울'))?['서울']:[]))].sort((a,b)=>a.localeCompare(b,'ko'));
 }
-const monthDay=(ms:number)=>{const d=new Date(ms+9*3600000);return `${d.getUTCMonth()+1}.${d.getUTCDate()}`;};
+export const monthDay=(ms:number)=>{const d=new Date(ms+9*3600000);return `${d.getUTCMonth()+1}.${d.getUTCDate()}`;};
 /** 카드 배지용 짧은 기간 표현. 판정은 timing과 같고 문구만 짧다. */
 export function timingBadge(item:Benefit,now:number):{label:string;urgent:boolean} {
  const t=timing(item,now),application=timestamp(item.deadline_at),end=dateValue(item.valid_until);

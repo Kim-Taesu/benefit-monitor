@@ -1,9 +1,14 @@
 name: Daily benefit briefing
+# The gate, the Cloudflare cron and the AI timing tell collection runs apart by this name.
+run-name: >-
+  ${{ github.event_name == 'push' && 'main 반영 검사'
+  || inputs.deploy_approved_snapshot && '승인 스냅샷 게시'
+  || inputs.apply_takedowns && '내림 적용' || '수집' }}
 on:
   schedule:
-    # 00:37 Asia/Seoul (UTC+9), off the top of the hour where GitHub load peaks.
-    # The 01:00 slot was delayed 5.8-10.7h and dropped on 2026-11-04. Not guaranteed;
-    # AI daily dispatches a missing collection after 10:00 KST.
+    # Backup only: 00:37 Asia/Seoul started 4-8h late (2026-11-08..20). The free Cloudflare cron
+    # (scheduler/cloudflare, approved 2026-11-20) dispatches health → 청약 → this collection from
+    # 03:20 KST; a scheduled run skips when today's collection already succeeded.
     - cron: '37 15 * * *'
   workflow_dispatch:
     inputs:
@@ -23,6 +28,10 @@ on:
         description: '내림 목록만 현재 공개 브리핑에 적용해 재배포 (수집·snapshot 없음, 항목 제거만)'
         type: boolean
         default: false
+      external_schedule:
+        description: '외부 예약 실행(Cloudflare Cron, 2026-11-20 승인). 오늘 이미 성공했으면 건너뜀'
+        type: boolean
+        default: false
   push:
     branches: [main]
 
@@ -34,10 +43,38 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  gate:
+    if: github.event.repository.private == false && vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      run: ${{ steps.gate.outputs.run || 'true' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        if: github.event_name == 'schedule' || inputs.external_schedule == true
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        if: github.event_name == 'schedule' || inputs.external_schedule == true
+        with:
+          python-version: '3.12'
+      - name: Skip a scheduled run when today's run already succeeded
+        # Manual dispatches never run this (or any project code before the snapshot revision check).
+        if: github.event_name == 'schedule' || inputs.external_schedule == true
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SCHEDULED: 'true'
+        run: python -m benefit_monitor.pipeline_timing --gate briefing-pages.yml
+
   build:
     # Standard runners on public repositories are free. Never consume
     # unverified private-repository allowances or change repository visibility.
-    if: github.event.repository.private == false && vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
+    needs: gate
+    if: needs.gate.outputs.run == 'true' && github.event.repository.private == false && vars.BENEFIT_PAGES_ZERO_SPEND == 'confirmed'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -84,6 +121,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           BRIEFING_REPOSITORY: ${{ github.repository }}
+          BENEFIT_EXTERNAL_SCHEDULE: ${{ inputs.external_schedule == true && 'true' || 'false' }}
         run: |
           set -euo pipefail
           python -m benefit_monitor.mirror --restore --repository "$BRIEFING_REPOSITORY"

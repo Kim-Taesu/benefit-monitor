@@ -87,7 +87,7 @@ API 키는 필요한 Actions step의 Secret 또는 승인된 로컬 경로로만
 
 ## 스케줄과 배포
 
-일일 브리핑은 `.github/workflows/briefing-pages.yml`(00:37 KST), 보건소는 `health-notices.yml`(00:07 KST), 청약 일정은 `subscriptions.yml`(00:12 KST), 장보기 기준가는 `grocery-baselines.yml`(주간)로 실행합니다. AI는 수집 완료 트리거와 보조 예약을 사용합니다. GitHub 예약은 지연·누락될 수 있으며 정시 전달을 보장하지 않습니다.
+매일 03:20 KST부터 무료 Cloudflare Workers cron([`scheduler/cloudflare`](scheduler/cloudflare/README.md), 2026-11-20 승인)이 보건소(`health-notices.yml`) → 청약 일정(`subscriptions.yml`) → 일일 브리핑 수집(`briefing-pages.yml`)을 차례로 실행 요청하고, 수집이 끝나면 AI 실행과 승인 스냅샷 게시가 이어져 보통 05:00 전에 공개됩니다. GitHub 예약(00:07·00:12·00:37 KST)은 4~8시간 늦게 시작해 백업으로만 남고, 그날 이미 성공했으면 수집 없이 끝납니다. 장보기 기준가는 `grocery-baselines.yml`(주간)로 실행합니다. 화면은 새 공개 전까지 이전 목록을 "○○ 기준" 안내와 함께 보여 주고(항목별 기한은 그대로), 공개되면 크롤링·AI·게시 소요 시간을 한 줄로 보여 줍니다.
 
 운영 주소: https://kim-taesu.github.io/benefit-monitor/
 

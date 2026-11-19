@@ -17,8 +17,10 @@ test('invalid structured claims withhold the whole record instead of showing an 
  const invalid=[null,[],claim({value:true}),claim({value:0}),claim({value:-1}),claim({value:NaN}),claim({value:Infinity}),claim({value:101}),claim({value:1.001}),claim({kind:'discount_amount',value:1.5}),claim({kind:'grant_amount',value:1e12}),claim({kind:'price'}),claim({qualifier:'guaranteed'}),claim({conditions:''}),claim({extra:'unknown'}),claim({evidence_quote:''}),claim({evidence_url:'https://evil.example/'}),claim({evidence_url:'https://mediahub.seoul.go.kr/archives/2'})];
  for(const value of invalid){const result=adapt(snapshot([item({benefit_value:value})]),NOW);assert.equal(result.items.length,0);assert.equal(result.withheldCount,1);}
 });
-test('structured values never bypass file, item or verification freshness gates',()=>{
- for(const body of [snapshot([item({benefit_value:claim(),needs_recheck:true})]),snapshot([item({benefit_value:claim(),display_until:new Date(NOW).toISOString()})]),snapshot([item({benefit_value:claim()})],{valid_through:new Date(NOW).toISOString()})])assert.deepEqual(adapt(body,NOW).items,[]);
+test('structured values never bypass item or verification freshness gates',()=>{
+ for(const body of [snapshot([item({benefit_value:claim(),needs_recheck:true})]),snapshot([item({benefit_value:claim(),display_until:new Date(NOW).toISOString()})])])assert.deepEqual(adapt(body,NOW).items,[]);
+ // Past the file cutoff (2026-11-20) the previous list stays, but an item past its own cutoff never does.
+ assert.deepEqual(adapt(snapshot([item({benefit_value:claim(),display_until:new Date(NOW).toISOString()})],{valid_through:new Date(NOW).toISOString()}),NOW).items,[]);
 });
 test('a payment evidence URL, when supplied, remains the observed source for numerical facts',()=>{
  const target='https://mediahub.seoul.go.kr/archives/2';

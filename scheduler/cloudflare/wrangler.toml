@@ -1,0 +1,10 @@
+# Free Cloudflare Workers cron (approved 2026-11-20). No route, no bindings, one secret (GITHUB_TOKEN).
+name = "benefit-monitor-daily-trigger"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+preview_urls = false
+
+[triggers]
+# Every 10 minutes 03:00-04:50 KST (18:00-19:50 UTC); plan.js acts from 03:20.
+crons = ["*/10 18-19 * * *"]

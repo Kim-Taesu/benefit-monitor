@@ -1,0 +1,9 @@
+{
+  "name": "benefit-monitor-daily-trigger",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/",
+    "deploy": "npx --yes wrangler@4.156.0 deploy"
+  }
+}

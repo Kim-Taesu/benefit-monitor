@@ -71,7 +71,6 @@ test('official links and complete detail conditions',async({page})=>{
  await capture(page,'details');
 });
 for(const [name,body,title]of [
- ['stale',snapshot(items,{valid_through:'2026-11-04T12:00:00+09:00'}),'최신 브리핑을 기다리고 있어요'],
  ['failed',snapshot(items,{status:'collection_failed'}),'이번 수집을 완료하지 못했습니다'],
  ['awaiting',snapshot(items,{status:'awaiting_verification'}),'검증된 공개 혜택을 준비하고 있어요'],
  ['expired-items',snapshot([item({display_until:'2026-11-04T12:00:00+09:00'})]),'현재 표시 가능한 검증 항목이 없어요'],
@@ -81,8 +80,19 @@ for(const [name,body,title]of [
 ] as const)test(`state ${name}`,async({page})=>{
  await setup(page,body);await page.setViewportSize({width:390,height:844});await page.goto('./');
  await expect(page.locator('article')).toHaveCount(0);
- await expect(page.getByText(name==='stale'?'최신 브리핑을 기다리고 있어요':title,{exact:true})).toBeVisible();
+ await expect(page.getByText(title,{exact:true})).toBeVisible();
  await capture(page,`state-${name}`);
+});
+test('past the file cutoff the previous list stays with a notice; timing shows once refreshed (2026-11-20)',async({page})=>{
+ await setup(page,snapshot(items,{valid_through:'2026-11-04T12:00:00+09:00'}));await page.setViewportSize({width:390,height:844});await page.goto('./');
+ await expect(page.locator('article')).toHaveCount(6);
+ await expect(page.locator('.refresh-line')).toContainText('새 데이터를 준비하는 중이라');await expect(page.locator('.refresh-line')).toContainText('기준 목록을 보여 드려요');
+ await expect(page.getByText('최신 브리핑을 기다리고 있어요')).toHaveCount(0);
+ await capture(page,'state-carried-over');
+ await setup(page,snapshot(items,{pipeline_timing:{collect_started_at:'2026-11-04T03:21:00+09:00',collect_finished_at:'2026-11-04T03:47:00+09:00',collect_seconds:720,
+  ai_started_at:'2026-11-04T03:48:00+09:00',ai_finished_at:'2026-11-04T04:01:00+09:00',published_at:'2026-11-04T04:02:10+09:00'}}));await page.reload();
+ await expect(page.locator('.refresh-line')).toHaveText('⏱ 오늘 데이터 준비 03:21 시작 → 04:02 공개 · 크롤링 12분 · AI 생각 13분 · 게시 1분');
+ await capture(page,'refresh-timing');
 });
 test('empty search, filter reset and partial collection warning',async({page})=>{
  await setup(page);await page.goto('./');await expect(page.getByText(/수집 실패 1곳/)).toBeVisible();
@@ -103,10 +113,11 @@ test('no JavaScript exposes dated text alternative',async({browser})=>{
  const context=await browser.newContext({javaScriptEnabled:false});const page=await context.newPage();await page.goto(String(test.info().project.use.baseURL));
  await expect(page.getByRole('link',{name:'텍스트 브리핑'})).toBeVisible();await context.close();
 });
-test('open tab gates the whole file when valid_through passes',async({page})=>{
+test('open tab keeps the previous list when valid_through passes, with the carried-over notice (2026-11-20)',async({page})=>{
  await setup(page,snapshot(items,{valid_through:'2026-11-04T12:00:03+09:00'}));await page.goto('./');await expect(page.locator('article')).toHaveCount(6);
- await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(0);await expect(page.getByText('최신 브리핑을 기다리고 있어요',{exact:true})).toBeVisible();
- await expect(page.getByText(/마지막 갱신은 20\d\d\.\d\d\.\d\d \d\d:\d\d \(KST\)입니다/)).toBeVisible();
+ await expect(page.locator('.refresh-line')).toHaveCount(0);
+ await page.clock.fastForward(4000);await expect(page.locator('article')).toHaveCount(6);
+ await expect(page.locator('.refresh-line')).toContainText(/새 데이터를 준비하는 중이라 오늘 06:55 기준 목록을 보여 드려요/);
 });
 test('my district is remembered automatically, shared URLs win, and stored values can be deleted',async({page})=>{
  await setup(page);await page.goto('./');

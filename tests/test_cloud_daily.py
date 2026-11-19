@@ -223,6 +223,17 @@ class CloudDailyTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'reached daily'):
                 m.cloud_run(self.root,now=NOW.replace(month=12,day=1),check_only=False,store=self.fixture.store())
 
+    def test_todays_crawl_window_reaches_the_snapshot_and_its_failure_never_blocks(self):
+        m=self.module()
+        window={'collect_started_at':'2026-11-06T03:21:00+09:00','collect_finished_at':'2026-11-06T03:47:00+09:00','collect_seconds':720}
+        for crawl,expected in ((lambda get,now:window,window),(lambda get,now:1/0,None)):
+            with self.subTest(expected=expected):
+                with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m.pipeline_timing,'crawl_window',side_effect=crawl),\
+                        patch.object(m,'daily',return_value={'status':'completed'}),\
+                        patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}) as publish:
+                    m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store(),refresh_completed=expected is None)
+                self.assertEqual(publish.call_args.kwargs['crawl'],expected)
+
     def test_success_preserves_latest_child_budget_and_dispatch_is_not_deployment(self):
         m=self.module()
         def inner(*args,**kwargs):

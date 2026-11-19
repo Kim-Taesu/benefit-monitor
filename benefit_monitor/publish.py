@@ -115,9 +115,9 @@ def collection_time(workflow=None):
 
 def run_context(now, report_time, event):
     expected=datetime.combine(now.astimezone(SEOUL).date(),collection_time(),SEOUL)
-    event=event if event in ("schedule","workflow_dispatch","push") else "local_or_unknown"
+    event=event if event in ("schedule","external_schedule","workflow_dispatch","push") else "local_or_unknown"
     status=("unavailable" if report_time is None else "pre_schedule_snapshot" if report_time<expected
-            else "scheduled_refresh" if event=="schedule" else "manual_refresh" if event=="workflow_dispatch" else "unknown_trigger")
+            else "scheduled_refresh" if event in ("schedule","external_schedule") else "manual_refresh" if event=="workflow_dispatch" else "unknown_trigger")
     return dict(trigger=event,status=status,expected_collection_at=expected.isoformat(),
                 scheduled_run_confirmed=status=="scheduled_refresh")
 
@@ -164,7 +164,7 @@ def page(data):
     context=data.get("run_context",{})
     run_label={"pre_schedule_snapshot":"정기 수집 예정시각 이전의 결과입니다. 오늘 정기 실행 성공을 확인한 자료가 아닙니다.",
                "manual_refresh":"수동 실행으로 갱신한 결과입니다. 정기 실행 성공을 뜻하지 않습니다.",
-               "scheduled_refresh":"GitHub 정기 실행에서 생성한 결과입니다.",
+               "scheduled_refresh":"정기 실행에서 생성한 결과입니다.",
                "unknown_trigger":"실행 유형 미확인", "unavailable":"수집 실행 결과 확인 불가"}.get(context.get("status"),"")
     now = aware_time(data["generated_at"])
     cov = data.get("coverage", {})
@@ -333,7 +333,10 @@ def payload(root, now=None, failure=False, report=None, state=None, auto=None):
         data["ai_status"] = status
     data["operational_state"] = state
     data["source_health"] = state["sources"]
-    data["run_context"] = run_context(now, aware_time(data["source_report_at"]) if data["source_report_at"] else None, os.environ.get("GITHUB_EVENT_NAME", ""))
+    event = os.environ.get("GITHUB_EVENT_NAME", "")
+    if event == "workflow_dispatch" and os.environ.get("BENEFIT_EXTERNAL_SCHEDULE") == "true":
+        event = "external_schedule"  # Dispatched by the approved Cloudflare cron (2026-11-20).
+    data["run_context"] = run_context(now, aware_time(data["source_report_at"]) if data["source_report_at"] else None, event)
     data["run_id"] = os.environ.get("GITHUB_RUN_ID", "local-" + now.isoformat())
     data["review_queue"] = operations.queue(report, state, now, config.get("max_age_days", 7)) if not failure and data["source_report_at"] else []
     if "withheld" in data:

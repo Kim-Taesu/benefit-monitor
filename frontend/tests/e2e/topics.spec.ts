@@ -63,7 +63,10 @@ test('removed personalization leaves no settings and deletes its old stored reco
 test('storage denial and expiry never remove basic discovery or fabricate topics',async({page})=>{
  await page.addInitScript(()=>Object.defineProperty(window,'localStorage',{get(){throw new Error('blocked');}}));
  await setup(page);await expect(page.locator('#results article')).toHaveCount(3);
+ // Past the file cutoff the previous list stays (2026-11-20); past every item's own cutoff nothing remains.
  await page.clock.fastForward(13*3600000);
+ await expect(page.locator('#results article')).toHaveCount(3);await expect(page.locator('.refresh-line')).toContainText('기준 목록을 보여 드려요');
+ await page.clock.fastForward(42*3600000);
  await expect(page.locator('#results article')).toHaveCount(0);
  await expect(page.locator('.topic-chip')).toHaveCount(0);await expect(page.getByRole('button',{name:/주제 더보기/})).toHaveCount(0);
 });
