@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-19T07:46:03.180380+09:00",
-  "day": "2026-11-19",
+  "generated_at": "2026-11-20T07:52:37.844542+09:00",
+  "day": "2026-11-20",
   "source": "rule",
   "summary": null,
   "picks": [
@@ -10,19 +10,19 @@
       "line": null
     },
     {
-      "id": "f0b397c6695a",
-      "line": null
-    },
-    {
-      "id": "a171a2762a00",
-      "line": null
-    },
-    {
       "id": "25f65fd95f5c",
       "line": null
     },
     {
+      "id": "79449f2d12bb",
+      "line": null
+    },
+    {
       "id": "9fbb7918c507",
+      "line": null
+    },
+    {
+      "id": "b219a4df4176",
       "line": null
     }
   ]
