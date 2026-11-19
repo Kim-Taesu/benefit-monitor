@@ -33,6 +33,7 @@
 - 출처는 `sources/<id>.json`에서 고치고 `sources.yaml`은 `scripts/generate_sources.py`로 생성한다. `runbook`에는 확인한 사실만 적고 모르면 `unknown`으로 둔다. [출처 관리](docs/sources.md)를 따른다.
 - 로직 변경 후 `python3 -m unittest discover -s tests -v`. 임시 파일은 작업 트리 `.tools/verification-tmp`를 만들고 `TMPDIR="$PWD/.tools/verification-tmp"`로 제한한다.
 - 프런트 변경 시 `frontend`에서 `npm test`, `npm run typecheck`, `npm run build`; 사용자 동작은 관련 E2E와 실제 화면 확인.
+- 실행해서 확인하는 절차(시스템 Chrome E2E, 배포 전후 `python3 -m benefit_monitor.live_check`)는 [verify 스킬](.claude/skills/verify/SKILL.md)을 따른다.
 - 실제 실행한 검사만 통과로 보고한다. 모델 품질·사용자 유용성·배포 상태를 오프라인 테스트 결과로 대신하지 않는다. SQL 형태 변경은 실제 DB 세션 결과를 검증해야 한다.
 - 근거 없는 기준 완화·테스트 삭제·원장 초기화를 하지 않는다. 프롬프트 변경 시 재조사 fingerprint와 기존 결과 재사용에 미치는 영향을 확인한다.
 

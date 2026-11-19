@@ -172,7 +172,7 @@ for(const [width,height] of [[360,800],[390,844]])test(`quick check card answers
  await expect(card.locator('.grocery-quick-links')).toHaveText('목살 ›');
  await expect(card.getByRole('button',{name:'대패삼겹'})).toHaveCount(0);
  await expect(card.getByRole('button',{name:'앞다리'})).toHaveCount(0);
- await page.screenshot({path:`../docs/qa/screenshots/grocery-quick-check-${width}.png`});
+ await page.screenshot({path:`${process.env.BENEFIT_SCREENSHOT_DIR||'../docs/qa/screenshots'}/grocery-quick-check-${width}.png`});
  await card.getByRole('button',{name:'목살'}).click();
  await expect(page.locator('#grocery-q')).toHaveValue('목살');
  await expect(page.locator('#grocery-q')).toBeFocused();
@@ -256,7 +256,7 @@ for(const [width,height] of [[360,800],[390,844]])test(`discount line sits under
  for(const nb of await lines.locator('.nb').all())expect(await nb.evaluate(e=>e.getClientRects().length)).toBe(1);
  expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
  await expect(page.locator('#groceries [role=status]')).toContainText('진행 중인 공식 할인행사 [테스트] 진행 행사 A');
- await page.screenshot({path:`../docs/qa/screenshots/grocery-discount-${width}.png`});
+ await page.screenshot({path:`${process.env.BENEFIT_SCREENSHOT_DIR||'../docs/qa/screenshots'}/grocery-discount-${width}.png`});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  // No discounts for 삼겹살: no line, and a missing key behaves the same.
  await page.locator('#grocery-q').fill('삼겹');

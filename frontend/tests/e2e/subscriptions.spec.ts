@@ -64,7 +64,7 @@ for(const width of [360,1280])test(`청약 tab shows Seoul·Gyeonggi schedule ca
  await section.getByText('특별공급·1순위·무순위가 뭐예요?').click();
  await expect(section.locator('.subs-glossary dl')).toBeVisible();
  if(width===360)await section.locator('.subs-card').first().scrollIntoViewIfNeeded();
- await page.screenshot({path:`../.ax/plans/shots/subscriptions-${width}.png`,fullPage:width===1280});
+ await page.screenshot({path:`${process.env.BENEFIT_SCREENSHOT_DIR||'../.ax/plans/shots'}/subscriptions-${width}.png`,fullPage:width===1280});
  // 혜택 탭으로 돌아가면 혜택 목록
  await page.getByRole('tab',{name:/혜택/}).click();
  await expect(section).toBeHidden();
@@ -96,7 +96,7 @@ for(const width of [360,1280])test(`청약 AI card sits right under the tabs; a 
  const remain=page.locator('.subs-card').nth(1);
  await expect(remain.getByRole('link',{name:/카카오맵/})).toHaveAttribute('href',/^https:\/\/map\.kakao\.com\/link\/search\/%EB%B6%84%EB%8B%B9%EA%B5%AC%20/);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
- if(width===360)await page.screenshot({path:`../.ax/plans/shots/subscriptions-pick-${width}.png`});
+ if(width===360)await page.screenshot({path:`${process.env.BENEFIT_SCREENSHOT_DIR||'../.ax/plans/shots'}/subscriptions-pick-${width}.png`});
  expect(requests.every(x=>x===origin(page))).toBe(true);  // links only: no map request from the page
 });
 
@@ -174,6 +174,6 @@ for(const width of [360,1280])test(`card shows per-type table, supply type and n
  await expect(card.locator('.subs-steps')).toContainText('일반공급 11/6');
  await expect(card.getByRole('link',{name:/모집공고문 PDF/})).toHaveAttribute('href',PDF);
  await card.scrollIntoViewIfNeeded();
- await page.screenshot({path:`../.ax/plans/shots/subscriptions-card-${width}.png`});
+ await page.screenshot({path:`${process.env.BENEFIT_SCREENSHOT_DIR||'../.ax/plans/shots'}/subscriptions-card-${width}.png`});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth)).toBe(true);
 });
