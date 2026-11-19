@@ -19,6 +19,16 @@ class PublicSnapshotTests(unittest.TestCase):
         from benefit_monitor.public_snapshot import stage
         return stage(self.root,data,now)
 
+    def test_pipeline_timing_passes_through_and_gains_the_publication_time(self):
+        raw=publish.payload(self.root,now=NOW)
+        timing={'collect_started_at':(NOW-timedelta(minutes=40)).isoformat(),'collect_finished_at':(NOW-timedelta(minutes=20)).isoformat(),
+                'collect_seconds':900,'ai_started_at':(NOW-timedelta(minutes=19)).isoformat(),'ai_finished_at':(NOW-timedelta(minutes=1)).isoformat()}
+        clean=self.stage(dict(raw,pipeline_timing=timing))
+        self.assertEqual(clean['pipeline_timing'],dict(timing,published_at=NOW.isoformat()))
+        # A forged or disordered timing is dropped, never published.
+        self.assertNotIn('pipeline_timing',self.stage(dict(raw,pipeline_timing=dict(timing,ai_started_at=(NOW-timedelta(minutes=30)).isoformat()))))
+        self.assertNotIn('pipeline_timing',self.stage(dict(raw,pipeline_timing=dict(timing,note='x'))))
+
     def test_snapshot_uses_existing_release_gate_and_renders_without_runtime_report(self):
         raw=publish.payload(self.root,now=NOW)
         raw['profile']={'private':'not public'}

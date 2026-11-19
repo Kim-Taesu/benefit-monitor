@@ -16,7 +16,7 @@ from .briefing import SEOUL
 from .claude_trial import ClaudeClient,configured_key
 from .cloud_state import CloudSession,GitHubStateStore,REPOSITORY,BUDGET,snapshot_digest
 from . import auto_release,runtime_retention
-from . import collection_snapshot
+from . import collection_snapshot,pipeline_timing
 from .mirror import AI_BASE,run as mirror,restore as restore_mirror,restore_ai,save_ai,lease as public_file_lease
 from .public_snapshot import validate
 from .wire_format import research_wire_schema
@@ -218,7 +218,7 @@ def runtime_room(root,now):
     return None if reason is None else {'status':'runtime_too_large','reason':reason,'retention':retention}
 
 
-def publish_snapshot(root,store,now,key,*,expected_sha):
+def publish_snapshot(root,store,now,key,*,expected_sha,crawl=None):
     if not isinstance(expected_sha,str) or not re.fullmatch('[0-9a-f]{40}',expected_sha):raise ValueError('initial public file lease required')
     code=os.environ.get('GITHUB_SHA','')
     if os.environ.get('GITHUB_REF')!='refs/heads/main' or not re.fullmatch('[0-9a-f]{40}',code):
@@ -228,7 +228,13 @@ def publish_snapshot(root,store,now,key,*,expected_sha):
     data=load(safe_path(root,'delivery/public/briefing.json'),{})
     status=auto_release.load_status(root)  # Written for this run just before; the export holds the older one.
     if status and isinstance(data,dict):data['ai_status']=status
-    content=(json.dumps(validate(root,data,now),ensure_ascii=False,indent=2)+'\n').encode()
+    clean=validate(root,data,now)
+    if crawl:
+        # Today's crawl (GitHub step records) plus this AI run; the deploy adds the publication time.
+        finished=datetime.now(SEOUL)
+        timing=pipeline_timing.sanitize(dict(crawl,ai_started_at=now.isoformat(),ai_finished_at=finished.isoformat()),finished)
+        if timing:clean['pipeline_timing']=timing
+    content=(json.dumps(clean,ensure_ascii=False,indent=2)+'\n').encode()
     if key.encode() in content or b'AGE-SECRET-KEY-' in content:raise ValueError('credential in public payload')
     env=runner_environment(store)
     if public_file_lease(REPOSITORY,env)!=expected_sha:raise ValueError('public snapshot changed during AI run; preserve the newer export')
@@ -337,6 +343,8 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         dispatch_refresh(store);return {'status':'refresh_dispatched'}  # Its completion triggers this workflow.
     if refresh!='ready':return {'status':'waiting_for_existing_refresh','refresh':refresh}
     public_lease=restore_public(root,store,now)
+    try:crawl=pipeline_timing.crawl_window(store._api,now)
+    except Exception:crawl=None  # Timing is a display aid; it never blocks the day.
     if refresh_completed:
         retried=session.refresh_completed_day(day,now)
         save(safe_path(root,'cache/ai_daily/days.json'),{'days':{k:v for k,v in session.control['days'].items() if k!=day}})
@@ -354,7 +362,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
             # Results already received stay; the day is failed, the trial is not halted, tomorrow runs normally.
             # The status goes up first so the admin page and this snapshot show it the same day.
             write_ai_status(root,'credit_exhausted',day,now);upload_ai_status(root,store)
-            delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
+            delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease,crawl=crawl)
             session.finish(day,'failed')
             return {'status':'credit_exhausted','day':day,'delivery':delivery}
         after=TrialBudget(safe_path(root,BUDGET)).summary();new=after['requests'][summary['requests']:]
@@ -365,7 +373,7 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         measurement['provider_failures']=[row.get('error_code','unknown') for row in new if row['status']!='completed' and row['id'] in measured]
         status='completed_with_provider_failure' if failures or after['halted'] else 'completed'
         write_ai_status(root,'ok' if status=='completed' else 'failed',day,now);upload_ai_status(root,store)
-        delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease)
+        delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease,crawl=crawl)
         session.finish(day,'completed')
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
                 'halted':after['halted'],'retried_day':retried,'picks':pick_report(result),'measurement':{k:v for k,v in measurement.items() if k!='request_ids'}}

@@ -20,7 +20,7 @@ test('limits stored identifiers without overwriting a valid set on rejection',()
 });
 test('favorites cannot revive expired, stale, unverified or missing records',()=>{
  const id=benefitKey(item());assert.equal(visibleFavorites(adapt(snapshot([item()]),NOW).items,[id]).length,1);
- for(const body of [snapshot([item({needs_recheck:true})]),snapshot([item({display_until:new Date(NOW).toISOString()})]),snapshot([item()],{valid_through:new Date(NOW).toISOString()}),snapshot([item()],{status:'collection_failed'})])assert.deepEqual(visibleFavorites(adapt(body,NOW).items,[id]),[]);
+ for(const body of [snapshot([item({needs_recheck:true})]),snapshot([item({display_until:new Date(NOW).toISOString()})]),snapshot([item({display_until:new Date(NOW).toISOString()})],{valid_through:new Date(NOW).toISOString()}),snapshot([item()],{status:'collection_failed'})])assert.deepEqual(visibleFavorites(adapt(body,NOW).items,[id]),[]);
 });
 test('non-identifiers and unofficial identifiers are rejected rather than copied back into storage',()=>{
  const s=memory();

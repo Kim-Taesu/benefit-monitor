@@ -33,7 +33,7 @@ function tabKey(event:KeyboardEvent,index:number){
 import type {Benefit} from './benefits';
 import {benefitKey,loadFavorites,saveFavorites,clearFavorites,visibleFavorites} from './favorites';
 import {loadInterests,saveInterests,clearInterests,initialInterests} from './preferences';
-import { adapt, select, timing, coverageLabels, readFilters, filterUrl, formatDate, updatedLabel, categoryEmoji } from './benefits';
+import { adapt, select, timing, coverageLabels, readFilters, filterUrl, formatDate, updatedLabel, categoryEmoji, minutesLabel, kstDay, monthDay } from './benefits';
 const raw=ref<unknown>(undefined),loading=ref(true),error=ref(''),now=ref(Date.now());
 // Parsed once per minute, not on every 1-second tick. Rounding down stays within the 5-minute
 // future tolerance, so data collected minutes ago is not mistaken for future data (an hour key did that).
@@ -121,15 +121,20 @@ const state=computed(()=>error.value?'load_error':raw.value!==undefined&&!data.v
 const notices:Record<string,{title:string;body:string}>={
  load_error:{title:'공개 데이터를 불러오지 못했습니다',body:'연결 상태를 확인한 뒤 다시 시도하세요. 이전 자료를 현재 혜택으로 대신 표시하지 않습니다.'},
  invalid:{title:'공개 데이터 확인이 필요합니다',body:'데이터 형식 또는 기준 시각을 확인할 수 없어 혜택을 표시하지 않았습니다.'},
- stale:{title:'최신 브리핑을 기다리고 있어요',body:'파일의 표시기한이 지났습니다. 이전 항목을 오늘의 유효한 혜택으로 표시하지 않습니다.'},
  collection_failed:{title:'이번 수집을 완료하지 못했습니다',body:'수집 실패 또는 연결 미완료 상태입니다. 유효한 최신 목록을 확인할 수 없습니다.'},
  awaiting_verification:{title:'검증된 공개 혜택을 준비하고 있어요',body:'공개 승인된 검증 항목이 아직 없습니다. 실제 혜택이 없다는 뜻은 아닙니다.'},
 };
-// 만료 안내에는 마지막으로 갱신된 시각을 함께 보여 준다. 지난 항목 자체는 계속 숨긴다.
-const notice=computed(()=>{
- const n=notices[state.value];
- if(!n||state.value!=='stale'||!updated.value)return n;
- return {...n,body:`마지막 갱신은 ${formatDate(updated.value)}입니다. 새 브리핑이 올라오면 자동으로 채워지니 잠시 뒤 다시 불러와 보세요. 이전 항목을 오늘의 유효한 혜택으로 표시하지 않습니다.`};
+const notice=computed(()=>notices[state.value]);
+// 갱신 안내(2026-11-20): 오늘 갱신 전이면 이전 목록 기준임을, 갱신됐으면 준비에 걸린 시간을 한 줄로 보여 준다.
+const clock=(iso:string)=>new Date(Date.parse(iso)+9*3600000).toISOString().slice(11,16);
+const refresh=computed(()=>{
+ const d=data.value;if(!d||d.state==='collection_failed')return null;
+ const t=d.timing;
+ const steps=t?[`크롤링 ${minutesLabel(t.crawlSeconds)}`,`AI 생각 ${minutesLabel(t.aiSeconds)}`,...(t.publishSeconds===null?[]:[`게시 ${minutesLabel(t.publishSeconds)}`])]:[];
+ const span=t?`${clock(t.startedAt)} 시작${t.publishedAt?` → ${clock(t.publishedAt)} 공개`:''}`:'';
+ if(d.carriedOver)return {kind:'carried',text:`새 데이터를 준비하는 중이라 ${updated.value?updatedLabel(updated.value,now.value).replace(/ 갱신$/,''):'이전'} 기준 목록을 보여 드려요. 끝난 항목은 빼고 보여 드려요.`,steps:[],span:''};
+ const at=t?Date.parse(t.publishedAt||t.startedAt):NaN;
+ return t?{kind:'timing',text:`${kstDay(at)===kstDay(now.value)?'오늘':monthDay(at)} 데이터 준비`,steps,span}:null;
 });
 // 탭 옆 건수. 각 탭이 처음 보여 주는 목록의 건수와 같다.
 const counts=computed<Record<Tab,number|null>>(()=>({benefits:all.value.length,subscriptions:subs.value?.items.length??null,groceries:groceries.value?featuredRows(groceries.value.rows).length:null,festivals:parseFestivals(raw.value,groceryMinute.value)?.items.length??null,health:parseHealth(raw.value,groceryMinute.value)?.items.length??null}));
@@ -165,6 +170,7 @@ onUnmounted(()=>{controller?.abort();clearInterval(interval);clearTimeout(deboun
     <h1 id="hero-title" class="sr-only">Benefit Monitor · 서울 생활 혜택</h1>
     <section v-if="showIntro" class="intro" aria-label="서비스 소개"><div><strong>서울에서 챙길 수 있는 생활 혜택을 매일 모아 드려요</strong><p>서울시·구청·보건소 같은 공식 출처에서 혜택, 서울·경기 청약 일정, 장보기 시세, 축제, 보건소 소식을 가져옵니다. 로그인 없이 바로 볼 수 있어요.</p></div><button type="button" @click="closeIntro">닫기</button></section>
     <p v-else-if="since&&(freshCount||urgent)" class="since"><span>{{ since }} 방문 이후</span><button v-if="freshCount" type="button" class="chip" @click="goChip('new')">새 혜택<small>{{ freshCount }}</small></button><button v-if="urgent" type="button" class="chip" @click="goChip('urgent')">곧 끝남<small>{{ urgent }}</small></button></p>
+    <p v-if="!loading&&refresh" class="refresh-line" :class="'refresh-'+refresh.kind" role="status"><span aria-hidden="true">{{ refresh.kind==='carried'?'⏳':'⏱' }}</span> <span>{{ refresh.text+(refresh.span?' ':'') }}</span><span v-if="refresh.span" class="refresh-span">{{ refresh.span }}</span><template v-if="refresh.steps.length"> · <span v-for="(step,n) in refresh.steps" :key="step" class="refresh-step">{{ step }}<template v-if="n<refresh.steps.length-1"> · </template></span></template></p>
     <nav id="site-tabs" class="site-tabs" aria-label="보기 전환"><div role="tablist"><button v-for="(t,n) in TABS" :id="'tab-'+t.id" :key="t.id" type="button" role="tab" :aria-selected="tab===t.id" :aria-controls="'panel-'+t.id" :tabindex="tab===t.id?0:-1" @click="setTab(t.id)" @keydown="tabKey($event,n)">{{ t.label }}<span v-if="!loading&&counts[t.id]!==null" class="tab-count">{{ counts[t.id] }}</span></button></div></nav>
     <div id="panel-benefits" v-show="tab==='benefits'" role="tabpanel" aria-labelledby="tab-benefits" class="panel">
     <PickCard v-if="benefitPick" id="benefit-pick" class="benefit-pick" title="이번 주 놓치면 아쉬운 혜택" :source="benefitPick.source" :summary="benefitPick.summary" :count="benefitPick.picks.length" :first="3" v-slot="{limit}"

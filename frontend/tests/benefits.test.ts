@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { adapt, select, timing, readFilters, filterUrl, safeOfficial, regionOptions, categories, categoryLabel } from '../src/benefits.ts';
+import { adapt, select, timing, readFilters, filterUrl, safeOfficial, regionOptions, categories, categoryLabel, parseTiming, minutesLabel } from '../src/benefits.ts';
 import { item, snapshot, NOW } from './fixtures.ts';
 
 test('valid approved paid and free records are preserved without invented amounts', () => {
@@ -8,9 +8,26 @@ test('valid approved paid and free records are preserved without invented amount
   assert.equal(result.state, 'partial'); assert.equal(result.items.length, 2);
   assert.equal(result.items[0].category, '문화·체험');
 });
-test('stale file gates all items even if their item deadline is still future', () => {
-  assert.equal(adapt(snapshot([item()], { valid_through: new Date(NOW).toISOString() }), NOW).state, 'stale');
-  assert.deepEqual(adapt(snapshot([item()], { valid_through: new Date(NOW).toISOString() }), NOW).items, []);
+test('past the file cutoff the previous list stays until the next refresh; item cutoffs still apply (2026-11-20)', () => {
+  const late = adapt(snapshot([item(), item({ url: 'https://mediahub.seoul.go.kr/archives/9', display_until: new Date(NOW).toISOString() })], { valid_through: new Date(NOW).toISOString() }), NOW);
+  assert.equal(late.state, 'partial'); assert.equal(late.carriedOver, true);
+  assert.equal(late.items.length, 1); assert.equal(late.withheldCount, 1);
+  assert.equal(adapt(snapshot([item()]), NOW).carriedOver, false);
+  const failed = adapt(snapshot([item()], { status: 'collection_failed', valid_through: new Date(NOW).toISOString() }), NOW);
+  assert.equal(failed.carriedOver, false); assert.equal(failed.items.length, 0);
+});
+const TIMING = { collect_started_at: '2026-11-04T03:21:00+09:00', collect_finished_at: '2026-11-04T03:47:00+09:00', collect_seconds: 720,
+  ai_started_at: '2026-11-04T03:48:00+09:00', ai_finished_at: '2026-11-04T04:01:00+09:00', published_at: '2026-11-04T04:02:10+09:00' };
+test('pipeline timing becomes crawl, AI and publish durations', () => {
+  assert.deepEqual(parseTiming(TIMING, NOW), { startedAt: TIMING.collect_started_at, publishedAt: TIMING.published_at, crawlSeconds: 720, aiSeconds: 780, publishSeconds: 70 });
+  assert.equal(adapt(snapshot([item()], { pipeline_timing: TIMING }), NOW).timing?.aiSeconds, 780);
+  const { published_at: _, ...unpublished } = TIMING;
+  assert.equal(parseTiming(unpublished, NOW)?.publishSeconds, null);
+  for (const bad of [{ ...TIMING, ai_started_at: '2026-11-04T03:40:00+09:00' }, { ...TIMING, published_at: '2026-11-04T13:00:00+09:00' },
+    { ...TIMING, collect_seconds: 99999 }, { ...TIMING, collect_seconds: '720' }, { ...TIMING, ai_finished_at: 'x' }, null, 'x']) {
+    assert.equal(parseTiming(bad, NOW), null);
+  }
+  assert.equal(minutesLabel(40), '1분 미만'); assert.equal(minutesLabel(90), '2분'); assert.equal(minutesLabel(780), '13분');
 });
 test('failure and awaiting verification never release embedded records', () => {
   for (const status of ['collection_failed', 'awaiting_verification']) {

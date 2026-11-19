@@ -8,7 +8,7 @@ from pathlib import Path
 import re
 import subprocess
 
-from . import auto_release,operations
+from . import auto_release,operations,pipeline_timing
 from .briefing import SEOUL,aware_time,identity
 from .publish import PUBLIC_FIELDS,payload,releases,write_export,STATUS
 from .store import load
@@ -165,11 +165,13 @@ def validate(root,data,now,auto=None):
                 try:discount_bundle=recompute(clean,now)
                 except Exception:discount_bundle=None
                 if discount_bundle is not None:clean['grocery_discounts']=discount_bundle
+    timing=pipeline_timing.sanitize(data.get('pipeline_timing'),now)
+    if timing:clean['pipeline_timing']=timing
     return clean
 
 
 def stage(root,data,now,auto=None):
-    clean=validate(root,data,now,auto)
+    clean=pipeline_timing.mark_published(validate(root,data,now,auto),now)
     write_export(root,clean)
     return clean
 
