@@ -7,6 +7,7 @@
 실제 저장소는 `~/personal/benefit-monitor/.maintenance/p0-source`입니다. 상위 폴더는 예전 사본입니다. 사용자 승인으로 그 프로젝트 하위 워크트리에서 작업할 수 있습니다. 명령은 선택한 Git 작업 트리 루트에서 실행합니다.
 
 - [실행 구조 — 매일 갱신 흐름·워크플로·데이터 저장소를 그림으로](docs/architecture.md)
+- [4단계 AI 파이프라인 설계안(수집 보강 → 검증 → 추천 → 게시, 구현 전)](docs/ai/pipeline-v2-plan.md)
 - [개선 단계와 완료 기준](docs/ai/improvement-phases.md)
 - [현재 진행·검증 기록](docs/ai/progress.md)
 - [브라우저 저장 범위(즐겨찾기·내 지역·방문 기록)](docs/ai/personalization.md)
