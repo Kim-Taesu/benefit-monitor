@@ -426,6 +426,8 @@ class CloudDailyTests(unittest.TestCase):
             def __init__(self,folder,budget,key):made.append(budget)
             def grammar_probe(self,schema,variant='baseline'):
                 probed.append(variant);return {'status':outcome[0],'schema_sha256':'0'*64,'cached':False}
+            def web_search_probe(self):
+                probed.append('web_search');return {'status':outcome[0],'schema_sha256':'1'*64,'cached':False}
         outcome=['passed'];probed=[]
         with patch.object(m,'ClaudeClient',Fake),patch.object(m,'daily',side_effect=AssertionError('no daily')),\
                 patch.object(m,'disable_workflow') as disable:
@@ -438,9 +440,10 @@ class CloudDailyTests(unittest.TestCase):
         self.assertEqual((m.exit_code(passed),m.exit_code(rejected)),(0,1))
         self.assertEqual(len(made),2);disable.assert_not_called()
         # Research, the nine other kinds (two stage 2 checks added 2026-11-20), then the two measurement variants.
-        self.assertEqual(probed[:12],['baseline']*10+['adaptive-medium','adaptive-high'])
+        # Research, the nine other kinds, the web search tool (2026-11-20), then the two measurement variants.
+        self.assertEqual(probed[:13],['baseline']*10+['web_search','adaptive-medium','adaptive-high'])
         self.assertEqual(set(passed['probes']),{'topic','verify','grocery','health','festival','benefit','subscription',
-                                                'notice_triage','festival_check',
+                                                'notice_triage','festival_check','web_search',
                                                 'festival:adaptive-medium','festival:adaptive-high'})
         self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
 

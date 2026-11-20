@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
 
 from . import cost_policy, wire_format
 from .ai_contract import check_schema
@@ -13,6 +14,43 @@ from .store import load, save
 from . import investigation_contract as contract
 
 ROOT=Path(__file__).resolve().parents[1]
+def search_lead(root,host,sources,documents,missing,now,state):
+    """Stage 1 follow-up search (2026-11-20): one paid request, provider URLs only. The first URL on a registered
+    source that allows AI review and is not read yet becomes the next link; other hosts are source candidates."""
+    from .ai_review import invoke_search
+    from . import web_search
+    from .cross_sources import fetchable
+    from .validation import official
+    report={'status':'skipped','searches':0,'urls':0}
+    # `state` is shared by one review run: after a refused search (web search disabled, daily search cap,
+    # credit) the rest of that run does not try again.
+    if state.get('off'):return {'report':report,'link':None,'others':[]}
+    candidate=host['candidates'][0]
+    title=str(candidate.get('title') or '').strip()
+    if not title:
+        report['status']='no_title';return {'report':report,'link':None,'others':[]}
+    organizer=(sources.get(candidate['source_id']) or {}).get('name','')
+    query=web_search.build(candidate['candidate_id'],title[:200],str(organizer)[:80],missing,now)
+    key=hashlib.sha256(json.dumps(query,ensure_ascii=False,sort_keys=True).encode()).hexdigest()
+    path=project_path(root,'.tools/ai-inputs/search-'+key+'.json')
+    save(path,query)
+    found=invoke_search(root,path)
+    report.update(status=found['status'],searches=found['searches'],urls=len(found['urls']),run_id=found.get('run_id'))
+    if found['status']!='search_done':
+        state['off']=True
+        return {'report':report,'link':None,'others':[]}
+    known={d['requested_url'] for d in documents}|{d['final_url'] for d in documents}
+    domains={d for s in sources.values() for d in s['domains']}
+    link=None;others=[]
+    for url in found['urls']:
+        sid=next((sid for sid,s in sources.items() if s.get('ai_review') is not False and official(url,s['domains'])),None)
+        if sid is not None:
+            if link is None and url not in known and fetchable(url):
+                link={'id':'s'+hashlib.sha256(url.encode()).hexdigest()[:16],'source_id':sid,'url':url}
+        elif urlsplit(url).hostname not in domains:
+            others.append(url)
+    report['allowed_link']=link is not None
+    return {'report':report,'link':link,'others':others}
 
 
 def fingerprint():
@@ -30,7 +68,8 @@ def read_result(run_id,expected_host):
     return load(path,None)
 
 
-def run(root,host,reader,now,*,execute,max_requests):
+def run(root,host,reader,now,*,execute,max_requests,search_state=None):
+    """search_state: a dict shared across one review run turns on the stage 1 follow-up search; None keeps it off."""
     # The caller owns the daily lock and passes its remaining research allowance.
     from .ai_review import invoke
     if type(max_requests) is not int or max_requests<1:raise ValueError('research allowance required')
@@ -38,6 +77,7 @@ def run(root,host,reader,now,*,execute,max_requests):
     host=deepcopy(host);documents=host['documents'];steps=[];calls=0;model={'status':'awaiting_api_authorization','run_id':None}
     initial_http=cost_policy.budget.used
     terminal='awaiting_api_authorization';input_path=None;missing=list(contract.TARGETS)
+    searched=False;search_others=[]
     for index in range(limit):
         http_remaining=max(0,min(cost_policy.budget.limit-cost_policy.budget.used,
                                reader.request_budget.limit-reader.request_budget.used))
@@ -71,6 +111,13 @@ def run(root,host,reader,now,*,execute,max_requests):
         except (ValueError,TypeError,KeyError,OSError,IndexError):
             terminal='invalid_model_output';step['status']=terminal;break
         step.update(status=action,missing_fields=missing)
+        # Links first; only when the model finds no usable official link does one web search look for one.
+        if (search_state is not None and action=='no_relevant_links' and missing and not searched and index+1<limit
+                and len(documents)<contract.MAX_DOCUMENTS and http_remaining>0):
+            searched=True
+            lead=search_lead(root,host,reader.sources,documents,missing,now,search_state)
+            step['search']=lead['report'];search_others+=lead['others']
+            if lead['link'] is not None:action,link='read',lead['link'];step['status']='read_search'
         if action!='read':terminal=action;break
         if index+1>=limit or len(documents)>=contract.MAX_DOCUMENTS or http_remaining<=0:
             terminal='budget_exhausted';break
@@ -94,7 +141,8 @@ def run(root,host,reader,now,*,execute,max_requests):
         documents.append(other)
     result={'version':1,'candidate_id':host['candidates'][0]['candidate_id'],'status':terminal,'missing_fields':missing,
             'model_calls':calls,'additional_http_requests':cost_policy.budget.used-initial_http,'http_budget_used':reader.request_budget.used,'steps':steps,
-            'source_candidates':contract.source_candidates(documents,reader.sources),
+            'source_candidates':list(dict.fromkeys(contract.source_candidates(documents,reader.sources)+search_others))[:20],
+            'web_searches':sum(s.get('search',{}).get('searches',0) for s in steps),
             'followup_supported_fields':sorted({field for step in steps[1:] for field in step.get('new_supported_fields',[]) if field not in missing}),
             'publication_approved':False}
     # The host stored with the last model output must not contain an unread/unprocessed extra page.

@@ -79,6 +79,25 @@ def invoke(root,kind,input_path,variant=None):
 TRIAL_RUNS=Path(__file__).resolve().parents[1]/'.tools/claude-trial/live/runs'
 
 
+@obs.timed('extraction','web_search')
+def invoke_search(root,input_path):
+    """Stage 1 follow-up search through the same credential-owning CLI. Returns status, provider URLs and searches."""
+    trial_root=Path(__file__).resolve().parents[1]
+    input_path=project_path(root,Path(input_path).resolve())
+    if not input_path.is_relative_to(trial_root):raise ValueError('AI input outside repository')
+    proc=subprocess.run([sys.executable,'-m','benefit_monitor.claude_trial','search','--root',str(trial_root),
+                         '--input',str(input_path)],cwd=trial_root,capture_output=True,text=True)
+    try:
+        value=json.loads(proc.stdout)
+        if value.get('status')=='search_done' and isinstance(value.get('urls'),list):
+            return {'status':'search_done','run_id':value.get('run_id'),'urls':[u for u in value['urls'] if isinstance(u,str)][:20],
+                    'searches':value.get('searches') if type(value.get('searches')) is int else 0}
+        if value.get('status')=='credit_exhausted':return {'status':'credit_exhausted','urls':[],'searches':0}
+        return {'status':'search_failed','urls':[],'searches':0,'reason':str(value.get('reason',''))[:120]}
+    except (ValueError,KeyError,TypeError):
+        return {'status':'search_failed','urls':[],'searches':0,'reason':'unreadable'}
+
+
 def load_run(run_id):
     """Normalized v3 draft and host input that the trial CLI stored for a validated run."""
     if not isinstance(run_id,str) or not run_id or '/' in run_id or run_id.startswith('.'):raise ValueError('invalid run id')
@@ -274,6 +293,8 @@ def stored_candidates(root,now,present):
 
 
 def review_candidates(root,candidates,now,max_candidates=2,execute=False,investigate=False):
+    # Stage 1 follow-up search (2026-11-20): one shared state per review run, only with investigation on.
+    search_state={'off':False} if investigate else None
     root=Path(root).resolve()
     if type(investigate) is not bool:raise ValueError('investigate must be boolean')
     if type(max_candidates) is not int or not 1<=max_candidates<=MAX_RESEARCH:raise ValueError('candidate limit 1..'+str(MAX_RESEARCH))
@@ -380,7 +401,7 @@ def review_candidates(root,candidates,now,max_candidates=2,execute=False,investi
                                        research_reason='공식 원문 여러 곳을 대조해 전체 조건·요약/상세 차이·비용·기간·선정·미확인을 v3로 추출. 사실/공개 승인은 사람 검토.')],documents=docs,unverified_links=unverified)
             investigation_result=None
             if active_investigation:
-                investigation_result=investigation.run(root,host,reader,now,execute=execute,max_requests=max_candidates-attempted)
+                investigation_result=investigation.run(root,host,reader,now,execute=execute,max_requests=max_candidates-attempted,search_state=search_state)
                 host=investigation_result['host'];docs=host['documents'];input_path=investigation_result['input_path']
                 model=investigation_result['model'];attempted+=max(1,investigation_result['report']['model_calls'])
                 hashes=','.join(sorted(d['body_hash'] for d in docs))
