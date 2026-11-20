@@ -19,6 +19,8 @@ kind별 설정은 두 표에 한 줄씩 있다(2026-11-14). `claude_trial.KINDS`
 | festival | `prompts/festival-system.md` | `today`, 축제 후보 | `festival_pick.review` |
 | benefit | `prompts/benefit-system.md` | `today`, 공개 혜택 후보 | `benefit_pick.review` |
 | subscription | `prompts/subscription-system.md` | `today`, 공개 청약 단지 후보 | `subscription_pick.review` |
+| notice_triage | `prompts/notice-triage-system.md` | `today`, 보건소 공지 제목·구·부서(최대 30건, id `n0`…) | `notice_triage.review` + 제목 낱말 규칙(`hidden_reason`) |
+| festival_check | `prompts/festival-check-system.md` | `today`, 축제 이름·기간·소개·프로그램·할인(최대 5건, 목록 요금 칸 제외) | `festival_check.review` + 구절·요금 대조(`note`) |
 
 축제·혜택·청약의 호스트 입력에는 `day`가 있지만 실제 모델 입력은 `today`로 변환한다. 호스트 저장 형식과 모델 입력 형식을 혼동하지 않는다. 추천 작업에는 개인 프로필이 제공되지 않는다. 현재 결과는 공통 추천이다.
 

@@ -435,6 +435,41 @@ def _validate_subscription(host, root):
         raise ValueError('subscription input differs from current data')
 
 
+def _validate_notice_triage(host, root):
+    # Stage 2 (2026-11-20): only titles that are in the stored health bundle, as the code lists them.
+    from .health_notices import FILE, sanitize
+    from .notice_triage import BATCH, notices
+    from .store import load
+    _only_fields(host, {'schema_version','mode','synthetic','now','notices'})
+    now = _host_now(host)
+    if host['schema_version'] != 'notice-triage-input-v1' or host['mode'] != 'api_agent' or host['synthetic'] is not False:
+        raise ValueError('notice triage input contract')
+    known = {n['url']: n for n in notices(sanitize(load(Path(root)/FILE, None), now, private=True))}
+    rows = host['notices']
+    if not isinstance(rows, list) or not 1 <= len(rows) <= BATCH or len({r.get('url') for r in rows}) != len(rows):
+        raise ValueError('notice triage batch shape')
+    for i, row in enumerate(rows):
+        if not isinstance(row, dict) or row != dict(known.get(row.get('url'), {}), id=f'n{i}'):
+            raise ValueError('notice triage input differs from the stored health bundle')
+
+
+def _validate_festival_check(host, root):
+    # Stage 2 (2026-11-20): only festival texts that are in today's festival cache, unchanged.
+    from .festival_check import BATCH, FIELDS, FILE
+    from .festivals import sanitize
+    from .store import load
+    _only_fields(host, {'schema_version','mode','synthetic','now','festivals'})
+    now = _host_now(host)
+    if host['schema_version'] != 'festival-check-input-v1' or host['mode'] != 'api_agent' or host['synthetic'] is not False:
+        raise ValueError('festival check input contract')
+    known = {f['id']: {k: f[k] for k in FIELDS} for f in (sanitize(load(Path(root)/FILE, None), now) or {}).get('items', [])}
+    rows = host['festivals']
+    if not isinstance(rows, list) or not 1 <= len(rows) <= BATCH or len({r.get('id') for r in rows}) != len(rows):
+        raise ValueError('festival check batch shape')
+    if any(not isinstance(r, dict) or known.get(r.get('id')) != r for r in rows):
+        raise ValueError('festival check input differs from the festival cache')
+
+
 def _validate_grocery(host, root):
     # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
     from .grocery_pick import host as grocery_host
@@ -626,6 +661,16 @@ def _pick_input(host):
     return {'today': host['day'], 'candidates': host['candidates']}
 
 
+def _notice_triage_input(host):
+    from .notice_triage import model_input
+    return model_input(host)
+
+
+def _festival_check_input(host):
+    from .festival_check import model_input
+    return model_input(host)
+
+
 class Kind:
     """One model task: its prompt, what is sent, what must come back and who checks it.
 
@@ -672,6 +717,16 @@ KINDS = {
                    '그 구절만으로 상태와 문장을 정하라.',
                    lambda host: {k: host[k] for k in ('district','center','program','page_text')} | {'today': host['now'][:10]},
                    _validate_health, _reviewer('health_notes')),
+    # Stage 2 checks (2026-11-20): classify and quote; code decides what is hidden or noted.
+    'notice_triage': Kind('notice-triage-system.md',
+                          '위 `<input>`의 `notices`마다 제목만 보고 `reason`을 하나씩 골라라. 모든 id에 한 번씩 답한다.',
+                          _notice_triage_input,
+                          _validate_notice_triage, _reviewer('notice_triage')),
+    'festival_check': Kind('festival-check-system.md',
+                           '위 `<input>`의 `festivals`마다 소개 글(`summary`·`programs`·`discount`)에서 요금·취소 관련 구절을 '
+                           '먼저 그대로 복사하고, 그 구절만으로 `status`를 정하라. 모든 id에 한 번씩 답한다.',
+                           _festival_check_input,
+                           _validate_festival_check, _reviewer('festival_check')),
 }
 if set(KINDS) != set(wire_format.WIRES):
     raise RuntimeError('every model kind needs a row in both KINDS and wire_format.WIRES')

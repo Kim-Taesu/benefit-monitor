@@ -131,3 +131,12 @@
 - 웹 검색 예외(이 조항이 "새 유료 검색 서비스를 만들지 않는다"보다 우선): Claude Messages API의 웹 검색 도구 `web_search_20250305`만, 요청당 `max_uses` 1~10, **서울 달력 하루 50회**. 요청 전 원장에 검색 비용(회당 $0.01, 2026-11-20 공식 단가)과 검색 결과 토큰(회당 30,000 토큰 가정)을 함께 예약하고, 응답의 `usage.server_tool_use.web_search_requests`로 정산한다. 정산 전·실패한 요청은 예약한 최대 횟수를 그날 검색 수로 센다. 검색 도구가 없는 요청의 서버 도구 과금, 허용보다 많은 검색, `web_fetch`·코드 실행 도구는 거절하며 다른 예상 밖 과금처럼 원장을 멈춘다.
 - 검색 결과의 쓰임: 검색은 단서다. 결과에서 쓰는 것은 URL뿐이고, 그 URL은 `OfficialReader`가 robots·TLS·허용 호스트·HTTP 예산을 지켜 직접 읽는다. 허용 목록 밖 URL은 읽지 않고 비공개 `source_candidates`로만 남긴다. 공개는 우리 코드가 읽은 공식 원문으로 2단계 검증과 탭별 게이트를 통과한 것만이다. `auto_publish.decide` 기준은 바꾸지 않는다.
 - 이번 변경(설계안 PR A)은 원장·정책·실행 시간 제한(`ai-daily.yml` 20→40분)만 바꾼다. 웹 검색을 실제로 보내는 코드, 모든 탭 검증, 추천 입력 전환은 이후 PR(B~D)이며 각각 유료 호출 종류·하루 상한을 이 조항 안에서 정한다. 새 유료 호출 종류와 하루 요청 수는 이번에 늘지 않았다.
+
+2026-11-20 같은 날 설계안 PR B(2단계 검증)를 "머지하고 진행"으로 이어 갔다. 운영 데이터를 확인해 범위를 다음과 같이 조정했다(사용자에게 보고).
+
+- 보건소 공지 분류(kind `notice_triage`, `benefit_monitor/notice_triage.py`): 모델은 제목·구·부서만 보고 `reason`을 하나 고른다(주민용 `service`·`event`·`health_info`·`facility`·`unclear`, 행정 `recruitment`·`bid`·`personnel`·`result`·`legal`). 화면에서 접는 것은 코드가 정한다: 행정 이유이면서 제목에 그 이유의 낱말(채용·입찰·인사·합격/결과 발표·공시송달 등)이 있을 때만이다. 접힌 공지도 공개 데이터에 남고 "행정 공지도 보기"로 펼친다. 관리자는 `{"kind":"notice_unhide","url":...}` 내림 항목으로 되돌린다. 분류는 `(url, 제목)`마다 한 번만 보내며 암호화 런타임(`cache/tab_checks/`)에 남는다.
+- 축제 소개 대조(kind `festival_check`, `benefit_monitor/festival_check.py`): 모델은 축제 자신의 소개·프로그램·할인 글에서 요금·취소 구절을 그대로 복사하고 상태를 고른다. 목록의 요금 칸(`fee_text`)은 근거로 쓰지 않는다. 코드가 구절이 그 글에 있는지와 요금 칸과의 차이를 보고 `partly_paid`(목록은 무료인데 유료 프로그램 구절)·`fee_found`·`free_found`·`cancelled`(취소·연기 구절, 목록에서 뺌) 메모만 공개한다. 목록의 요금 칸과 축제 추천의 규칙은 바꾸지 않는다. 축제 탭은 원래 전국 대상이라 설계안 초안의 "서울·경기 밖 거르기"는 넣지 않았다.
+- 공개 형태: `briefing.json`의 `tab_checks`(`notices[{url,title,reason}]`, `festivals[{id,note,quote}]`). 모델이 쓴 문장은 없다(행정 이유는 정해진 낱말을 코드가 한국어로 바꾸고, 축제 구절은 원문 그대로다). 수집 공개(`publish.attach_tab_checks`)·승인 스냅샷(`public_snapshot`)·내림 재배포(`auto_release.apply_takedowns`)가 모두 그 공개본의 보건소·축제 묶음과 다시 대조하며, 실패하면 그 줄만 빠지고 공개는 막지 않는다. AI 실행이 `briefing-data/ai-tab-checks.json`에 올리고 수집 실행은 복원해 같은 검사를 한다.
+- 하루 유료 요청: 두 종류 합계 20(`tab_checks.MAX_PER_DAY`), 축제 먼저·공지가 남은 몫. 월 $30 원장 안이다. 새 스키마 두 개는 첫 정규 사용 전에 `grammar_probe_only` 수동 시험이 필요하다(유료 1건 미만).
+- 청약·장보기 검증은 미뤘다: 둘 다 청약홈·공시 가격 같은 공식 API의 구조화 값이고 대조할 두 번째 원문이 없어, 같은 출처를 다시 읽는 검증은 확인하는 것이 없다. 웹 검색으로 두 번째 출처를 가져오는 PR C에서 붙인다.
+- `publish.py`·`public_snapshot.py`가 바뀌어 주제 카드 `policy_sha256`을 다시 기록했다. 주제 카드 게이트 판정은 바꾸지 않았다.

@@ -241,6 +241,10 @@ def apply_takedowns(data, takedowns, current=None, now=None):
             data['health_notes'] = notes
         else:
             data.pop('health_notes')
+    if 'tab_checks' in data:
+        # Stage 2 rows (2026-11-20): an admin "notice_unhide" takedown shows that notice again.
+        from . import tab_checks
+        tab_checks.apply(data, data['tab_checks'], takedowns)
     if 'grocery_discounts' in data:
         # Recomputed from the items kept now: a line never outlives its item nor shows its old end/region.
         from .grocery_discounts import recompute

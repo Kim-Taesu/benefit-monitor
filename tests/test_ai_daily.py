@@ -50,8 +50,9 @@ class AIDailyTests(unittest.TestCase):
         self.assertEqual(by_operation['grocery']['status'],'ok')
         self.assertIn('public_export',by_operation)
         self.assertEqual(len({r['attempt_id'] for r in rows}),1)
-        # topics, grocery, health, festival, benefit, subscription (2026-11-18), public_export.
-        self.assertEqual(len(rows),7)
+        # tab_checks (2026-11-20), topics, grocery, health, festival, benefit, subscription (2026-11-18), public_export.
+        self.assertEqual(len(rows),8)
+        self.assertIn('tab_checks',by_operation)
         self.assertIn('subscription',by_operation)
 
 

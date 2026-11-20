@@ -22,7 +22,10 @@ CONTROL_FILES={'.tools/claude-trial/live/budget.json','cache/ai_daily/days.json'
 FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs/',
          'cache/ai_review/','cache/ai_topics/','cache/ai_daily/','cache/ai_publish/',
          # Measurement rows (variant_trial): counts the approved measured days across runs.
-         'cache/variant_trial/')
+         'cache/variant_trial/',
+         # Stage 2 tab checks (2026-11-20): notice reasons and festival checks are kept so only new titles
+         # and changed festival texts are sent again.
+         'cache/tab_checks/')
 FILES={'report.json','cache/operational_state.json','cache/verified_items.json',
        'cache/district_candidates.json','cache/collection_log.json'}
 

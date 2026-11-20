@@ -3,9 +3,14 @@ import { computed, ref } from 'vue';
 import { parseFestivals, festivalStatus, festivalPeriod, festivalFees, provinces } from './festivals';
 import { formatDate } from './benefits';
 import { parseFestivalPick } from './picks';
+import { parseTabChecks, festivalNotes } from './checks';
 const props=defineProps<{raw:unknown;now:number;query:string}>();
 const PAGE=12;
-const bundle=computed(()=>parseFestivals(props.raw,props.now));
+// 소개 글에서 AI가 찾아 코드가 대조한 요금·취소 구절(2026-11-20). 취소·연기 안내가 있는 축제는 목록에서 뺀다.
+const checks=computed(()=>parseTabChecks(props.raw).festivals);
+const parsed=computed(()=>parseFestivals(props.raw,props.now));
+const cancelled=computed(()=>(parsed.value?.items??[]).filter(i=>checks.value.get(i.id)?.note==='cancelled'));
+const bundle=computed(()=>parsed.value&&{...parsed.value,items:parsed.value.items.filter(i=>checks.value.get(i.id)?.note!=='cancelled')});
 const province=ref(''),status=ref<''|'ongoing'|'upcoming'|'pick'>(''),shown=ref(PAGE);
 // 이번 주말 추천: 줄마다 카드에 붙이고, 요약 문장은 목록 위에 한 번 보인다. 요금으로 거르거나 순서를 바꾸지 않는다.
 const pick=computed(()=>bundle.value?parseFestivalPick(props.raw,bundle.value):null);
@@ -37,6 +42,7 @@ function setStatus(value:''|'ongoing'|'upcoming'|'pick'){status.value=status.val
       <button type="button" class="chip" :aria-pressed="status==='upcoming'" @click="setStatus('upcoming')">개최예정</button>
       <button v-if="pick" type="button" class="chip" :aria-pressed="status==='pick'" @click="setStatus('pick')">이번 주말 추천<small>{{ pick.picks.length }}</small></button>
     </div>
+    <p v-if="cancelled.length" class="fine-print festival-cancelled">소개 글에 취소·연기 안내가 있는 축제 {{ cancelled.length }}건({{ cancelled.map(i=>i.name).join(', ') }})은 목록에서 뺐어요.</p>
     <p v-if="query.trim()" class="fine-print festival-query">위 검색어 "{{ query.trim() }}"도 함께 적용됩니다.</p>
     <div v-if="pick?.summary&&!status&&!province" class="lead festival-pick"><span class="badge ai">🤖 AI 작성</span><div><p class="pick-summary">{{ pick.summary }}</p><p class="fine-print">AI가 공개 정보 안에서 쓴 문장이에요. 날짜·요금은 공개 전에 코드가 원본과 대조했어요.</p></div></div>
     <p v-else-if="pick&&pick.source==='rule'&&!province" class="fine-print festival-pick-note">추천 표시는 수도권 먼저, 가까운 날짜 순으로 자동 선정했어요.</p>
@@ -48,6 +54,7 @@ function setStatus(value:''|'ongoing'|'upcoming'|'pick'){status.value=status.val
         <p class="bcard-facts">{{ festivalPeriod(item) }}<span aria-hidden="true"> · </span>{{ item.region||'지역 미확인' }}<span aria-hidden="true"> · </span>{{ festivalFees[item.fee_status] }}</p>
         <p v-if="item.fee_text&&item.fee_text!==festivalFees[item.fee_status]" class="festival-fee">요금: {{ item.fee_text }}</p>
         <p v-if="item.discount" class="festival-fee">할인: {{ item.discount }}</p>
+        <p v-if="checks.get(item.id)" class="festival-fee festival-check" :class="checks.get(item.id)!.note"><span class="badge ai">AI 확인</span> {{ festivalNotes[checks.get(item.id)!.note] }}: “{{ checks.get(item.id)!.quote }}”</p>
         <details v-if="item.summary||item.programs||item.place||item.organizer" class="card-details">
           <summary>축제 소개 <span aria-hidden="true">+</span></summary>
           <div class="details-body">

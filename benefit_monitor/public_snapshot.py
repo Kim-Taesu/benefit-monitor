@@ -165,6 +165,10 @@ def validate(root,data,now,auto=None):
                 try:discount_bundle=recompute(clean,now)
                 except Exception:discount_bundle=None
                 if discount_bundle is not None:clean['grocery_discounts']=discount_bundle
+    if clean['status']!='collection_failed':
+        # Stage 2 rows (2026-11-20): kept only where they match the bundles re-checked above.
+        from . import tab_checks
+        tab_checks.apply(clean,data.get('tab_checks'),(auto if auto is not None else auto_release.load(root))[1])
     timing=pipeline_timing.sanitize(data.get('pipeline_timing'),now)
     if timing:clean['pipeline_timing']=timing
     return clean
