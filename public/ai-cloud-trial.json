@@ -11,16 +11,26 @@
   "baseline_days": {
     "2026-11-05": "completed"
   },
-  "limit_revision": 2,
+  "limit_revision": 3,
   "limit_revision_approval": {
-    "approved_at": "2026-11-07",
-    "user_text": "금액은 난 월 $10~20 도 괜찮은거같음",
-    "monthly_cap_microdollars": 15000000,
+    "approved_at": "2026-11-20",
+    "user_text": "하루 50회 · 월 $30 (추천)",
+    "monthly_cap_microdollars": 30000000,
+    "daily_web_search_limit": 50,
     "month": "Asia/Seoul calendar month of started_at",
     "max_requests": null,
     "max_run_days": null
   },
   "prior_limit_revision_approvals": [
+    {
+      "approved_at": "2026-11-07",
+      "user_text": "금액은 난 월 $10~20 도 괜찮은거같음",
+      "monthly_cap_microdollars": 15000000,
+      "month": "Asia/Seoul calendar month of started_at",
+      "max_requests": null,
+      "max_run_days": null,
+      "limit_revision": 2
+    },
     {
       "approved_at": "2026-11-05",
       "user_text": "요청 200회, 실행 14일, $5 유지로 진행해",

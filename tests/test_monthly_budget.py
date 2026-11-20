@@ -1,4 +1,4 @@
-"""Monthly $15 cap ledger (user-approved 2026-11-07); legacy rows are never rewritten."""
+"""Monthly cap ledger: $15 (2026-11-07) raised to $30 with 50 web searches a day (2026-11-20); rows are never rewritten."""
 from copy import deepcopy
 from datetime import datetime, timezone
 import json
@@ -16,7 +16,7 @@ NOV = datetime.fromisoformat('2026-11-07T10:00:00+09:00')
 NOW_KST = NOV
 
 
-def row(n, started, amount=14_999_000):
+def row(n, started, amount=29_999_000):
     return {'id': f'{n:064x}', 'status': 'completed', 'reserved_microdollars': amount,
             'charged_microdollars': amount, 'started_at': started}
 
@@ -36,7 +36,7 @@ class MonthlyBudgetTests(unittest.TestCase):
 
     def test_constants_and_new_ledger_shape(self):
         state = load(self.path, {})
-        self.assertEqual(MONTHLY_CAP, 15_000_000)
+        self.assertEqual(MONTHLY_CAP, 30_000_000)
         self.assertEqual((state['cap_microdollars'], state['cap_kind']), (MONTHLY_CAP, 'monthly'))
         self.assertNotIn('max_requests', state)
 
@@ -52,7 +52,7 @@ class MonthlyBudgetTests(unittest.TestCase):
     def test_month_boundary_uses_seoul_calendar(self):
         # 2026-10-31T16:00Z is already 2026-11-01 01:00 KST.
         rows = [row(1, '2026-10-31T16:00:00+00:00')]
-        self.assertEqual(TrialBudget.month_exposure({'requests': rows}, NOV), 14_999_000)
+        self.assertEqual(TrialBudget.month_exposure({'requests': rows}, NOV), 29_999_000)
         rows = [row(1, '2026-10-31T14:59:00+00:00')]
         self.assertEqual(TrialBudget.month_exposure({'requests': rows}, NOV), 0)
 
@@ -96,18 +96,18 @@ class MonthlyBudgetTests(unittest.TestCase):
         fixture.control['budget'] = legacy
         session = fixture.session()
         before = json.dumps(session.control['budget']['requests'], sort_keys=True)
-        save(fixture.root / 'public/ai-cloud-trial.json', dict(fixture.policy, expires_at=None, limit_revision=2))
+        save(fixture.root / 'public/ai-cloud-trial.json', dict(fixture.policy, expires_at=None, limit_revision=3))
         self.assertTrue(session.apply_limit_revision())
         self.assertFalse(session.apply_limit_revision())
         control = json.loads(fixture.store().read('control')[0])
         self.assertEqual(json.dumps(control['budget']['requests'], sort_keys=True), before)
         self.assertEqual((control['budget']['cap_kind'], control['budget']['cap_microdollars'], control['limit_revision']),
-                         ('monthly', MONTHLY_CAP, 2))
+                         ('monthly', MONTHLY_CAP, 3))
         self.assertNotIn('max_requests', control['budget'])
         self.assertIsNone(control['expires_at'])
 
     def test_past_month_overrun_does_not_block_next_month_resume(self):
-        self.seed([row(1, OCT, 15_100_000)], halted=True)
+        self.seed([row(1, OCT, 30_100_000)], halted=True)
         self.assertTrue(self.budget.summary()['halted'])
         self.budget.resume_after_review()
         self.assertFalse(self.budget.summary()['halted'])
@@ -117,12 +117,12 @@ class MonthlyBudgetTests(unittest.TestCase):
         fixture = state_fixture.CloudStateTests()
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
-        save(fixture.root / 'public/ai-cloud-trial.json', dict(fixture.policy, expires_at=None, limit_revision=2))
-        fixture.control.update(expires_at=None, limit_revision=2)
+        save(fixture.root / 'public/ai-cloud-trial.json', dict(fixture.policy, expires_at=None, limit_revision=3))
+        fixture.control.update(expires_at=None, limit_revision=3)
         fixture.session()
         from benefit_monitor.cloud_state import CloudSession
         control = json.loads(fixture.store().read('control')[0])
-        control['budget']['requests'].append(row(500, OCT, 15_100_000))
+        control['budget']['requests'].append(row(500, OCT, 30_100_000))
         control['budget']['halted'] = True
         _, sha = fixture.store().read('control')
         fixture.store().write('control', json.dumps(control).encode(), sha)
@@ -137,8 +137,8 @@ class MonthlyBudgetTests(unittest.TestCase):
         fixture = state_fixture.CloudStateTests()
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
-        save(fixture.root / 'public/ai-cloud-trial.json', dict(fixture.policy, expires_at=None, limit_revision=2))
-        fixture.control.update(expires_at=None, limit_revision=2)
+        save(fixture.root / 'public/ai-cloud-trial.json', dict(fixture.policy, expires_at=None, limit_revision=3))
+        fixture.control.update(expires_at=None, limit_revision=3)
         fixture.control['days'].update({f'2026-10-{n:02d}': {'status': 'completed'} for n in range(1, 31)})
         self.assertGreater(len(fixture.control['days']), 30)
         session = fixture.session()

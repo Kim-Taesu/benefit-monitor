@@ -14,7 +14,7 @@ from urllib.request import Request, build_opener
 
 from .ai_contract import validate
 from .research_probe import NoRedirect
-from .trial_budget import TrialBudget, secure_open
+from .trial_budget import TrialBudget, secure_open, WEB_SEARCH_MICRODOLLARS, MAX_WEB_SEARCH_USES
 from .validation import official
 from . import wire_format
 
@@ -121,6 +121,46 @@ PROBE_SYSTEM = 'Grammar compile check. Reply with the smallest JSON value that m
 PROBE_MAX_TOKENS = 16
 
 
+# Web search (approved 2026-11-20): each search is billed on top of tokens and its results arrive as
+# input tokens. A request declares at most one web_search tool with an explicit max_uses; the
+# reservation covers every allowed search plus SEARCH_RESULT_TOKENS of results per search.
+SEARCH_RESULT_TOKENS = 30_000
+WEB_SEARCH_TYPES = ('web_search_20250305',)
+
+
+def web_search_uses(payload):
+    """max_uses of the request's web_search tool, 0 when it has none. Other server tools are refused."""
+    if not isinstance(payload, dict):
+        return 0
+    tools = payload.get('tools') or []
+    if not isinstance(tools, list):
+        raise ValueError('invalid tools')
+    searches = [t for t in tools if isinstance(t, dict) and str(t.get('type', '')).startswith('web_search')]
+    if any(isinstance(t, dict) and str(t.get('type', '')).startswith(('web_fetch', 'code_execution')) for t in tools):
+        raise ValueError('unapproved server tool')
+    if not searches:
+        return 0
+    if len(searches) != 1 or searches[0].get('type') not in WEB_SEARCH_TYPES:
+        raise ValueError('unapproved web search tool')
+    uses = searches[0].get('max_uses')
+    if type(uses) is not int or not 1 <= uses <= MAX_WEB_SEARCH_USES:
+        raise ValueError('web search needs max_uses 1..%d' % MAX_WEB_SEARCH_USES)
+    return uses
+
+
+def server_searches(usage, allowed):
+    """Billed web searches in a response; any other server tool billing, or more than allowed, is refused."""
+    tools = usage.get('server_tool_use') or {}
+    if not isinstance(tools, dict):
+        raise ValueError('unexpected server tool billing')
+    if any(v for k, v in tools.items() if k != 'web_search_requests'):
+        raise ValueError('unexpected server tool billing')
+    used = tools.get('web_search_requests') or 0
+    if type(used) is not int or used < 0 or used > allowed:
+        raise ValueError('unexpected server tool billing')
+    return used
+
+
 class ClaudeClient:
     def __init__(self, root, budget, key):
         self.root, self.budget, self.key = Path(root), budget, key
@@ -143,12 +183,13 @@ class ClaudeClient:
             digest = hashlib.sha256((digest+'\nmanual_retry_1').encode()).hexdigest()
         self.last_request_id = digest
         self.last_cached = False
+        searches = web_search_uses(payload)
         amount = 0 if body is None else int((
-            (Decimal(len(body) + 4096) * Decimal(state['input_rate'])
+            (Decimal(len(body) + 4096 + searches * SEARCH_RESULT_TOKENS) * Decimal(state['input_rate'])
              + Decimal(payload['max_tokens']) * Decimal(state['output_rate'])) * 2
-        ).to_integral_value(rounding=ROUND_CEILING))
+        ).to_integral_value(rounding=ROUND_CEILING)) + searches * WEB_SEARCH_MICRODOLLARS
         try:
-            row = self.budget.reserve(digest, amount)
+            row = self.budget.reserve(digest, amount, web_search_uses=searches)
         except ValueError:
             raise TrialError('trial stopped by persistent budget') from None
         output = self.cache / (digest + '.json')
@@ -198,11 +239,10 @@ class ClaudeClient:
                     raise ValueError('unexpected cache pricing')
                 if usage['input_tokens'] > 100_000 or usage['output_tokens'] > payload['max_tokens']:
                     raise ValueError('unexpected token range')
-                if usage.get('server_tool_use') and any(usage['server_tool_use'].values()):
-                    raise ValueError('unexpected server tool billing')
+                used = server_searches(usage, searches)
                 cost = int((Decimal(usage['input_tokens']) * Decimal(state['input_rate'])
                             + Decimal(usage['output_tokens']) * Decimal(state['output_rate'])
-                            ).to_integral_value(rounding=ROUND_CEILING))
+                            ).to_integral_value(rounding=ROUND_CEILING)) + used * WEB_SEARCH_MICRODOLLARS
             fd = secure_open(output, os.O_WRONLY | os.O_CREAT | os.O_EXCL)
             with os.fdopen(fd, 'wb') as f:
                 f.write(raw)

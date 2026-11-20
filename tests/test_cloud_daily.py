@@ -101,7 +101,7 @@ class CloudDailyTests(unittest.TestCase):
         with patch.object(m,'daily',side_effect=AssertionError('must not collect')):
             self.assertFalse(m.cloud_run(self.root,now=NOW,store=self.fixture.store())['limit_revision_applied'])
         self.assertEqual(json.loads(self.fixture.store().read('control')[0])['budget']['max_requests'],200)
-        save(self.root/'public/ai-cloud-trial.json',dict(self.fixture.policy,expires_at=None,limit_revision=2))
+        save(self.root/'public/ai-cloud-trial.json',dict(self.fixture.policy,expires_at=None,limit_revision=3))
         with patch.object(m,'daily',side_effect=AssertionError('must not collect')):
             first=m.cloud_run(self.root,now=NOW,store=self.fixture.store())
             second=m.cloud_run(self.root,now=NOW,store=self.fixture.store())
@@ -212,8 +212,8 @@ class CloudDailyTests(unittest.TestCase):
                 m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
         data=json.loads(self.fixture.store().read('control')[0])
         data['days'].pop('2026-11-06',None)
-        data['budget']['requests'].append({'id':'9'*64,'status':'completed','reserved_microdollars':14_997_720,
-                                           'charged_microdollars':14_997_720,'started_at':'2026-11-06T02:00:00+00:00'})
+        data['budget']['requests'].append({'id':'9'*64,'status':'completed','reserved_microdollars':29_997_720,
+                                           'charged_microdollars':29_997_720,'started_at':'2026-11-06T02:00:00+00:00'})
         _,sha=self.fixture.store().read('control');self.fixture.store().write('control',json.dumps(data).encode(),sha)
         with patch.object(m,'disable_workflow') as disable,patch.object(m,'daily',side_effect=AssertionError('cap must stop paid work')):
             self.assertEqual(m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())['status'],'trial_budget_limit')
