@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<style>
+  :root{--bg:#f7f6f2;--ink:#1f2328;--muted:#6b7280;--line:#c9ccd1;--card:#fff;--cf:#f38020;--gh:#2f6feb;--ai:#8250df;--data:#1a7f37;--done:#1a7f37}
+  *{box-sizing:border-box}
+  body{margin:0;width:960px;height:540px;background:var(--bg);font-family:"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;color:var(--ink);overflow:hidden}
+  header{display:flex;justify-content:space-between;align-items:center;padding:18px 28px 6px}
+  h1{font-size:22px;margin:0;font-weight:800;letter-spacing:-.3px}
+  .clock{font:700 26px ui-monospace,Menlo,monospace;background:#1f2328;color:#fff;border-radius:10px;padding:4px 14px}
+  .clock small{font-size:12px;opacity:.7;margin-left:6px;font-family:"Apple SD Gothic Neo",sans-serif;font-weight:500}
+  .lanes{position:relative;height:400px;margin:0 20px}
+  .lane{position:absolute;left:0;right:0;border-radius:12px;border:1px dashed var(--line)}
+  .lane span{position:absolute;right:12px;top:6px;font-size:12px;color:var(--muted);font-weight:700}
+  .l1{top:4px;height:92px}.l2{top:106px;height:150px}.l3{top:266px;height:130px}
+  .node{position:absolute;width:150px;height:68px;border-radius:12px;background:var(--card);border:2px solid var(--line);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;font-size:14px;font-weight:700;line-height:1.25;transition:none}
+  .node small{font-size:11px;color:var(--muted);font-weight:500;margin-top:3px}
+  .node.active{border-color:var(--c);box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 22%,transparent);transform:scale(1.06)}
+  .node.done{border-color:var(--c);background:color-mix(in srgb,var(--c) 8%,#fff)}
+  .node.done::after{content:"✓";position:absolute;top:-10px;right:-10px;width:22px;height:22px;border-radius:50%;background:var(--done);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .cf{--c:var(--cf)}.gh{--c:var(--gh)}.ai{--c:var(--ai)}.dt{--c:var(--data)}
+  svg{position:absolute;inset:0;pointer-events:none}
+  path{fill:none;stroke:var(--line);stroke-width:2.5;marker-end:url(#a)}
+  path.on{stroke:var(--ink);stroke-width:3;marker-end:url(#b)}
+  path.dash{stroke-dasharray:6 5}
+  .caption{margin:6px 28px 0;font-size:16px;font-weight:600;min-height:24px}
+  .caption b{color:var(--gh)}
+  .legend{position:absolute;right:28px;bottom:10px;font-size:11px;color:var(--muted)}
+</style></head><body>
+<header><h1>매일 새벽 갱신 흐름</h1><div class="clock" id="clock">03:00<small>KST</small></div></header>
+<div class="lanes">
+  <div class="lane l1"><span>예약 (Cloudflare Workers 무료 cron)</span></div>
+  <div class="lane l2"><span>GitHub Actions (공개 저장소 무료 러너)</span></div>
+  <div class="lane l3"><span>저장 · 공개</span></div>
+  <svg viewBox="0 0 920 400" width="920" height="400">
+    <defs>
+      <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" style="fill:#c9ccd1;stroke:none"/></marker>
+      <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" style="fill:#1f2328;stroke:none"/></marker>
+    </defs>
+    <path id="e1" class="dash" d="M95,82 C95,110 95,120 95,146"/>
+    <path id="e2" class="dash" d="M180,50 C240,50 260,110 270,146"/>
+    <path id="e3" class="dash" d="M190,40 C380,40 430,100 450,146"/>
+    <path id="e4" d="M530,180 L568,180"/>
+    <path id="e5" d="M720,180 L748,180"/>
+    <path id="e6" d="M640,214 C640,250 640,260 400,300"/>
+    <path id="e7" d="M820,214 C820,240 700,250 620,300"/>
+    <path id="e8" d="M470,332 L560,332"/>
+    <path id="e9" d="M710,332 L748,332"/>
+    <path id="e10" d="M95,214 C95,260 300,250 320,300"/>
+    <path id="e11" d="M275,214 C275,260 320,260 330,300"/>
+  </svg>
+  <div class="node cf" id="cron" style="left:20px;top:22px;width:170px">⏰ cron 10분마다<small>03:00~04:50, 03:20부터 요청</small></div>
+  <div class="node gh" id="health" style="left:20px;top:146px">보건소 공지<small>health-notices.yml</small></div>
+  <div class="node gh" id="subs" style="left:200px;top:146px">청약 일정·실거래<small>subscriptions.yml</small></div>
+  <div class="node gh" id="collect" style="left:380px;top:146px">혜택 수집 · 1차 공개<small>briefing-pages.yml “수집”</small></div>
+  <div class="node ai" id="ai" style="left:570px;top:146px">AI 검증 · 추천<small>ai-daily.yml · Haiku 5.5</small></div>
+  <div class="node gh" id="deploy" style="left:750px;top:146px">승인 스냅샷 게시<small>briefing-pages.yml</small></div>
+  <div class="node dt" id="data" style="left:250px;top:300px;width:220px">briefing-data 브랜치<small>briefing.json · 탭별 JSON · 암호화 상태</small></div>
+  <div class="node dt" id="pages" style="left:560px;top:300px">GitHub Pages<small>정적 Vue 화면</small></div>
+  <div class="node dt" id="user" style="left:750px;top:300px">📱 사용자 화면<small>05:00 전 갱신 목표</small></div>
+</div>
+<div class="caption" id="cap"></div>
+<div class="legend">시각은 2026-11-20 실제 소요 시간으로 계산한 예상치</div>
+<script>
+const STEPS=[
+  {t:'03:00',cap:'cron이 10분마다 깨어나지만 03:20 전에는 아무것도 하지 않습니다.',active:['cron'],on:[]},
+  {t:'03:20',cap:'<b>1회차</b> — 오늘 실행이 없으니 보건소 수집을 요청합니다.',active:['health'],done:['cron'],on:['e1']},
+  {t:'03:23',cap:'보건소 공지를 briefing-data에 저장합니다. (약 2~3분)',active:['data'],done:['cron','health'],on:['e1','e10']},
+  {t:'03:30',cap:'<b>2회차</b> — 보건소 성공 확인 → 청약 일정 수집을 요청합니다.',active:['subs'],done:['cron','health'],on:['e1','e10','e2']},
+  {t:'03:37',cap:'청약 일정·실거래를 저장합니다. (약 6~7분)',active:['data'],done:['cron','health','subs'],on:['e1','e10','e2','e11']},
+  {t:'03:40',cap:'<b>3회차</b> — 혜택 수집을 요청합니다. 공식 목록을 모아 AI 없이 1차 공개합니다.',active:['collect'],done:['cron','health','subs'],on:['e1','e10','e2','e11','e3']},
+  {t:'03:48',cap:'수집이 끝나면 <b>workflow_run</b>으로 AI 실행이 곧바로 시작됩니다.',active:['ai'],done:['cron','health','subs','collect'],on:['e1','e10','e2','e11','e3','e4']},
+  {t:'04:00',cap:'AI 결과·승인 목록을 briefing-data에 커밋하고 그 커밋으로 게시를 요청합니다.',active:['data','deploy'],done:['cron','health','subs','collect','ai'],on:['e1','e10','e2','e11','e3','e4','e6','e5']},
+  {t:'04:02',cap:'고정 커밋을 다시 검증한 뒤 GitHub Pages에 배포합니다.',active:['pages'],done:['cron','health','subs','collect','ai','deploy','data'],on:['e1','e10','e2','e11','e3','e4','e6','e5','e7','e8']},
+  {t:'04:02',cap:'05:00 전에 오늘 목록이 보입니다. GitHub 예약 실행은 백업으로만 남습니다.',active:['user'],done:['cron','health','subs','collect','ai','deploy','data','pages'],on:['e1','e10','e2','e11','e3','e4','e6','e5','e7','e8','e9']},
+];
+window.setStep=i=>{const s=STEPS[i];
+  document.querySelectorAll('.node').forEach(n=>n.classList.remove('active','done'));
+  document.querySelectorAll('svg > path').forEach(p=>p.classList.remove('on'));
+  (s.done||[]).forEach(id=>document.getElementById(id).classList.add('done'));
+  s.active.forEach(id=>{const n=document.getElementById(id);n.classList.remove('done');n.classList.add('active')});
+  s.on.forEach(id=>document.getElementById(id).classList.add('on'));
+  document.getElementById('clock').innerHTML=s.t+'<small>KST</small>';
+  document.getElementById('cap').innerHTML=s.cap;};
+window.STEP_COUNT=STEPS.length;setStep(0);
+</script></body></html>
