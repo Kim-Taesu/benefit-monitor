@@ -14,6 +14,7 @@ from .health_notes import refresh as health_refresh
 from .festival_pick import refresh as festival_refresh
 from .benefit_pick import refresh as benefit_refresh
 from .subscription_pick import refresh as subscription_refresh
+from .tab_checks import refresh as tab_checks_refresh
 from .remote_delivery import deliver,preceding_refresh
 from . import observability as obs
 
@@ -63,6 +64,13 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
                                ai_execute=allow_spend,ai_max_candidates=limit,snapshot=snapshot,ai_max_verify=verify_limit,
                                **({'ai_investigate':True} if policy.get('investigate_missing_conditions',True) is True else {}))
             exhausted=bool((collection or {}).get('ai_review',{}).get('credit_exhausted'))
+            # Stage 2 (2026-11-20): festival fee notes and health-notice triage, up to 20 paid requests, before
+            # any recommendation card. Optional: a failure never blocks the day's other results.
+            try:
+                checks=obs.call('verification','tab_checks',tab_checks_refresh,root,now,execute=allow_spend and not exhausted)
+            except Exception as error:
+                checks={'status':'failed','error_type':type(error).__name__}
+            exhausted=exhausted or checks.get('status')=='credit_exhausted'
             # The topic step is a paid call too; skip it once credit has run out.
             topics=obs.call('recommendation','topics',refresh,root,now=now,execute=allow_spend) if not exhausted else {'topics':[],'skipped':'credit_exhausted'}
             exhausted=exhausted or (topics.get('model') or {}).get('status')=='credit_exhausted'
@@ -97,7 +105,7 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
                 measurement={'status':'failed','error_type':type(error).__name__}
             public=obs.call('publication','public_export',publish_briefing,root,now=now) if publish else None
             remote=deliver(root,policy,now=now) if publish and policy.get('remote_delivery_approved') is True else None
-            result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'topics':topics,'grocery':grocery,'health':health,'festival':picks['festival'],'benefit':picks['benefit'],'subscription':picks['subscription'],'measurement':measurement,'public_exported':public is not None,
+            result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'tab_checks':checks,'topics':topics,'grocery':grocery,'health':health,'festival':picks['festival'],'benefit':picks['benefit'],'subscription':picks['subscription'],'measurement':measurement,'public_exported':public is not None,
                     'remote_delivery':remote,'recurring_spend_requested':allow_spend,'public_status':public.get('status') if public else None}
             state['days'][day].update(status='failed' if exhausted else 'completed',finished_at=now.isoformat())
             save(project_path(root,'cache/ai_daily/days.json'),state)

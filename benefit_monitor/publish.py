@@ -380,7 +380,18 @@ def run(root, now=None, failure=False):
         attach_health_notices(root,data,now)
         attach_subscriptions(root,data,now)
         attach_tab_picks(root,data,now)
+        attach_tab_checks(root,data,now)
     return write_export(root,data)
+
+
+def attach_tab_checks(root,data,now):
+    """Stage 2 rows (2026-11-20): hidden administrative notices and festival fee notes, re-checked against this
+    payload's bundles. Any failure leaves the key out and never fails publication."""
+    try:
+        from . import auto_release, tab_checks
+        tab_checks.attach(root,data,now,auto_release.load(root)[1])
+    except Exception:
+        data.pop('tab_checks',None)
 
 
 def attach_tab_picks(root,data,now):

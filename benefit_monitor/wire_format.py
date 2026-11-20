@@ -35,6 +35,8 @@ TOPIC_WIRE = 'topic-wire-v1'
 GROCERY_WIRE = 'grocery-wire-v1'
 HEALTH_WIRE = 'health-note-wire-v1'
 FESTIVAL_WIRE = 'festival-wire-v1'
+NOTICE_TRIAGE_WIRE = 'notice-triage-wire-v1'
+FESTIVAL_CHECK_WIRE = 'festival-check-wire-v1'
 BENEFIT_WIRE = 'benefit-wire-v1'
 SUBSCRIPTION_WIRE = 'subscription-wire-v1'
 UNION_LIMIT = 16
@@ -421,6 +423,36 @@ def subscription_from_wire(wire, host):
     return _pick_from_wire(wire, SUBSCRIPTION_WIRE)
 
 
+def notice_triage_wire_schema(host):
+    """One reason per notice id (stage 2, 2026-11-20). Same schema every day: one grammar probe."""
+    from .notice_triage import REASONS
+    row = _object({'id': _string(), 'reason': {'enum': list(REASONS)}})
+    schema = _object({'wire_version': {'enum': [NOTICE_TRIAGE_WIRE]}, 'results': {'type': 'array', 'items': row}})
+    check_limits(schema)
+    return schema
+
+
+def notice_triage_from_wire(wire, host):
+    if not isinstance(wire, dict) or wire.get('wire_version') != NOTICE_TRIAGE_WIRE or set(wire) != {'wire_version', 'results'}:
+        raise ValueError('notice triage wire contract mismatch')
+    return {'results': wire['results']}
+
+
+def festival_check_wire_schema(host):
+    """Quotes first, then the status read from them (stage 2, 2026-11-20). Same schema every day."""
+    from .festival_check import STATUSES
+    row = _object({'id': _string(), 'quotes': {'type': 'array', 'items': _string()}, 'status': {'enum': list(STATUSES)}})
+    schema = _object({'wire_version': {'enum': [FESTIVAL_CHECK_WIRE]}, 'results': {'type': 'array', 'items': row}})
+    check_limits(schema)
+    return schema
+
+
+def festival_check_from_wire(wire, host):
+    if not isinstance(wire, dict) or wire.get('wire_version') != FESTIVAL_CHECK_WIRE or set(wire) != {'wire_version', 'results'}:
+        raise ValueError('festival check wire contract mismatch')
+    return {'results': wire['results']}
+
+
 def _verify_schema(host):
     from .verify_contract import wire_schema
     return wire_schema()
@@ -446,6 +478,8 @@ WIRES = {
     'festival': (FESTIVAL_WIRE, festival_wire_schema, festival_from_wire, (_pick_from_wire,)),
     'benefit': (BENEFIT_WIRE, benefit_wire_schema, benefit_from_wire, (_pick_from_wire,)),
     'subscription': (SUBSCRIPTION_WIRE, subscription_wire_schema, subscription_from_wire, (_pick_from_wire,)),
+    'notice_triage': (NOTICE_TRIAGE_WIRE, notice_triage_wire_schema, notice_triage_from_wire, (notice_triage_from_wire,)),
+    'festival_check': (FESTIVAL_CHECK_WIRE, festival_check_wire_schema, festival_check_from_wire, (festival_check_from_wire,)),
 }
 
 

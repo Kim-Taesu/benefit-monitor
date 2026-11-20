@@ -4,13 +4,18 @@ import { parseHealth, filterHealth, boardStatus } from './health';
 import { formatDate } from './benefits';
 import { kstDate } from './festivals';
 import HealthWeekly from './HealthWeekly.vue';
+import { parseTabChecks, noticeReasons } from './checks';
 const props=defineProps<{raw:unknown;now:number}>();
 // 내 지역은 혜택 탭과 같이 쓴다(App이 기억한다).
 const district=defineModel<string>('district',{default:''});
 const PAGE=20;
 const bundle=computed(()=>parseHealth(props.raw,props.now));
-const hintOnly=ref(false),query=ref(''),shown=ref(PAGE);
-const filtered=computed(()=>filterHealth(bundle.value?.items??[],district.value,hintOnly.value,query.value));
+const hintOnly=ref(false),query=ref(''),shown=ref(PAGE),showAdmin=ref(false);
+// 행정 공지(채용·입찰·결과 발표 등)는 기본으로 접는다(2026-11-20). AI가 제목으로 분류하고, 제목에 그 낱말이 있을 때만 접힌다.
+const admin=computed(()=>parseTabChecks(props.raw).notices);
+const matched=computed(()=>filterHealth(bundle.value?.items??[],district.value,hintOnly.value,query.value));
+const folded=computed(()=>matched.value.filter(i=>admin.value.has(i.url)).length);
+const filtered=computed(()=>showAdmin.value?matched.value:matched.value.filter(i=>!admin.value.has(i.url)));
 const visible=computed(()=>filtered.value.slice(0,shown.value));
 const hints=computed(()=>(bundle.value?.items??[]).filter(i=>i.hint&&(!district.value||i.district===district.value)).length);
 const selectedBoard=computed(()=>bundle.value?.boards.find(b=>b.district===district.value)??null);
@@ -39,11 +44,12 @@ const md=(d:string)=>`${Number(d.slice(5,7))}/${Number(d.slice(8,10))}`;
     </details>
     <h3 class="health-notices-title">최근 공지</h3>
     <div class="chips" role="group" aria-label="공지 종류"><button type="button" class="chip" :aria-pressed="hintOnly" @click="hintOnly=!hintOnly;shown=PAGE">검진·접종·프로그램만 <small>{{ hints }}</small></button></div>
+    <p v-if="folded" class="fine-print health-admin-note">채용·입찰·결과 발표 같은 행정 공지 {{ folded }}건은 접어 두었어요. AI가 제목으로 분류했고, 제목에 그런 낱말이 있을 때만 접힙니다. <button type="button" class="link-button" :aria-pressed="showAdmin" @click="showAdmin=!showAdmin;shown=PAGE">{{ showAdmin?'다시 접기':'행정 공지도 보기' }}</button></p>
     <p class="fine-print">"검진·접종·프로그램" 표시는 제목 단어만 본 것입니다. 무료 여부·대상·기간은 원문에서 확인하세요. 확인된 건은 혜택 탭에 카드로 올라갑니다.</p>
     <div v-if="selectedBoard&&selectedBoard.status!=='checked'" class="notice warning health-board-note" role="status"><span aria-hidden="true">⚠️</span><div><strong>{{ selectedBoard.name }}: {{ boardStatus[selectedBoard.status] }}</strong><p>{{ selectedBoard.reason }}<template v-if="selectedBoard.count"> · 마지막으로 받은 공지 {{ selectedBoard.count }}건을 보여줍니다.</template></p><a class="official-link" :href="selectedBoard.homeUrl" target="_blank" rel="noopener noreferrer">{{ selectedBoard.name }} 바로가기 <span aria-hidden="true">↗</span><span class="sr-only"> (새 창)</span></a></div></div>
     <ul v-if="visible.length" class="health-list">
       <li v-for="item in visible" :key="item.district+item.id" class="health-row" :class="{hint:item.hint}">
-        <div class="health-meta"><span class="category">{{ item.district }}</span><time :datetime="item.date">{{ md(item.date) }}</time><span v-if="item.hint" class="health-badge">검진·접종·프로그램</span></div>
+        <div class="health-meta"><span class="category">{{ item.district }}</span><time :datetime="item.date">{{ md(item.date) }}</time><span v-if="item.hint" class="health-badge">검진·접종·프로그램</span><span v-if="admin.get(item.url)" class="health-badge admin">행정 공지 · {{ noticeReasons[admin.get(item.url)!] }}</span></div>
         <a :href="item.url" target="_blank" rel="noopener noreferrer" class="health-title">{{ item.title }}<span class="sr-only"> (새 창, {{ item.center }} 원문)</span></a>
         <small>{{ item.center }}<template v-if="item.dept"> · {{ item.dept }}</template></small>
       </li>

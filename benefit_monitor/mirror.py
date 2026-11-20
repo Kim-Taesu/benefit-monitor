@@ -63,6 +63,7 @@ def restore(root, repository, now=None, env=None):
     restore_subscriptions(root,repository,env)
     restore_grocery_pick(root,repository,env)
     restore_tab_picks(root,repository,env)
+    restore_tab_checks(root,repository,env)
     return envelope.get("sha")
 
 
@@ -150,6 +151,22 @@ def restore_tab_picks(root, repository, env=None):
         except Exception:
             pass
     return restored
+
+
+def restore_tab_checks(root, repository, env=None):
+    """Last AI run's public stage 2 rows (2026-11-20); publication re-checks them against today's bundles.
+    The AI run keeps its own private state, so this copy is only written when none exists."""
+    from .store import save
+    from .tab_checks import PUBLIC
+    path = Path(root) / PUBLIC
+    try:
+        value, _ = _get(repository, 'ai-tab-checks.json', env)
+        if isinstance(value, dict) and not path.exists():
+            save(path, value)
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def restore_health_notes(root, repository, env=None):

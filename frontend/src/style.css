@@ -242,3 +242,5 @@ body{font-size:15px;word-break:keep-all;overflow-wrap:anywhere}
 .refresh-line{margin-top:10px;font-size:13px;line-height:1.5;color:var(--muted)}
 .refresh-line .refresh-step,.refresh-line .refresh-span{white-space:nowrap}
 .refresh-carried{color:var(--ink)}
+/* Stage 2 checks (2026-11-20): folded administrative notices and festival fee notes. */
+.health-badge.admin{background:#eef0f2;color:#5b6470}.health-admin-note .link-button{padding:0 2px}.festival-check{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px}.festival-check.partly_paid{color:#8a4b00}

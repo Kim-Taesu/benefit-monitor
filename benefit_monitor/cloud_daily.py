@@ -140,6 +140,23 @@ def upload_tab_picks(root,store):
     return written
 
 
+def upload_tab_checks(root,store):
+    """Best effort copy of today's public stage 2 rows (2026-11-20) to briefing-data for collection-only runs."""
+    try:
+        from .tab_checks import PUBLIC
+        checks=load(safe_path(root,PUBLIC),None)
+        if not isinstance(checks,dict):return False
+        try:sha=store._api('contents/ai-tab-checks.json?ref=briefing-data').get('sha')
+        except ValueError:sha=None  # Not created yet.
+        body={'message':'Update AI tab checks','branch':'briefing-data',
+              'content':base64.b64encode((json.dumps(checks,ensure_ascii=False,indent=2)+'\n').encode()).decode()}
+        if sha:body['sha']=sha
+        store._api('contents/ai-tab-checks.json',body)
+        return True
+    except Exception:
+        return False
+
+
 def upload_health_notes(root,store):
     """Best effort copy of the public AI health sentences to briefing-data so collection-only runs keep them."""
     try:
@@ -243,7 +260,7 @@ def publish_snapshot(root,store,now,key,*,expected_sha,crawl=None):
     if save_ai(root,REPOSITORY,env=env)!=local:
         # Merged with a concurrent writer: this snapshot no longer matches; the next collection publishes it.
         return {'status':'ai_approval_merged_deferred'}
-    upload_health_notes(root,store);upload_grocery_pick(root,store);upload_tab_picks(root,store)
+    upload_health_notes(root,store);upload_grocery_pick(root,store);upload_tab_picks(root,store);upload_tab_checks(root,store)
     commit=mirror(root,REPOSITORY,env=runner_environment(store),content=content,expected_sha=expected_sha)
     if not isinstance(commit,str) or not re.fullmatch('[0-9a-f]{40}',commit):raise ValueError('immutable snapshot commit required')
     actions_request(store,'actions/workflows/briefing-pages.yml/dispatches',body={'ref':'main','inputs':{
@@ -376,7 +393,8 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease,crawl=crawl)
         session.finish(day,'completed')
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
-                'halted':after['halted'],'retried_day':retried,'picks':pick_report(result),'measurement':{k:v for k,v in measurement.items() if k!='request_ids'}}
+                'halted':after['halted'],'retried_day':retried,'picks':pick_report(result),
+                'tab_checks':result.get('tab_checks') if isinstance(result.get('tab_checks'),dict) else None,'measurement':{k:v for k,v in measurement.items() if k!='request_ids'}}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')

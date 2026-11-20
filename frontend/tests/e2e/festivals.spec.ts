@@ -52,3 +52,25 @@ test('missing festival bundle hides the section',async({page})=>{
  await expect(page.locator('#results article')).toHaveCount(1);
  await expect(page.locator('#festivals')).toHaveCount(0);
 });
+
+// Stage 2 checks (2026-11-20): a quoted fee note on the card, cancelled festivals leave the list.
+test('festival checks show a quoted note and remove cancelled festivals',async({page})=>{
+ await page.setViewportSize({width:390,height:900});
+ await page.clock.install({time:new Date(NOW)});
+ const paid=festival(1,{programs:'[테스트] 체험부스(체험비 5,000원)'}),gone=festival(2,{summary:'[테스트] 올해 축제는 취소되었습니다.'});
+ const raw=snapshot(undefined,{festivals:{schema_version:1,source:'kfes',fetched_at:'2026-11-04T06:00:00+09:00',notice:'[테스트] 관광공사 게시 정보',items:[paid,gone]}}) as Record<string,unknown>;
+ raw.tab_checks={schema_version:1,notices:[],festivals:[{id:paid.id,note:'partly_paid',quote:'체험부스(체험비 5,000원)'},{id:gone.id,note:'cancelled',quote:'올해 축제는 취소되었습니다.'}]};
+ const origin=new URL(String(test.info().project.use.baseURL)).origin;
+ await page.route('**/*',route=>{
+  const u=new URL(route.request().url());
+  if(u.origin!==origin)return route.abort();
+  if(u.pathname.endsWith('/briefing.json'))return route.fulfill({json:raw});
+  return route.continue();
+ });
+ await page.goto('./#festivals');
+ const section=page.locator('#festivals');
+ await expect(section.locator('h2')).toContainText('1건');
+ await expect(page.getByRole('tab',{name:/축제/})).toContainText('1');
+ await expect(section.locator('.festival-check')).toContainText('소개 글에 유료 프로그램이 있어요: “체험부스(체험비 5,000원)”');
+ await expect(section.locator('.festival-cancelled')).toContainText('[테스트] 축제 2');
+});

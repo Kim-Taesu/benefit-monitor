@@ -9,6 +9,7 @@ import {parseSubscriptions,CALENDAR_PAGE} from './subscriptions';
 import {parseGroceries,parsePick,parseBaselines,parseDiscounts,featuredRows} from './groceries';
 import {parseFestivals} from './festivals';
 import {parseHealth} from './health';
+import {parseTabChecks} from './checks';
 import {DISTRICTS,isSeoulCandidate,matchesHome,topicsFor,TOPIC_ICONS,TOPIC_ICON_FALLBACK,MAJOR_TOPIC_COUNT} from './topics';
 import {parseBenefitPick,parseSubscriptionPick,benefitDeadline,benefitFeeLabel} from './picks';
 import PickCard from './PickCard.vue';
@@ -137,7 +138,10 @@ const refresh=computed(()=>{
  return t?{kind:'timing',text:`${kstDay(at)===kstDay(now.value)?'오늘':monthDay(at)} 데이터 준비`,steps,span}:null;
 });
 // 탭 옆 건수. 각 탭이 처음 보여 주는 목록의 건수와 같다.
-const counts=computed<Record<Tab,number|null>>(()=>({benefits:all.value.length,subscriptions:subs.value?.items.length??null,groceries:groceries.value?featuredRows(groceries.value.rows).length:null,festivals:parseFestivals(raw.value,groceryMinute.value)?.items.length??null,health:parseHealth(raw.value,groceryMinute.value)?.items.length??null}));
+// 탭 숫자는 화면에 기본으로 보이는 건수: 접은 행정 공지와 취소·연기 축제는 뺀다(2026-11-20).
+function countFestivals(){const f=parseFestivals(raw.value,groceryMinute.value);if(!f)return null;const c=parseTabChecks(raw.value).festivals;return f.items.filter(i=>c.get(i.id)?.note!=='cancelled').length;}
+function countHealth(){const h=parseHealth(raw.value,groceryMinute.value);if(!h)return null;const c=parseTabChecks(raw.value).notices;return h.items.filter(i=>!c.has(i.url)).length;}
+const counts=computed<Record<Tab,number|null>>(()=>({benefits:all.value.length,subscriptions:subs.value?.items.length??null,groceries:groceries.value?featuredRows(groceries.value.rows).length:null,festivals:countFestivals(),health:countHealth()}));
 // 보건소 탭의 지역은 내 지역과 함께 움직인다. 서울 25개 구가 아닌 곳(성남시)은 그 탭 안에서만 쓴다.
 const healthDistrict=ref(filters.region);
 watch(()=>filters.region,value=>{healthDistrict.value=value;});

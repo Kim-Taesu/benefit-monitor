@@ -120,3 +120,33 @@ test('health weekly card hides AI badge when no summaries exist',async({page})=>
  await expect(card.locator('.card-meta .grocery-badge')).toHaveText('자동 선정');
  await expect(card).not.toContainText('AI가 공식 페이지를 요약했습니다');
 });
+
+// Stage 2 checks (2026-11-20): administrative notices are folded behind a toggle, never removed.
+test('administrative notices are folded and can be shown again',async({page})=>{
+ await page.setViewportSize({width:390,height:900});
+ await page.clock.install({time:new Date(NOW)});
+ const hiring=item(3,{title:'[테스트] 보건소 기간제 근로자 채용 공고'});
+ const raw=snapshot(undefined,{health_notices:{schema_version:1,source:'health_notices',fetched_at:'2026-11-04T00:07:00+09:00',notice:'[테스트] 보건소 공지',programs:[],boards:[
+  board({items:[item(1),hiring]}),
+ ]}}) as Record<string,unknown>;
+ raw.tab_checks={schema_version:1,notices:[{url:hiring.url,title:hiring.title,reason:'recruitment'}],festivals:[]};
+ const origin=new URL(String(test.info().project.use.baseURL)).origin;
+ await page.route('**/*',route=>{
+  const u=new URL(route.request().url());
+  if(u.origin!==origin)return route.abort();
+  if(u.pathname.endsWith('/briefing.json'))return route.fulfill({json:raw});
+  return route.continue();
+ });
+ await page.goto('./#health');
+ const section=page.locator('#health');
+ await expect(page.getByRole('tab',{name:/보건소/})).toContainText('1');
+ await expect(section.locator('h2')).toContainText('1건');
+ await expect(section.locator('.health-row')).toHaveCount(1);
+ const note=section.locator('.health-admin-note');
+ await expect(note).toContainText('행정 공지 1건');
+ await note.getByRole('button',{name:'행정 공지도 보기'}).click();
+ await expect(section.locator('.health-row')).toHaveCount(2);
+ await expect(section.locator('.health-badge.admin')).toHaveText('행정 공지 · 채용');
+ await note.getByRole('button',{name:'다시 접기'}).click();
+ await expect(section.locator('.health-row')).toHaveCount(1);
+});

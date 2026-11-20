@@ -277,6 +277,7 @@ sequenceDiagram
   CD->>AD: daily(online, allow_spend, publish)
   loop 요청마다 비용 먼저 영속 예약
     AD->>C: 원문 대조·조건 추출 (검증 ≤40, 조사 ≤40)
+    AD->>C: 탭 검증 ≤20 (보건소 공지 분류·축제 소개 대조)
     AD->>C: 주제 1 · 장보기 1 · 보건소 문장 ≤10
     AD->>C: 축제 1 · 혜택 1 · 청약 1 · 측정 변형 4
   end
@@ -290,9 +291,10 @@ sequenceDiagram
 
 ```mermaid
 pie showData
-  title 하루 최대 요청 99건의 구성
+  title 하루 최대 요청 119건의 구성
   "원문 검증" : 40
   "추가 조사" : 40
+  "탭 검증(공지 분류·축제 대조)" : 20
   "보건소 안내 문장" : 10
   "요청 설정 측정(공개 안 함)" : 4
   "주제" : 1
@@ -372,6 +374,7 @@ gitGraph
 | `grocery-baselines.json` | grocery-baselines | 수집 시 병합 | ✅ (briefing에 포함) |
 | `ai-approved.json` | 수집(재확인·철회), AI 실행 | 수집·AI | 공개 가능한 필드만 |
 | `ai-*-pick.json`, `ai-health-notes.json` | AI 실행 | 수집 시 병합(유효기간 검사) | ✅ “AI 작성” 표시 |
+| `ai-tab-checks.json` | AI 실행 | 수집 시 병합(공지·축제 묶음과 재대조) | ✅ 접힌 행정 공지·축제 요금 메모 |
 | `ai-status.json` | AI 실행 | 관리자 화면·briefing | 상태 문자열만 |
 | `ai-control.age`, `ai-runtime.age`, `ai-collection.age` | AI 실행·수집 | AI 실행 | ❌ age 암호화(원장·검토 대기 자료) |
 
