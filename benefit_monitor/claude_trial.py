@@ -356,6 +356,42 @@ class ClaudeClient:
         path.write_text(json.dumps(rows, ensure_ascii=False, indent=2) + '\n')
         return dict(row, schema_sha256=key, cached=False)
 
+    def web_search(self, host):
+        """Stage 1 follow-up search (2026-11-20): one request with the web search tool and no output schema.
+        A provider 400 (for example web search disabled in the Console) fails this request without halting
+        the trial, like a grammar probe; every other failure keeps the usual halt."""
+        from . import web_search
+        web_search.validate(host)
+        payload = self.payload(web_search.SYSTEM, web_search.user_text(host), web_search.MAX_TOKENS)
+        payload['tools'] = [web_search.tool()]
+        return self._request('/v1/messages', payload, probe=True)
+
+    def web_search_probe(self):
+        """Paid, tiny request proving the provider accepts the web search tool for this key (Console setting).
+        The prompt asks for no search; max_uses 1 bounds the cost if one happens. Cached like grammar probes."""
+        from . import web_search
+        key = hashlib.sha256(('tool\n' + json.dumps(web_search.tool(1), sort_keys=True)).encode()).hexdigest()
+        path = self.root / 'grammar-probes.json'
+        rows = json.loads(path.read_text()) if path.is_file() else {}
+        if key in rows:
+            return dict(rows[key], schema_sha256=key, cached=True)
+        payload = self.payload(web_search.PROBE_SYSTEM, 'probe', PROBE_MAX_TOKENS)
+        payload['tools'] = [web_search.tool(1)]
+        try:
+            result = self._request('/v1/messages', payload, probe=True)
+            row = {'status':'passed', 'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
+                   'request_id':self.last_request_id, 'usage':result['usage']}
+        except TrialError:
+            state = self.budget.summary()
+            ledger = next((r for r in state['requests'] if r['id'] == self.last_request_id), None)
+            if state['halted'] or not ledger or ledger['status'] != 'failed' or ledger.get('error_code') != 'http_400':
+                raise
+            row = {'status':'rejected', 'at':datetime.now(ZoneInfo('Asia/Seoul')).isoformat(),
+                   'request_id':self.last_request_id, 'detail':ledger.get('error_detail')}
+        rows[key] = row
+        path.write_text(json.dumps(rows, ensure_ascii=False, indent=2) + '\n')
+        return dict(row, schema_sha256=key, cached=False)
+
     def message(self, system, user, max_tokens=4096, retry_failed_once=False, output_schema=None, preflight=False,
                 variant='baseline'):
         payload = self.payload(system, user, max_tokens, output_schema, variant)
@@ -775,7 +811,7 @@ def input_from_message(text):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('init','status','auth','run','resume','preflight','probe'))
+    parser.add_argument('command', choices=('init','status','auth','run','resume','preflight','probe','search'))
     parser.add_argument('--root', type=Path, default=Path.cwd())
     parser.add_argument('--model', default='claude-haiku-5-5')
     parser.add_argument('--retry-failed-once', action='store_true')
@@ -817,6 +853,8 @@ def main():
         result = ClaudeClient(folder, budget, configured_key(root)).grammar_probe(wire_format.research_wire_schema())
         print(json.dumps(dict(result, kind='research'), ensure_ascii=False))
         return 0 if result['status'] == 'passed' else 1
+    if args.command == 'search':
+        return search_command(root, folder, budget, args.input, parser)
     if not args.kind or not args.input:
         parser.error('run, preflight and topic probe require --kind and --input')
     input_path = args.input.resolve()
@@ -906,6 +944,36 @@ def main():
         (destination/'validation.json').write_text(json.dumps(failure,ensure_ascii=False,indent=2)+'\n')
         print(json.dumps({'status':'rejected_draft','cached':client.last_cached,'run_id':run_id,'usage':result.get('usage')}))
         return 1
+
+
+def search_command(root, folder, budget, input_arg, parser):
+    """Stage 1 follow-up search: prints the provider's result URLs; the caller decides what may be read."""
+    from . import web_search
+    if not input_arg:
+        parser.error('search requires --input')
+    input_path = input_arg.resolve()
+    if not input_path.is_relative_to(root) or input_path.stat().st_size > MAX_INPUT_FILE:
+        parser.error('input must be a bounded project-local file')
+    host = json.loads(input_path.read_text())
+    web_search.validate(host)
+    client = ClaudeClient(folder, budget, configured_key(root))
+    try:
+        result = client.web_search(host)
+    except TrialError as error:
+        print(json.dumps({'status':'search_failed','reason':str(error)[:120],'run_id':client.last_request_id}, ensure_ascii=False))
+        return 1
+    run_id = client.last_request_id
+    destination = folder/'runs'/run_id
+    if not destination.resolve().is_relative_to(folder.resolve()):
+        raise ValueError('output directory escapes trial root')
+    destination.mkdir(parents=True, exist_ok=True, mode=0o700)
+    urls = web_search.result_urls(result)
+    record = {'kind':'source_search', 'input':host, 'urls':urls, 'searches':web_search.searches_used(result),
+              'stop_reason':result.get('stop_reason'), 'usage':result.get('usage'), 'cached':client.last_cached}
+    (destination/'search-result.json').write_text(json.dumps(record, ensure_ascii=False, indent=2)+'\n')
+    print(json.dumps({'status':'search_done','run_id':run_id,'urls':urls,'searches':record['searches'],
+                      'cached':client.last_cached}, ensure_ascii=False))
+    return 0
 
 
 def rejection(result,error):

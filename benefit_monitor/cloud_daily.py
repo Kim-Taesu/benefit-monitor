@@ -323,6 +323,8 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         try:
             for kind in wire_format.WIRES:
                 if kind!='research':others[kind]=client.grammar_probe(wire_format.schema_for(kind,None))
+            # Stage 1 follow-up search (2026-11-20): proves the key may use the web search tool (Console setting).
+            others['web_search']=client.web_search_probe()
             for variant in VARIANTS:
                 if variant!='baseline':
                     others['festival:'+variant]=client.grammar_probe(wire_format.schema_for('festival',None),variant=variant)
