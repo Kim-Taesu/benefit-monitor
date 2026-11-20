@@ -6,6 +6,7 @@
 
 실제 저장소는 `~/personal/benefit-monitor/.maintenance/p0-source`입니다. 상위 폴더는 예전 사본입니다. 사용자 승인으로 그 프로젝트 하위 워크트리에서 작업할 수 있습니다. 명령은 선택한 Git 작업 트리 루트에서 실행합니다.
 
+- [실행 구조 — 매일 갱신 흐름·워크플로·데이터 저장소를 그림으로](docs/architecture.md)
 - [개선 단계와 완료 기준](docs/ai/improvement-phases.md)
 - [현재 진행·검증 기록](docs/ai/progress.md)
 - [브라우저 저장 범위(즐겨찾기·내 지역·방문 기록)](docs/ai/personalization.md)
@@ -87,7 +88,7 @@ API 키는 필요한 Actions step의 Secret 또는 승인된 로컬 경로로만
 
 ## 스케줄과 배포
 
-매일 03:20 KST부터 무료 Cloudflare Workers cron([`scheduler/cloudflare`](scheduler/cloudflare/README.md), 2026-11-20 승인)이 보건소(`health-notices.yml`) → 청약 일정(`subscriptions.yml`) → 일일 브리핑 수집(`briefing-pages.yml`)을 차례로 실행 요청하고, 수집이 끝나면 AI 실행과 승인 스냅샷 게시가 이어져 보통 05:00 전에 공개됩니다. GitHub 예약(00:07·00:12·00:37 KST)은 4~8시간 늦게 시작해 백업으로만 남고, 그날 이미 성공했으면 수집 없이 끝납니다. 장보기 기준가는 `grocery-baselines.yml`(주간)로 실행합니다. 화면은 새 공개 전까지 이전 목록을 "○○ 기준" 안내와 함께 보여 주고(항목별 기한은 그대로), 공개되면 크롤링·AI·게시 소요 시간을 한 줄로 보여 줍니다.
+매일 03:20 KST부터 무료 Cloudflare Workers cron([`scheduler/cloudflare`](scheduler/cloudflare/README.md), 2026-11-20 승인)이 보건소(`health-notices.yml`) → 청약 일정(`subscriptions.yml`) → 일일 브리핑 수집(`briefing-pages.yml`)을 차례로 실행 요청하고, 수집이 끝나면 AI 실행과 승인 스냅샷 게시가 이어져 보통 05:00 전에 공개됩니다. GitHub 예약(00:07·00:12·00:37 KST)은 4~8시간 늦게 시작해 백업으로만 남고, 그날 이미 성공했으면 수집 없이 끝납니다. 장보기 기준가는 `grocery-baselines.yml`(주간)로 실행합니다. 순서·트리거·저장 위치는 [실행 구조](docs/architecture.md)에 그림으로 정리했습니다. 화면은 새 공개 전까지 이전 목록을 "○○ 기준" 안내와 함께 보여 주고(항목별 기한은 그대로), 공개되면 크롤링·AI·게시 소요 시간을 한 줄로 보여 줍니다.
 
 운영 주소: https://kim-taesu.github.io/benefit-monitor/
 
