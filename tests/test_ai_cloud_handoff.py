@@ -29,13 +29,13 @@ class HandoffTests(unittest.TestCase):
         m = self.module()
         f = fixtures.CloudStateTests(); f.setUp(); self.addCleanup(f.doCleanups)
         f.session()
-        policy = dict(f.policy, expires_at=None, limit_revision=2)
+        policy = dict(f.policy, expires_at=None, limit_revision=3)
         from benefit_monitor.store import save, load
         save(f.root / 'public/ai-cloud-trial.json', policy)
         control = f.control
-        control.update(expires_at=None, limit_revision=2)
+        control.update(expires_at=None, limit_revision=3)
         control['budget'].pop('max_requests', None)
-        control['budget'].update(cap_kind='monthly', cap_microdollars=15_000_000)
+        control['budget'].update(cap_kind='monthly', cap_microdollars=30_000_000)
         import json
         _, sha = f.store().read('control'); f.store().write('control', json.dumps(control).encode(), sha)
         save(f.root / 'ai-automation.json', {'enabled': False})

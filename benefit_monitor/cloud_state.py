@@ -15,7 +15,7 @@ from .age_state import AgeState,pack_runtime,restore_runtime
 from .research_probe import NoRedirect
 from .store import save,load
 from .briefing import SEOUL
-from .trial_budget import TrialBudget,secure_open,MONTHLY_CAP
+from .trial_budget import TrialBudget,secure_open,MONTHLY_CAP,PREVIOUS_MONTHLY_CAP
 from scripts.install_age import safe_path
 
 REPOSITORY='Kim-Taesu/benefit-monitor'
@@ -30,7 +30,10 @@ BUDGET='.tools/claude-trial/live/budget.json'
 # Upper bound for pre-revision (limit_revision < 2) controls only; revision 2 has no expiry.
 MAX_EXPIRY=datetime.fromisoformat('2026-11-19T13:09:12.753468+09:00')
 # 2: monthly $15 cap, no request/day limit, no expiry (user-approved 2026-11-07).
-LIMIT_REVISION=2
+# 3: monthly $30 cap and up to 50 web searches a Seoul day, no expiry (user-approved 2026-11-20).
+LIMIT_REVISION=3
+# Monthly cap each no-expiry revision binds; earlier revisions use the legacy cumulative ledger.
+REVISION_CAPS={2:PREVIOUS_MONTHLY_CAP,3:MONTHLY_CAP}
 
 
 def requests_digest(rows):
@@ -60,13 +63,13 @@ def validate_control(root,data):
             if policy['expires_at'] is not None:
                 bound=datetime.fromisoformat(policy['expires_at'])
                 if bound.tzinfo is None or not expiry<=bound<=MAX_EXPIRY:raise ValueError
-        elif revision!=LIMIT_REVISION:raise ValueError
+        elif revision not in REVISION_CAPS:raise ValueError
         budget=data['budget'];TrialBudget(safe_path(root,BUDGET))._validate(budget)
         if (policy['model']!='claude-haiku-5-5' or budget['model']!=policy['model']
                 or len(budget['requests'])<30 or requests_digest(budget['requests'][:30])!=policy['baseline_requests_sha256']
                 or TrialBudget._exposure(budget)<policy['baseline_exposure_microdollars']):raise ValueError
-        if revision not in (0,1,LIMIT_REVISION):raise ValueError
-        if revision==LIMIT_REVISION and TrialBudget.is_legacy(budget):raise ValueError
+        if revision not in (0,1,*REVISION_CAPS):raise ValueError
+        if revision in REVISION_CAPS and (TrialBudget.is_legacy(budget) or budget['cap_microdollars']!=REVISION_CAPS[revision]):raise ValueError
         if revision==1 and budget.get('max_requests')!=200:raise ValueError
         if not isinstance(data['days'],dict):raise ValueError
         for day,row in data['days'].items():

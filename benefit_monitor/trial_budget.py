@@ -1,4 +1,4 @@
-"""Persistent, fail-closed reservation ledger: monthly $15 cap (user-approved 2026-11-07)."""
+"""Persistent, fail-closed reservation ledger: monthly $30 cap and 50 web searches a day (user-approved 2026-11-20)."""
 from contextlib import contextmanager
 from copy import deepcopy
 from datetime import datetime, timezone
@@ -14,7 +14,15 @@ import stat
 # 14 run days trial becomes a monthly cap. A month is the Asia/Seoul calendar month of a row's
 # `started_at`. Ledgers created under the earlier approvals (LEGACY_*) stay valid, their rows are
 # never reset or rewritten, and they are upgraded one way by CloudSession.apply_limit_revision().
-MONTHLY_CAP = 15_000_000  # microUSD per Seoul calendar month
+# User approval 2026-11-20 ("하루 50회 · 월 $30 (추천)"): the monthly cap rises to $30 and web search
+# (billed per search on top of tokens) is allowed up to 50 searches per Seoul day. Ledgers revised to
+# $15 stay valid until CloudSession.apply_limit_revision() raises their cap, one way.
+MONTHLY_CAP = 30_000_000  # microUSD per Seoul calendar month
+PREVIOUS_MONTHLY_CAP = 15_000_000  # limit revision 2 (2026-11-07)
+MONTHLY_CAPS = (PREVIOUS_MONTHLY_CAP, MONTHLY_CAP)
+WEB_SEARCH_MICRODOLLARS = 10_000  # $10 per 1,000 searches (Claude API price, 2026-11-20)
+DAILY_WEB_SEARCH_LIMIT = 50
+MAX_WEB_SEARCH_USES = 10  # per request
 LEGACY_CAP = 5_000_000
 LEGACY_MAX_REQUESTS = (200, 40)
 MAX_LEDGER_BYTES = 8 * 1024 * 1024
@@ -64,7 +72,7 @@ class TrialBudget:
                 if state['cap_microdollars'] != LEGACY_CAP or state['max_requests'] not in LEGACY_MAX_REQUESTS \
                         or len(state['requests']) > state['max_requests']:
                     raise ValueError
-            elif state['cap_kind'] != 'monthly' or 'max_requests' in state or state['cap_microdollars'] != MONTHLY_CAP:
+            elif state['cap_kind'] != 'monthly' or 'max_requests' in state or state['cap_microdollars'] not in MONTHLY_CAPS:
                 raise ValueError
             if (type(state['cap_microdollars']) is not int or state['version'] != 1
                     or type(state['halted']) is not bool
@@ -82,6 +90,9 @@ class TrialBudget:
                 for key in ('reserved_microdollars', 'charged_microdollars'):
                     if type(row[key]) is not int or row[key] < 0:
                         raise ValueError
+                uses = row.get('web_search_max_uses', 0)
+                if type(uses) is not int or not 0 <= uses <= MAX_WEB_SEARCH_USES:
+                    raise ValueError
             # Monthly ledgers: the cap is a pre-reservation check in reserve(), not an invariant over
             # past months (an overrun halts; resuming next month must stay possible). Rows still need
             # a valid started_at.
@@ -142,6 +153,26 @@ class TrialBudget:
             totals[key] = totals.get(key, 0) + cls._row_exposure(row)
         return totals
 
+    @staticmethod
+    def cap(state):
+        return LEGACY_CAP if TrialBudget.is_legacy(state) else state['cap_microdollars']
+
+    @staticmethod
+    def _row_searches(row):
+        """Searches a row may have used: settled rows report them; reserved or failed rows count their maximum."""
+        if row['status'] in ('completed', 'overrun'):
+            return int(((row.get('usage') or {}).get('server_tool_use') or {}).get('web_search_requests') or 0)
+        return row.get('web_search_max_uses', 0)
+
+    @classmethod
+    def day_web_searches(cls, state, now):
+        """Web searches counted against the Seoul calendar day of `now`."""
+        if now.tzinfo is None:
+            raise ValueError('timezone required')
+        day = now.astimezone(SEOUL).date()
+        return sum(cls._row_searches(r) for r in state['requests']
+                   if datetime.fromisoformat(r['started_at']).astimezone(SEOUL).date() == day)
+
     @classmethod
     def month_exposure(cls, state, now):
         """Exposure of rows whose started_at falls in the Seoul calendar month of `now`."""
@@ -155,17 +186,21 @@ class TrialBudget:
             now = datetime.now(timezone.utc)
             month = self.month_exposure(state, now)
             legacy = self.is_legacy(state)
+            cap = self.cap(state)
             return {**state, 'request_count':len(state['requests']),
                     'exposure_microdollars':self._exposure(state),
                     'remaining_microdollars':max(0, (LEGACY_CAP - self._exposure(state)) if legacy
-                                                 else MONTHLY_CAP - month),
+                                                 else cap - month),
                     'month_exposure_microdollars':month,
-                    'month_remaining_microdollars':max(0, MONTHLY_CAP - month),
+                    'month_remaining_microdollars':max(0, cap - month),
+                    'day_web_searches':self.day_web_searches(state, now),
                     'confirmed_microdollars':sum(r['charged_microdollars'] for r in state['requests'])}
 
-    def reserve(self, request_id, amount, now=None):
+    def reserve(self, request_id, amount, now=None, web_search_uses=0):
         now = now or datetime.now(timezone.utc)
         if not re.fullmatch('[0-9a-f]{64}', request_id) or type(amount) is not int or not 0 <= amount <= MONTHLY_CAP:
+            raise ValueError('invalid reservation')
+        if type(web_search_uses) is not int or not 0 <= web_search_uses <= MAX_WEB_SEARCH_USES:
             raise ValueError('invalid reservation')
         with self._locked() as state:
             existing = next((r for r in state['requests'] if r['id'] == request_id), None)
@@ -176,10 +211,17 @@ class TrialBudget:
             if self.is_legacy(state):  # not yet revised: the original cumulative rules still bind
                 if len(state['requests']) >= state['max_requests'] or self._exposure(state) + amount > LEGACY_CAP:
                     raise ValueError('trial budget exhausted')
-            elif self.month_exposure(state, now) + amount > MONTHLY_CAP:
+            elif self.month_exposure(state, now) + amount > state['cap_microdollars']:
                 raise ValueError('monthly budget exhausted')
+            if web_search_uses:
+                if self.is_legacy(state) or state['cap_microdollars'] != MONTHLY_CAP:
+                    raise ValueError('web search needs the 2026-11-20 limit revision')
+                if self.day_web_searches(state, now) + web_search_uses > DAILY_WEB_SEARCH_LIMIT:
+                    raise ValueError('daily web search limit reached')
             row = dict(id=request_id, status='reserved', reserved_microdollars=amount,
                        charged_microdollars=0, started_at=now.isoformat())
+            if web_search_uses:
+                row['web_search_max_uses'] = web_search_uses
             state['requests'].append(row)
             return dict(row)
 
@@ -209,7 +251,7 @@ class TrialBudget:
     def exhausted(cls, state, now):
         if cls.is_legacy(state):
             return cls._exposure(state) >= LEGACY_CAP
-        return cls.month_exposure(state, now) >= MONTHLY_CAP
+        return cls.month_exposure(state, now) >= state['cap_microdollars']
 
     def resume_after_review(self):
         """Explicit operator review; retains every failure and reserved dollar."""

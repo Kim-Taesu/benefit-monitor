@@ -39,7 +39,7 @@ flowchart TB
     ai -->|"⑥ dispatch"| deploy["briefing-pages.yml<br/>run-name: 승인 스냅샷 게시"]
   end
 
-  claude[("🤖 Claude API · Haiku 5.5 · 월 $15 원장")]:::ai
+  claude[("🤖 Claude API · Haiku 5.5 · 월 $30 원장")]:::ai
 
   subgraph OUT["저장 · 공개"]
     direction LR
@@ -65,7 +65,7 @@ flowchart TB
 | 예약 | Cloudflare Workers 무료 cron 1개(`scheduler/cloudflare`) — 워크플로 실행 요청만 함 | 무료 플랜, 결제 정보 없음 |
 | 실행 | GitHub Actions 표준 러너 | 공개 저장소 무료 |
 | 수집 | Python 표준 라이브러리, 공식 익명 HTTPS | 0 |
-| AI | 승인된 Claude 호출만, Haiku 5.5 고정 | 월 $15 원장 상한(사용자가 직접 충전) |
+| AI | 승인된 Claude 호출만, Haiku 5.5 고정 | 월 $30 원장 상한(2026-11-20 상향, 사용자가 직접 충전) |
 | 저장 | 같은 저장소의 `briefing-data` 브랜치 | 0 |
 | 공개 | GitHub Pages | 0 |
 
@@ -413,7 +413,7 @@ mindmap
       공개 저장소일 때만 실행
       BENEFIT_PAGES_ZERO_SPEND 변수 확인
       요청 전 비용 영속 예약
-      월 15달러 원장 상한
+      월 30달러 원장 상한
       자동 충전 없음
     동시성
       benefit-pages 그룹 공유
