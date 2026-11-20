@@ -1,157 +1,10 @@
 {
   "schema_version": 1,
   "source": "subscriptions",
-  "fetched_at": "2026-11-20T07:40:48.788101+09:00",
+  "fetched_at": "2026-11-21T07:13:38.948603+09:00",
   "window_days": 14,
   "notice": "청약홈(한국부동산원) 청약 달력과 입주자모집공고 요약을 옮겼습니다. 신청 자격·당첨 가능성·층·호별 금액은 확인하지 않았으니 신청 전 모집공고문에서 확인하세요.",
   "items": [
-    {
-      "id": "2026940260",
-      "name": "더샵 분당센트로(7차)",
-      "area": "경기",
-      "kind": "remain",
-      "supply": "임의공급",
-      "steps": [
-        {
-          "label": "임의공급 접수",
-          "start": "2026-11-20",
-          "end": "2026-11-24"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
-      "district": "성남시 분당구",
-      "units": 6,
-      "area_min": 78.44,
-      "area_max": 84.08,
-      "price_min": null,
-      "price_max": null,
-      "move_in": "2027-04",
-      "regulation": [],
-      "announce": "2026-11-27",
-      "contract_start": "2026-11-28",
-      "contract_end": "2026-11-28",
-      "notice_date": "2026-11-17",
-      "types": [
-        {
-          "label": "78N",
-          "area": 78.44,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        },
-        {
-          "label": "84N",
-          "area": 84.08,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940260&pblancNo=2026940260&atchmnflSeqNo=2022286&atchmnflSn=2",
-      "trade_status": "checked"
-    },
-    {
-      "id": "2026940249",
-      "name": "야목역 서희스타힐스 그랜드힐(조합원 취소분)(2차)",
-      "area": "경기",
-      "kind": "remain",
-      "supply": "임의공급",
-      "steps": [
-        {
-          "label": "임의공급 접수",
-          "start": "2026-11-17",
-          "end": "2026-11-23"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
-      "district": "화성특례시 효행구",
-      "units": 13,
-      "area_min": 84.95,
-      "area_max": 84.96,
-      "price_min": null,
-      "price_max": null,
-      "move_in": "2029-10",
-      "regulation": [],
-      "announce": "2026-11-26",
-      "contract_start": "2026-11-27",
-      "contract_end": "2026-11-27",
-      "notice_date": "2026-11-13",
-      "types": [
-        {
-          "label": "84A",
-          "area": 84.95,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        },
-        {
-          "label": "84B",
-          "area": 84.96,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940249&pblancNo=2026940249&atchmnflSeqNo=2017043&atchmnflSn=3",
-      "trade_status": "unavailable"
-    },
-    {
-      "id": "2026940263",
-      "name": "이천역 예미지 센트럴파크(4차)",
-      "area": "경기",
-      "kind": "remain",
-      "supply": "임의공급",
-      "steps": [
-        {
-          "label": "임의공급 접수",
-          "start": "2026-11-20",
-          "end": "2026-11-20"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-18T07:54:19.731866+09:00",
-      "district": "이천시 중리지구",
-      "units": 15,
-      "area_min": 84.79,
-      "area_max": 84.79,
-      "price_min": null,
-      "price_max": null,
-      "move_in": "2026-11",
-      "regulation": [],
-      "announce": "2026-11-25",
-      "contract_start": "2026-11-26",
-      "contract_end": "2026-11-26",
-      "notice_date": "2026-11-18",
-      "types": [
-        {
-          "label": "84A",
-          "area": 84.79,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940263&pblancNo=2026940263&atchmnflSeqNo=2027110&atchmnflSn=2",
-      "trade_status": "unavailable"
-    },
     {
       "id": "2026940261",
       "name": "e편한세상 헤이리",
@@ -318,6 +171,58 @@
       "trade_status": "unavailable"
     },
     {
+      "id": "2026940260",
+      "name": "더샵 분당센트로(7차)",
+      "area": "경기",
+      "kind": "remain",
+      "supply": "임의공급",
+      "steps": [
+        {
+          "label": "임의공급 접수",
+          "start": "2026-11-20",
+          "end": "2026-11-24"
+        }
+      ],
+      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "detail": "checked",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
+      "district": "성남시 분당구",
+      "units": 6,
+      "area_min": 78.44,
+      "area_max": 84.08,
+      "price_min": null,
+      "price_max": null,
+      "move_in": "2027-04",
+      "regulation": [],
+      "announce": "2026-11-27",
+      "contract_start": "2026-11-28",
+      "contract_end": "2026-11-28",
+      "notice_date": "2026-11-17",
+      "types": [
+        {
+          "label": "78N",
+          "area": 78.44,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        },
+        {
+          "label": "84N",
+          "area": 84.08,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        }
+      ],
+      "special_kinds": [],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940260&pblancNo=2026940260&atchmnflSeqNo=2022286&atchmnflSn=2",
+      "trade_status": "checked"
+    },
+    {
       "id": "2026000457",
       "name": "부천대장 하우스토리 디센트(부천대장지구 A2BL) 공공분양주택",
       "area": "경기",
@@ -342,7 +247,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000457&pblancNo=2026000457",
       "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
       "district": "부천시 오정구",
       "units": 548,
       "area_min": 59.71,
@@ -462,7 +367,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000576&pblancNo=2026000576",
       "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
       "district": "안산시 상록구",
       "units": 984,
       "area_min": 84.87,
@@ -557,8 +462,60 @@
           "count": 24
         }
       ],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000576&pblancNo=2026000576&atchmnflSeqNo=2023060&atchmnflSn=2",
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000576&pblancNo=2026000576&atchmnflSeqNo=2023060&atchmnflSn=3",
       "trade_status": "checked"
+    },
+    {
+      "id": "2026940249",
+      "name": "야목역 서희스타힐스 그랜드힐(조합원 취소분)(2차)",
+      "area": "경기",
+      "kind": "remain",
+      "supply": "임의공급",
+      "steps": [
+        {
+          "label": "임의공급 접수",
+          "start": "2026-11-17",
+          "end": "2026-11-23"
+        }
+      ],
+      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "detail": "checked",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
+      "district": "화성특례시 효행구",
+      "units": 13,
+      "area_min": 84.95,
+      "area_max": 84.96,
+      "price_min": null,
+      "price_max": null,
+      "move_in": "2029-10",
+      "regulation": [],
+      "announce": "2026-11-26",
+      "contract_start": "2026-11-27",
+      "contract_end": "2026-11-27",
+      "notice_date": "2026-11-13",
+      "types": [
+        {
+          "label": "84A",
+          "area": 84.95,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        },
+        {
+          "label": "84B",
+          "area": 84.96,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        }
+      ],
+      "special_kinds": [],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940249&pblancNo=2026940249&atchmnflSeqNo=2017043&atchmnflSn=3",
+      "trade_status": "unavailable"
     },
     {
       "id": "2026930045",
@@ -580,7 +537,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
       "district": "송파구",
       "units": 3,
       "area_min": 43.73,
@@ -663,7 +620,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000560&pblancNo=2026000560",
       "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
       "district": "영등포구",
       "units": 218,
       "area_min": 84.94,
@@ -1023,7 +980,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000505&pblancNo=2026000505",
       "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
       "district": "종로구",
       "units": 134,
       "area_min": 39.93,
@@ -1121,7 +1078,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-17T18:07:23.589942+09:00",
+      "checked_at": "2026-11-21T07:13:38.948603+09:00",
       "district": "중랑구",
       "units": 74,
       "area_min": 20.16,
