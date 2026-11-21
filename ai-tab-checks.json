@@ -2,6 +2,16 @@
   "schema_version": 1,
   "notices": [
     {
+      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585776&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+      "title": "청년마음건강센터 기간제근로자 1차 서류전형 합격자 발표 및 2차 면접심사 안내 공고",
+      "reason": "result"
+    },
+    {
+      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585763&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+      "title": "성북구보건소 AI IoT기반 어르신 건강관리사업 기간제 근로자 채용 서류전형 합격자발표 및 면접시험 안내",
+      "reason": "result"
+    },
+    {
       "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585626&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
       "title": "2026년 서울체력장 성북센터 운영 기간제근로자(운동사) 채용공고",
       "reason": "recruitment"
@@ -22,13 +32,13 @@
       "reason": "result"
     },
     {
-      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9584434&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
-      "title": "바른식생활교육 및 영양플러스사업 기간제근로자(영양사) 1차 서류심사 합격자 명단 및 2차 면접안내",
-      "reason": "result"
-    },
-    {
       "url": "https://www.guro.go.kr/health/selectBbsNttView.do?bbsNo=578&nttNo=241105&&pageUnit=10&key=1304&pageIndex=1",
       "title": "서울특별시 구로구 보건소 시간선택제임기제공무원[금연상담사, 대사증후군관리 상담사(영양사)]채용 공고",
+      "reason": "recruitment"
+    },
+    {
+      "url": "https://www.ydp.go.kr/health/selectBbsNttView.do?bbsNo=317&nttNo=421633&&pageUnit=10&key=3723&pageIndex=1",
+      "title": "영등포구 어린이·사회복지급식관리지원센터 직원(계약직) 모집공고(출산휴가 및 육아휴직 대체자) - 기간연장",
       "reason": "recruitment"
     },
     {
