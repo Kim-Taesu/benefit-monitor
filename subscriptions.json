@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "subscriptions",
-  "fetched_at": "2026-11-21T07:13:38.948603+09:00",
+  "fetched_at": "2026-11-22T05:54:07.736486+09:00",
   "window_days": 14,
   "notice": "청약홈(한국부동산원) 청약 달력과 입주자모집공고 요약을 옮겼습니다. 신청 자격·당첨 가능성·층·호별 금액은 확인하지 않았으니 신청 전 모집공고문에서 확인하세요.",
   "items": [
@@ -72,7 +72,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-18T07:54:19.731866+09:00",
+      "checked_at": "2026-11-22T05:54:07.736486+09:00",
       "district": "광명시",
       "units": 30,
       "area_min": 84.85,
