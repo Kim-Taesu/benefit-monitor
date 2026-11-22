@@ -243,7 +243,7 @@ sequenceDiagram
   participant GP as GitHub Pages
   R->>BD: mirror --restore (공개 JSON·승인 목록·탭별 JSON, sha 임대 기록)
   R->>R: publish --prepare-import
-  R->>O: cli --online (요청 예산 95/100, robots·TLS·허용 호스트)
+  R->>O: cli --online ① 자동 공개 항목 원문 재확인 ② 출처 수집 (같은 요청 예산 95/100, robots·TLS·허용 호스트)
   R->>R: publish → delivery/public/briefing.json
   R->>BD: collection_snapshot --upload (age 암호화)
   R->>BD: mirror --save-ai (재확인 시각·철회만)
@@ -341,6 +341,7 @@ flowchart TD
 ```
 
 - 판정 코드: [`auto_publish.decide`](../benefit_monitor/auto_publish.py), 철회·재확인: [`auto_release.py`](../benefit_monitor/auto_release.py).
+- 매일 재확인은 수집과 AI 단계보다 **먼저** 돕니다(최대 20건, 6시간 안에 확인한 항목은 건너뜀). 이미 공개된 항목은 마지막 확인 뒤 30시간이 지나면 화면에서 빠지기 때문입니다. 예산이 모자라 확인하지 못한 항목은 `report.json`의 `body_check_failures`에 `budget_exhausted`로 남습니다(2026-11-22: 재확인을 맨 뒤에 하던 때 예산이 바닥나 공개 기간이 남은 항목들이 빠짐).
 - 축제·장보기·보건소·청약은 검증 혜택과 다른 별도 채널입니다. 모델 문장은 승인된 필드(`grocery_pick`, `health_notes[].sentence`, `festival_pick`, `benefit_pick`, `subscription_pick`)에만 “AI 작성” 표시와 함께 들어가고, 실패하면 규칙 카드·링크로 대체합니다.
 
 ---
