@@ -16,8 +16,8 @@ from .trial_budget import secure_open
 # and stopped every paid step. The real storage bound is the 8 MiB encrypted file, which is unchanged.
 MAX_RUNTIME_BYTES=64*1024*1024
 # Daily multi-document research retains several small artifacts per request.
-# Keep the same 32 MiB expanded / 8 MiB encrypted bounds; allow more small files.
-MAX_FILES=8192
+# The file count has a separate limit from the expanded and encrypted byte limits.
+MAX_FILES=16384
 CONTROL_FILES={'.tools/claude-trial/live/budget.json','cache/ai_daily/days.json'}
 FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs/',
          'cache/ai_review/','cache/ai_topics/','cache/ai_daily/','cache/ai_publish/',
