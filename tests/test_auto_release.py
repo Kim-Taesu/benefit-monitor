@@ -396,8 +396,37 @@ class RecheckTests(Base):
                 self.assertEqual(errors[0]['item_id'], CID)
         cost_policy.reset(1)
         (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
-        _, calls = self.check({CID: record()})
+        errors, calls = self.check({CID: record()})
         self.assertEqual(calls, [])
+        # Left unchecked for lack of budget: reported, because the record leaves the page 30 hours later.
+        self.assertEqual(errors, [dict(source='test', item_id=CID, error_type='BudgetExhausted', category='budget_exhausted')])
+
+    def test_daily_run_rechecks_before_collection_uses_the_budget(self):
+        # 2026-11-22: rechecked after collection and the AI stages, records ran out of budget and expired.
+        import io
+        from benefit_monitor.cli import run
+        save(self.root / 'sources.yaml', dict(sources=[dict(SOURCE, html_url='https://official.example/')], max_age_days=7,
+                                              max_http_requests=60))
+        order = []
+
+        class Response(io.BytesIO):
+            headers = {'Content-Type': 'text/html; charset=utf-8'}
+
+        def network(request):
+            order.append(request.full_url)
+            return Response(b'User-agent: *\nAllow: /' if request.full_url.endswith('/robots.txt') else BODY.encode())
+
+        def collection(source):
+            order.append('collection')
+            cost_policy.budget.used = cost_policy.budget.limit  # collection takes everything that is left
+            return []
+        later = NOW + timedelta(hours=7)
+        with patch('benefit_monitor.official_reader.network_open', side_effect=network), \
+                patch('benefit_monitor.cli.collect_html', side_effect=collection):
+            report = run(self.root, online=True, now=later)
+        self.assertEqual(order, ['https://official.example/robots.txt', 'https://official.example/ai/1', 'collection'])
+        self.assertEqual(auto_release.load(self.root)[0][CID]['review']['checked_at'], later.isoformat())
+        self.assertEqual(report['body_check_failures'], [])
 
     def test_robots_refusal_never_withdraws(self):
         import io

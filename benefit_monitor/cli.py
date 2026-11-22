@@ -43,6 +43,17 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         handoffs, failures = [], []
         district_coverage = []
         successful_sources = []
+        # AI auto-published records are rechecked first, every day and even when the AI run fails: keeping
+        # what is already public comes before collection and the AI stages in the shared HTTP budget
+        # (2026-11-22: rechecked last, they ran out of budget and expired after 30 hours).
+        auto_failures = []
+        if online:
+            from . import auto_release
+            auto_approved, auto_takedowns = auto_release.load(root)
+            if auto_approved:
+                from .official_reader import OfficialReader
+                auto_failures = operations.check_auto(auto_approved, auto_takedowns, sources, now, OfficialReader(root, now))
+                auto_release.save_approved(root, auto_approved)
         with obs.span('collection','source_collection') as observation:
             if snapshot is not None:
                 # Today's free collection (collection_snapshot): no listing request is repeated.
@@ -151,17 +162,8 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
             for cid in ai_result['changed_ids']:
                 operational_state.setdefault('items',{}).setdefault(cid,{}).update(
                     hold_at=now.isoformat(),hold_reason='body_changed')
-        # AI auto-published records are rechecked here every day, even when the AI run fails.
-        from . import auto_release
-        auto_approved, auto_takedowns = auto_release.load(root) if online else ({}, [])
-        auto_reader = None
-        if auto_approved:
-            from .official_reader import OfficialReader
-            auto_reader = OfficialReader(root, now)
-        body_failures = operations.check_bodies(operational_state, explicit_items, sources, now, config.get("body_checks_per_run", 0),
-                                                auto=auto_approved, takedowns=auto_takedowns, reader=auto_reader) if online else []
-        if auto_approved:
-            auto_release.save_approved(root, auto_approved)
+        body_failures = auto_failures + (operations.check_bodies(operational_state, explicit_items, sources, now,
+                                                                 config.get("body_checks_per_run", 0)) if online else [])
         explicit_items = operations.observe(operational_state, [], explicit_items, now)
         if len({i.id for i in explicit_items}) != len(explicit_items):
             raise ValueError("Duplicate imported URL")

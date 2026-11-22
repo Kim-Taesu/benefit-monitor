@@ -106,27 +106,34 @@ def check_bodies(state,items,sources,now,limit,auto=None,takedowns=(),reader=Non
     """
     errors=[]
     _check_human(state,items,sources,now,limit,errors)
-    if auto and reader is not None:errors+=_check_auto(auto,takedowns,sources,now,reader)
+    if auto and reader is not None:errors+=check_auto(auto,takedowns,sources,now,reader)
     return errors
 
 
 GONE_CODES=(401,403,404,410,451)
 
 
-def _check_auto(approved,takedowns,sources,now,reader):
-    """Exact body hash of each record's original official page (the hash the AI decision used)."""
+def check_auto(approved,takedowns,sources,now,reader):
+    """Exact body hash of each record's original official page (the hash the AI decision used).
+
+    cli.run calls this before collection. A record left unchecked for lack of budget is reported
+    (category 'budget_exhausted'), since it disappears from the page 30 hours after its last check."""
     from urllib.error import HTTPError
     from urllib.parse import urlsplit
     from .auto_release import mark_checked,recheck_targets
     from .research_probe import RedirectBlocked
     from . import cost_policy
     errors=[]
-    for cid in recheck_targets(approved,takedowns,sources,now):
+    targets=recheck_targets(approved,takedowns,sources,now)
+    for n,cid in enumerate(targets):
         record=approved[cid]
         # One page request each; robots.txt is fetched once per host and cached by the reader.
         host=reader.state['hosts'].get(urlsplit(record['url']).netloc,{})
         need=1+(now.timestamp()>=host.get('robots_until',0))
-        if cost_policy.budget.limit-cost_policy.budget.used<need:break
+        if cost_policy.budget.limit-cost_policy.budget.used<need:
+            errors+=[dict(source=approved[c].get('source'),item_id=c,error_type='BudgetExhausted',category='budget_exhausted')
+                     for c in targets[n:]]
+            break
         try:
             try:doc=reader.read({'source':record['source'],'url':record['url']},cooldown_on_failure=False)
             except HTTPError as e:
