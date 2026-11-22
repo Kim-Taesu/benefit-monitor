@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "grocery_baselines",
-  "fetched_at": "2026-11-16T04:42:15.110845+09:00",
+  "fetched_at": "2026-11-23T05:39:53.056463+09:00",
   "items": [
     {
       "id": "pork_belly",
@@ -17,14 +17,14 @@
         "id": "4304-27-삼겹살"
       },
       "baseline": {
-        "avg": 2901,
+        "avg": 2896,
         "months": 4,
         "from": "2026-07",
         "to": "2026-11",
         "unit": "원/100g",
         "kind": null,
         "grade": null,
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -41,14 +41,14 @@
         "id": "4304-68-목심"
       },
       "baseline": {
-        "avg": 2717,
+        "avg": 2711,
         "months": 4,
         "from": "2026-07",
         "to": "2026-11",
         "unit": "원/100g",
         "kind": null,
         "grade": null,
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -65,14 +65,14 @@
         "id": "4304-25-앞다리"
       },
       "baseline": {
-        "avg": 1618,
+        "avg": 1614,
         "months": 4,
         "from": "2026-07",
         "to": "2026-11",
         "unit": "원/100g",
         "kind": null,
         "grade": null,
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -89,14 +89,14 @@
         "id": "4301-22-등심 1등급"
       },
       "baseline": {
-        "avg": 11084,
+        "avg": 11120,
         "months": 4,
         "from": "2026-07",
         "to": "2026-11",
         "unit": "원/100g",
         "kind": null,
         "grade": null,
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -113,14 +113,14 @@
         "id": "4401-37-갈비살(냉장) 미국산"
       },
       "baseline": {
-        "avg": 5248,
+        "avg": 5282,
         "months": 4,
         "from": "2026-07",
         "to": "2026-11",
         "unit": "원/100g",
         "kind": null,
         "grade": null,
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -137,14 +137,14 @@
         "id": "9901-99-육계(kg)"
       },
       "baseline": {
-        "avg": 5838,
+        "avg": 5808,
         "months": 4,
         "from": "2026-07",
         "to": "2026-11",
         "unit": "원/kg",
         "kind": null,
         "grade": null,
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -161,14 +161,14 @@
         "id": "9903-23-XL30구 일반란"
       },
       "baseline": {
-        "avg": 7184,
+        "avg": 7182,
         "months": 4,
         "from": "2026-07",
         "to": "2026-11",
         "unit": "원/30구",
         "kind": null,
         "grade": null,
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -191,7 +191,7 @@
         "unit": "1포기",
         "kind": "가을",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -214,7 +214,7 @@
         "unit": "1개",
         "kind": "가을",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -236,7 +236,7 @@
         "unit": "1kg",
         "kind": "양파",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -259,7 +259,7 @@
         "unit": "1kg",
         "kind": "대파",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -282,7 +282,7 @@
         "unit": "100g",
         "kind": "수미(노지)",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -304,7 +304,7 @@
         "unit": "1kg",
         "kind": "무세척(국산)",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -327,7 +327,7 @@
         "unit": "10개",
         "kind": "다다기계통",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -350,7 +350,7 @@
         "unit": "1개",
         "kind": "애호박",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -373,7 +373,7 @@
         "unit": "100g",
         "kind": "적",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -395,7 +395,7 @@
         "unit": "100g",
         "kind": "시금치",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -417,7 +417,7 @@
         "unit": "1봉",
         "kind": "풀무원 국산콩 콩나물 340g",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -440,7 +440,7 @@
         "unit": "1kg",
         "kind": "깐마늘(국산)",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -463,7 +463,7 @@
         "unit": "20kg",
         "kind": "전체(쌀20KG)",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -485,7 +485,7 @@
         "unit": "1개",
         "kind": "풀무원 국산콩 300g×2",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -508,7 +508,7 @@
         "unit": "10개",
         "kind": "후지",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -530,7 +530,7 @@
         "unit": "100g",
         "kind": "수입",
         "grade": "상품",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -553,7 +553,7 @@
         "unit": "1마리",
         "kind": "국산(신선 냉장)",
         "grade": "大",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     },
     {
@@ -576,7 +576,7 @@
         "unit": "1마리",
         "kind": "연근해(냉동)",
         "grade": "大",
-        "checked_at": "2026-11-16"
+        "checked_at": "2026-11-23"
       }
     }
   ]
