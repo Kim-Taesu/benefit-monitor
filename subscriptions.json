@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "subscriptions",
-  "fetched_at": "2026-11-22T05:54:07.736486+09:00",
+  "fetched_at": "2026-11-23T03:31:01.150638+09:00",
   "window_days": 14,
   "notice": "청약홈(한국부동산원) 청약 달력과 입주자모집공고 요약을 옮겼습니다. 신청 자격·당첨 가능성·층·호별 금액은 확인하지 않았으니 신청 전 모집공고문에서 확인하세요.",
   "items": [
@@ -20,7 +20,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-19T07:35:42.779083+09:00",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
       "district": "파주시",
       "units": 15,
       "area_min": 84.96,
@@ -133,7 +133,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-19T07:35:42.779083+09:00",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
       "district": "광주시",
       "units": 2,
       "area_min": 59.77,
@@ -709,7 +709,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-19T07:35:42.779083+09:00",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
       "district": "강동구",
       "units": 13,
       "area_min": 59.59,
@@ -852,11 +852,7 @@
           "general": null,
           "special": null,
           "price": null,
-          "trade": {
-            "amount": 70970,
-            "month": "2026-11",
-            "kind": "분양권"
-          }
+          "trade": null
         },
         {
           "label": "75B",
@@ -865,11 +861,7 @@
           "general": null,
           "special": null,
           "price": null,
-          "trade": {
-            "amount": 70970,
-            "month": "2026-11",
-            "kind": "분양권"
-          }
+          "trade": null
         },
         {
           "label": "84A",
@@ -892,7 +884,7 @@
       ],
       "special_kinds": [],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940264&pblancNo=2026940264&atchmnflSeqNo=2022302&atchmnflSn=2",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026940258",
@@ -1167,7 +1159,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000585&pblancNo=2026000585",
       "detail": "checked",
-      "checked_at": "2026-11-19T07:35:42.779083+09:00",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
       "district": "고양시 덕양구",
       "units": 102,
       "area_min": 59.87,
@@ -1237,6 +1229,137 @@
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000585&pblancNo=2026000585&atchmnflSeqNo=2021027&atchmnflSn=5",
       "trade_status": "checked"
+    },
+    {
+      "id": "2026910304",
+      "name": "더샵 분당하이스트(2차)",
+      "area": "경기",
+      "kind": "remain",
+      "supply": "무순위(사후접수)",
+      "steps": [
+        {
+          "label": "무순위 접수",
+          "start": "2026-11-30",
+          "end": "2026-11-30"
+        }
+      ],
+      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "detail": "checked",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "district": "성남시 분당구",
+      "units": 34,
+      "area_min": 74.0,
+      "area_max": 84.64,
+      "price_min": null,
+      "price_max": null,
+      "move_in": "2027-12",
+      "regulation": [],
+      "announce": "2026-12-03",
+      "contract_start": "2026-12-05",
+      "contract_end": "2026-12-05",
+      "notice_date": "2026-11-23",
+      "types": [
+        {
+          "label": "74A",
+          "area": 74.0,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        },
+        {
+          "label": "74D",
+          "area": 74.44,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        },
+        {
+          "label": "84A",
+          "area": 84.0,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        },
+        {
+          "label": "84C",
+          "area": 84.0,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        },
+        {
+          "label": "84G",
+          "area": 84.64,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        }
+      ],
+      "special_kinds": [],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910304&pblancNo=2026910304&atchmnflSeqNo=2027367&atchmnflSn=2",
+      "trade_status": "checked"
+    },
+    {
+      "id": "2026910303",
+      "name": "동탄신도시 금강펜테리움 7차 센트럴파크(2차)",
+      "area": "경기",
+      "kind": "remain",
+      "supply": "무순위(사후접수)",
+      "steps": [
+        {
+          "label": "무순위 접수",
+          "start": "2026-11-30",
+          "end": "2026-11-30"
+        }
+      ],
+      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "detail": "checked",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "district": "화성시 동탄구",
+      "units": 4,
+      "area_min": 84.93,
+      "area_max": 84.97,
+      "price_min": null,
+      "price_max": null,
+      "move_in": "2027-01",
+      "regulation": [],
+      "announce": "2026-12-03",
+      "contract_start": "2026-12-10",
+      "contract_end": "2026-12-10",
+      "notice_date": "2026-11-23",
+      "types": [
+        {
+          "label": "84A",
+          "area": 84.97,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        },
+        {
+          "label": "84B",
+          "area": 84.93,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        }
+      ],
+      "special_kinds": [],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910303&pblancNo=2026910303&atchmnflSeqNo=2027407&atchmnflSn=5",
+      "trade_status": "unavailable"
     },
     {
       "id": "2026000591",
@@ -1466,6 +1589,146 @@
         }
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000575&pblancNo=2026000575&atchmnflSeqNo=2027378&atchmnflSn=2",
+      "trade_status": "checked"
+    },
+    {
+      "id": "2026850057",
+      "name": "의왕 백운밸리 리젠시빌 란트",
+      "area": "경기",
+      "kind": "rental",
+      "supply": "공공지원민간임대",
+      "steps": [
+        {
+          "label": "청약 접수",
+          "start": "2026-11-30",
+          "end": "2026-11-30"
+        }
+      ],
+      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "detail": "checked",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "district": "의왕시",
+      "units": 130,
+      "area_min": 59.96,
+      "area_max": 74.97,
+      "price_min": 35100,
+      "price_max": 59300,
+      "move_in": "2029-05",
+      "regulation": [],
+      "announce": "2026-12-03",
+      "contract_start": "2026-12-09",
+      "contract_end": "2026-12-10",
+      "notice_date": "2026-11-23",
+      "types": [
+        {
+          "label": "59A",
+          "area": 59.98,
+          "pyeong": null,
+          "general": 0,
+          "special": 0,
+          "price": 51000,
+          "trade": null
+        },
+        {
+          "label": "59AT",
+          "area": 59.98,
+          "pyeong": null,
+          "general": 4,
+          "special": 0,
+          "price": 37000,
+          "trade": null
+        },
+        {
+          "label": "59B",
+          "area": 59.96,
+          "pyeong": null,
+          "general": 0,
+          "special": 0,
+          "price": 51000,
+          "trade": null
+        },
+        {
+          "label": "59BT",
+          "area": 59.96,
+          "pyeong": null,
+          "general": 2,
+          "special": 0,
+          "price": 35100,
+          "trade": null
+        },
+        {
+          "label": "59C",
+          "area": 59.96,
+          "pyeong": null,
+          "general": 0,
+          "special": 0,
+          "price": 49900,
+          "trade": null
+        },
+        {
+          "label": "59CT",
+          "area": 59.96,
+          "pyeong": null,
+          "general": 12,
+          "special": 6,
+          "price": 37800,
+          "trade": null
+        },
+        {
+          "label": "74",
+          "area": 74.97,
+          "pyeong": null,
+          "general": 0,
+          "special": 0,
+          "price": 59300,
+          "trade": null
+        }
+      ],
+      "special_kinds": [],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026850057&pblancNo=2026850057&atchmnflSeqNo=2021998&atchmnflSn=5",
+      "trade_status": "checked"
+    },
+    {
+      "id": "2026910305",
+      "name": "판교TH212(2차)",
+      "area": "경기",
+      "kind": "remain",
+      "supply": "무순위(사후접수)",
+      "steps": [
+        {
+          "label": "무순위 접수",
+          "start": "2026-11-30",
+          "end": "2026-11-30"
+        }
+      ],
+      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "detail": "checked",
+      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "district": "성남시 분당구",
+      "units": 1,
+      "area_min": 128.83,
+      "area_max": 128.83,
+      "price_min": null,
+      "price_max": null,
+      "move_in": "2027-01",
+      "regulation": [],
+      "announce": "2026-12-03",
+      "contract_start": "2026-12-10",
+      "contract_end": "2026-12-10",
+      "notice_date": "2026-11-23",
+      "types": [
+        {
+          "label": "128C",
+          "area": 128.83,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": null,
+          "trade": null
+        }
+      ],
+      "special_kinds": [],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910305&pblancNo=2026910305&atchmnflSeqNo=2023020&atchmnflSn=4",
       "trade_status": "checked"
     }
   ]
