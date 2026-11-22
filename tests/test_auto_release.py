@@ -401,8 +401,10 @@ class RecheckTests(Base):
         # Left unchecked for lack of budget: reported, because the record leaves the page 30 hours later.
         self.assertEqual(errors, [dict(source='test', item_id=CID, error_type='BudgetExhausted', category='budget_exhausted')])
 
-    def test_daily_run_rechecks_before_collection_uses_the_budget(self):
-        # 2026-11-22: rechecked after collection and the AI stages, records ran out of budget and expired.
+    def test_ai_run_rechecks_first_and_collection_run_rechecks_last(self):
+        # 2026-11-22: rechecked after the AI stages, records ran out of budget and expired after 30 hours.
+        # Rechecking first in the collection run then cut its last 5 meat cuts, so only the AI run (which
+        # reuses the collection snapshot) goes first.
         import io
         from benefit_monitor.cli import run
         save(self.root / 'sources.yaml', dict(sources=[dict(SOURCE, html_url='https://official.example/')], max_age_days=7,
@@ -420,13 +422,33 @@ class RecheckTests(Base):
             order.append('collection')
             cost_policy.budget.used = cost_policy.budget.limit  # collection takes everything that is left
             return []
+
+        def snapshot(root, value):
+            order.append('snapshot')
+            cost_policy.budget.used = cost_policy.budget.limit  # stands in for the AI stages that follow
+            return [], [], ['test'], [], []
+        page = ['https://official.example/robots.txt', 'https://official.example/ai/1']
         later = NOW + timedelta(hours=7)
+        with patch('benefit_monitor.official_reader.network_open', side_effect=network), \
+                patch('benefit_monitor.cli.collection_snapshot.unpack', side_effect=snapshot):
+            report = run(self.root, online=True, now=later, snapshot='a' * 40)
+        self.assertEqual(order, page + ['snapshot'])
+        self.assertEqual(auto_release.load(self.root)[0][CID]['review']['checked_at'], later.isoformat())
+        self.assertEqual(report['body_check_failures'], [])
+
+        order.clear()
+        (self.root / 'cache/ai_review/http.json').unlink(missing_ok=True)
+        self.approve(record())
         with patch('benefit_monitor.official_reader.network_open', side_effect=network), \
                 patch('benefit_monitor.cli.collect_html', side_effect=collection):
             report = run(self.root, online=True, now=later)
-        self.assertEqual(order, ['https://official.example/robots.txt', 'https://official.example/ai/1', 'collection'])
-        self.assertEqual(auto_release.load(self.root)[0][CID]['review']['checked_at'], later.isoformat())
-        self.assertEqual(report['body_check_failures'], [])
+        self.assertEqual(order, ['collection'])
+        self.assertEqual(report['body_check_failures'][0]['category'], 'budget_exhausted')
+        order.clear()
+        with patch('benefit_monitor.official_reader.network_open', side_effect=network), \
+                patch('benefit_monitor.cli.collect_html', return_value=[]):
+            run(self.root, online=True, now=later)
+        self.assertEqual(order, page)
 
     def test_robots_refusal_never_withdraws(self):
         import io

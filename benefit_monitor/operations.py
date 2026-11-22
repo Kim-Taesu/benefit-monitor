@@ -116,7 +116,7 @@ GONE_CODES=(401,403,404,410,451)
 def check_auto(approved,takedowns,sources,now,reader):
     """Exact body hash of each record's original official page (the hash the AI decision used).
 
-    cli.run calls this before collection. A record left unchecked for lack of budget is reported
+    cli.run calls this before the AI stages (after collection in a collection run). A record left unchecked for lack of budget is reported
     (category 'budget_exhausted'), since it disappears from the page 30 hours after its last check."""
     from urllib.error import HTTPError
     from urllib.parse import urlsplit
