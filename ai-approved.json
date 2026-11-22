@@ -69,7 +69,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-19T07:41:10.306584+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": "2026-11-14",
       "basis": {
         "period_quotes": [],
@@ -112,7 +112,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-20T07:46:38.565654+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": "2026-10-27",
       "basis": {
         "period_quotes": [
@@ -282,7 +282,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-20T07:46:38.565654+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -328,7 +328,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-22T06:01:13.282340+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": "2026-11-16",
       "basis": {
         "period_quotes": [
@@ -382,7 +382,7 @@
         }
       ],
       "document_count": 2,
-      "checked_at": "2026-11-19T07:46:03.180380+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -489,7 +489,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-20T07:52:37.844542+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -537,7 +537,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-20T07:52:37.844542+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -582,7 +582,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-20T07:52:37.844542+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -646,7 +646,11 @@
       "original_body_hash": "141c3cb06417eb33c5ce08a925ee3671aac445663a79ee9ffd2aa5460dd6a2b0"
     },
     "title_key": "북서울꿈의숲정원문화힐링센터_가드닝클래스|문화·예약",
-    "decided_at": "2026-11-20T07:52:37.844542+09:00"
+    "decided_at": "2026-11-20T07:52:37.844542+09:00",
+    "status": "withdrawn",
+    "withdrawn_reason": "body_changed",
+    "withdrawn_at": "2026-11-22T15:13:49.037310+09:00",
+    "recheck_priority": true
   },
   "3fc55948006078ab5b774342": {
     "schema_version": 1,
@@ -676,7 +680,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-20T14:40:55.405598+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": "2026-11-20",
       "basis": {
         "period_quotes": [],
@@ -720,7 +724,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-21T07:26:54.330111+09:00",
+      "checked_at": "2026-11-22T15:13:49.037310+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
