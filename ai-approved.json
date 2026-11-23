@@ -112,7 +112,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-23T06:29:19.879245+09:00",
+      "checked_at": "2026-11-24T03:47:59.915610+09:00",
       "published_at": "2026-10-27",
       "basis": {
         "period_quotes": [
@@ -282,7 +282,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-23T06:29:19.879245+09:00",
+      "checked_at": "2026-11-24T03:47:59.915610+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -526,7 +526,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-23T03:41:54.587126+09:00",
+      "checked_at": "2026-11-24T03:47:59.915610+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -574,7 +574,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-23T06:29:19.879245+09:00",
+      "checked_at": "2026-11-24T03:47:59.915610+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -731,7 +731,11 @@
       "original_body_hash": "ed6008e034ac34af7ee7eb8ffd61fcbbb7653f18c061c01677c67ab742fd6fc1"
     },
     "title_key": "중랑구중랑목재문화체험장-육각렌치를이용한입체모양만들기12월유아목공체험6~7세단체평일-오전10:00~12:00|문화·예약",
-    "decided_at": "2026-11-23T06:29:19.879245+09:00"
+    "decided_at": "2026-11-23T06:29:19.879245+09:00",
+    "status": "withdrawn",
+    "withdrawn_reason": "body_changed",
+    "withdrawn_at": "2026-11-24T03:47:59.915610+09:00",
+    "recheck_priority": true
   },
   "9c25b5294c72c22f0a50cfcc": {
     "schema_version": 1,
@@ -761,7 +765,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-23T06:29:19.879245+09:00",
+      "checked_at": "2026-11-24T03:47:59.915610+09:00",
       "published_at": "2026-10-22",
       "basis": {
         "period_quotes": [
@@ -783,59 +787,47 @@
     "title_key": "-절기성북구취약계층인플루엔자독감무료예방접종안내|보건소공지",
     "decided_at": "2026-11-23T06:29:19.879245+09:00"
   },
-  "b79afc7844f10fd672498921": {
+  "f323d2e603b131e8220c449c": {
     "schema_version": 1,
-    "candidate_id": "b79afc7844f10fd672498921",
-    "source": "health_notices",
-    "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271787&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
-    "title": "2026년 12월 상설 심폐소생술 교육 신청안내",
-    "summary": "2026년 12월 상설 심폐소생술 교육 신청 안내(보건소 의약과 운영, 무료 교육)",
-    "conditions": "요일별 진행(월 14시~16시, 화·목 10시~12시), 실습 포함, 최소 5명 미만이면 취소·변경 가능, 시작 10분 경과 후 이수 불가. 비용: 비용: 무료",
-    "fee_status": "free",
-    "districts": [
-      "금천구"
-    ],
+    "candidate_id": "f323d2e603b131e8220c449c",
+    "source": "retail",
+    "url": "https://www.shinsegaegroupnewsroom.com/traders-celebrates-16th-anniversary-with-discounts/",
+    "title": "한우 등심 팩당 8천원 할인, 인기 신상품 최대 1만원 할인! 트레이더스, 개점 16주년 맞아 고객 감사제",
+    "summary": "트레이더스가 개점 16주년을 맞아 29일까지 인기 먹거리·한우·생필품·생활가전을 특가 판매하고, 15만원 이상 구매 고객 대상 1천원 특가 행사도 진행한다.",
+    "conditions": "품목별 할인은 신세계포인트 적립 또는 삼성카드 결제 시 적용. 천원 특가는 15만원 이상 결제 고객 대상이며 주류·도서·가전 등 제외. 비용: 한우 등심 팩당 8천원 할인, 한돈 삼겹살·목심 팩당 5천원 할인, 제주감귤·골드키위 3천원 할인. 품목에 따라 신세계포인트 적립 또는 삼성카드 결제 시 적용. 결제 조건: 할인은 품목에 따라 신세계포인트 적립 또는 삼성카드 결제 시 적용",
+    "fee_status": "paid",
+    "districts": [],
     "valid_from": null,
-    "valid_until": null,
+    "valid_until": "2026-11-26",
     "deadline_at": null,
-    "validity_kind": "ongoing",
+    "validity_kind": "fixed",
     "labels": {},
     "payment_terms": {},
     "review": {
       "kind": "ai_auto",
       "documents": [
         {
-          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271787&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
-          "body_hash": "91d0ef8e456b832d21d114d2c2dd60b98f9781ad0e7d963767647a27d544cc95",
-          "title": "2026년 12월 상설 심폐소생술 교육 신청안내"
-        },
-        {
-          "url": "https://www.geumcheon.go.kr/health/cprResveList.do?key=4646",
-          "body_hash": "1c473915918696b0b1164d0eb7d7e74ab11b567613b2d2910b0ed7c829caf663",
-          "title": ""
-        },
-        {
-          "url": "https://www.geumcheon.go.kr/health/selectBbsNttView.do?key=2281&id=&bbsNo=310&nttNo=271544&searchCtgry=&searchCnd=all&searchKrwd=&pageIndex=1&integrDeptCode=&searchDeptCode=",
-          "body_hash": "5d0d4dc3c906b954169e86cb553d29067c45bd48d9f8935f24c078cca07ee764",
-          "title": ""
+          "url": "https://www.shinsegaegroupnewsroom.com/traders-celebrates-16th-anniversary-with-discounts/",
+          "body_hash": "ab2c6962489f7da7064153b7e5dfb982d835494144795cd2f7a545bff65de957",
+          "title": "한우 등심 팩당 8천원 할인, 인기 신상품 최대 1만원 할인! 트레이더스, 개점 16주년 맞아 고객 감사제"
         }
       ],
-      "document_count": 3,
-      "checked_at": "2026-11-23T06:29:19.879245+09:00",
-      "published_at": "2026-10-29",
+      "document_count": 1,
+      "checked_at": "2026-11-24T03:47:59.915610+09:00",
+      "published_at": null,
       "basis": {
-        "period_quotes": [],
+        "period_quotes": [
+          "트레이더스 홀세일 클럽(이하 트레이더스)은 오는 29일까지 일주일간 개점 16주년 기념행사를 진행한다고 23일 밝혔다."
+        ],
         "operating_quotes": [
-          "새소식 홈 보건소 소개 보건소식 새소식 점자뷰어보기 점자파일받기 인쇄 부가기능 토글 인스타그램 엑스 블로그 부가기능 닫기 2026년 12월 상설 심폐소생술 교육 신청안내 상세보기 - 제목,담당부서,등록일,조회수,내용,파일 정보 제공 제목 2026년 12월 상설 심폐소생술 교육 신청안내 담당부서 의약과 등록일 2026.11.17 조회수 [2026년 12월 상설 심폐소생술 교육 신청 안내] 심폐소생술 교육 신청 바로가기 : 예약신청 - 보건소 홈페이지 - 월요일 오후 2시 / 화요일, 목요일 오전 10시 진행입니다.",
-          "예약신청 홈 건강생활 심폐소생술 심폐소생술 예약 예약신청 점자뷰어보기 점자파일받기 인쇄 부가기능 토글 인스타그램 엑스 블로그 부가기능 닫기 희망날짜 확인 대 상: 만 10세 이상 교육 희망자 확인 교육일정 - 매주 월요일 14시~16시 - 매주 화,목요일 10시~12시 확인 교육내용: 심폐소생술 및 자동심장충격기 사용법 이론 및 실습 확인 장 소: 금천구보건소 4층 보건교육실(금천구 시흥대로73길 70) 확인 비 용: 무료 확인 신청방법: 홈페이지 또는 전화신청: 02-2627-2657(2654) 확인 기타사항 - 교육 신청 시 시간 반드시 확인 후 신청 부탁드립니다!",
-          "[안내사항] - 실습이 포함되어 있으니 편한 복장을 착용해 주세요.",
-          "- 교육인원 미달(5명 미만) 및 보건소 사정에 의해 교육일정 변경 또는 취소가 있을 수 있습니다.",
-          "- 교육 신청 인원이 5명 미만일 경우 취소 및 날짜 변경이 있을 수 있습니다.(개별연락) - 교육 시작 10분이 지나면 교육 이수가 불가능합니다."
+          "트레이더스, 개점 16주년 맞아 고객 감사제 3분 읽기 AI 요약 트레이더스가 개점 16주년을 맞아 29일까지 인기 먹거리·한우·생필품·생활가전을 특가 판매하고, 15만원 이상 구매 고객 대상 1천원 특가 행사도 진행한다.",
+          "할인은 품목에 따라 신세계포인트 적립 또는 삼성카드 결제 시 적용된다.",
+          "15만원 이상 결제한 고객(주류, 도서, 가전 등은 제외)을 대상으로 26일까지는 ‘티 스탠다드 청정갯벌 명품 재래김(5g*30봉)’을, 27일부터 29일까지는 ‘크리스마스 틴 웨이퍼롤(500g)’을 1천원에 한정 수량 판매한다."
         ]
       },
-      "original_body_hash": "91d0ef8e456b832d21d114d2c2dd60b98f9781ad0e7d963767647a27d544cc95"
+      "original_body_hash": "ab2c6962489f7da7064153b7e5dfb982d835494144795cd2f7a545bff65de957"
     },
-    "title_key": "12월상설심폐소생술교육신청안내|보건소공지",
-    "decided_at": "2026-11-23T06:29:19.879245+09:00"
+    "title_key": "한우등심팩당8천원할인,인기신상품최대1만원할인!트레이더스,개점16주년맞아고객감사제|마트",
+    "decided_at": "2026-11-24T03:47:59.915610+09:00"
   }
 }
