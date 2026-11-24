@@ -6,6 +6,7 @@
 - 변경: `public_topics.py`(learning·culture·shopping 낱말 규칙), `public/topic-publication.json`(`policy_sha256` 재기록), `festival_pick.py`(`METRO_WINDOW_DAYS` 21), `festival-system.md` v4, 테스트 `test_public_topics.py`·`test_festival_pick.py`.
 - 실제 실행한 검사·결과: 전체 단위 테스트 통과. 11-24 공개본으로 `approved_snapshot`+`basis_cards`를 돌리면 문화·체험 1건·배움·강좌 3건 카드가 생기고, 축제 후보는 포천·양평빙송어·서울빛초롱·청계천의 빛·해운대가 된다.
 - 미검증: 모델이 실제로 이 주제 카드를 고르는지와 축제 추천 문장은 다음 AI 실행에서 본다.
+- 같은 브랜치 추가(점검 5번): `auto_publish.py`에 단체·기관만 신청하는 항목 보류(`not_personal`)를 더했다. 테스트는 생활숲 사례와 사람 조건이 섞인 반례("6~7세 유아기관 및 단체", "학교 밖 청소년")를 다룬다. 이미 승인된 생활숲 항목이 실제로 빠지는지는 재조사 시점에 확인해야 한다.
 
 ## 2026-11-24 — 장보기 농산물: 월요일 KAMIS 조사가 매번 빠지던 문제
 

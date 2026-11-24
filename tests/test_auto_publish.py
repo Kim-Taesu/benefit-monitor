@@ -93,6 +93,21 @@ class AutoPublishTests(unittest.TestCase):
         from benefit_monitor.auto_publish import decide
         return decide(draft_for(base, **facts), base, now, list(takedowns))
 
+    def test_organisation_only_applicants_hold(self):
+        # 2026-11-24: "생활숲 조성사업" is applied for by apartment and school managers, not by a person.
+        for required in (['아파트·학교·유치원·어린이집 내 유휴공지 관리주체'], ['비영리 법인', '사회복지시설']):
+            with self.subTest(required=required):
+                facts = period_facts(eligibility=sup({'scope': 'restricted', 'required': required, 'not_confirmed': []}, 'd1s4'))
+                result = self.decide(host(D1, D2), facts)
+                self.assertFalse(result['publish'])
+                self.assertIn('not_personal', result['reasons'])
+        # Any condition naming a person keeps it a personal benefit.
+        for required in (['6~7세 유아기관 및 단체'], ['학교 밖 청소년'], ['관내 어린이집 재원 아동 가구'], ['65세 이상']):
+            with self.subTest(required=required):
+                facts = period_facts(eligibility=sup({'scope': 'restricted', 'required': required, 'not_confirmed': []}, 'd1s4'))
+                result = self.decide(host(D1, D2), facts)
+                self.assertTrue(result['publish'], result['reasons'])
+
     def test_period_item_with_two_documents_publishes(self):
         base = host(D1, D2)
         result = self.decide(base, period_facts())
