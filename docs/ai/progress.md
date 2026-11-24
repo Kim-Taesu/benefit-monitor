@@ -1,5 +1,21 @@
 # 개선 진행 기록
 
+## 2026-11-24 — 주제 카드 낱말 규칙 확장, 수도권 축제 후보 창 21일
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`. 같은 날 공개본 점검 3·7번을 사용자가 선택지로 정했다([정책 대응표](policy-map.md) 2026-11-24 두 번째 항목).
+- 변경: `public_topics.py`(learning·culture·shopping 낱말 규칙), `public/topic-publication.json`(`policy_sha256` 재기록), `festival_pick.py`(`METRO_WINDOW_DAYS` 21), `festival-system.md` v4, 테스트 `test_public_topics.py`·`test_festival_pick.py`.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 11-24 공개본으로 `approved_snapshot`+`basis_cards`를 돌리면 문화·체험 1건·배움·강좌 3건 카드가 생기고, 축제 후보는 포천·양평빙송어·서울빛초롱·청계천의 빛·해운대가 된다.
+- 미검증: 모델이 실제로 이 주제 카드를 고르는지와 축제 추천 문장은 다음 AI 실행에서 본다.
+- 같은 브랜치 추가(점검 5번): `auto_publish.py`에 단체·기관만 신청하는 항목 보류(`not_personal`)를 더했다. 테스트는 생활숲 사례와 사람 조건이 섞인 반례("6~7세 유아기관 및 단체", "학교 밖 청소년")를 다룬다. 이미 승인된 생활숲 항목이 실제로 빠지는지는 재조사 시점에 확인해야 한다.
+
+## 2026-11-24 — 장보기 농산물: 월요일 KAMIS 조사가 매번 빠지던 문제
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `00aec7d` 기준). 같은 날 공개본 점검 6번(농산물 조사일 11-20 고정)을 사용자가 "진행"으로 승인했다.
+- 원인: `briefing-data` 이력에서 농산물 조사일이 월요일만 매번 금요일로 남았다(11-16·11-23). 11-23(월) KAMIS 일간 페이지를 프로젝트 수집기로 한 번 읽어 보니 "1일전" 열이 없는 9열 표였다(전날이 일요일). `parse_kamis`가 10열 표만 받아 월요일 표 전체를 버렸다.
+- 변경: `groceries.py`가 머리글 이름으로 가격 열을 맞춘다(`KAMIS_COLUMNS`, `_kamis_columns`). 열 개수가 10이면 이전과 같고, 9이면 "1일전"만 빠진 경우에만 받아 `day_ago`를 비워 둔다. 다른 머리글 모양은 이전처럼 읽지 않는다. 공개 검사(`_clean_produce`)와 화면은 원래 `day_ago` 없음을 허용한다.
+- 실제 실행한 검사·결과: `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` 전체 통과. 새 테스트는 실제 11-23 페이지의 머리글·첫 행 값을 쓴다.
+- 미검증: 수정한 파서로 실제 월요일 페이지를 다시 읽는 확인은 KAMIS가 연결을 끊어 하지 못했다. 다음 월요일 자료(화요일 새벽 수집)에서 `groceries.produce.survey_date`가 월요일인지 본다.
+
 ## 2026-11-24 — 당일 공개본 점검 후속: 청약 요약의 끝난 단계, 이어지는 구간 종료일, Source health 오탐
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `19f86a4` 기준). 11-24 공개본(`briefing-data` `302f70a`) 점검에서 찾은 문제 중 사용자가 1·2·4번을 승인했다([정책 대응표](policy-map.md) 2026-11-24 항목).

@@ -56,6 +56,23 @@ def _rows(table):
             for row in re.findall(r"<tr[^>]*>(.*?)</tr>", table, flags=re.S)]
 
 
+# Header labels of the KAMIS price columns, in page order. A Monday page has no "1일전" column
+# (the day before is Sunday), so its rows carry day_ago=None (2026-11-24: Mondays were dropped).
+KAMIS_COLUMNS = (("당일", "today"), ("1일전", "day_ago"), ("1주일전", "week_ago"), ("2주일전", "two_weeks_ago"),
+                 ("1년전", "year_ago"), ("평년", "normal"))
+
+
+def _kamis_columns(head):
+    """Price keys for the header's price columns, or None when the header is not the expected one."""
+    if head[:4] != ["품목", "품종", "단위", "등급"]:
+        return None
+    labels = head[4:]
+    wanted = [(label, key) for label, key in KAMIS_COLUMNS if label != "1일전" or len(labels) == len(KAMIS_COLUMNS)]
+    if len(labels) != len(wanted) or any(not have.startswith(label) for have, (label, _) in zip(labels, wanted)):
+        return None
+    return [key for _, key in wanted]
+
+
 def parse_kamis(page):
     """(survey_date, items) from the KAMIS 부류별 일간 page; (None, []) when no survey that day."""
     match = re.search(r'class="txt_date">\s*(\d{4})\.(\d{2})\.(\d{2})\s*기준', page)
@@ -63,15 +80,15 @@ def parse_kamis(page):
     if not match or not table:
         return None, []
     rows = _rows(table.group(1))
-    if not rows or rows[0][:4] != ["품목", "품종", "단위", "등급"] or len(rows[0]) != 10 \
-            or not rows[0][4].startswith("당일") or rows[0][9] != "평년":
+    keys = _kamis_columns(rows[0]) if rows else None
+    if keys is None:
         return None, []
     items, seen = [], set()
     for cells in rows[1:]:
-        if len(cells) != 10 or not all(cells[:3]):
+        if len(cells) != len(rows[0]) or not all(cells[:3]):
             continue
         try:
-            prices = dict(zip(PRICE_KEYS, (_price(c) for c in cells[4:])))
+            prices = dict.fromkeys(PRICE_KEYS) | dict(zip(keys, (_price(c) for c in cells[4:])))
         except ValueError:
             continue
         item = dict(zip(("item", "kind", "unit", "grade"), cells[:4]))

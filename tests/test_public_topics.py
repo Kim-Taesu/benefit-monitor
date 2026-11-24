@@ -127,9 +127,14 @@ class PublicTopicsTests(unittest.TestCase):
     def test_keyword_rules_cover_uncategorized_items_and_family_facet(self):
         from benefit_monitor.public_topics import keyword_topics
         self.assertEqual(keyword_topics({'title':'희망돌보미 채용 공고','summary':'','labels':{'category':'생활지원'}}),(['career'],[]))
-        self.assertEqual(keyword_topics({'title':'어린이 기록체험실','summary':''}),(['family'],['family']))
-        self.assertEqual(keyword_topics({'title':'제휴 멤버십','summary':'KT 할인','source':'emart24'}),(['carrier','convenience'],[]))
-        self.assertEqual(keyword_topics({'title':'다도 체험','summary':'','labels':{'audience':'7세 이상'}}),([],[]))
+        self.assertEqual(keyword_topics({'title':'어린이 기록체험실','summary':''}),(['family','culture'],['family']))
+        self.assertEqual(keyword_topics({'title':'제휴 멤버십','summary':'KT 할인','source':'emart24'}),(['carrier','shopping','convenience'],[]))
+        self.assertEqual(keyword_topics({'title':'다도 체험','summary':'','labels':{'audience':'7세 이상'}}),(['culture'],[]))
+        # 2026-11-24: learning and culture by wording, for items with no category label.
+        self.assertEqual(keyword_topics({'title':'[공유누리] 노래교실(수요반)','summary':''}),(['learning'],[]))
+        self.assertEqual(keyword_topics({'title':'2026 백인제가옥 전시해설 예약','summary':''}),(['culture'],[]))
+        self.assertEqual(keyword_topics({'title':'인플루엔자 무료 예방접종 안내','summary':'취약계층 대상'}),([],[]))
+        self.assertEqual(keyword_topics({'title':'한우 등심 팩당 8천원 할인','summary':''}),(['shopping'],[]))
 
 
 if __name__=='__main__':unittest.main()

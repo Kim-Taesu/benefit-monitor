@@ -103,6 +103,12 @@ def _cutoff(day, moment):
 
 
 CORE = ('summary', 'conditions', 'fee_status', 'eligibility')
+# 2026-11-24 (user choice): a page whose only applicants are organisations is not a personal benefit
+# ("2027년 생활숲 조성사업": apartment, school and nursery managers apply). Held when every required
+# condition names an organisation and none names a person.
+ORGANISATION = re.compile(r'관리주체|관리사무소|법인|단체|기관|사업자|사업장|기업|협회|조합|어린이집|유치원|학교|시설')
+PERSON = re.compile(r'주민|구민|시민|개인|본인|청소년|청년|어르신|노인|아동|학생|유아|가구|가족|부모|여성|남성|장애인|임산부'
+                    r'|[0-9]\s*세|누구나|어린이(?!집)|회원|대상자|거주자')
 COST = ('cost_details', 'payment_conditions')
 PAID = ('paid', 'mixed', 'conditional')
 # Public Benefit fee values; a conditional fee is shown as mixed (ruling R11).
@@ -341,6 +347,11 @@ def decide(draft, host, now, takedowns):
         reasons.append('disputed')
     if any(supported(f) is None for f in CORE):
         reasons.append('core_missing')
+    eligibility = supported('eligibility')
+    required = eligibility.get('required') if isinstance(eligibility, dict) else None
+    if isinstance(required, list) and required and all(isinstance(r, str) for r in required) \
+            and all(ORGANISATION.search(r) for r in required) and not any(PERSON.search(r) for r in required):
+        reasons.append('not_personal')
     fee = supported('fee_status')
     if fee in PAID and all(supported(f) is None for f in COST):
         reasons.append('cost_missing')
