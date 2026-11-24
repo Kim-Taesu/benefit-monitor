@@ -149,6 +149,66 @@ def _topics_and_festivals(data, now):
     return found
 
 
+# What each AI kind visibly changes on the public page (2026-11-24, "AI를 의미 있게 쓰는가").
+def _contribution(data):
+    items = data.get('items') or []
+    checks = data.get('tab_checks') or {}
+    def pick(key):
+        return 1 if (data.get(key) or {}).get('source') == 'ai' else 0
+    return {
+        'research': sum(1 for i in items if (i.get('review') or {}).get('kind') == 'ai_auto'),
+        'verify': sum(1 for i in items if (i.get('review') or {}).get('kind') == 'ai_auto'),
+        'topic': len((data.get('topic_cards') or {}).get('topics') or []) if not (data.get('topic_cards') or {}).get('used_fallback') else 0,
+        'grocery': pick('grocery_pick'), 'festival': pick('festival_pick'), 'benefit': pick('benefit_pick'),
+        'subscription': pick('subscription_pick'),
+        'health': len(data.get('health_notes') or []),
+        'notice_triage': len(checks.get('notices') or []),
+        'festival_check': len(checks.get('festivals') or []),
+    }
+
+
+WHAT = {'research': '자동 공개 혜택', 'verify': '자동 공개 혜택(재확인)', 'topic': 'AI 주제 카드', 'grocery': 'AI 장보기 문장',
+        'festival': 'AI 축제 문장', 'benefit': 'AI 혜택 문장', 'subscription': 'AI 청약 문장', 'health': '보건소 문장',
+        'notice_triage': '접힌 행정 공지', 'festival_check': '축제 메모'}
+IDLE_DAYS = 7
+
+
+def _ai_value(data, usage):
+    """Facts: cost and visible result per kind. Warnings: a kind that paid for IDLE_DAYS with nothing visible
+    today, and gate decisions that the current code would change."""
+    found, facts = [], []
+    days = (usage or {}).get('days') or []
+    if not days:
+        return found, ['AI 사용량 기록 없음(ai-usage.json)']
+    last = days[-1]
+    week = days[-IDLE_DAYS:]
+    visible = _contribution(data)
+    week_usd = sum(d.get('total_usd') or 0 for d in week)
+    facts.append(f'AI {last["day"]}: 요청 {last.get("total_requests")}건 · ${last.get("total_usd", 0):.4f} '
+                 f'(최근 {len(week)}일 ${week_usd:.4f})')
+    for kind in sorted({k for d in week for k in d.get('kinds', {})}):
+        today = last.get('kinds', {}).get(kind, {})
+        paid = [d for d in week if d.get('kinds', {}).get(kind, {}).get('requests')]
+        cost = sum(d['kinds'][kind].get('usd') or 0 for d in paid)
+        base = kind.split(':')[0]
+        shown = visible.get(base)
+        facts.append(f'AI {kind}: 오늘 {today.get("requests", 0)}건 ${today.get("usd", 0):.4f} · 최근 {len(paid)}일 ${cost:.4f}'
+                     + (f' → {WHAT[base]} {shown}' if shown is not None and not kind.endswith(':measure') else ''))
+        if shown == 0 and len(paid) >= IDLE_DAYS and not kind.endswith(':measure'):
+            found.append(Finding('warn', 'AI', f'{kind}: {len(paid)}일 동안 ${cost:.4f}를 썼지만 오늘 공개본에 보이는 결과({WHAT[base]})가 없습니다'))
+    corpus = last.get('gate_corpus') or {}
+    if corpus and corpus.get('status') != 'ok':
+        found.append(Finding('warn', 'AI', f'게이트 회귀 묶음 상태: {corpus.get("status")}'))
+    elif corpus:
+        facts.append(f'게이트 재생: 사례 {corpus.get("records")}건 · 그대로 {corpus.get("unchanged")} · 공개→보류 {corpus.get("publish_to_held")}'
+                     f' · 보류→공개 {corpus.get("held_to_publish")}')
+        moved = (corpus.get('publish_to_held') or 0) + (corpus.get('held_to_publish') or 0)
+        if moved:
+            found.append(Finding('warn', 'AI', f'지금 코드가 자동 공개 판정 {moved}건을 바꿉니다(공개→보류 {corpus.get("publish_to_held")}, '
+                                              f'보류→공개 {corpus.get("held_to_publish")}). 새 사유 {corpus.get("reasons_added")}'))
+    return found, facts
+
+
 def _known_failing():
     """Source ids whose sources/<id>.json says the failure is already known; their streaks are not news."""
     names = set()
@@ -161,7 +221,7 @@ def _known_failing():
     return names
 
 
-def report(data, now=None, previous=None):
+def report(data, now=None, previous=None, usage=None):
     """(findings, facts) for a public briefing; findings are Finding(level, section, message)."""
     now = now or datetime.now(timezone.utc)
     base = live_check.check(data, before=previous, now=now)
@@ -173,7 +233,14 @@ def report(data, now=None, previous=None):
             found += part(data, now)
         except Exception as error:
             found.append(Finding('error', '리포트', f'{part.__name__} 검사 실패: {type(error).__name__}'))
-    return found, list(base.facts)
+    facts = list(base.facts)
+    try:
+        more, ai_facts = _ai_value(data, usage)
+        found += more
+        facts += ai_facts
+    except Exception as error:
+        found.append(Finding('warn', '리포트', f'AI 기여 검사 실패: {type(error).__name__}'))
+    return found, facts
 
 
 def markdown(findings, facts):
@@ -190,6 +257,13 @@ def markdown(findings, facts):
 
 def _git_json(ref, path='briefing.json'):
     return json.loads(subprocess.run(['git', 'show', f'{ref}:{path}'], check=True, capture_output=True).stdout)
+
+
+def usage_from_git(ref):
+    try:
+        return _git_json(ref, 'ai-usage.json')
+    except (subprocess.CalledProcessError, ValueError):
+        return None
 
 
 def from_git(ref):
@@ -213,11 +287,14 @@ def main(argv=None):
     ap.add_argument('--briefing', help='공개 briefing.json 파일')
     ap.add_argument('--previous', help='비교할 이전 공개본 (선택)')
     ap.add_argument('--git-ref', help='briefing-data 커밋(예: FETCH_HEAD); 이전 날짜 공개본을 이력에서 찾는다')
+    ap.add_argument('--usage', help='ai-usage.json 파일 (선택, --git-ref 이면 같은 커밋에서 읽음)')
     ap.add_argument('--now', help='기준 시각 ISO (기본: 지금)')
     args = ap.parse_args(argv)
     try:
+        usage = None
         if args.git_ref:
             data, previous = from_git(args.git_ref)
+            usage = usage_from_git(args.git_ref)
         else:
             with open(args.briefing, encoding='utf-8') as f:
                 data = json.load(f)
@@ -225,11 +302,14 @@ def main(argv=None):
             if args.previous:
                 with open(args.previous, encoding='utf-8') as f:
                     previous = json.load(f)
+            if args.usage:
+                with open(args.usage, encoding='utf-8') as f:
+                    usage = json.load(f)
     except (OSError, ValueError, KeyError, TypeError, subprocess.CalledProcessError) as error:
         print(f'briefing 을 읽지 못했습니다: {type(error).__name__}')
         return 1
     now = datetime.fromisoformat(args.now) if args.now else None
-    findings, facts = report(data, now, previous)
+    findings, facts = report(data, now, previous, usage)
     text = markdown(findings, facts)
     print(text)
     summary = os.environ.get('GITHUB_STEP_SUMMARY')

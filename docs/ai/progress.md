@@ -1,5 +1,13 @@
 # 개선 진행 기록
 
+## 2026-11-24 — 게이트 회귀 묶음과 AI 효과 측정
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `3ecf0c4` 기준). [개선 단계](improvement-phases.md) 2026-11-24 재조정의 B. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-24 네 번째 항목.
+- 배경: 회귀 재생 도구(`evaluation.py replay`)는 있었지만 재료가 암호화 실행 상태에 5일만 남고, 당시 판정이 없어 비교가 안 되며, 자동으로 돌지 않았다. AI 종류별 비용과 공개 기여를 나란히 보는 수단도 없었다.
+- 변경: `gate_corpus.py`(묶음 쌓기·정리·재생), `ai_usage.py`(종류별 사용량·공개 파일·Actions 요약), `cloud_state.FILES`에 `corpus`, `cloud_daily.day_review`(공개 뒤 실행, 실패해도 그날 결과 유지), `quality_report._ai_value`(종류별 비용 대 공개 결과, 7일 무기여·판정 변경 경고), 테스트 `test_gate_corpus.py`·`test_cloud_daily.py` 2건.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 실제 암호화 묶음 생성·재생은 키가 있는 AI 실행에서만 돌아 아직 확인하지 못했다.
+- 미검증·다음: 머지 뒤 첫 AI 일일 실행의 Actions 요약에 "AI 사용량"·"자동 공개 게이트 재생" 표가 나오는지, briefing-data에 `ai-corpus.age`·`ai-usage.json`이 생기는지 확인한다. 묶음 크기 증가 속도(며칠치가 6 MiB에 들어가는지)를 1주 관측한다. 7일치가 쌓이면 E(효과 없는 호출 정리)를 판단한다.
+
 ## 2026-11-24 — 결과물 품질 리포트(장애를 사람보다 먼저 알리기)
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `52ab1e0` 기준). 같은 날 7건을 모두 사람이 화면에서 찾은 뒤, 구조 피드백의 1번 제안을 사용자가 승인했다([정책 대응표](policy-map.md) 2026-11-24 세 번째 항목).
