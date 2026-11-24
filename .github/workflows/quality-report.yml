@@ -1,0 +1,52 @@
+name: Quality report
+# Re-reads the published briefing.json (briefing-data) and fails when what visitors get is stale, empty,
+# fell back, or no longer passes today's checks (benefit_monitor/quality_report.py, 2026-11-24).
+# Public data only: no secrets, no model call, no network besides git. A red run is the alert.
+on:
+  # After each collection run. The AI run's approved snapshot is dispatched by the workflow token, which
+  # starts no workflow_run, so the daily schedule below reads the state after the AI run.
+  workflow_run:
+    workflows: ['Daily benefit briefing']
+    types: [completed]
+    branches: [main]
+  schedule:
+    - cron: '23 22 * * *'  # 07:23 KST, after the 03:20~05:00 KST collection and AI run
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-report
+  cancel-in-progress: true
+
+jobs:
+  report:
+    # Push runs of the briefing only test and deploy; they do not publish new data.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.event != 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Read the published briefing history from briefing-data
+        id: data
+        env:
+          STARTED_AT: ${{ github.event.workflow_run.run_started_at }}
+        run: |
+          git fetch --depth 60 origin briefing-data
+          published=$(git log -1 --format=%cI FETCH_HEAD -- briefing.json)
+          # A gated or failed collection run publishes nothing new; the last report still stands.
+          if [ -n "$STARTED_AT" ] && [ "$(date -d "$published" +%s)" -lt "$(date -d "$STARTED_AT" +%s)" ]; then
+            echo "fresh=false" >> "$GITHUB_OUTPUT"
+            echo "이번 실행이 새 공개본을 만들지 않아 품질 리포트를 생략합니다 (마지막 공개 $published)." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "fresh=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Check the published result
+        if: steps.data.outputs.fresh == 'true'
+        run: python -m benefit_monitor.quality_report --git-ref FETCH_HEAD
