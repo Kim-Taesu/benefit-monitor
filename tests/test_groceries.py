@@ -64,6 +64,24 @@ class ParseTests(unittest.TestCase):
         self.assertEqual([i['item'] for i in items], ['양파', '쌀'])
         self.assertIsNone(items[1]['week_ago'])
 
+    def test_kamis_monday_page_without_the_day_before_column(self):
+        # 2026-11-23 (Mon) page: no "1일전" column, so every Monday survey was dropped for Friday's.
+        head = ('<tr><th>품목</th><th>품종</th><th>단위</th><th>등급</th><th>당일 (11/23)</th>'
+                '<th>1주일전 (11/16)</th><th>2주일전 (11/09)</th><th>1년전</th><th>평년</th></tr>')
+        rows = [kamis_row('쌀', '20kg', '20kg', '상품', '63,380', '63,321', '63,156', '62,441', '55,411'),
+                kamis_row('수박', '수박', '1개', '상품', '-', '-', '-', '25,000', '24,000')]
+        page = kamis_page(rows, date='2026.11.23').decode().replace(HEAD, head)
+        survey, items = groceries.parse_kamis(page)
+        self.assertEqual(survey, '2026-11-23')
+        self.assertEqual([i['item'] for i in items], ['쌀'])
+        rice = items[0]
+        self.assertEqual((rice['today'], rice['day_ago'], rice['week_ago'], rice['two_weeks_ago'], rice['year_ago'],
+                          rice['normal']), (63380, None, 63321, 63156, 62441, 55411))
+        # Any other header shape still yields nothing.
+        for bad in (head.replace('1주일전', '1개월전'), head.replace('<th>평년</th>', '')):
+            self.assertEqual(groceries.parse_kamis(kamis_page(rows, date='2026.11.23').decode().replace(HEAD, bad)),
+                             (None, []))
+
     def test_kamis_rejects_pages_without_a_dated_table(self):
         self.assertEqual(groceries.parse_kamis('<html>조사 없음</html>'), (None, []))
         bad = kamis_page([kamis_row('양파', '양파', '1kg', '상품', '1,893원', '-', '-', '-', '-', '-')])
