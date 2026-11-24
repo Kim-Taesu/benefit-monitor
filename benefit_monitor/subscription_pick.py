@@ -38,20 +38,29 @@ GENERIC = {'아파트', '분양', '접수', '청약', '공급', '일반공급', 
 TOKEN = re.compile(r'[0-9가-힣]+')
 
 
+# Step and special-supply words are checked even when no candidate still offers them: a step that ended
+# (2026-11-24: "특별공급과 1순위·2순위를 열고" the day after 특별공급 closed) is no longer a fact to write.
+STEP_WORDS = {'특별공급', '1순위', '2순위', '무순위', '재공급', '임의공급', '사전청약'}
+SPECIAL_WORDS = {'신혼부부', '다자녀가구', '다자녀', '노부모부양', '노부모', '생애최초', '기관추천', '신생아'}
+
+
 def _next_start(item, today):
     return min(s['start'] for s in item['steps'] if s['end'] >= today)
 
 
 def _candidates(bundle, now):
-    """Complexes still taking applications, soonest next receipt first, Seoul before Gyeonggi on the same day."""
+    """Complexes still taking applications, soonest next receipt first, Seoul before Gyeonggi on the same day.
+    Only steps still open today go in; special-supply kinds only while a 특별공급 step is open."""
     today = now.date().isoformat()
     rows = []
     for item in (bundle or {}).get('items', []):
-        if not any(s['end'] >= today for s in item['steps']):
+        steps = [dict(label=s['label'], start=s['start'], end=s['end']) for s in item['steps'] if s['end'] >= today]
+        if not steps:
             continue
+        special_open = any('특별공급' in s['label'] for s in steps)
         rows.append(dict(id=item['id'], name=item['name'], area=item['area'], district=item.get('district') or '',
-                         supply=item['supply'], steps=[dict(label=s['label'], start=s['start'], end=s['end']) for s in item['steps']],
-                         units=item.get('units'), special=[k['name'] for k in item.get('special_kinds') or []],
+                         supply=item['supply'], steps=steps, units=item.get('units'),
+                         special=[k['name'] for k in item.get('special_kinds') or []] if special_open else [],
                          regulation=list(item.get('regulation') or []), _next=_next_start(item, today)))
     rows.sort(key=lambda c: (c['_next'], c['area'] != '서울', c['name'], c['id']))
     return [{k: v for k, v in c.items() if k != '_next'} for c in rows]
@@ -156,7 +165,7 @@ def _check(summary, picks, host):
         errors.append('markup')
     facts = {c['id']: _facts(c) for c in rows}
     names = {c['id']: _names(c['name']) for c in rows}
-    vocab = sorted(set().union(*facts.values()), key=len, reverse=True)
+    vocab = sorted(set().union(STEP_WORDS, SPECIAL_WORDS, *facts.values()), key=len, reverse=True)
     every_name = set().union(*names.values())
     for p in picks:
         if p['id'] in by_id:

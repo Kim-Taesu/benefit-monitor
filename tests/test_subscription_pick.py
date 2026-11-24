@@ -15,14 +15,15 @@ NOW = datetime.fromisoformat('2026-11-18T09:00:00+09:00')
 RAW = json.loads((Path(__file__).parent / 'fixtures/subscriptions/bundle-2026-11-18.json').read_text())
 BUNDLE = sanitize(RAW, NOW)
 DH, JH, BC, BU, JO = '2026940256', '2026000497', '2026940260', '2026000457', '2026950090'
+# JH's 특별공급 closed on 11-16, so on 11-18 only its 1순위·2순위 are facts (2026-11-24 fix).
 SUMMARY = ('서초구 디에이치 신반포에스테라는 임의공급 단지예요. 중랑구 중화역 라온프라이빗 센트로는 '
-           '신혼부부·다자녀가구 특별공급과 1순위 접수가 있어요.')
+           '1순위와 2순위 접수가 있어요.')
 HOST = sp.host(BUNDLE, NOW)
 
 
 def draft(summary=SUMMARY, picks=None):
     return dict(summary=summary, picks=picks if picks is not None else [
-        dict(id=DH, line='서초구 임의공급'), dict(id=JH, line='신혼부부·신생아 특별공급')])
+        dict(id=DH, line='서초구 임의공급'), dict(id=JH, line='중랑구 1순위·2순위')])
 
 
 def one(cid, line):
@@ -51,9 +52,13 @@ class HostTests(unittest.TestCase):
         first = HOST['candidates'][0]
         self.assertEqual(set(first), {'id', 'name', 'area', 'district', 'supply', 'steps', 'units', 'special', 'regulation'})
         self.assertEqual((first['area'], first['district'], first['supply']), ('서울', '중랑구', '아파트 분양'))
-        self.assertEqual(first['special'][:2], ['신혼부부', '다자녀가구'])
         self.assertEqual(first['regulation'], ['투기과열지구', '청약과열지역'])
-        self.assertEqual(first['steps'][0], {'label': '특별공급', 'start': '2026-11-16', 'end': '2026-11-16'})
+        # Its 특별공급 (11-16) has ended: only open steps go in, and no special-supply kinds without an open 특별공급.
+        self.assertEqual([s['label'] for s in first['steps']], ['1순위', '2순위'])
+        self.assertEqual(first['special'], [])
+        bu = next(c for c in HOST['candidates'] if c['id'] == BU)
+        self.assertEqual(bu['steps'][0], {'label': '특별공급', 'start': '2026-11-23', 'end': '2026-11-23'})
+        self.assertEqual(bu['special'][:2], ['신생아', '생애최초'])
 
     def test_host_none_below_minimum(self):
         self.assertIsNone(sp.host(dict(BUNDLE, items=BUNDLE['items'][:1]), NOW))
@@ -75,7 +80,7 @@ class ReviewTests(unittest.TestCase):
         self.assertIn('number', sp.review(draft(summary=SUMMARY + ' 총 113세대예요.'), HOST))
 
     def test_ranked_rounds_are_facts_not_numbers(self):
-        self.assertEqual(sp.review(one(JH, '특별공급 다음 1순위·2순위'), HOST), [])
+        self.assertEqual(sp.review(one(BU, '특별공급 다음 1순위·2순위'), HOST), [])
         self.assertIn('fact', sp.review(one(DH, '1순위 접수'), HOST))  # an 임의공급 has no 1순위 step
 
     def test_relative_time_rejected(self):
@@ -106,7 +111,7 @@ class ReviewTests(unittest.TestCase):
     def test_short_place_and_special_names_are_checked_too(self):
         # 2026-11-18 review: models write 분당 for 성남시 분당구 and 다자녀 for 다자녀가구.
         self.assertEqual(sp.review(one(DH, '서초 임의공급'), HOST), [])
-        self.assertEqual(sp.review(one(JH, '다자녀·노부모 특별공급'), HOST), [])
+        self.assertEqual(sp.review(one(BU, '다자녀·노부모 특별공급'), HOST), [])
         for line in ('분당 임의공급', '중랑 임의공급', '다자녀 대상'):
             self.assertIn('fact', sp.review(one(DH, line), HOST), line)
         only_dh = draft(summary='분당에서는 디에이치 신반포에스테라가 임의공급으로 접수를 받아요. 조건은 공고문에서 확인하세요.',
@@ -123,8 +128,23 @@ class ReviewTests(unittest.TestCase):
         swapped = draft(summary='중랑구 중화역 라온프라이빗 센트로는 임의공급, 서초구 디에이치 신반포에스테라는 신혼부부 특별공급을 받아요.')
         self.assertIn('fact', sp.review(swapped, HOST))
         # A clause that names no complex may use any picked complex's facts.
-        ok = draft(summary='서울 서초구와 중랑구에서 접수가 열려요. 임의공급과 특별공급이 함께 있어요. 조건은 공고문에서 확인하세요.')
+        ok = draft(summary='서울 서초구와 중랑구에서 접수가 열려요. 임의공급과 1순위 접수가 함께 있어요. 조건은 공고문에서 확인하세요.')
         self.assertEqual(sp.review(ok, HOST), [])
+
+    def test_ended_steps_are_not_facts(self):
+        # 2026-11-24: the summary said 특별공급 was open for complexes whose 특별공급 had closed the day before.
+        for line in ('특별공급과 1순위', '신혼부부 특별공급', '다자녀 대상'):
+            self.assertIn('fact', sp.review(one(JH, line), HOST), line)
+        later = datetime.fromisoformat('2026-11-24T03:47:00+09:00')
+        host = sp.host(sanitize(RAW, later, allow_stale=True), later)
+        bu = next(c for c in host['candidates'] if c['id'] == BU)
+        self.assertEqual(([s['label'] for s in bu['steps']], bu['special']), (['1순위', '2순위'], []))
+        stale = dict(summary='경기 부천시 부천대장 하우스토리 디센트는 특별공급과 공공분양으로 접수를 받아요.',
+                     picks=[dict(id=BU, line='부천시 오정구 분양가상한제 공공분양')])
+        self.assertIn('fact', sp.review(stale, host))
+        self.assertIn('fact', sp.review(dict(stale, picks=[dict(id=BU, line='특별공급·1순위·2순위')],
+                                             summary='경기 부천시 부천대장 하우스토리 디센트는 1순위 접수를 받아요.'), host))
+        self.assertEqual(sp.review(dict(stale, summary='경기 부천시 부천대장 하우스토리 디센트는 1순위와 2순위 접수를 받아요.'), host), [])
 
     def test_unpicked_name_containing_a_picked_name_is_caught(self):
         rows = [dict(c) for c in HOST['candidates']]

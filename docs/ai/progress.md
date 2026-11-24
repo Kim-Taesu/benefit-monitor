@@ -1,5 +1,12 @@
 # 개선 진행 기록
 
+## 2026-11-24 — 당일 공개본 점검 후속: 청약 요약의 끝난 단계, 이어지는 구간 종료일, Source health 오탐
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `19f86a4` 기준). 11-24 공개본(`briefing-data` `302f70a`) 점검에서 찾은 문제 중 사용자가 1·2·4번을 승인했다([정책 대응표](policy-map.md) 2026-11-24 항목).
+- 변경: `subscription_pick.py`(끝난 단계·특별공급 종류를 입력과 허용 사실에서 뺌, 단계 낱말은 늘 검사), `subscription-system.md` v3, `auto_publish.py`(`CONTINUES_FROM`·`_continued`), `source-health.yml`(건너뛴 수집 실행이면 점검 생략), 테스트 `test_subscription_pick.py`·`test_auto_publish.py`.
+- 실제 실행한 검사·결과(2026-11-24): `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` 전체 통과. 11-24 실제 청약 요약을 새 검사에 넣으면 `fact`로 거절된다. 트레이더스 원문 문장에서 "29일까지"만 이어지는 구간(27일부터)으로 읽히는 것을 확인했다.
+- 미검증·관측 한계: Source health 생략 단계는 실제 Actions에서 아직 돌지 않았다(다음 건너뛴 정기 실행에서 확인). 새 프롬프트에서 모델이 남은 단계만 쓰는지는 다음 AI 실행에서만 안다. 이미 승인 목록에 있는 트레이더스 항목의 `valid_until`은 다음 재확인·재조사 때까지 그대로다.
+
 ## 2026-11-18 — 혜택·청약 탭 AI 요약 카드, 카테고리 이모지, 청약 지도 링크
 
 - 작업 단위와 범위: 브랜치 `feat/tab-summaries`(main `d73edce` 기준). 사용자 승인 내용은 [정책 대응표](policy-map.md)의 2026-11-18 항목.
