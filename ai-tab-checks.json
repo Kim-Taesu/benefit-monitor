@@ -7,11 +7,6 @@
       "reason": "result"
     },
     {
-      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585809&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
-      "title": "성북구보건소 AI IoT기반 어르신 건강관리사업 기간제 근로자 최종합격자 안내 공고",
-      "reason": "result"
-    },
-    {
       "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585776&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
       "title": "청년마음건강센터 기간제근로자 1차 서류전형 합격자 발표 및 2차 면접심사 안내 공고",
       "reason": "result"
@@ -52,6 +47,11 @@
       "reason": "recruitment"
     },
     {
+      "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=214812",
+      "title": "서울특별시 관악구보건소 감염병예방사업 기간제근로자(임상병리사) 채용 최종합격자 공고",
+      "reason": "result"
+    },
+    {
       "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=214070",
       "title": "감염병예방사업 기간제근로자(임상병리사) 공개채용 서류전형 합격자 명단 및 면접시험 공고",
       "reason": "result"
@@ -70,11 +70,6 @@
       "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212691",
       "title": "서울특별시 관악구보건소 감염병예방사업 기간제근로자(임상병리사) 채용 공고",
       "reason": "recruitment"
-    },
-    {
-      "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212331",
-      "title": "2026년 모자보건사업 기간제근로자 공개채용 최종합격자 공고",
-      "reason": "result"
     },
     {
       "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412802",
@@ -119,6 +114,11 @@
     {
       "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412564",
       "title": "결핵관리사업 기간제근로자 채용 최종 합격자 공고",
+      "reason": "result"
+    },
+    {
+      "url": "https://www.songpa.go.kr/ehealth/selectBbsNttView.do?bbsNo=179&nttNo=19280578&&pageUnit=10&key=4713&pageIndex=1",
+      "title": "11월 음주폐해예방의 달 맞이 온라인 퀴즈 이벤트 정답 및 당첨자 발표",
       "reason": "result"
     }
   ],
