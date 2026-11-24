@@ -53,6 +53,7 @@ python3 -m benefit_monitor.live_check --before "$TMPDIR/before.json"   # 배포 
 - `live_check` 가 실패로 보는 것: `collection_failed`, 혜택 0건, 갱신 36시간 초과, 장보기 가격 비어 있음,
   **배포 전에 보이던 AI 추천(festival·benefit·subscription·grocery)이 사라짐.** 경고: 혜택 수 감소, 비어 있는
   추천, `ai_status` 이상, 3회 이상 연속 실패한 출처.
+- 결과물 품질(조사일 신선도·AI 추천 지금 기준 재검사·주제 카드·축제 후보)은 `git fetch --depth 60 origin briefing-data` 뒤 `python3 -m benefit_monitor.quality_report --git-ref origin/briefing-data`로 본다. 정기로는 `Quality report` 워크플로가 수집 뒤와 매일 07:23 KST에 돈다.
 - Pages CDN 이 몇 분 늦을 수 있다. 실패면 2~3분 간격으로 최대 3번 다시 읽고, 그래도 실패면 멈추고 보고한다.
   다시 읽기 전에 결과 데이터를 고치거나 재배포를 반복하지 않는다.
 - 보고에는 `live_check` 출력의 `status · 혜택 N건 · 갱신 시각 · AI 추천 표시` 줄을 그대로 붙인다.
