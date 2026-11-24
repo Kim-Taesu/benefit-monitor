@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "days": [
+    {
+      "day": "2026-11-25",
+      "kinds": {
+        "benefit:measure": {
+          "requests": 3,
+          "failed": 0,
+          "usd": 0.005837,
+          "web_searches": 0
+        },
+        "festival:measure": {
+          "requests": 3,
+          "failed": 0,
+          "usd": 0.003101,
+          "web_searches": 0
+        },
+        "festival_check:measure": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000288,
+          "web_searches": 0
+        },
+        "grocery:measure": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000515,
+          "web_searches": 0
+        },
+        "notice_triage:measure": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000271,
+          "web_searches": 0
+        },
+        "research:measure": {
+          "requests": 8,
+          "failed": 0,
+          "usd": 0.016732,
+          "web_searches": 0
+        },
+        "subscription:measure": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000863,
+          "web_searches": 0
+        },
+        "topic:measure": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.001058,
+          "web_searches": 0
+        },
+        "verify:measure": {
+          "requests": 37,
+          "failed": 0,
+          "usd": 0.03111,
+          "web_searches": 0
+        }
+      },
+      "total_usd": 0.059775,
+      "total_requests": 56,
+      "gate_corpus": {
+        "status": "ok",
+        "added": 158,
+        "dropped": 0,
+        "records": 158,
+        "recorded_published": 23,
+        "oldest": "2026-11-25",
+        "newest": "2026-11-25",
+        "unchanged": 158,
+        "publish_to_held": 0,
+        "held_to_publish": 0,
+        "reasons_changed": 0,
+        "replay_failed": 0,
+        "reasons_added": {},
+        "reasons_removed": {}
+      }
+    }
+  ]
+}
