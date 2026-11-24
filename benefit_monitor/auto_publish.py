@@ -54,6 +54,19 @@ def phrase_end(text):
         except ValueError:
             return None
     return end
+# "27일부터" right before an ending phrase: that phrase continues a segment that started on day 27.
+CONTINUES_FROM = re.compile(r'(?P<d>\d{1,2})\s*일(?:\s*\([^)]{1,4}\))?\s*부터\s*$')
+
+
+def _continued(body_ends):
+    """Drop a body ending that another segment picks up the very next day (2026-11-24 트레이더스:
+    "26일까지는 A를, 27일부터 29일까지는 B를" ends on the 29th, not the 26th). Each entry is
+    (day, moment, start_day_of_month or None); a later segment must start on day+1 and end after it."""
+    return [(day, moment) for day, moment, _ in body_ends
+            if not any(start == (day + timedelta(days=1)).day and later > day and (later - day).days <= 31
+                       for later, _, start in body_ends if start)]
+
+
 TIME_OF_DAY = re.compile(r'(?:(?P<half>오전|오후)\s*)?(?P<h>\d{1,2})\s*(?:시(?:\s*(?P<m>\d{1,2})\s*분)?|:(?P<mm>\d{2}))')
 
 
@@ -383,6 +396,7 @@ def decide(draft, host, now, takedowns):
             for d in (x for x in host['documents'] if x['id'] in cited):
                 found = [m for m in ENDING_DATE.finditer(d['body']) if not _reference_range(m.group(), today)]
                 matches = [m.group() for m in found]
+                spans = []
                 for match in found:
                     phrase = match.group()
                     if FOUR_DIGIT_YEAR.search(phrase):
@@ -396,7 +410,9 @@ def decide(draft, host, now, takedowns):
                     if stated_end is None or stated_end < today or (moment is not None and moment <= now):
                         period_ok = False
                     else:
-                        body_ends.append((stated_end, moment))
+                        start = CONTINUES_FROM.search(d['body'][max(0, match.start() - 16):match.start()])
+                        spans.append((stated_end, moment, int(start['d']) if start else None))
+                body_ends += _continued(spans)
     elif candidate['source_id'] in LIVE_LISTINGS:
         # Approved 2026-11-12: the listing's own official page, fetched within FRESH_HOURS, is the live
         # record. Every cited fact must come from that page (the bundle holds other listings too), and

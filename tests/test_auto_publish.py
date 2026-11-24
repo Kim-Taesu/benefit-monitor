@@ -898,6 +898,20 @@ class DateReadingTests(unittest.TestCase):
         result = self.year_less('2026-11-05', body_extra='\n사전 신청은 11월 5일까지 받았습니다.')
         self.assertIn('no_current_evidence', result['reasons'])
 
+    def test_body_segment_picked_up_the_next_day_is_not_an_ending(self):
+        # 2026-11-24 트레이더스: "26일까지는 A를, 27일부터 29일까지는 B를" ends on the 29th, not the 26th.
+        result = self.year_less('2026-11-05', body_extra='\n15일까지는 김을, 16일(월)부터 18일까지는 과자를 1천원에 판매합니다.')
+        self.assertTrue(result['publish'], result['reasons'])
+        self.assertEqual(result['record']['valid_until'], '2026-11-18')
+        # The cutoff moves only to the next segment's end; a gap still lowers it to the first ending.
+        for extra, until in (('\n14일까지는 김을, 16일부터 18일까지는 과자를 판매합니다.', '2026-11-14'),
+                             ('\n15일까지는 김을, 16일부터 16일까지는 과자를 판매합니다.', '2026-11-16'),
+                             ('\n사전 신청은 15일까지 받습니다.', '2026-11-15')):
+            with self.subTest(extra=extra):
+                result = self.year_less('2026-11-05', body_extra=extra)
+                self.assertTrue(result['publish'], result['reasons'])
+                self.assertEqual(result['record']['valid_until'], until)
+
     def test_day_only_phrase_reads_the_posting_month_only_after_the_posting_day(self):
         # 2026-11-12 rule narrowed 2026-11-18 (user "ok"): a day with no month anywhere near it reads as the posting
         # month when it falls on or after the posting day ("오는 17일까지" posted 11-05 is 11-17). An earlier day
