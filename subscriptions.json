@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "subscriptions",
-  "fetched_at": "2026-11-24T03:31:01.930250+09:00",
+  "fetched_at": "2026-11-25T03:31:15.161797+09:00",
   "window_days": 14,
   "notice": "청약홈(한국부동산원) 청약 달력과 입주자모집공고 요약을 옮겼습니다. 신청 자격·당첨 가능성·층·호별 금액은 확인하지 않았으니 신청 전 모집공고문에서 확인하세요.",
   "items": [
@@ -67,55 +67,111 @@
       "trade_status": "checked"
     },
     {
-      "id": "2026940260",
-      "name": "더샵 분당센트로(7차)",
-      "area": "경기",
-      "kind": "remain",
-      "supply": "임의공급",
+      "id": "2026000505",
+      "name": "경희궁 에피트",
+      "area": "서울",
+      "kind": "apt",
+      "supply": "아파트 분양",
       "steps": [
         {
-          "label": "임의공급 접수",
-          "start": "2026-11-20",
-          "end": "2026-11-24"
+          "label": "특별공급",
+          "start": "2026-11-25",
+          "end": "2026-11-25"
+        },
+        {
+          "label": "1순위",
+          "start": "2026-11-26",
+          "end": "2026-11-27"
+        },
+        {
+          "label": "2순위",
+          "start": "2026-11-30",
+          "end": "2026-11-30"
         }
       ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000505&pblancNo=2026000505",
       "detail": "checked",
-      "checked_at": "2026-11-21T07:13:38.948603+09:00",
-      "district": "성남시 분당구",
-      "units": 6,
-      "area_min": 78.44,
-      "area_max": 84.08,
-      "price_min": null,
-      "price_max": null,
-      "move_in": "2027-04",
-      "regulation": [],
-      "announce": "2026-11-27",
-      "contract_start": "2026-11-28",
-      "contract_end": "2026-11-28",
-      "notice_date": "2026-11-17",
+      "checked_at": "2026-11-25T03:31:15.161797+09:00",
+      "district": "종로구",
+      "units": 134,
+      "area_min": 39.93,
+      "area_max": 84.99,
+      "price_min": 118241,
+      "price_max": 257484,
+      "move_in": "2030-08",
+      "regulation": [
+        "투기과열지구",
+        "청약과열지역"
+      ],
+      "announce": "2026-12-04",
+      "contract_start": "2026-12-16",
+      "contract_end": "2026-12-18",
+      "notice_date": "2026-11-13",
       "types": [
         {
-          "label": "78N",
-          "area": 78.44,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
+          "label": "39",
+          "area": 39.93,
+          "pyeong": 16,
+          "general": 5,
+          "special": 0,
+          "price": 118241,
           "trade": null
         },
         {
-          "label": "84N",
-          "area": 84.08,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
+          "label": "59",
+          "area": 59.99,
+          "pyeong": 23,
+          "general": 13,
+          "special": 18,
+          "price": 189843,
+          "trade": null
+        },
+        {
+          "label": "84A",
+          "area": 84.98,
+          "pyeong": 33,
+          "general": 25,
+          "special": 28,
+          "price": 257484,
+          "trade": null
+        },
+        {
+          "label": "84B",
+          "area": 84.99,
+          "pyeong": 33,
+          "general": 19,
+          "special": 26,
+          "price": 251744,
           "trade": null
         }
       ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940260&pblancNo=2026940260&atchmnflSeqNo=2022286&atchmnflSn=2",
+      "special_kinds": [
+        {
+          "name": "신혼부부",
+          "count": 20
+        },
+        {
+          "name": "다자녀가구",
+          "count": 13
+        },
+        {
+          "name": "신생아",
+          "count": 13
+        },
+        {
+          "name": "기관추천",
+          "count": 13
+        },
+        {
+          "name": "생애최초",
+          "count": 9
+        },
+        {
+          "name": "노부모부양",
+          "count": 4
+        }
+      ],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000505&pblancNo=2026000505&atchmnflSeqNo=2012203&atchmnflSn=4",
       "trade_status": "checked"
     },
     {
@@ -143,7 +199,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000457&pblancNo=2026000457",
       "detail": "checked",
-      "checked_at": "2026-11-21T07:13:38.948603+09:00",
+      "checked_at": "2026-11-25T03:31:15.161797+09:00",
       "district": "부천시 오정구",
       "units": 548,
       "area_min": 59.71,
@@ -263,7 +319,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000576&pblancNo=2026000576",
       "detail": "checked",
-      "checked_at": "2026-11-21T07:13:38.948603+09:00",
+      "checked_at": "2026-11-25T03:31:15.161797+09:00",
       "district": "안산시 상록구",
       "units": 984,
       "area_min": 84.87,
@@ -362,223 +418,6 @@
       "trade_status": "checked"
     },
     {
-      "id": "2026950098",
-      "name": "아르뮤제자이",
-      "area": "경기",
-      "kind": "officetel",
-      "supply": "오피스텔·도시형 등",
-      "steps": [
-        {
-          "label": "청약 접수",
-          "start": "2026-11-24",
-          "end": "2026-11-24"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-24T03:31:01.930250+09:00",
-      "district": "안산시 상록구",
-      "units": 370,
-      "area_min": 84.92,
-      "area_max": 84.98,
-      "price_min": 73500,
-      "price_max": 75800,
-      "move_in": "2031-03",
-      "regulation": [],
-      "announce": "2026-12-01",
-      "contract_start": "2026-12-04",
-      "contract_end": "2026-12-05",
-      "notice_date": "2026-11-19",
-      "types": [
-        {
-          "label": "84",
-          "area": 84.98,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        },
-        {
-          "label": "84",
-          "area": 84.92,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        },
-        {
-          "label": "84",
-          "area": 84.96,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026950098&pblancNo=2026950098&atchmnflSeqNo=2028188&atchmnflSn=3",
-      "trade_status": "checked"
-    },
-    {
-      "id": "2026940264",
-      "name": "용인 고림 동문 디 이스트",
-      "area": "경기",
-      "kind": "remain",
-      "supply": "임의공급",
-      "steps": [
-        {
-          "label": "임의공급 접수",
-          "start": "2026-11-24",
-          "end": "2026-11-24"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-24T03:31:01.930250+09:00",
-      "district": "용인시 처인구",
-      "units": 23,
-      "area_min": 75.72,
-      "area_max": 84.79,
-      "price_min": null,
-      "price_max": null,
-      "move_in": "2028-10",
-      "regulation": [],
-      "announce": "2026-11-27",
-      "contract_start": "2026-11-30",
-      "contract_end": "2026-11-30",
-      "notice_date": "2026-11-20",
-      "types": [
-        {
-          "label": "75A",
-          "area": 75.78,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": {
-            "amount": 70970,
-            "month": "2026-11",
-            "kind": "분양권"
-          }
-        },
-        {
-          "label": "75B",
-          "area": 75.72,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": {
-            "amount": 70970,
-            "month": "2026-11",
-            "kind": "분양권"
-          }
-        },
-        {
-          "label": "84A",
-          "area": 84.79,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        },
-        {
-          "label": "84B",
-          "area": 84.77,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940264&pblancNo=2026940264&atchmnflSeqNo=2022302&atchmnflSn=2",
-      "trade_status": "checked"
-    },
-    {
-      "id": "2026930045",
-      "name": "잠실 래미안아이파크",
-      "area": "서울",
-      "kind": "remain",
-      "supply": "계약취소 재공급",
-      "steps": [
-        {
-          "label": "특별공급",
-          "start": "2026-11-23",
-          "end": "2026-11-23"
-        },
-        {
-          "label": "일반공급",
-          "start": "2026-11-24",
-          "end": "2026-11-24"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-21T07:13:38.948603+09:00",
-      "district": "송파구",
-      "units": 3,
-      "area_min": 43.73,
-      "area_max": 84.96,
-      "price_min": 110548,
-      "price_max": 185607,
-      "move_in": null,
-      "regulation": [],
-      "announce": "2026-11-27",
-      "contract_start": "2026-12-04",
-      "contract_end": "2026-12-04",
-      "notice_date": "2026-11-17",
-      "types": [
-        {
-          "label": "43",
-          "area": 43.73,
-          "pyeong": 20,
-          "general": 1,
-          "special": 0,
-          "price": 110548,
-          "trade": {
-            "amount": 238000,
-            "month": "2026-06",
-            "kind": "입주권"
-          }
-        },
-        {
-          "label": "59A",
-          "area": 59.47,
-          "pyeong": 26,
-          "general": 1,
-          "special": 0,
-          "price": 157939,
-          "trade": {
-            "amount": 327000,
-            "month": "2026-04",
-            "kind": "입주권"
-          }
-        },
-        {
-          "label": "84D",
-          "area": 84.96,
-          "pyeong": 34,
-          "general": 0,
-          "special": 1,
-          "price": 185607,
-          "trade": {
-            "amount": 430000,
-            "month": "2026-07",
-            "kind": "입주권"
-          }
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026930045&pblancNo=2026930045&atchmnflSeqNo=2023023&atchmnflSn=9",
-      "trade_status": "checked"
-    },
-    {
       "id": "2026940258",
       "name": "중앙하이츠 원종역(4차)",
       "area": "경기",
@@ -640,6 +479,85 @@
       "trade_status": "checked"
     },
     {
+      "id": "2026950090",
+      "name": "중화역 라온프라이빗 센트로",
+      "area": "서울",
+      "kind": "officetel",
+      "supply": "오피스텔·도시형 등",
+      "steps": [
+        {
+          "label": "청약 접수",
+          "start": "2026-11-25",
+          "end": "2026-11-26"
+        }
+      ],
+      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
+      "detail": "checked",
+      "checked_at": "2026-11-25T03:31:15.161797+09:00",
+      "district": "중랑구",
+      "units": 74,
+      "area_min": 20.16,
+      "area_max": 59.91,
+      "price_min": 17800,
+      "price_max": 54800,
+      "move_in": "2029-02",
+      "regulation": [],
+      "announce": "2026-12-02",
+      "contract_start": "2026-12-08",
+      "contract_end": "2026-12-09",
+      "notice_date": "2026-11-12",
+      "types": [
+        {
+          "label": "20OA",
+          "area": 20.16,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": 17800,
+          "trade": null
+        },
+        {
+          "label": "41OA",
+          "area": 41.51,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": 36800,
+          "trade": null
+        },
+        {
+          "label": "41OB",
+          "area": 41.51,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": 37200,
+          "trade": null
+        },
+        {
+          "label": "59OA",
+          "area": 59.91,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": 52000,
+          "trade": null
+        },
+        {
+          "label": "59OB",
+          "area": 59.91,
+          "pyeong": null,
+          "general": null,
+          "special": null,
+          "price": 54800,
+          "trade": null
+        }
+      ],
+      "special_kinds": [],
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026950090&pblancNo=2026950090&atchmnflSeqNo=2023059&atchmnflSn=1",
+      "trade_status": "checked"
+    },
+    {
       "id": "2026000560",
       "name": "해링턴 플레이스 문래",
       "area": "서울",
@@ -664,7 +582,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000560&pblancNo=2026000560",
       "detail": "checked",
-      "checked_at": "2026-11-21T07:13:38.948603+09:00",
+      "checked_at": "2026-11-25T03:31:15.161797+09:00",
       "district": "영등포구",
       "units": 218,
       "area_min": 84.94,
@@ -736,193 +654,6 @@
         }
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000560&pblancNo=2026000560&atchmnflSeqNo=2022113&atchmnflSn=4",
-      "trade_status": "checked"
-    },
-    {
-      "id": "2026000505",
-      "name": "경희궁 에피트",
-      "area": "서울",
-      "kind": "apt",
-      "supply": "아파트 분양",
-      "steps": [
-        {
-          "label": "특별공급",
-          "start": "2026-11-25",
-          "end": "2026-11-25"
-        },
-        {
-          "label": "1순위",
-          "start": "2026-11-26",
-          "end": "2026-11-27"
-        },
-        {
-          "label": "2순위",
-          "start": "2026-11-30",
-          "end": "2026-11-30"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000505&pblancNo=2026000505",
-      "detail": "checked",
-      "checked_at": "2026-11-21T07:13:38.948603+09:00",
-      "district": "종로구",
-      "units": 134,
-      "area_min": 39.93,
-      "area_max": 84.99,
-      "price_min": 118241,
-      "price_max": 257484,
-      "move_in": "2030-08",
-      "regulation": [
-        "투기과열지구",
-        "청약과열지역"
-      ],
-      "announce": "2026-12-04",
-      "contract_start": "2026-12-16",
-      "contract_end": "2026-12-18",
-      "notice_date": "2026-11-13",
-      "types": [
-        {
-          "label": "39",
-          "area": 39.93,
-          "pyeong": 16,
-          "general": 5,
-          "special": 0,
-          "price": 118241,
-          "trade": null
-        },
-        {
-          "label": "59",
-          "area": 59.99,
-          "pyeong": 23,
-          "general": 13,
-          "special": 18,
-          "price": 189843,
-          "trade": null
-        },
-        {
-          "label": "84A",
-          "area": 84.98,
-          "pyeong": 33,
-          "general": 25,
-          "special": 28,
-          "price": 257484,
-          "trade": null
-        },
-        {
-          "label": "84B",
-          "area": 84.99,
-          "pyeong": 33,
-          "general": 19,
-          "special": 26,
-          "price": 251744,
-          "trade": null
-        }
-      ],
-      "special_kinds": [
-        {
-          "name": "신혼부부",
-          "count": 20
-        },
-        {
-          "name": "다자녀가구",
-          "count": 13
-        },
-        {
-          "name": "신생아",
-          "count": 13
-        },
-        {
-          "name": "기관추천",
-          "count": 13
-        },
-        {
-          "name": "생애최초",
-          "count": 9
-        },
-        {
-          "name": "노부모부양",
-          "count": 4
-        }
-      ],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000505&pblancNo=2026000505&atchmnflSeqNo=2012203&atchmnflSn=4",
-      "trade_status": "checked"
-    },
-    {
-      "id": "2026950090",
-      "name": "중화역 라온프라이빗 센트로",
-      "area": "서울",
-      "kind": "officetel",
-      "supply": "오피스텔·도시형 등",
-      "steps": [
-        {
-          "label": "청약 접수",
-          "start": "2026-11-25",
-          "end": "2026-11-26"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-21T07:13:38.948603+09:00",
-      "district": "중랑구",
-      "units": 74,
-      "area_min": 20.16,
-      "area_max": 59.91,
-      "price_min": 17800,
-      "price_max": 54800,
-      "move_in": "2029-02",
-      "regulation": [],
-      "announce": "2026-12-02",
-      "contract_start": "2026-12-08",
-      "contract_end": "2026-12-09",
-      "notice_date": "2026-11-12",
-      "types": [
-        {
-          "label": "20OA",
-          "area": 20.16,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": 17800,
-          "trade": null
-        },
-        {
-          "label": "41OA",
-          "area": 41.51,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": 36800,
-          "trade": null
-        },
-        {
-          "label": "41OB",
-          "area": 41.51,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": 37200,
-          "trade": null
-        },
-        {
-          "label": "59OA",
-          "area": 59.91,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": 52000,
-          "trade": null
-        },
-        {
-          "label": "59OB",
-          "area": 59.91,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": 54800,
-          "trade": null
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026950090&pblancNo=2026950090&atchmnflSeqNo=2023059&atchmnflSn=1",
       "trade_status": "checked"
     },
     {
@@ -1193,7 +924,7 @@
       ],
       "special_kinds": [],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910303&pblancNo=2026910303&atchmnflSeqNo=2027407&atchmnflSn=5",
-      "trade_status": "unavailable"
+      "trade_status": "checked"
     },
     {
       "id": "2026000591",
