@@ -17,6 +17,9 @@ from .store import load, lock, save
 TRIAL_RUNS = Path(__file__).resolve().parents[1] / '.tools/claude-trial/live/runs'
 
 WINDOW_DAYS = 9
+# Seoul·Gyeonggi·Incheon festivals may start further out (2026-11-24, user choice): on 11-24 the 9-day window held
+# only 포천 and 해운대 while Seoul's winter festivals began on 12-11.
+METRO_WINDOW_DAYS = 21
 MAX_PICKS = 5
 MIN_CANDIDATES = 2
 MAX_AGE_HOURS = 36
@@ -31,14 +34,17 @@ FORBIDDEN = ('보장', '무조건', '최저가', '확실', '선착순', '매진'
 
 
 def _candidates(bundle, now):
-    """Festivals still running or starting within WINDOW_DAYS, metro first, then by start date."""
+    """Festivals still running or starting within WINDOW_DAYS (METRO_WINDOW_DAYS for the metro area),
+    metro first, then by start date."""
     today = now.date().isoformat()
     last = (now.date() + timedelta(days=WINDOW_DAYS)).isoformat()
+    metro_last = (now.date() + timedelta(days=METRO_WINDOW_DAYS)).isoformat()
     rows = []
     for row in (bundle or {}).get('items', []):
-        if row['end'] >= today and row['start'] <= last:
+        metro = row['region'].startswith(METRO)
+        if row['end'] >= today and row['start'] <= (metro_last if metro else last):
             rows.append(dict(id=row['id'], name=row['name'], start=row['start'], end=row['end'], region=row['region'],
-                             metro=row['region'].startswith(METRO), fee_status=row['fee_status'],
+                             metro=metro, fee_status=row['fee_status'],
                              fee_text=row['fee_text'][:60], programs=row['programs'][:120]))
     rows.sort(key=lambda c: (not c['metro'], c['start'], c['name']))
     return rows

@@ -22,6 +22,11 @@ KEYWORD_TEXT_TOPICS=(
     ('family',r'가족|어린이|자녀|육아|키즈|임산부|예비맘'),
     ('career',r'채용|면접|취업|구직|일자리|사무지원'),
     ('housing',r'입주자|사회주택|임대주택 공급|전세|월세'),
+    # 2026-11-24 (user choice): AI auto-published items carry no category label, so the category
+    # mapping never reached them and the topic cards went empty once the last labelled item expired.
+    ('learning',r'강좌|교실|클래스|교육|배워|배움|수업|특강|아카데미'),
+    ('culture',r'전시|해설|공연|관람|체험|예술'),
+    ('shopping',r'할인|특가|적립'),
 )
 AGE_PATTERN=r'어르신|시니어|노인|65세|청년|19~39세'
 CONVENIENCE_SOURCES=frozenset({'convenience','cu_events','emart24','emart24_events','gs25','seven','seven_events'})

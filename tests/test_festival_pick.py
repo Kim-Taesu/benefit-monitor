@@ -68,14 +68,15 @@ class HostTests(unittest.TestCase):
     def test_host_window_and_metro_first(self):
         host = fp.host(BUNDLE, NOW)
         names = [c['name'] for c in host['candidates']]
-        self.assertEqual(len(names), 9)
-        self.assertEqual(names[0], '영주 사과축제')
-        self.assertTrue(host['candidates'][0]['metro'])
+        self.assertEqual(len(names), 10)
+        # Metro festivals may start up to 21 days out (포천펫스타 on 11-29); others only within 9 days.
+        self.assertEqual(names[:2], ['영주 사과축제', '포천펫스타'])
+        self.assertTrue(all(c['metro'] for c in host['candidates'][:2]))
         self.assertNotIn('해운대 빛축제', names)
         self.assertEqual((host['schema_version'], host['mode'], host['synthetic'], host['day']),
                          ('festival-input-v1', 'api_agent', False, '2026-11-14'))
-        self.assertTrue(all(not c['metro'] for c in host['candidates'][1:]))
-        rest = [(c['start'], c['name']) for c in host['candidates'][1:]]
+        self.assertTrue(all(not c['metro'] for c in host['candidates'][2:]))
+        rest = [(c['start'], c['name']) for c in host['candidates'][2:]]
         self.assertEqual(rest, sorted(rest))
 
     def test_host_none_below_minimum(self):

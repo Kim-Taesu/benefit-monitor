@@ -1,5 +1,12 @@
 # 개선 진행 기록
 
+## 2026-11-24 — 주제 카드 낱말 규칙 확장, 수도권 축제 후보 창 21일
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`. 같은 날 공개본 점검 3·7번을 사용자가 선택지로 정했다([정책 대응표](policy-map.md) 2026-11-24 두 번째 항목).
+- 변경: `public_topics.py`(learning·culture·shopping 낱말 규칙), `public/topic-publication.json`(`policy_sha256` 재기록), `festival_pick.py`(`METRO_WINDOW_DAYS` 21), `festival-system.md` v4, 테스트 `test_public_topics.py`·`test_festival_pick.py`.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 11-24 공개본으로 `approved_snapshot`+`basis_cards`를 돌리면 문화·체험 1건·배움·강좌 3건 카드가 생기고, 축제 후보는 포천·양평빙송어·서울빛초롱·청계천의 빛·해운대가 된다.
+- 미검증: 모델이 실제로 이 주제 카드를 고르는지와 축제 추천 문장은 다음 AI 실행에서 본다.
+
 ## 2026-11-24 — 장보기 농산물: 월요일 KAMIS 조사가 매번 빠지던 문제
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `00aec7d` 기준). 같은 날 공개본 점검 6번(농산물 조사일 11-20 고정)을 사용자가 "진행"으로 승인했다.
