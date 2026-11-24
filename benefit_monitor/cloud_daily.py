@@ -268,6 +268,24 @@ def publish_snapshot(root,store,now,key,*,expected_sha,crawl=None):
     return {'status':'dispatched_not_yet_verified','snapshot_commit':commit,'code_sha':code,'ref':'main'}
 
 
+def day_review(root,store,now,new_rows):
+    """After the day's paid work (2026-11-24): per-kind usage and cost to briefing-data ai-usage.json, and the
+    gate corpus extended and replayed with the current code. Counts only; never fails the day."""
+    from . import ai_usage,gate_corpus
+    runs=safe_path(root,'.tools/claude-trial/live/runs')
+    try:kinds=ai_usage.summarize(new_rows,runs)
+    except Exception:kinds={}
+    try:corpus=gate_corpus.daily(store,runs,now,os.environ.get('GITHUB_SHA',''))
+    except Exception as error:corpus={'status':'failed','reason':type(error).__name__}
+    ai_usage.upload(store,now.date().isoformat(),kinds,corpus)
+    summary=os.environ.get('GITHUB_STEP_SUMMARY')
+    if summary:
+        try:
+            with open(summary,'a',encoding='utf-8') as stream:stream.write(ai_usage.markdown(kinds,corpus))
+        except OSError:pass
+    return {'usage':kinds,'gate_corpus':corpus}
+
+
 def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=True,refresh_completed=False):
     trusted_environment()
     if type(refresh_completed) is not bool:raise ValueError('refresh_completed must be boolean')
@@ -394,9 +412,12 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         write_ai_status(root,'ok' if status=='completed' else 'failed',day,now);upload_ai_status(root,store)
         delivery=publish_snapshot(root,store,now,key,expected_sha=public_lease,crawl=crawl)
         session.finish(day,'completed')
+        try:review=day_review(root,store,now,new)  # After publication: it never delays or blocks the day.
+        except Exception:review={}
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
                 'halted':after['halted'],'retried_day':retried,'picks':pick_report(result),
-                'tab_checks':result.get('tab_checks') if isinstance(result.get('tab_checks'),dict) else None,'measurement':{k:v for k,v in measurement.items() if k!='request_ids'}}
+                'tab_checks':result.get('tab_checks') if isinstance(result.get('tab_checks'),dict) else None,'measurement':{k:v for k,v in measurement.items() if k!='request_ids'},
+                **review}
     except Exception:
         # Preserve results if possible; unresolved remote reservations still block restarts.
         try:session.save_runtime();session.finish(day,'failed')

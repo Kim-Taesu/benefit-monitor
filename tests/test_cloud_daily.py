@@ -263,6 +263,27 @@ class CloudDailyTests(unittest.TestCase):
         self.assertEqual((policy['max_ai_verifications_per_day'],policy['max_ai_candidates_per_day']),(40,40))
         self.assertIs(policy['investigate_missing_conditions'],True)
 
+    def test_day_review_runs_after_publication_and_its_failure_never_fails_the_day(self):
+        m=self.module();order=[]
+        publish=lambda *a,**k:order.append('publish') or {'status':'dispatched_not_yet_verified'}
+        review=lambda *a,**k:order.append('review') or {'usage':{'research':{'requests':1}},'gate_corpus':{'status':'ok'}}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',return_value={'status':'completed'}),\
+                patch.object(m.collection_snapshot,'restore',return_value=None),patch.object(m,'publish_snapshot',side_effect=publish),\
+                patch.object(m,'day_review',side_effect=review):
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        self.assertEqual(order,['publish','review'])
+        self.assertEqual((result['status'],result['gate_corpus']),('completed',{'status':'ok'}))
+
+    def test_day_review_errors_are_contained(self):
+        m=self.module()
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',return_value={'status':'completed'}),\
+                patch.object(m.collection_snapshot,'restore',return_value=None),\
+                patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}),\
+                patch('benefit_monitor.gate_corpus.daily',side_effect=RuntimeError('boom')):
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        self.assertEqual(result['status'],'completed')
+        self.assertEqual(result['gate_corpus'],{'status':'failed','reason':'RuntimeError'})
+
     def test_investigation_can_be_disabled_without_raising_daily_allowance(self):
         m=self.module()
         with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',return_value={'status':'completed'}),patch.object(m.collection_snapshot,'restore',return_value=None),patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}):
