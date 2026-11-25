@@ -349,9 +349,15 @@ def decide(draft, host, now, takedowns):
         reasons.append('core_missing')
     eligibility = supported('eligibility')
     required = eligibility.get('required') if isinstance(eligibility, dict) else None
-    if isinstance(required, list) and required and all(isinstance(r, str) for r in required) \
-            and all(ORGANISATION.search(r) for r in required) and not any(PERSON.search(r) for r in required):
+    # The model's applicant judgement (2026-11-25, with evidence segments) holds an organisation-only page too;
+    # it can only add a hold, never lift one.
+    if supported('applicant') == 'organization' or (
+            isinstance(required, list) and required and all(isinstance(r, str) for r in required)
+            and all(ORGANISATION.search(r) for r in required) and not any(PERSON.search(r) for r in required)):
         reasons.append('not_personal')
+    # The source itself says the offer ended, was cancelled or is full (model judgement with evidence).
+    if supported('closure') is not None:
+        reasons.append('closed_by_source')
     fee = supported('fee_status')
     if fee in PAID and all(supported(f) is None for f in COST):
         reasons.append('cost_missing')

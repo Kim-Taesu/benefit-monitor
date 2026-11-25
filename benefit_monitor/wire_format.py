@@ -26,7 +26,7 @@ from pathlib import Path
 import re
 
 from .daily_topics import TITLES
-from .research_guard import FIELDS, REQUIRED_FIELDS
+from .research_guard import FIELDS, REQUIRED_FIELDS, SEMANTIC_FIELDS
 from .topic_semantics import FACETS
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -39,6 +39,7 @@ NOTICE_TRIAGE_WIRE = 'notice-triage-wire-v1'
 FESTIVAL_CHECK_WIRE = 'festival-check-wire-v1'
 BENEFIT_WIRE = 'benefit-wire-v1'
 SUBSCRIPTION_WIRE = 'subscription-wire-v1'
+OPS_REVIEW_WIRE = 'ops-review-wire-v1'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
 GRAMMAR_UNION_LIMIT = 0
@@ -59,6 +60,9 @@ TEXT_FIELDS = ('cost_details', 'payment_conditions', 'selection', 'application_m
                'cancellation', 'restrictions', 'summary', 'conditions')
 SCOPES = ('restricted', 'unrestricted', 'disputed')
 FEES = ('free', 'paid', 'conditional')
+# 2026-11-25: who may apply, and what the source says about the offer having stopped.
+APPLICANTS = ('individual', 'organization', 'both')
+CLOSURES = ('ended', 'cancelled', 'full')
 ERROR_CODES = ['missing_input', 'policy_blocked', 'environment_unavailable', 'tool_failure', 'budget_exhausted']
 STATUSES = ['completed', 'partial', 'blocked', 'failed']
 SENTENCE = re.compile(r'.+?(?:[.!?。](?=\s|$)|$)')
@@ -186,6 +190,14 @@ def _fact_value(field, fact):
         if fact['text'] not in FEES:
             raise ValueError('invalid fee_status')
         return fact['text']
+    if field == 'applicant':
+        if fact['text'] not in APPLICANTS:
+            raise ValueError('invalid applicant')
+        return fact['text']
+    if field == 'closure':
+        if fact['text'] not in CLOSURES:
+            raise ValueError('invalid closure')
+        return fact['text']
     if field == 'eligibility':
         if fact['text'] not in SCOPES:
             raise ValueError('invalid eligibility scope')
@@ -234,10 +246,13 @@ def research_from_wire(wire, host):
             if fact['field'] in by_field:
                 raise ValueError('duplicate fact field')
             by_field[fact['field']] = fact
-        if set(by_field) != set(FIELDS):
+        # The semantic fields may be left out; answers from before 2026-11-25 have none.
+        if set(by_field) - set(FIELDS) or set(FIELDS) - set(SEMANTIC_FIELDS) - set(by_field):
             raise ValueError('missing fact field')
         facts = []
         for field in FIELDS:
+            if field not in by_field:
+                continue
             fact = by_field[field]
             if fact['status'] == 'unknown':
                 if field in OPTIONAL_FIELDS:
@@ -453,6 +468,21 @@ def festival_check_from_wire(wire, host):
     return {'results': wire['results']}
 
 
+def ops_review_wire_schema(host):
+    """Reference and copied quote first, then the issue code (phase F, 2026-11-25). No free text."""
+    from .ops_review import ISSUES
+    row = _object({'ref': _string(), 'field': _string(), 'quote': _string(), 'issue': {'enum': list(ISSUES)}})
+    schema = _object({'wire_version': {'enum': [OPS_REVIEW_WIRE]}, 'findings': {'type': 'array', 'items': row}})
+    check_limits(schema)
+    return schema
+
+
+def ops_review_from_wire(wire, host):
+    if not isinstance(wire, dict) or wire.get('wire_version') != OPS_REVIEW_WIRE or set(wire) != {'wire_version', 'findings'}:
+        raise ValueError('ops review wire contract mismatch')
+    return {'findings': wire['findings']}
+
+
 def _verify_schema(host):
     from .verify_contract import wire_schema
     return wire_schema()
@@ -480,6 +510,7 @@ WIRES = {
     'subscription': (SUBSCRIPTION_WIRE, subscription_wire_schema, subscription_from_wire, (_pick_from_wire,)),
     'notice_triage': (NOTICE_TRIAGE_WIRE, notice_triage_wire_schema, notice_triage_from_wire, (notice_triage_from_wire,)),
     'festival_check': (FESTIVAL_CHECK_WIRE, festival_check_wire_schema, festival_check_from_wire, (festival_check_from_wire,)),
+    'ops_review': (OPS_REVIEW_WIRE, ops_review_wire_schema, ops_review_from_wire, (ops_review_from_wire,)),
 }
 
 

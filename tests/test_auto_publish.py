@@ -108,6 +108,22 @@ class AutoPublishTests(unittest.TestCase):
                 result = self.decide(host(D1, D2), facts)
                 self.assertTrue(result['publish'], result['reasons'])
 
+    def test_semantic_judgements_only_add_holds(self):
+        # 2026-11-25 (phase C): the model's applicant and closure facts, each with evidence segments.
+        result = self.decide(host(D1, D2), period_facts(applicant=sup('organization', 'd1s4')))
+        self.assertFalse(result['publish'])
+        self.assertIn('not_personal', result['reasons'])
+        for closure in ('ended', 'cancelled', 'full'):
+            with self.subTest(closure=closure):
+                result = self.decide(host(D1, D2), period_facts(closure=sup(closure, 'd1s2')))
+                self.assertFalse(result['publish'])
+                self.assertIn('closed_by_source', result['reasons'])
+        # Individual or both, and an unknown judgement, change nothing.
+        for applicant in ('individual', 'both'):
+            with self.subTest(applicant=applicant):
+                result = self.decide(host(D1, D2), period_facts(applicant=sup(applicant, 'd1s4')))
+                self.assertTrue(result['publish'], result['reasons'])
+
     def test_period_item_with_two_documents_publishes(self):
         base = host(D1, D2)
         result = self.decide(base, period_facts())

@@ -31,12 +31,9 @@ def fingerprint(_runtime_root):
     return hashlib.sha256(contract_fingerprint(root,'research').encode()+b'\n'+draft_schema).hexdigest()
 
 
-# One-time bridge for the change above. The research prompt, schema and decoder were not edited in
-# that commit, so answers signed with the last whole-file value stay valid and are not paid for
-# again. It applies only while fingerprint() equals BRIDGED_FINGERPRINT: the next real change to the
-# research contract switches it off by itself. Delete both constants (and their test) then.
-LEGACY_FINGERPRINT='c138133987052d63a1d61b80518ce7be6ed921cadbd25c6f6d5b8e9a6e8539b9'
-BRIDGED_FINGERPRINT='ed38ec4b44cd16f1c716b53324f28c01942691267388a9f8eb6aa06ed41688e6'
+# The one-time bridge for the 2026-11-14 narrowing (LEGACY/BRIDGED_FINGERPRINT) was removed on 2026-11-25:
+# the research contract changed (applicant and closure fields), so earlier answers are researched again
+# within the daily limit.
 
 
 def _signature(cid,hashes,prompt):
@@ -46,9 +43,7 @@ def _signature(cid,hashes,prompt):
 def _signatures(cid,hashes,prompt,suffix=''):
     """Today's signature, and the set of stored signatures that mean the same input and contract."""
     signature=_signature(cid,hashes,prompt+suffix)
-    same={signature}
-    if prompt==BRIDGED_FINGERPRINT:same.add(_signature(cid,hashes,LEGACY_FINGERPRINT+suffix))
-    return signature,same
+    return signature,{signature}
 
 
 

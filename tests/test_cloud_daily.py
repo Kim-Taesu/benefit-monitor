@@ -461,10 +461,11 @@ class CloudDailyTests(unittest.TestCase):
         self.assertEqual((m.exit_code(passed),m.exit_code(rejected)),(0,1))
         self.assertEqual(len(made),2);disable.assert_not_called()
         # Research, the nine other kinds (two stage 2 checks added 2026-11-20), then the two measurement variants.
-        # Research, the nine other kinds, the web search tool (2026-11-20), then the two measurement variants.
-        self.assertEqual(probed[:13],['baseline']*10+['web_search','adaptive-medium','adaptive-high'])
+        # Research, the ten other kinds (ops_review added 2026-11-25), the web search tool (2026-11-20), then the two
+        # measurement variants.
+        self.assertEqual(probed[:14],['baseline']*11+['web_search','adaptive-medium','adaptive-high'])
         self.assertEqual(set(passed['probes']),{'topic','verify','grocery','health','festival','benefit','subscription',
-                                                'notice_triage','festival_check','web_search',
+                                                'notice_triage','festival_check','ops_review','web_search',
                                                 'festival:adaptive-medium','festival:adaptive-high'})
         self.assertNotIn('2026-11-06',json.loads(self.fixture.store().read('control')[0])['days'])
 

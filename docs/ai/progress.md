@@ -2,7 +2,7 @@
 
 ## 2026-11-26 — 첫 정규 실행 확인: 보관 축소 효과, 발굴 검색 0회
 
-- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `8517972` 기준).
+- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `8517972` 기준, 이후 `564cd68` 병합).
 - 확인된 것(11-26 03:47 KST AI 정규 실행, `briefing-data` 공개본 기준):
   - 실행 상태 저장 성공(`ai-status` ok). `ai-runtime.age`는 8,226,620 → 7,631,716바이트로 줄었다.
   - 공개 혜택 12 → 13건, AI 추천 4개 유지, `live_check` 실패 0. 유료 요청 68건, 원장 기준 $0.080.
@@ -10,6 +10,28 @@
 - 변경: 발굴 요청에만 `tool_choice: {"type": "any"}`를 넣었다(`claude_trial.ClaudeClient.web_search`). 도구가 `web_search` 하나뿐이라 검색이 강제된다. Haiku 5.5는 강제 `tool_choice`를 받는다(공식 이전 안내). 요청당 `max_uses` 2와 하루 50회·월 원장 상한은 그대로다. 후보 보충 검색(`search_lead`)은 바꾸지 않았다.
 - 실제 실행한 검사·결과: 전체 단위 테스트 통과.
 - 미검증: 강제 선택으로 실제 검색이 일어나는지와 결과 URL은 다음 AI 실행의 `ai-usage.json`(`other.web_searches`)에서 본다. 스케이트장은 아직 공개본에 없다.
+
+## 2026-11-25 — AI 공개 화면 점검(F)
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `5a97aed` 기준). [개선 단계](improvement-phases.md) F. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 다섯 번째 항목.
+- 변경: `ops_review.py`(입력 구성·검사·하루 1회 실행), `wire_format`(`ops-review-wire-v1`: ref·field·quote·issue, 자유 문장 없음), `claude_trial.KINDS['ops_review']`·`_validate_ops_review`, 프롬프트 `ops-review-system.md` v1(예시 포함), `cloud_daily.day_review`(공개 뒤 점검 → 그 요청까지 포함한 사용량 → 회귀 묶음), `ai_usage`(그날 행·Actions 요약에 점검 결과), `quality_report`(지적을 경고로), AGENTS.md 일일 상한 한 줄, 테스트 `test_ops_review.py`·예시 검사·문법 시험 목록.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 11-25 공개본으로 입력을 만들면 항목 73개(보건소 29·청약 15·축제 13·혜택 12·추천 4), 약 1.5만 자다.
+- 미검증: 실제 모델이 무엇을 지적하는지, 인용 검사에 몇 번 걸리는지는 머지 뒤 AI 실행의 `ai-usage.json` `ops_review`와 품질 리포트 경고로 본다. 1주 동안 지적이 사람 판단과 맞는지 확인해 쓸모를 판단한다(E와 같은 기준).
+
+## 2026-11-25 — 의미 판단을 조사 형식으로(C 1단계): 신청 주체·멈춤
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `1037ddf` 기준). [개선 단계](improvement-phases.md) C. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 네 번째 항목.
+- 변경: `research_guard.SEMANTIC_FIELDS`(`applicant`·`closure`), `wire_format`(값 검사, 두 필드는 빠져도 됨), `docs/ai/schemas/research-extraction-v3.schema.json`(두 필드 분기), `auto_publish.decide`(`not_personal`·`closed_by_source` 보류), `research-system.md` v2, `ai_review`의 지문 연결 상수 제거, 테스트(`test_wire_format.py` 새 필드·이전 응답 호환, `test_auto_publish.py` 보류만 늘어남, 연결 장치 테스트 2건 삭제, 프롬프트 버전 문자열).
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과.
+- 미검증: 모델이 새 필드를 실제로 얼마나 채우는지, 재조사로 보류가 몇 건 늘어나는지는 머지 뒤 AI 실행의 게이트 회귀 묶음 재생(`ai-usage.json`의 `gate_corpus`)과 보류 사유(`not_personal`·`closed_by_source`)로 본다. 새 스키마 문법 시험은 첫 조사 요청에서 자동으로 돈다.
+- 다음: 재조사가 끝나면(4~5일) 정규식 규칙별로 회귀 묶음에서 끄고 켜 영향을 비교한 뒤 겹치는 규칙을 줄인다.
+
+## 2026-11-25 — 운영 조정 값 설정 파일 분리(G)
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `9facf33` 기준, 이후 `8517972` 병합). [개선 단계](improvement-phases.md) G. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 세 번째 항목.
+- 변경: `config/tuning.json`(값 12개, 승인 범위·단위·이유), `tuning.py`(검사·읽기, 잘못되면 예외), `festival_pick`·`runtime_retention`·`quality_report`·`gate_corpus`·`live_check`·`ai_usage`가 상수 대신 설정을 읽는다. 테스트 `test_tuning.py`(커밋된 파일 유효, 모든 값이 코드에서 쓰이고 그 외 값 없음, 범위 밖·형식 오류 거절, 파일 누락·모르는 이름 예외).
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 각 모듈이 읽는 값이 분리 전 상수와 같음을 확인했다(동작 변화 없음). main의 보관 축소(조사 2일·검증 1일, PR #89)와 병합하며 그 값을 설정 파일로 옮기고 범위 하한을 그 승인값으로 잡았다.
+- 다음: 범위를 바꿀 일이 생기면 대응표에 승인을 남긴 뒤 `min`/`max`를 고친다.
 
 ## 2026-11-25 — AI 추가 실행 저장 실패(8 MiB)와 실행 상태 보관 축소
 

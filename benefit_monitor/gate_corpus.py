@@ -18,11 +18,11 @@ import json
 from pathlib import Path
 import re
 
-from . import auto_publish
+from . import auto_publish, tuning
 
 SCHEMA_VERSION = 1
 # The encrypted file cap is 8 MiB (cloud_state.MAX_CIPHER); age adds little, so keep a margin.
-PACKED_LIMIT = 6 * 1024 * 1024
+PACKED_LIMIT = int(tuning.value('corpus.packed_limit_mib') * 1024 * 1024)  # config/tuning.json
 RUN_ID = re.compile(r'[0-9a-f]{64}')
 
 

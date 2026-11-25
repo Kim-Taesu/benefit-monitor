@@ -516,6 +516,18 @@ def _validate_festival_check(host, root):
         raise ValueError('festival check input differs from the festival cache')
 
 
+def _validate_ops_review(host, root):
+    # Phase F (2026-11-25): only the view the code rebuilds from today's public briefing may be sent.
+    from .ops_review import host as ops_host
+    from .store import load
+    _only_fields(host, {'schema_version','mode','synthetic','now','day','entries'})
+    now = _host_now(host)
+    data = load(Path(root)/'delivery/public/briefing.json', None)
+    expected = ops_host(data, now) if isinstance(data, dict) else None
+    if expected is None or host != expected:
+        raise ValueError('ops review input differs from the public briefing')
+
+
 def _validate_grocery(host, root):
     # Only the input the code rebuilds from today's public groceries bundle may reach a paid request.
     from .grocery_pick import host as grocery_host
@@ -717,6 +729,11 @@ def _festival_check_input(host):
     return model_input(host)
 
 
+def _ops_review_input(host):
+    from .ops_review import model_input
+    return model_input(host)
+
+
 class Kind:
     """One model task: its prompt, what is sent, what must come back and who checks it.
 
@@ -773,6 +790,11 @@ KINDS = {
                            '먼저 그대로 복사하고, 그 구절만으로 `status`를 정하라. 모든 id에 한 번씩 답한다.',
                            _festival_check_input,
                            _validate_festival_check, _reviewer('festival_check')),
+    # Phase F (2026-11-25): report only; findings never change what is published.
+    'ops_review': Kind('ops-review-system.md',
+                       '위 `<input>`의 `entries`를 방문자처럼 읽고, 오늘(`today`) 기준으로 틀렸거나 오해를 부르는 곳만 골라라. '
+                       '각 지적은 항목 id·필드·그 필드에서 그대로 복사한 구절을 먼저 쓰고 마지막에 문제 종류를 고른다. 없으면 빈 목록이다.',
+                       _ops_review_input, _validate_ops_review, _reviewer('ops_review')),
 }
 if set(KINDS) != set(wire_format.WIRES):
     raise RuntimeError('every model kind needs a row in both KINDS and wire_format.WIRES')

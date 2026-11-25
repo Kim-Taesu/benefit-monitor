@@ -5,7 +5,10 @@ import unicodedata
 REQUIRED_FIELDS = ('eligibility','event_period','application_period','fee_status','cost_details',
                    'payment_conditions','selection','capacity','application_method','cancellation',
                    'restrictions','availability')
-FIELDS = REQUIRED_FIELDS + ('summary','conditions','districts','published_at')
+# applicant and closure (2026-11-25, improvement phase C): semantic judgements the model makes with evidence
+# segments; the gate only ever holds more because of them. Optional, so earlier drafts stay valid.
+SEMANTIC_FIELDS = ('applicant','closure')
+FIELDS = REQUIRED_FIELDS + ('summary','conditions','districts','published_at') + SEMANTIC_FIELDS
 RESTRICTION = re.compile(
     r'(?:유아|어린이|아동|성인|청년|가족|주민|회원)[^.!?\n]{0,16}?(?:동반(?:\s*가족)?|대상|한정|전용)'
     r'|대상\s*(?:유아|어린이|아동|성인|청년|가족|주민|회원)'

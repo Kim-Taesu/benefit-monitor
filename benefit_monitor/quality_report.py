@@ -25,13 +25,14 @@ from importlib import import_module
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from . import live_check
+from . import live_check, tuning
 from .tab_picks import TAB_PICKS
 
 KST = ZoneInfo('Asia/Seoul')
 Finding = namedtuple('Finding', 'level section message')
-SECTION_MAX_AGE_HOURS = 30  # festivals, health notices and subscriptions are fetched daily
-MEAT_MAX_AGE_DAYS = 1
+# config/tuning.json; festivals, health notices and subscriptions are fetched daily.
+SECTION_MAX_AGE_HOURS = tuning.value('quality.section_max_age_hours')
+MEAT_MAX_AGE_DAYS = tuning.value('quality.meat_max_age_days')
 DAY_UNTIL = re.compile(r'(?:(?P<m>\d{1,2})\s*월\s*)?(?P<d>\d{1,2})\s*일\s*까지')
 
 
@@ -170,7 +171,7 @@ def _contribution(data):
 WHAT = {'research': '자동 공개 혜택', 'verify': '자동 공개 혜택(재확인)', 'topic': 'AI 주제 카드', 'grocery': 'AI 장보기 문장',
         'festival': 'AI 축제 문장', 'benefit': 'AI 혜택 문장', 'subscription': 'AI 청약 문장', 'health': '보건소 문장',
         'notice_triage': '접힌 행정 공지', 'festival_check': '축제 메모'}
-IDLE_DAYS = 7
+IDLE_DAYS = tuning.value('quality.idle_days')
 
 
 def _ai_value(data, usage):
@@ -196,6 +197,13 @@ def _ai_value(data, usage):
                      + (f' → {WHAT[base]} {shown}' if shown is not None and not kind.endswith(':measure') else ''))
         if shown == 0 and len(paid) >= IDLE_DAYS and not kind.endswith(':measure'):
             found.append(Finding('warn', 'AI', f'{kind}: {len(paid)}일 동안 ${cost:.4f}를 썼지만 오늘 공개본에 보이는 결과({WHAT[base]})가 없습니다'))
+    # Phase F (2026-11-25): the AI review of the published page. Findings are warnings for a person to look at;
+    # they never fail the report on their own, and the model never decides anything here.
+    review = last.get('ops_review') or {}
+    for f in review.get('findings') or []:
+        found.append(Finding('warn', 'AI 점검', f'{f.get("ref")} {f.get("field")} — {f.get("issue")}: “{f.get("quote")}”'))
+    if review and review.get('status') not in ('completed', 'no_entries', 'already_tried'):
+        found.append(Finding('warn', 'AI 점검', f'AI 공개 화면 점검 상태: {review.get("status")} {review.get("errors") or ""}'.rstrip()))
     corpus = last.get('gate_corpus') or {}
     if corpus and corpus.get('status') != 'ok':
         found.append(Finding('warn', 'AI', f'게이트 회귀 묶음 상태: {corpus.get("status")}'))
@@ -224,7 +232,7 @@ def _known_failing():
 # The encrypted state files share one cap (cloud_state.MAX_CIPHER). 2026-11-25: the runtime reached 98%, and a run
 # that grows past the cap cannot save what it already paid for.
 STATE_CAP = 8 * 1024 * 1024
-STATE_ERROR, STATE_WARN = 0.95, 0.90
+STATE_ERROR, STATE_WARN = tuning.value('quality.state_error_share'), tuning.value('quality.state_warn_share')
 # Right after collection, before the AI run, these are still yesterday's or not there yet (2026-11-25: the
 # post-collection report failed on a hidden grocery pick and empty topic cards that the AI run then filled).
 AI_SECTIONS = {'festival', 'benefit', 'subscription', 'grocery', '주제'}
