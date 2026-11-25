@@ -91,7 +91,8 @@ def invoke_search(root,input_path):
     try:
         value=json.loads(proc.stdout)
         if value.get('status')=='search_done' and isinstance(value.get('urls'),list):
-            return {'status':'search_done','run_id':value.get('run_id'),'urls':[u for u in value['urls'] if isinstance(u,str)][:20],
+            rows=[r for r in value.get('rows') or [] if isinstance(r,dict) and isinstance(r.get('url'),str) and isinstance(r.get('title'),str)][:20]
+            return {'status':'search_done','run_id':value.get('run_id'),'urls':[u for u in value['urls'] if isinstance(u,str)][:20],'rows':rows,
                     'searches':value.get('searches') if type(value.get('searches')) is int else 0}
         if value.get('status')=='credit_exhausted':return {'status':'credit_exhausted','urls':[],'searches':0}
         return {'status':'search_failed','urls':[],'searches':0,'reason':str(value.get('reason',''))[:120]}

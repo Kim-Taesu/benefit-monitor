@@ -20,7 +20,7 @@ from . import observability as obs
 from .briefing import build as build_briefing, write as write_briefing
 
 @obs.entry
-def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2, snapshot=None, ai_max_verify=0, ai_investigate=False):
+def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=False, ai_max_candidates=2, snapshot=None, ai_max_verify=0, ai_investigate=False, ai_discover=False):
     if ai_review and (type(ai_max_candidates) is not int or not 1<=ai_max_candidates<=40):raise ValueError("AI candidate limit 1..40")
     if ai_execute and not ai_review:raise ValueError("AI spend requires explicit review stage")
     if ai_review and not online:raise ValueError("AI body review requires explicit online collection")
@@ -42,6 +42,7 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         incoming = []
         handoffs, failures = [], []
         district_coverage = []
+        district_extra_pages = []
         successful_sources = []
         # AI auto-published records are rechecked every day, even when the AI run fails. The AI run reuses the
         # collection snapshot, so there the recheck goes first, before the AI stages take the shared HTTP
@@ -125,6 +126,14 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
                             except Exception as e:
                                 failures.append(dict(source=s["id"], reason=type(e).__name__, **operations.error_info(e)))
                         handoffs.append(dict(source=s["id"], routes=s["routes"], reason="official_detail_review_required"))
+                    # Approved 2026-11-25: a second listing page for district_feed sources that ask for it, after
+                    # every other source so it only uses budget the collection order left over.
+                    if online and config.get("seoul_district_coverage"):
+                        more = [s["district_feed"] for s in sources.values() if s.get("district_feed") and s.get("district_pages", 1) >= 2]
+                        if more:
+                            from .collectors.districts import collect_more
+                            more_items, district_extra_pages = collect_more(root, sources["seoul"], now, more)
+                            incoming.extend(more_items)
                 finally:
                     pass
                 if online:
@@ -155,6 +164,17 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
             from .ai_review import research_pool, review_candidates, stored_candidates
             # Collection ran under the configured limit; research gets the rest up to the project max of 100.
             cost_policy.budget.limit=100
+            discovery = None
+            if ai_discover and online:
+                # Approved 2026-11-25: once a day, web search leads for events no listing showed. They join
+                # today's candidates and pass the same research, verification and publication gates.
+                from . import discovery_search
+                try:
+                    found, discovery = discovery_search.run(root, sources, now, known_urls={c['url'] for c in incoming},
+                                                            execute=ai_execute)
+                    incoming = incoming + found
+                except Exception as error:  # Optional step: never blocks the listed candidates.
+                    discovery = {'status':'failed','error_type':type(error).__name__}
             ai_candidates, listed, researchable = research_pool(incoming, explicit_items, sources, operational_state.get('items', {}),
                                                                 today=now.date().isoformat())
             # Approved 2026-11-14: held drafts the gate would now publish and withdrawn auto-published
@@ -200,11 +220,13 @@ def run(root, imports=None, online=False, now=None, ai_review=False, ai_execute=
         operations.health(operational_state, successful_sources, failures, now)
         operations.classify_history(report, operational_state)
         if ai_result is not None:report["ai_review"] = ai_result
+        if ai_review and discovery is not None:report["ai_discovery"] = discovery
         if verify_result is not None:report["ai_verify"] = verify_result
         report["body_check_failures"] = body_failures
         report["review_queue"] = operations.queue(report, operational_state, now, config.get("max_age_days", 7), successful_sources)
         save(root/"cache/operational_state.json", operational_state)
         report["district_coverage"] = district_coverage
+        report["district_extra_pages"] = district_extra_pages
         report["collection"] = dict(online=online, successful_sources=successful_sources,
                                   successful_districts=sum(d["status"] == "checked" and d.get("mode") == "live" for d in district_coverage))
         report["cost_policy"] = cost_policy.telemetry()

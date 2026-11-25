@@ -132,6 +132,16 @@
           "type": "string",
           "minLength": 1
         },
+        "district_pages": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "description": "district_feed 자치구 뉴스를 몇 페이지까지 읽을지. 1페이지는 25개 구 공통 수집이 읽고, 2페이지는 다른 출처 수집이 모두 끝난 뒤 HTTP 예산이 남을 때만 읽는다(2026-11-25 승인). 없으면 1."
+        },
+        "district_keywords": {
+          "$ref": "#/$defs/text_list",
+          "description": "자치구 뉴스(districts.py)에만 쓰는 제목 단어. keywords에 더해진다. 미디어허브 첫 화면 수집에는 쓰지 않는다(2026-11-25 승인)."
+        },
         "collector": {
           "enum": [
             "sh_notice",
