@@ -1,5 +1,13 @@
 # 개선 진행 기록
 
+## 2026-11-25 — AI 추가 실행 저장 실패(8 MiB)와 실행 상태 보관 축소
+
+- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `7a5367c` 기준). [정책 대응표](policy-map.md) 2026-11-25 마지막 항목.
+- 확인된 것: 수집 재실행(run 45539326917)은 성공했다(공개본 혜택 12건, AI 추천 4개 유지, 자치구 후보 39→66건, 강서구 4→5건). 이어 사용자 요청으로 돌린 AI 추가 실행(run 45551555583, `refresh_completed_day`)은 약 13분 뒤 `cloud_stopped_requires_review`, `ValueError: encrypted state exceeds 8 MiB`로 멈췄다. 실행 전 `ai-runtime.age`는 8,226,620바이트였다. 공개본·`ai-usage.json`은 바뀌지 않았고 오늘 추가 실행 1회는 소진됐다.
+- 변경: `runtime_retention.KEEP_DAYS` 3→2, `KEEP_VERIFY_DAYS` 3→1, 테스트 `test_runtime_retention.py`.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과.
+- 미검증: 키가 없어 실행 상태를 열어 보지 못했다. 사전 검사(압축 7.5 MiB)를 통과하고도 저장에서 넘친 이유(늘어난 자치구 후보 조사분이 하루 증가량을 키웠는지)는 추정이다. 다음 정규 실행에서 정리 건수·`ai-runtime.age` 크기·발굴 검색 결과(`ai_discovery`)를 본다.
+
 ## 2026-11-25 — 목록에 없는 행사 찾기: 자치구 뉴스 범위 확장과 AI 발굴 검색
 
 - 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `4914eff` 기준, 이후 `9facf33` 병합). 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 항목.
