@@ -96,13 +96,10 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
                 except Exception as error:  # Optional cards: never block publishing the day's paid results.
                     picks[name]={'status':'failed','error_type':type(error).__name__,'model':None}
                 exhausted=exhausted or (picks[name].get('model') or {}).get('status')=='credit_exhausted'
-            # Request-setting measurement (approved 2026-11-14, bounded in variant_trial): the same festival and
-            # benefit inputs with adaptive thinking, recorded only. Never blocks or changes the day's results.
-            try:
-                from .variant_trial import daily_step
-                measurement=daily_step(root,now,execute=allow_spend and not exhausted)
-            except Exception as error:
-                measurement={'status':'failed','error_type':type(error).__name__}
+            # Request-setting measurement (approved 2026-11-14) ended 2026-11-25 after 11 measured days: the benefit
+            # card now runs with adaptive-high (pick_common.REGULAR_VARIANTS) and the festival card passed with every
+            # setting. variant_trial stays available as a manual CLI; the daily run sends no measurement request.
+            measurement={'status':'ended','ended':'2026-11-25'}
             public=obs.call('publication','public_export',publish_briefing,root,now=now) if publish else None
             remote=deliver(root,policy,now=now) if publish and policy.get('remote_delivery_approved') is True else None
             result={'status':'credit_exhausted' if exhausted else 'completed','day':day,'collection':collection,'tab_checks':checks,'topics':topics,'grocery':grocery,'health':health,'festival':picks['festival'],'benefit':picks['benefit'],'subscription':picks['subscription'],'measurement':measurement,'public_exported':public is not None,

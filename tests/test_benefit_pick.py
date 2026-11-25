@@ -306,7 +306,9 @@ class RefreshTests(unittest.TestCase):
             root = Path(tmp.name)
         calls = []
 
-        def invoke(r, kind, path):
+        def invoke(r, kind, path, variant=None):
+            # 2026-11-25: the regular benefit pick runs with adaptive-high (pick_common.REGULAR_VARIANTS).
+            self.assertEqual(variant, 'adaptive-high')
             calls.append((kind, json.loads(Path(path).read_text())))
             self.assertEqual(load(root / 'cache/benefit_pick/days.json', {})['days']['2026-11-14']['status'], 'attempted')
             if model is not None:

@@ -1,5 +1,12 @@
 # 개선 진행 기록
 
+## 2026-11-25 — 혜택 추천 높은 추론 설정 전환, 요청 설정 측정 종료
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `db4e4f4` 기준). [개선 단계](improvement-phases.md) 2026-11-24 재조정 D. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 두 번째 항목.
+- 변경: `pick_common.REGULAR_VARIANTS = {'benefit': 'adaptive-high'}`와 `daily_draft`가 그 설정으로 `invoke`, `ai_daily`의 `variant_trial.daily_step` 호출 제거(`measurement: ended`), 테스트 `test_benefit_pick.py`(설정 전달 확인)·`test_ai_daily.py`(측정 요청 없음).
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과.
+- 미검증: 실제 통과율은 다음 AI 실행부터 `picks.benefit`(source·errors)과 `ai-usage.json`의 `benefit` 비용으로 본다. 1주 동안 규칙 카드 대체가 측정(1/11)보다 잦으면 다시 검토한다.
+
 ## 2026-11-25 — 첫 운영 확인 후속: 사용량 분류, 수집 직후 리포트, 실행 상태 용량
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `4914eff` 기준). 11-25 새벽 첫 실행 확인에서 찾은 문제를 사용자가 "진행"으로 승인했다([정책 대응표](policy-map.md) 2026-11-25 항목).

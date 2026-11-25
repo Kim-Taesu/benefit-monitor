@@ -11,7 +11,8 @@ private run folder; pick.json is never written here, so nothing measured can rea
 Every measurement is an extra paid request on top of the regular daily calls: at most once per
 day, kind and variant (4 a day). Approved 2026-11-14, first for seven measured days, then the same
 day without an end date: when credit runs out the regular cards fall back to rule cards anyway.
-The monthly ledger cap still applies. To stop measuring, remove the call in ai_daily.
+The monthly ledger cap still applies. Ended 2026-11-25: the daily run no longer calls daily_step (the benefit
+card now runs with adaptive-high, pick_common.REGULAR_VARIANTS); this module stays as a manual CLI.
 """
 import argparse
 from datetime import datetime
