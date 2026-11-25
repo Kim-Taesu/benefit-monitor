@@ -1,5 +1,12 @@
 # 개선 진행 기록
 
+## 2026-11-25 — 운영 조정 값 설정 파일 분리(G)
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `9facf33` 기준). [개선 단계](improvement-phases.md) G. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 세 번째 항목.
+- 변경: `config/tuning.json`(값 12개, 승인 범위·단위·이유), `tuning.py`(검사·읽기, 잘못되면 예외), `festival_pick`·`runtime_retention`·`quality_report`·`gate_corpus`·`live_check`·`ai_usage`가 상수 대신 설정을 읽는다. 테스트 `test_tuning.py`(커밋된 파일 유효, 모든 값이 코드에서 쓰이고 그 외 값 없음, 범위 밖·형식 오류 거절, 파일 누락·모르는 이름 예외).
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 각 모듈이 읽는 값이 분리 전 상수와 같음을 확인했다(동작 변화 없음).
+- 다음: 범위를 바꿀 일이 생기면 대응표에 승인을 남긴 뒤 `min`/`max`를 고친다.
+
 ## 2026-11-25 — 혜택 추천 높은 추론 설정 전환, 요청 설정 측정 종료
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `db4e4f4` 기준). [개선 단계](improvement-phases.md) 2026-11-24 재조정 D. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 두 번째 항목.

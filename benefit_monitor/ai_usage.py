@@ -13,8 +13,10 @@ from collections import defaultdict
 import json
 from pathlib import Path
 
+from . import tuning
+
 FILE = 'ai-usage.json'
-KEEP_DAYS = 31
+KEEP_DAYS = tuning.value('usage.keep_days')  # config/tuning.json
 
 
 def _kind(runs, request_id):

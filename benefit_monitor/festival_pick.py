@@ -9,17 +9,17 @@ from datetime import timedelta
 from pathlib import Path
 import re
 
-from . import pick_common as common
+from . import pick_common as common, tuning
 from .ai_review import invoke
 from .official_reader import project_path
 from .store import load, lock, save
 
 TRIAL_RUNS = Path(__file__).resolve().parents[1] / '.tools/claude-trial/live/runs'
 
-WINDOW_DAYS = 9
+WINDOW_DAYS = tuning.value('festival.window_days')  # config/tuning.json
 # Seoul·Gyeonggi·Incheon festivals may start further out (2026-11-24, user choice): on 11-24 the 9-day window held
 # only 포천 and 해운대 while Seoul's winter festivals began on 12-11.
-METRO_WINDOW_DAYS = 21
+METRO_WINDOW_DAYS = tuning.value('festival.metro_window_days')
 MAX_PICKS = 5
 MIN_CANDIDATES = 2
 MAX_AGE_HOURS = 36

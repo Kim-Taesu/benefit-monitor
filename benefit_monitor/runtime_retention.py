@@ -12,11 +12,13 @@ from pathlib import Path
 import re
 import shutil
 
+from . import tuning
+
 # 14 -> 7 (2026-11-14) -> 5 (approved 2026-11-16) -> 3 (approved 2026-11-25): the encrypted runtime reached 98% of
 # its 8 MiB file cap; research runs now live on in the private gate corpus (gate_corpus, ai-corpus.age).
-KEEP_DAYS = 3
+KEEP_DAYS = tuning.value('runtime.keep_days')  # config/tuning.json
 # Daily verification runs (up to 40) only feed that day's decision; their state lives in cache/ai_verify.
-KEEP_VERIFY_DAYS = 3
+KEEP_VERIFY_DAYS = tuning.value('runtime.keep_verify_days')
 RUNS = '.tools/claude-trial/live/runs'
 INPUTS = '.tools/ai-inputs'
 DOCUMENTS = 'cache/ai_review/documents'
