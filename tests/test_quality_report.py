@@ -90,6 +90,30 @@ class TopicTests(unittest.TestCase):
         self.assertEqual(qr._topics_and_festivals(dict(topic_cards=dict(topics=[{}])), NOW), [])
 
 
+class StageAndStateTests(unittest.TestCase):
+    def test_collection_stage_leaves_out_what_the_ai_run_fills(self):
+        # 2026-11-25: right after collection the grocery pick was hidden and topic cards were empty until the AI run.
+        data = dict(status='partial', generated_at=GENERATED, items=[{}], topic_cards=dict(topics=[]),
+                    benefit_pick=dict(source='rule', picks=[{}]))
+        before = dict(data, grocery_pick=dict(picks=[{}]))
+        final, _ = qr.report(data, NOW, before)
+        early, facts = qr.report(data, NOW, before, stage='collection')
+        self.assertTrue(any(f.section == '주제' for f in final))
+        self.assertTrue(any('grocery_pick' in f.message for f in final))
+        self.assertFalse(any(qr._ai_dependent(f) for f in early))
+        self.assertIn('수집 직후 단계', facts[-1])
+        # Section problems are still errors right after collection.
+        self.assertTrue(any(f.section == '축제' and f.level == 'error' for f in early))
+
+    def test_encrypted_state_near_its_cap(self):
+        cap = qr.STATE_CAP
+        found, facts = qr._state({'ai-runtime.age': int(cap * 0.98), 'ai-corpus.age': 784579})
+        self.assertEqual([(f.level, f.section) for f in found], [('error', '상태')])
+        self.assertEqual(len(facts), 2)
+        self.assertEqual([f.level for f in qr._state({'ai-runtime.age': int(cap * 0.92)})[0]], ['warn'])
+        self.assertEqual(qr._state(None), ([], []))
+
+
 class CommandTests(unittest.TestCase):
     def test_exit_code_and_summary(self):
         with tempfile.TemporaryDirectory() as tmp:

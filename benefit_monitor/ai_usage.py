@@ -5,7 +5,7 @@ requests it made, how many failed, the ledger charge in USD and web searches, pl
 replay counts. The quality report sets these next to what the public page shows from each kind, so a
 kind that costs every day and changes nothing visible is easy to see.
 
-Kinds come from each run's metadata; measurement requests (variant set) are counted as `<kind>:measure`;
+Kinds come from each run's metadata; measurement requests (a variant other than baseline) are counted as `<kind>:measure`;
 requests without a run folder (web search follow-ups, grammar probes) as `other`.
 """
 import base64
@@ -23,7 +23,8 @@ def _kind(runs, request_id):
     except (OSError, ValueError):
         return 'other'
     kind = meta.get('kind') if isinstance(meta.get('kind'), str) else 'other'
-    return kind + ':measure' if meta.get('variant') else kind
+    # Every request records its variant; 'baseline' is the regular request (2026-11-25: all were counted as measure).
+    return kind + ':measure' if meta.get('variant') not in (None, 'baseline') else kind
 
 
 def _searches(row):

@@ -99,7 +99,7 @@ class UsageTests(unittest.TestCase):
     def test_summarize_by_kind_with_measurement_and_other(self):
         with tempfile.TemporaryDirectory() as tmp:
             base = host(D1)
-            write_run(tmp, RUN_A, base, {}, kind='research')
+            write_run(tmp, RUN_A, base, {}, kind='research', variant='baseline')
             write_run(tmp, RUN_B, base, {}, kind='benefit', variant='adaptive-high')
             rows = [dict(id=RUN_A, status='completed', charged_microdollars=1500),
                     dict(id=RUN_B, status='completed', charged_microdollars=2500),
