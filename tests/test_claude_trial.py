@@ -425,7 +425,7 @@ class ClaudeTrialTests(unittest.TestCase):
         self.assertEqual(sent[1]['output_config'],sent[2]['output_config'])
         self.assertEqual(json.loads((live/'grammar-probes.json').read_text()).popitem()[1]['status'],'passed')
         request=sent[2]
-        self.assertIn('research-system-v1',request['system'])
+        self.assertIn('research-system-v2',request['system'])
         self.assertNotIn('Phase',request['system'])
         schema=request['output_config']['format']['schema']
         self.assertEqual(request['output_config']['format']['type'],'json_schema')

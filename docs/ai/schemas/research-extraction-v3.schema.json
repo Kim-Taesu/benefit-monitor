@@ -536,6 +536,140 @@
                     "unknown_reason"
                   ],
                   "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "enum": [
+                        "applicant"
+                      ]
+                    },
+                    "value": {
+                      "enum": [
+                        "individual",
+                        "organization",
+                        "both",
+                        null
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "supported",
+                        "unknown",
+                        "disputed"
+                      ]
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source_ref": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "quote": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "locator": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "source_ref",
+                          "quote",
+                          "locator"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "unknown_reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "value",
+                    "status",
+                    "evidence",
+                    "unknown_reason"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "enum": [
+                        "closure"
+                      ]
+                    },
+                    "value": {
+                      "enum": [
+                        "ended",
+                        "cancelled",
+                        "full",
+                        null
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "supported",
+                        "unknown",
+                        "disputed"
+                      ]
+                    },
+                    "evidence": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source_ref": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "quote": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "locator": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "source_ref",
+                          "quote",
+                          "locator"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "unknown_reason": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "field",
+                    "value",
+                    "status",
+                    "evidence",
+                    "unknown_reason"
+                  ],
+                  "additionalProperties": false
                 }
               ]
             }

@@ -26,7 +26,7 @@ from pathlib import Path
 import re
 
 from .daily_topics import TITLES
-from .research_guard import FIELDS, REQUIRED_FIELDS
+from .research_guard import FIELDS, REQUIRED_FIELDS, SEMANTIC_FIELDS
 from .topic_semantics import FACETS
 
 PROJECT = Path(__file__).resolve().parents[1]
@@ -59,6 +59,9 @@ TEXT_FIELDS = ('cost_details', 'payment_conditions', 'selection', 'application_m
                'cancellation', 'restrictions', 'summary', 'conditions')
 SCOPES = ('restricted', 'unrestricted', 'disputed')
 FEES = ('free', 'paid', 'conditional')
+# 2026-11-25: who may apply, and what the source says about the offer having stopped.
+APPLICANTS = ('individual', 'organization', 'both')
+CLOSURES = ('ended', 'cancelled', 'full')
 ERROR_CODES = ['missing_input', 'policy_blocked', 'environment_unavailable', 'tool_failure', 'budget_exhausted']
 STATUSES = ['completed', 'partial', 'blocked', 'failed']
 SENTENCE = re.compile(r'.+?(?:[.!?。](?=\s|$)|$)')
@@ -186,6 +189,14 @@ def _fact_value(field, fact):
         if fact['text'] not in FEES:
             raise ValueError('invalid fee_status')
         return fact['text']
+    if field == 'applicant':
+        if fact['text'] not in APPLICANTS:
+            raise ValueError('invalid applicant')
+        return fact['text']
+    if field == 'closure':
+        if fact['text'] not in CLOSURES:
+            raise ValueError('invalid closure')
+        return fact['text']
     if field == 'eligibility':
         if fact['text'] not in SCOPES:
             raise ValueError('invalid eligibility scope')
@@ -234,10 +245,13 @@ def research_from_wire(wire, host):
             if fact['field'] in by_field:
                 raise ValueError('duplicate fact field')
             by_field[fact['field']] = fact
-        if set(by_field) != set(FIELDS):
+        # The semantic fields may be left out; answers from before 2026-11-25 have none.
+        if set(by_field) - set(FIELDS) or set(FIELDS) - set(SEMANTIC_FIELDS) - set(by_field):
             raise ValueError('missing fact field')
         facts = []
         for field in FIELDS:
+            if field not in by_field:
+                continue
             fact = by_field[field]
             if fact['status'] == 'unknown':
                 if field in OPTIONAL_FIELDS:

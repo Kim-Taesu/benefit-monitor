@@ -111,7 +111,9 @@ class ResearchWireTests(unittest.TestCase):
         duplicate = wire()
         duplicate['records'][0]['facts'].append(dict(duplicate['records'][0]['facts'][0]))
         missing = wire()
-        missing['records'][0]['facts'].pop()
+        missing['records'][0]['facts'].pop(0)  # eligibility; the semantic fields may be left out
+        cases['invalid applicant'] = wire(applicant={'status': 'supported', 'value': 'company', 'evidence': [{'segment_id': 'd1s1'}]})
+        cases['invalid closure'] = wire(closure={'status': 'supported', 'value': 'soon', 'evidence': [{'segment_id': 'd1s1'}]})
         cases['duplicate'] = duplicate
         cases['missing'] = missing
         schema = w.research_wire_schema()
@@ -119,6 +121,19 @@ class ResearchWireTests(unittest.TestCase):
             self.assertTrue(conforms(value, schema, schema), message)
             with self.assertRaisesRegex(ValueError, message):
                 w.research_from_wire(value, host())
+
+    def test_semantic_fields_decode_and_may_be_left_out(self):
+        # 2026-11-25 (phase C): applicant and closure carry the model's judgement with evidence segments.
+        value = wire(applicant={'status': 'supported', 'value': 'organization', 'evidence': [{'segment_id': 'd1s2'}]},
+                     closure={'status': 'supported', 'value': 'ended', 'evidence': [{'segment_id': 'd1s1'}]})
+        facts = {f['field']: f for f in w.research_from_wire(value, host())['records'][0]['facts']}
+        self.assertEqual((facts['applicant']['value'], facts['closure']['value']), ('organization', 'ended'))
+        self.assertEqual(facts['closure']['evidence'][0]['locator'], 'd1s1')
+        # An answer from before the change has neither field and still decodes.
+        old = wire()
+        old['records'][0]['facts'] = [f for f in old['records'][0]['facts'] if f['field'] not in w.SEMANTIC_FIELDS]
+        facts = {f['field'] for f in w.research_from_wire(old, host())['records'][0]['facts']}
+        self.assertFalse(facts & set(w.SEMANTIC_FIELDS))
 
     def test_application_period_accepts_a_date_without_a_time(self):
         # 2026-11-14: notices mostly give the deadline as a date only, and the model wrote that date even
