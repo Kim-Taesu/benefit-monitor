@@ -33,6 +33,22 @@
         "포인트",
         "행사",
         "전시"
+      ],
+      "district_keywords": [
+        "축제",
+        "페스티벌",
+        "개장",
+        "스케이트",
+        "썰매",
+        "공연",
+        "강좌",
+        "교실",
+        "장터",
+        "마켓",
+        "이벤트",
+        "박람회",
+        "캠프",
+        "나눔"
       ]
     },
     {
@@ -50,7 +66,8 @@
       ],
       "feed_url": null,
       "district_feed": "강서구",
-      "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
+      "district_pages": 2,
+      "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지(HTTP 예산이 남으면 2페이지까지) · 구청 공지 전체 수집 아님"
     },
     {
       "id": "eunpyeong",
@@ -66,7 +83,8 @@
       ],
       "feed_url": null,
       "district_feed": "은평구",
-      "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
+      "district_pages": 2,
+      "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지(HTTP 예산이 남으면 2페이지까지) · 구청 공지 전체 수집 아님"
     },
     {
       "id": "seongnam",

@@ -136,6 +136,24 @@ class AIReviewTests(unittest.TestCase):
             normal=run(self.root,path,now=NOW)
         self.assertNotIn('ai_review',normal)
 
+    def test_cli_discovery_leads_join_research_only_when_asked(self):
+        # 2026-11-25: discovery search leads become ordinary review candidates in the same run.
+        from benefit_monitor.cli import run
+        lead={'source':'seoul','url':'https://www.seoul.go.kr/news/9','title':'윈터 스케이트장','summary':'발굴','needs_recheck':True}
+        incoming=self.root/'incoming.json';incoming.write_text('[]')
+        with patch('benefit_monitor.official_reader.network_open',side_effect=self.transport), \
+             patch('benefit_monitor.discovery_search.run',return_value=([lead],{'status':'done','new_leads':1})) as discover, \
+             patch('benefit_monitor.ai_review.invoke',side_effect=AssertionError('no API grant')):
+            report=run(self.root,incoming,online=True,now=NOW,ai_review=True,ai_discover=True)
+            self.assertEqual(discover.call_args.kwargs['execute'],False)
+            self.assertEqual(report['ai_discovery'],{'status':'done','new_leads':1})
+            self.assertEqual(report['ai_review']['awaiting_api'],1)
+            self.assertIn('https://www.seoul.go.kr/news/9',self.requests)
+            self.requests.clear()
+            plain=run(self.root,incoming,online=True,now=NOW,ai_review=True)
+            self.assertEqual(discover.call_count,1)
+        self.assertNotIn('ai_discovery',plain)
+
     def test_cli_brings_back_delisted_drafts_but_not_dismissed_ones(self):
         # 2026-11-14: a held draft the gate would now publish is read again although today's collection
         # no longer lists it; one that verification dismissed (ended / not a benefit) stays out.

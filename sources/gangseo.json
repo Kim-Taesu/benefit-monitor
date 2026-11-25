@@ -17,7 +17,8 @@
     ],
     "feed_url": null,
     "district_feed": "강서구",
-    "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지 · 구청 공지 전체 수집 아님"
+    "district_pages": 2,
+    "collection_scope": "서울시 공식 자치구 뉴스 첫 페이지(HTTP 예산이 남으면 2페이지까지) · 구청 공지 전체 수집 아님"
   },
   "monitoring": {
     "expect": "working"
@@ -38,7 +39,8 @@
       ]
     },
     "extraction": [
-      "구청 사이트를 직접 읽지 않는다. 서울시 공식 자치구 뉴스에서 \"강서구\" 목록 첫 페이지를 읽는다(district_feed)."
+      "구청 사이트를 직접 읽지 않는다. 서울시 공식 자치구 뉴스에서 \"강서구\" 목록 첫 페이지를 읽는다(district_feed).",
+      "2페이지는 다른 출처 수집이 모두 끝난 뒤 공개 HTTP 예산이 3회 이상 남을 때만 읽는다(robots 1 + 구별 1). 예산이 모자라면 건너뛰고 report.json의 district_extra_pages에 skipped로 남긴다(2026-11-25 승인)."
     ],
     "pitfalls": [
       "구청 공지 전체 수집이 아니다. 화면에 전체 수집으로 표시하지 않는다."
@@ -52,6 +54,12 @@
     ],
     "code": [
       "benefit_monitor/collectors/districts.py"
+    ],
+    "history": [
+      {
+        "date": "2026-11-25",
+        "note": "district_pages 2 추가. 사용자 승인: 첫 페이지에서 밀린 구 소식을 하루 한 페이지 더 읽는다."
+      }
     ]
   }
 }

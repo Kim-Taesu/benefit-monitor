@@ -62,7 +62,8 @@ def daily(root,now=None,online=False,allow_spend=False,publish=False,scheduled=F
             imports=prepare_import(root,now) if project_path(root,'public/verified.json').exists() else None
             collection=collect(root,imports=imports,online=True,now=now,ai_review=True,
                                ai_execute=allow_spend,ai_max_candidates=limit,snapshot=snapshot,ai_max_verify=verify_limit,
-                               **({'ai_investigate':True} if policy.get('investigate_missing_conditions',True) is True else {}))
+                               **({'ai_investigate':True,'ai_discover':policy.get('discover_events',True) is True}
+                                  if policy.get('investigate_missing_conditions',True) is True else {}))
             exhausted=bool((collection or {}).get('ai_review',{}).get('credit_exhausted'))
             # Stage 2 (2026-11-20): festival fee notes and health-notice triage, up to 20 paid requests, before
             # any recommendation card. Optional: a failure never blocks the day's other results.
