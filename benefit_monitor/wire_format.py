@@ -39,6 +39,7 @@ NOTICE_TRIAGE_WIRE = 'notice-triage-wire-v1'
 FESTIVAL_CHECK_WIRE = 'festival-check-wire-v1'
 BENEFIT_WIRE = 'benefit-wire-v1'
 SUBSCRIPTION_WIRE = 'subscription-wire-v1'
+OPS_REVIEW_WIRE = 'ops-review-wire-v1'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
 GRAMMAR_UNION_LIMIT = 0
@@ -467,6 +468,21 @@ def festival_check_from_wire(wire, host):
     return {'results': wire['results']}
 
 
+def ops_review_wire_schema(host):
+    """Reference and copied quote first, then the issue code (phase F, 2026-11-25). No free text."""
+    from .ops_review import ISSUES
+    row = _object({'ref': _string(), 'field': _string(), 'quote': _string(), 'issue': {'enum': list(ISSUES)}})
+    schema = _object({'wire_version': {'enum': [OPS_REVIEW_WIRE]}, 'findings': {'type': 'array', 'items': row}})
+    check_limits(schema)
+    return schema
+
+
+def ops_review_from_wire(wire, host):
+    if not isinstance(wire, dict) or wire.get('wire_version') != OPS_REVIEW_WIRE or set(wire) != {'wire_version', 'findings'}:
+        raise ValueError('ops review wire contract mismatch')
+    return {'findings': wire['findings']}
+
+
 def _verify_schema(host):
     from .verify_contract import wire_schema
     return wire_schema()
@@ -494,6 +510,7 @@ WIRES = {
     'subscription': (SUBSCRIPTION_WIRE, subscription_wire_schema, subscription_from_wire, (_pick_from_wire,)),
     'notice_triage': (NOTICE_TRIAGE_WIRE, notice_triage_wire_schema, notice_triage_from_wire, (notice_triage_from_wire,)),
     'festival_check': (FESTIVAL_CHECK_WIRE, festival_check_wire_schema, festival_check_from_wire, (festival_check_from_wire,)),
+    'ops_review': (OPS_REVIEW_WIRE, ops_review_wire_schema, ops_review_from_wire, (ops_review_from_wire,)),
 }
 
 
