@@ -1,5 +1,12 @@
 # 개선 진행 기록
 
+## 2026-11-25 — AI 공개 화면 점검(F)
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `5a97aed` 기준). [개선 단계](improvement-phases.md) F. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 다섯 번째 항목.
+- 변경: `ops_review.py`(입력 구성·검사·하루 1회 실행), `wire_format`(`ops-review-wire-v1`: ref·field·quote·issue, 자유 문장 없음), `claude_trial.KINDS['ops_review']`·`_validate_ops_review`, 프롬프트 `ops-review-system.md` v1(예시 포함), `cloud_daily.day_review`(공개 뒤 점검 → 그 요청까지 포함한 사용량 → 회귀 묶음), `ai_usage`(그날 행·Actions 요약에 점검 결과), `quality_report`(지적을 경고로), AGENTS.md 일일 상한 한 줄, 테스트 `test_ops_review.py`·예시 검사·문법 시험 목록.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 11-25 공개본으로 입력을 만들면 항목 73개(보건소 29·청약 15·축제 13·혜택 12·추천 4), 약 1.5만 자다.
+- 미검증: 실제 모델이 무엇을 지적하는지, 인용 검사에 몇 번 걸리는지는 머지 뒤 AI 실행의 `ai-usage.json` `ops_review`와 품질 리포트 경고로 본다. 1주 동안 지적이 사람 판단과 맞는지 확인해 쓸모를 판단한다(E와 같은 기준).
+
 ## 2026-11-25 — 의미 판단을 조사 형식으로(C 1단계): 신청 주체·멈춤
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `1037ddf` 기준). [개선 단계](improvement-phases.md) C. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 네 번째 항목.

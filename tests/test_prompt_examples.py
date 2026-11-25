@@ -76,6 +76,16 @@ class PromptExampleTests(unittest.TestCase):
             self.assertEqual(subscription_pick.review(draft, {'candidates': candidates}), [], draft['summary'])
 
 
+    def test_ops_review_examples_pass_review(self):
+        from benefit_monitor import ops_review
+        rows = examples('ops-review-system.md', 'entries')
+        self.assertGreaterEqual(len(rows), 1)
+        for raw_input, raw_output in rows:
+            host = {'entries': json.loads(raw_input)}
+            draft = json.loads(raw_output)
+            self.assertEqual(ops_review.review(draft, host), [], draft)
+
+
 class PromptShapeTests(unittest.TestCase):
     def test_pick_task_does_not_encourage_forbidden_copy(self):
         for kind in ('festival', 'benefit', 'subscription'):

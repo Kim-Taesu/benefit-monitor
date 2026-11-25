@@ -197,6 +197,13 @@ def _ai_value(data, usage):
                      + (f' → {WHAT[base]} {shown}' if shown is not None and not kind.endswith(':measure') else ''))
         if shown == 0 and len(paid) >= IDLE_DAYS and not kind.endswith(':measure'):
             found.append(Finding('warn', 'AI', f'{kind}: {len(paid)}일 동안 ${cost:.4f}를 썼지만 오늘 공개본에 보이는 결과({WHAT[base]})가 없습니다'))
+    # Phase F (2026-11-25): the AI review of the published page. Findings are warnings for a person to look at;
+    # they never fail the report on their own, and the model never decides anything here.
+    review = last.get('ops_review') or {}
+    for f in review.get('findings') or []:
+        found.append(Finding('warn', 'AI 점검', f'{f.get("ref")} {f.get("field")} — {f.get("issue")}: “{f.get("quote")}”'))
+    if review and review.get('status') not in ('completed', 'no_entries', 'already_tried'):
+        found.append(Finding('warn', 'AI 점검', f'AI 공개 화면 점검 상태: {review.get("status")} {review.get("errors") or ""}'.rstrip()))
     corpus = last.get('gate_corpus') or {}
     if corpus and corpus.get('status') != 'ok':
         found.append(Finding('warn', 'AI', f'게이트 회귀 묶음 상태: {corpus.get("status")}'))
