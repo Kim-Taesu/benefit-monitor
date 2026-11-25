@@ -3,7 +3,7 @@
 Only three growing folders are touched: run artifacts, staged AI inputs and cached official
 bodies. An entry is removed only when nothing current references it (the per-candidate review
 state, the decisions behind auto-published records, the official-body cache index) and its own
-recorded timestamp is older than 5 days (3 days for verification runs). A missing or unreadable timestamp or reference file keeps
+recorded timestamp is older than 3 days (verification runs too). A missing or unreadable timestamp or reference file keeps
 everything. The ledger (budget.json), its response cache and the review queue are never touched.
 """
 from datetime import datetime, timedelta
@@ -12,8 +12,9 @@ from pathlib import Path
 import re
 import shutil
 
-# 14 -> 7 (2026-11-14) -> 5 (approved 2026-11-16): the packed runtime exceeded its preflight again.
-KEEP_DAYS = 5
+# 14 -> 7 (2026-11-14) -> 5 (approved 2026-11-16) -> 3 (approved 2026-11-25): the encrypted runtime reached 98% of
+# its 8 MiB file cap; research runs now live on in the private gate corpus (gate_corpus, ai-corpus.age).
+KEEP_DAYS = 3
 # Daily verification runs (up to 40) only feed that day's decision; their state lives in cache/ai_verify.
 KEEP_VERIFY_DAYS = 3
 RUNS = '.tools/claude-trial/live/runs'
