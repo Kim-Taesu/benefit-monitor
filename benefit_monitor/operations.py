@@ -120,10 +120,13 @@ def check_auto(approved,takedowns,sources,now,reader):
     (category 'budget_exhausted'), since it disappears from the page 30 hours after its last check."""
     from urllib.error import HTTPError
     from urllib.parse import urlsplit
-    from .auto_release import mark_checked,recheck_targets
+    from .auto_release import mark_checked,recheck_targets,rule_withdrawals
     from .research_probe import RedirectBlocked
     from . import cost_policy
     errors=[]
+    # The current gate's hold rules reach records published before the rule existed (2026-11-26). No request.
+    for cid,reason in rule_withdrawals(approved,now).items():
+        errors.append(dict(source=approved[cid].get('source'),item_id=cid,error_type='RuleWithdrawal',category='rule_'+reason))
     targets=recheck_targets(approved,takedowns,sources,now)
     for n,cid in enumerate(targets):
         record=approved[cid]

@@ -25,8 +25,11 @@ def _kind(runs, request_id):
     except (OSError, ValueError):
         return 'other'
     kind = meta.get('kind') if isinstance(meta.get('kind'), str) else 'other'
-    # Every request records its variant; 'baseline' is the regular request (2026-11-25: all were counted as measure).
-    return kind + ':measure' if meta.get('variant') not in (None, 'baseline') else kind
+    # Every request records its variant; 'baseline' is the regular request (2026-11-25: all were counted as measure),
+    # and so is a kind's approved regular setting (benefit adaptive-high, 2026-11-26: it was counted as measure).
+    from .pick_common import REGULAR_VARIANTS
+    variant = meta.get('variant')
+    return kind if variant in (None, 'baseline', REGULAR_VARIANTS.get(kind)) else kind + ':measure'
 
 
 def _searches(row):

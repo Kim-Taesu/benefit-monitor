@@ -1,5 +1,13 @@
 # 개선 진행 기록
 
+## 2026-11-26 — 첫 운영 확인 후속: 승인 항목 보류 규칙 재적용, 점검 10개 제한, 사용량 분류, 품질 리포트 시점
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `a513d8c` 기준). 11-26 새벽 확인에서 찾은 4건을 사용자가 승인했다([정책 대응표](policy-map.md) 2026-11-26 항목).
+- 11-26 확인 결과: 공개 혜택 13건, 품질 리포트 통과(경고 4). 실행 상태 98%→91%, 혜택 추천 AI 문장(adaptive-high, $0.0031), 측정 종료, 새 조사 형식 실패 없음(조사 15건), 회귀 묶음 166건 재생 변화 없음, 정부·문화 출처 회복. 하루 AI 68건 $0.080. 청약 추천은 검사 거절로 규칙 카드.
+- 변경: `auto_release.rule_withdrawals`와 `operations.check_auto` 호출, `auto_publish.ORG_APPLY`·`PERSON_APPLY`·`organisation_applies`·`past_text`(decide에도 적용), `ai_usage._kind`(정규 설정), `ops_review`(10개 초과는 자르기, 전부 검사), `ops-review-system.md` v2, `quality-report.yml`(AI 일일 실행 뒤에도), 테스트 `test_rule_withdrawals.py`·`test_ops_review.py`·`test_gate_corpus.py`·`test_auto_publish.py`.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 11-26 승인 기록·공개 항목 17건에 새 규칙을 적용하면 생활숲 1건만 철회 대상이다.
+- 미검증: 다음 재확인에서 생활숲이 실제로 빠지는지, AI 일일 실행 뒤 품질 리포트가 도는지, 점검이 10개 이하로 통과하는지는 머지 뒤 실행에서 본다.
+
 ## 2026-11-26 — 첫 정규 실행 확인: 보관 축소 효과, 발굴 검색 0회
 
 - 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `8517972` 기준, 이후 `564cd68`·`df95bb7` 병합).

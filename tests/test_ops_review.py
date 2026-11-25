@@ -47,7 +47,11 @@ class ReviewTests(unittest.TestCase):
         for code, value in cases.items():
             with self.subTest(code=code):
                 self.assertIn(code, ops_review.review({'findings': [value]}, self.host))
-        self.assertEqual(ops_review.review({'findings': [self.finding()] * 11}, self.host), ['too_many'])
+        # More than ten valid findings are not an error (2026-11-26); only the first ten leave the run.
+        self.assertEqual(ops_review.review({'findings': [self.finding()] * 11}, self.host), [])
+        self.assertEqual(len(ops_review.public_findings({'findings': [self.finding()] * 11})), ops_review.MAX_FINDINGS)
+        bad = [self.finding()] * 10 + [self.finding(quote='없는 구절')]
+        self.assertEqual(ops_review.review({'findings': bad}, self.host), ['quote_not_in_field'])  # all are still checked
         self.assertEqual(ops_review.review({'findings': [], 'extra': 1}, self.host), ['draft_shape'])
 
     def test_wire_round_trip_and_no_free_text(self):
@@ -79,7 +83,7 @@ class RefreshTests(unittest.TestCase):
             good = {'findings': [dict(ref='item:0', field='summary', quote='오는 29일까지', issue='date_mismatch')]}
             result, calls = self.run_refresh(tmp, {'status': 'validated_draft', 'run_id': 'run1'}, good)
             self.assertEqual((calls, result['status']), (['ops_review'], 'completed'))
-            self.assertEqual(result['findings'], good['findings'])
+            self.assertEqual((result['findings'], result['total']), (good['findings'], 1))
             again, calls = self.run_refresh(tmp, {'status': 'validated_draft', 'run_id': 'run1'}, good)
             self.assertEqual((calls, again['status']), ([], 'already_tried'))
 

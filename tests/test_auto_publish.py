@@ -118,6 +118,9 @@ class AutoPublishTests(unittest.TestCase):
                 result = self.decide(host(D1, D2), period_facts(closure=sup(closure, 'd1s2')))
                 self.assertFalse(result['publish'])
                 self.assertIn('closed_by_source', result['reasons'])
+        # The applicant wording in the conditions holds too, as the daily rule recheck does for approved records.
+        result = self.decide(host(D1, D2), period_facts(conditions=sup('아파트 관리주체가 신청 가능', 'd1s4')))
+        self.assertIn('not_personal', result['reasons'])
         # Individual or both, and an unknown judgement, change nothing.
         for applicant in ('individual', 'both'):
             with self.subTest(applicant=applicant):

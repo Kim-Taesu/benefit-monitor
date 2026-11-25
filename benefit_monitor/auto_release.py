@@ -328,6 +328,34 @@ def mark_checked(approved, candidate_id, body_hash, now, root=None):
     return result
 
 
+def rule_withdrawals(approved, now):
+    """Hold rules of the current gate applied to records already published (approved 2026-11-26, user "(나)").
+
+    A rule added after a record was approved (organisation-only applicants, ended-offer wording) otherwise never
+    reaches it: approved records are only re-checked for their page body. Only auto-published, still shown records
+    are read, only their stored public text and quoted official sentences, so this makes no request. A match
+    withdraws the record through the usual withdrawal fields; only a new AI decision, which applies the same
+    rules, can publish it again. Returns {candidate_id: reason} for what it withdrew."""
+    from .auto_publish import organisation_applies, past_text
+    withdrawn = {}
+    for cid, record in approved.items():
+        if not isinstance(record, dict) or record.get('status') == 'withdrawn' \
+                or (record.get('review') or {}).get('kind') != 'ai_auto':
+            continue
+        try:
+            text = ' '.join(str(record.get(k) or '') for k in ('title', 'summary', 'conditions'))
+            quotes = [q for v in ((record['review'].get('basis') or {}).values()) for q in (v or []) if isinstance(q, str)]
+            reason = ('not_personal' if organisation_applies(text)
+                      else 'past_signal' if past_text(str(record.get('title') or ''), quotes) else None)
+        except (AttributeError, TypeError):
+            continue
+        if reason:
+            record.update(status='withdrawn', withdrawn_reason='rule_' + reason, withdrawn_at=now.isoformat(),
+                          recheck_priority=False)
+            withdrawn[cid] = reason
+    return withdrawn
+
+
 def recheck_targets(approved, takedowns, sources, now):
     """Up to 20 records that could still be shown (not withdrawn, taken down, ended or past 90 days),
     least recently checked first; ones checked in the last 6 hours are skipped."""

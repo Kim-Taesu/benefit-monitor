@@ -74,8 +74,8 @@ def review(draft, host):
         return ['draft_shape']
     findings = draft['findings']
     errors = []
-    if len(findings) > MAX_FINDINGS:
-        errors.append('too_many')
+    # Every finding is checked; more than MAX_FINDINGS valid ones are cut to the first MAX_FINDINGS afterwards
+    # (2026-11-26: the first run returned more than 10 and the whole answer was thrown away).
     by_id = {e['id']: e for e in host['entries']}
     for f in findings:
         if not isinstance(f, dict) or set(f) != {'ref', 'field', 'quote', 'issue'} \
@@ -95,8 +95,9 @@ def review(draft, host):
 
 
 def public_findings(draft):
-    """The part that may leave the private run: references, enum codes and quotes copied from public data."""
-    return [{k: f[k] for k in ('ref', 'field', 'issue', 'quote')} for f in draft['findings']]
+    """The part that may leave the private run: references, enum codes and quotes copied from public data,
+    the first MAX_FINDINGS in the model's order (the prompt asks for the surest first)."""
+    return [{k: f[k] for k in ('ref', 'field', 'issue', 'quote')} for f in draft['findings'][:MAX_FINDINGS]]
 
 
 def refresh(root, now, data, execute=True):
@@ -124,7 +125,7 @@ def refresh(root, now, data, execute=True):
             draft = load(TRIAL_RUNS / model['run_id'] / 'result.json', None)
             errors = review(draft, current)
             result = {'status': 'rejected', 'errors': errors} if errors else \
-                {'status': 'completed', 'findings': public_findings(draft)}
+                {'status': 'completed', 'findings': public_findings(draft), 'total': len(draft['findings'])}
         elif model.get('status') == 'rejected_draft':
             result = {'status': 'rejected', 'errors': [str(e)[:80] for e in load(
                 TRIAL_RUNS / model['run_id'] / 'validation.json', {}).get('errors', [])][:20]}

@@ -107,6 +107,24 @@ CORE = ('summary', 'conditions', 'fee_status', 'eligibility')
 # ("2027년 생활숲 조성사업": apartment, school and nursery managers apply). Held when every required
 # condition names an organisation and none names a person.
 ORGANISATION = re.compile(r'관리주체|관리사무소|법인|단체|기관|사업자|사업장|기업|협회|조합|어린이집|유치원|학교|시설')
+# 2026-11-26: a phrase that names who applies. "관리주체가 신청 가능" with no phrase letting a person apply is an
+# organisation-only page even when the summary mentions residents ("주민과 함께 나무를 심고").
+ORG_APPLY = re.compile(r'(관리주체|관리사무소|법인|단체|기관|학교|어린이집|유치원|사업자|기업|협회|조합)\s*(만|이|가|에서|별로)?\s*'
+                       r'(신청|응모|접수|지원)')
+PERSON_APPLY = re.compile(r'(주민|구민|시민|개인|본인|누구나|가구|청년|어르신|학생|보호자|부모)\s*(누구나|은|는|이|가|도|만)?\s*'
+                          r'(직접\s*)?(신청|응모|접수|참여|이용)')
+
+
+def organisation_applies(text):
+    """Whether the text says an organisation applies and nothing says a person may."""
+    return bool(ORG_APPLY.search(text)) and not PERSON_APPLY.search(text)
+
+
+def past_text(title, quotes):
+    """The ended-offer wording the gate holds on, read from a title and quoted official text."""
+    return bool(PAST_SIGNAL.search(title) or PAST_TITLE.search(title) or any(PAST_SIGNAL.search(q) for q in quotes))
+
+
 PERSON = re.compile(r'주민|구민|시민|개인|본인|청소년|청년|어르신|노인|아동|학생|유아|가구|가족|부모|여성|남성|장애인|임산부'
                     r'|[0-9]\s*세|누구나|어린이(?!집)|회원|대상자|거주자')
 COST = ('cost_details', 'payment_conditions')
@@ -351,7 +369,8 @@ def decide(draft, host, now, takedowns):
     required = eligibility.get('required') if isinstance(eligibility, dict) else None
     # The model's applicant judgement (2026-11-25, with evidence segments) holds an organisation-only page too;
     # it can only add a hold, never lift one.
-    if supported('applicant') == 'organization' or (
+    if supported('applicant') == 'organization' or organisation_applies(
+            ' '.join(str(supported(f) or '') for f in ('summary', 'conditions'))) or (
             isinstance(required, list) and required and all(isinstance(r, str) for r in required)
             and all(ORGANISATION.search(r) for r in required) and not any(PERSON.search(r) for r in required)):
         reasons.append('not_personal')
