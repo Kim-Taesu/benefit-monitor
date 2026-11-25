@@ -77,6 +77,107 @@
         "reasons_added": {},
         "reasons_removed": {}
       }
+    },
+    {
+      "day": "2026-11-26",
+      "kinds": {
+        "benefit:measure": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.003075,
+          "web_searches": 0
+        },
+        "festival": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000782,
+          "web_searches": 0
+        },
+        "festival_check": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000434,
+          "web_searches": 0
+        },
+        "grocery": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000514,
+          "web_searches": 0
+        },
+        "health": {
+          "requests": 5,
+          "failed": 0,
+          "usd": 0.002584,
+          "web_searches": 0
+        },
+        "notice_triage": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000263,
+          "web_searches": 0
+        },
+        "ops_review": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.001681,
+          "web_searches": 0
+        },
+        "other": {
+          "requests": 3,
+          "failed": 0,
+          "usd": 0.000365,
+          "web_searches": 0
+        },
+        "research": {
+          "requests": 15,
+          "failed": 0,
+          "usd": 0.037242,
+          "web_searches": 0
+        },
+        "subscription": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000861,
+          "web_searches": 0
+        },
+        "topic": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.001269,
+          "web_searches": 0
+        },
+        "verify": {
+          "requests": 37,
+          "failed": 0,
+          "usd": 0.031139,
+          "web_searches": 0
+        }
+      },
+      "total_usd": 0.080209,
+      "total_requests": 68,
+      "gate_corpus": {
+        "status": "ok",
+        "added": 8,
+        "dropped": 0,
+        "records": 166,
+        "recorded_published": 25,
+        "oldest": "2026-11-25",
+        "newest": "2026-11-26",
+        "unchanged": 166,
+        "publish_to_held": 0,
+        "held_to_publish": 0,
+        "reasons_changed": 0,
+        "replay_failed": 0,
+        "reasons_added": {},
+        "reasons_removed": {}
+      },
+      "ops_review": {
+        "status": "rejected",
+        "errors": [
+          "too_many"
+        ]
+      }
     }
   ]
 }
