@@ -19,11 +19,12 @@ import urllib.request
 from collections import namedtuple
 from datetime import datetime, timezone
 
+from benefit_monitor import tuning
 from benefit_monitor.tab_picks import KEYS as TAB_PICK_KEYS
 
 LIVE_URL = 'https://kim-taesu.github.io/benefit-monitor/briefing.json'
 PICK_KEYS = tuple(TAB_PICK_KEYS) + ('grocery_pick',)
-SOURCE_FAILURE_WARN = 3
+SOURCE_FAILURE_WARN = tuning.value('live.source_failure_warn')  # config/tuning.json
 
 Result = namedtuple('Result', 'failures warnings facts')
 
