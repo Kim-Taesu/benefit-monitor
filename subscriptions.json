@@ -1,71 +1,10 @@
 {
   "schema_version": 1,
   "source": "subscriptions",
-  "fetched_at": "2026-11-25T03:31:15.161797+09:00",
+  "fetched_at": "2026-11-26T03:31:01.917119+09:00",
   "window_days": 14,
   "notice": "청약홈(한국부동산원) 청약 달력과 입주자모집공고 요약을 옮겼습니다. 신청 자격·당첨 가능성·층·호별 금액은 확인하지 않았으니 신청 전 모집공고문에서 확인하세요.",
   "items": [
-    {
-      "id": "2026940257",
-      "name": "강동한강 디에트르",
-      "area": "서울",
-      "kind": "remain",
-      "supply": "임의공급",
-      "steps": [
-        {
-          "label": "임의공급 접수",
-          "start": "2026-11-24",
-          "end": "2026-11-25"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
-      "detail": "checked",
-      "checked_at": "2026-11-23T03:31:01.150638+09:00",
-      "district": "강동구",
-      "units": 13,
-      "area_min": 59.59,
-      "area_max": 80.15,
-      "price_min": null,
-      "price_max": null,
-      "move_in": "2027-04",
-      "regulation": [],
-      "announce": "2026-11-30",
-      "contract_start": "2026-12-01",
-      "contract_end": "2026-12-02",
-      "notice_date": "2026-11-19",
-      "types": [
-        {
-          "label": "59B",
-          "area": 59.59,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        },
-        {
-          "label": "79A",
-          "area": 79.75,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        },
-        {
-          "label": "80A",
-          "area": 80.15,
-          "pyeong": null,
-          "general": null,
-          "special": null,
-          "price": null,
-          "trade": null
-        }
-      ],
-      "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026940257&pblancNo=2026940257&atchmnflSeqNo=2028027&atchmnflSn=6",
-      "trade_status": "checked"
-    },
     {
       "id": "2026000505",
       "name": "경희궁 에피트",
@@ -172,249 +111,6 @@
         }
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000505&pblancNo=2026000505&atchmnflSeqNo=2012203&atchmnflSn=4",
-      "trade_status": "checked"
-    },
-    {
-      "id": "2026000457",
-      "name": "부천대장 하우스토리 디센트(부천대장지구 A2BL) 공공분양주택",
-      "area": "경기",
-      "kind": "apt",
-      "supply": "아파트 분양",
-      "steps": [
-        {
-          "label": "특별공급",
-          "start": "2026-11-23",
-          "end": "2026-11-23"
-        },
-        {
-          "label": "1순위",
-          "start": "2026-11-24",
-          "end": "2026-11-24"
-        },
-        {
-          "label": "2순위",
-          "start": "2026-11-25",
-          "end": "2026-11-25"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000457&pblancNo=2026000457",
-      "detail": "checked",
-      "checked_at": "2026-11-25T03:31:15.161797+09:00",
-      "district": "부천시 오정구",
-      "units": 548,
-      "area_min": 59.71,
-      "area_max": 84.95,
-      "price_min": 61345,
-      "price_max": 85406,
-      "move_in": "2029-06",
-      "regulation": [
-        "분양가상한제"
-      ],
-      "announce": "2026-12-01",
-      "contract_start": "2027-01-25",
-      "contract_end": "2027-01-29",
-      "notice_date": "2026-11-12",
-      "types": [
-        {
-          "label": "59A",
-          "area": 59.71,
-          "pyeong": 24,
-          "general": 37,
-          "special": 205,
-          "price": 61345,
-          "trade": null
-        },
-        {
-          "label": "59B",
-          "area": 59.99,
-          "pyeong": 24,
-          "general": 18,
-          "special": 108,
-          "price": 61520,
-          "trade": null
-        },
-        {
-          "label": "59C",
-          "area": 59.99,
-          "pyeong": 24,
-          "general": 3,
-          "special": 11,
-          "price": 61515,
-          "trade": null
-        },
-        {
-          "label": "74A",
-          "area": 74.98,
-          "pyeong": 30,
-          "general": 8,
-          "special": 42,
-          "price": 75423,
-          "trade": null
-        },
-        {
-          "label": "84A",
-          "area": 84.95,
-          "pyeong": 34,
-          "general": 16,
-          "special": 100,
-          "price": 85406,
-          "trade": null
-        }
-      ],
-      "special_kinds": [
-        {
-          "name": "신생아",
-          "count": 110
-        },
-        {
-          "name": "생애최초",
-          "count": 82
-        },
-        {
-          "name": "기관추천",
-          "count": 82
-        },
-        {
-          "name": "다자녀가구",
-          "count": 55
-        },
-        {
-          "name": "신혼부부",
-          "count": 55
-        },
-        {
-          "name": "기타",
-          "count": 55
-        },
-        {
-          "name": "노부모부양",
-          "count": 27
-        }
-      ],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000457&pblancNo=2026000457&atchmnflSeqNo=2023090&atchmnflSn=3",
-      "trade_status": "checked"
-    },
-    {
-      "id": "2026000576",
-      "name": "아르뮤제자이",
-      "area": "경기",
-      "kind": "apt",
-      "supply": "아파트 분양",
-      "steps": [
-        {
-          "label": "특별공급",
-          "start": "2026-11-23",
-          "end": "2026-11-23"
-        },
-        {
-          "label": "1순위",
-          "start": "2026-11-24",
-          "end": "2026-11-24"
-        },
-        {
-          "label": "2순위",
-          "start": "2026-11-25",
-          "end": "2026-11-25"
-        }
-      ],
-      "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000576&pblancNo=2026000576",
-      "detail": "checked",
-      "checked_at": "2026-11-25T03:31:15.161797+09:00",
-      "district": "안산시 상록구",
-      "units": 984,
-      "area_min": 84.87,
-      "area_max": 104.83,
-      "price_min": 109900,
-      "price_max": 140840,
-      "move_in": "2031-03",
-      "regulation": [],
-      "announce": "2026-12-01",
-      "contract_start": "2026-12-13",
-      "contract_end": "2026-12-15",
-      "notice_date": "2026-11-12",
-      "types": [
-        {
-          "label": "84A",
-          "area": 84.89,
-          "pyeong": 36,
-          "general": 82,
-          "special": 98,
-          "price": 110500,
-          "trade": null
-        },
-        {
-          "label": "84B",
-          "area": 84.96,
-          "pyeong": 36,
-          "general": 43,
-          "special": 45,
-          "price": 110500,
-          "trade": null
-        },
-        {
-          "label": "84C",
-          "area": 84.87,
-          "pyeong": 36,
-          "general": 42,
-          "special": 48,
-          "price": 109900,
-          "trade": null
-        },
-        {
-          "label": "99A",
-          "area": 99.9,
-          "pyeong": 42,
-          "general": 157,
-          "special": 23,
-          "price": 127200,
-          "trade": null
-        },
-        {
-          "label": "99B",
-          "area": 99.9,
-          "pyeong": 42,
-          "general": 237,
-          "special": 35,
-          "price": 124200,
-          "trade": null
-        },
-        {
-          "label": "104",
-          "area": 104.83,
-          "pyeong": 44,
-          "general": 152,
-          "special": 22,
-          "price": 140840,
-          "trade": null
-        }
-      ],
-      "special_kinds": [
-        {
-          "name": "다자녀가구",
-          "count": 97
-        },
-        {
-          "name": "신혼부부",
-          "count": 53
-        },
-        {
-          "name": "신생아",
-          "count": 35
-        },
-        {
-          "name": "기관추천",
-          "count": 35
-        },
-        {
-          "name": "노부모부양",
-          "count": 27
-        },
-        {
-          "name": "생애최초",
-          "count": 24
-        }
-      ],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000576&pblancNo=2026000576&atchmnflSeqNo=2023060&atchmnflSn=3",
       "trade_status": "checked"
     },
     {
@@ -681,7 +377,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000585&pblancNo=2026000585",
       "detail": "checked",
-      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "checked_at": "2026-11-26T03:31:01.917119+09:00",
       "district": "고양시 덕양구",
       "units": 102,
       "area_min": 59.87,
@@ -767,7 +463,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "checked_at": "2026-11-26T03:31:01.917119+09:00",
       "district": "성남시 분당구",
       "units": 34,
       "area_min": 74.0,
@@ -889,7 +585,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "checked_at": "2026-11-26T03:31:01.917119+09:00",
       "district": "화성시 동탄구",
       "units": 4,
       "area_min": 84.93,
@@ -923,7 +619,7 @@
         }
       ],
       "special_kinds": [],
-      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910303&pblancNo=2026910303&atchmnflSeqNo=2027407&atchmnflSn=5",
+      "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910303&pblancNo=2026910303&atchmnflSeqNo=2027407&atchmnflSn=6",
       "trade_status": "checked"
     },
     {
@@ -1171,7 +867,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "checked_at": "2026-11-26T03:31:01.917119+09:00",
       "district": "의왕시",
       "units": 130,
       "area_min": 59.96,
@@ -1268,7 +964,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-23T03:31:01.150638+09:00",
+      "checked_at": "2026-11-26T03:31:01.917119+09:00",
       "district": "성남시 분당구",
       "units": 1,
       "area_min": 128.83,
