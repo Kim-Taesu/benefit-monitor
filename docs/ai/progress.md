@@ -2,12 +2,27 @@
 
 ## 2026-11-25 — 목록에 없는 행사 찾기: 자치구 뉴스 범위 확장과 AI 발굴 검색
 
-- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `4914eff` 기준). 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 항목.
+- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `4914eff` 기준, 이후 `9facf33` 병합). 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 항목.
 - 배경: 강서구 마곡광장 윈터 스케이트장(12-24~2027-01-24, 구청 인스타그램 게시)이 화면에 없었다. 자치구 뉴스는 구별 첫 페이지의 혜택 단어 제목만 받았고, AI 웹 검색은 이미 목록에 있는 후보의 빈 필드만 채웠다. 목록에 없는 행사를 찾는 경로가 없었다.
 - 변경: `sources/seoul.json` `district_keywords`, `sources/gangseo.json`·`eunpyeong.json` `district_pages: 2`, 스키마 두 항목, `collectors/districts.py`(`title_words`·`collect_more`), `cli.py`(2페이지는 다른 출처 수집 뒤 남은 예산으로, `ai_discover`), `web_search.py`(발굴 입력 계약·`result_rows`), `claude_trial.py`(발굴 입력 분기, 결과 행에 제목), `discovery_search.py`(새 모듈), `ai_daily.py`(`discover_events` 정책, 기본 켜짐), `age_state.py`(새 캐시 보관), 테스트 `test_discovery_search.py`·`test_ai_review.py` 1건.
 - 실제 실행한 검사·결과: `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` 전체 통과.
 - 미검증: 작업 환경의 네트워크 정책이 `mediahub.seoul.go.kr`을 막아, 늘린 키워드·2페이지가 실제 강서구 목록에서 무엇을 더 잡는지 확인하지 못했다. 발굴 검색의 실제 결과(어떤 URL이 나오고 몇 건이 등록 출처인지)와 비용은 머지 뒤 첫 AI 일일 실행의 `report.json` `ai_discovery`와 `ai-usage.json`에서 본다. 스케이트장 안내가 등록 출처(구청·미디어허브)에 올라오지 않았다면 이번 변경으로도 후보가 되지 않고 `source_candidates`에만 남는다.
 - 다음: 1주일 동안 `ai_discovery.new_leads`·자동 공개 기여·`source_candidates`를 보고, 자주 나오는 미등록 공식 호스트(예: 구 시설 예약 사이트)를 출처로 등록할지 판단한다. 2페이지가 `http_budget`으로 자주 건너뛰어지는지도 본다.
+
+## 2026-11-25 — 혜택 추천 높은 추론 설정 전환, 요청 설정 측정 종료
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `db4e4f4` 기준). [개선 단계](improvement-phases.md) 2026-11-24 재조정 D. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 두 번째 항목.
+- 변경: `pick_common.REGULAR_VARIANTS = {'benefit': 'adaptive-high'}`와 `daily_draft`가 그 설정으로 `invoke`, `ai_daily`의 `variant_trial.daily_step` 호출 제거(`measurement: ended`), 테스트 `test_benefit_pick.py`(설정 전달 확인)·`test_ai_daily.py`(측정 요청 없음).
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과.
+- 미검증: 실제 통과율은 다음 AI 실행부터 `picks.benefit`(source·errors)과 `ai-usage.json`의 `benefit` 비용으로 본다. 1주 동안 규칙 카드 대체가 측정(1/11)보다 잦으면 다시 검토한다.
+
+## 2026-11-25 — 첫 운영 확인 후속: 사용량 분류, 수집 직후 리포트, 실행 상태 용량
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `4914eff` 기준). 11-25 새벽 첫 실행 확인에서 찾은 문제를 사용자가 "진행"으로 승인했다([정책 대응표](policy-map.md) 2026-11-25 항목).
+- 확인된 것: 11-24 수정 5가지 모두 공개본에 반영. `ai-corpus.age` 158건(785 KB), `ai-usage.json` 하루 56건 $0.06, 최종 공개본 품질 리포트 통과.
+- 변경: `ai_usage._kind`(baseline은 일반 요청), `quality_report`(`--stage collection`, `_state` 크기 검사), `quality-report.yml`(수집 직후 실행에 단계 전달), `runtime_retention.KEEP_DAYS` 3, 테스트.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 11-25 수집 직후 공개본(`afcd39f`)에 `--stage collection`으로 돌리면 어제의 오탐 2건이 빠지고 실행 상태 97% 오류만 남는다. 지금 공개본은 실행 상태 98% 오류로 실패한다(실제 위험).
+- 미검증: 3일 보관으로 실행 상태가 실제로 얼마나 줄어드는지는 다음 AI 실행의 정리 결과로 확인한다. 07:23 정기 품질 리포트는 11-25에 아직 한 번도 돌지 않았다(GitHub 예약 지연). 정부 출처(korea.kr 정책뉴스)는 페이지를 받았지만 키워드에 맞는 기사 링크가 0개였고 재요청은 연결이 끊겨 원인을 확정하지 못했다.
 
 ## 2026-11-24 — 게이트 회귀 묶음과 AI 효과 측정
 

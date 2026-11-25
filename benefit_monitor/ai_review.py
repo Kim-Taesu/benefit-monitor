@@ -57,7 +57,8 @@ def _signatures(cid,hashes,prompt,suffix=''):
 def invoke(root,kind,input_path,variant=None):
     """Only the existing CLI owns API credentials, reservations and response checks.
 
-    variant: request settings for a manual measurement (variant_trial); regular runs never pass it."""
+    variant: request settings for a manual measurement (variant_trial), or a regular pick's approved setting
+    (pick_common.REGULAR_VARIANTS, 2026-11-25); other regular runs never pass it."""
     trial_root=Path(__file__).resolve().parents[1]
     input_path=project_path(root,Path(input_path).resolve())
     if not input_path.is_relative_to(trial_root):raise ValueError('AI input outside repository')

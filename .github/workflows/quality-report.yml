@@ -49,4 +49,7 @@ jobs:
           fi
       - name: Check the published result
         if: steps.data.outputs.fresh == 'true'
-        run: python -m benefit_monitor.quality_report --git-ref FETCH_HEAD
+        env:
+          # After a collection run the AI run has not filled picks and topic cards yet (2026-11-25).
+          STAGE: ${{ github.event_name == 'workflow_run' && 'collection' || 'final' }}
+        run: python -m benefit_monitor.quality_report --git-ref FETCH_HEAD --stage "$STAGE"

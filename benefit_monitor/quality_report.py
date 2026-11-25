@@ -221,8 +221,36 @@ def _known_failing():
     return names
 
 
-def report(data, now=None, previous=None, usage=None):
-    """(findings, facts) for a public briefing; findings are Finding(level, section, message)."""
+# The encrypted state files share one cap (cloud_state.MAX_CIPHER). 2026-11-25: the runtime reached 98%, and a run
+# that grows past the cap cannot save what it already paid for.
+STATE_CAP = 8 * 1024 * 1024
+STATE_ERROR, STATE_WARN = 0.95, 0.90
+# Right after collection, before the AI run, these are still yesterday's or not there yet (2026-11-25: the
+# post-collection report failed on a hidden grocery pick and empty topic cards that the AI run then filled).
+AI_SECTIONS = {'festival', 'benefit', 'subscription', 'grocery', '주제'}
+
+
+def _state(sizes):
+    found, facts = [], []
+    for name, size in sorted((sizes or {}).items()):
+        if not isinstance(size, int):
+            continue
+        share = size / STATE_CAP
+        facts.append(f'{name}: {size / 1024 / 1024:.2f} MiB ({share:.0%} of 8 MiB)')
+        if share >= STATE_ERROR:
+            found.append(Finding('error', '상태', f'{name} 가 상한의 {share:.0%}입니다. 다음 AI 실행이 저장하지 못할 수 있습니다'))
+        elif share >= STATE_WARN:
+            found.append(Finding('warn', '상태', f'{name} 가 상한의 {share:.0%}입니다'))
+    return found, facts
+
+
+def _ai_dependent(finding):
+    return finding.section in AI_SECTIONS or (finding.section == '공개' and '_pick' in finding.message)
+
+
+def report(data, now=None, previous=None, usage=None, sizes=None, stage='final'):
+    """(findings, facts) for a public briefing; findings are Finding(level, section, message).
+    stage='collection' leaves out what only the AI run fills in (picks, topic cards)."""
     now = now or datetime.now(timezone.utc)
     base = live_check.check(data, before=previous, now=now)
     known = _known_failing()
@@ -240,6 +268,12 @@ def report(data, now=None, previous=None, usage=None):
         facts += ai_facts
     except Exception as error:
         found.append(Finding('warn', '리포트', f'AI 기여 검사 실패: {type(error).__name__}'))
+    more, state_facts = _state(sizes)
+    found += more
+    facts += state_facts
+    if stage == 'collection':
+        found = [f for f in found if not _ai_dependent(f)]
+        facts.append('수집 직후 단계: AI 추천·주제 카드는 AI 실행 뒤 정기 리포트에서 검사합니다')
     return found, facts
 
 
@@ -266,6 +300,17 @@ def usage_from_git(ref):
         return None
 
 
+def sizes_from_git(ref, names=('ai-runtime.age', 'ai-corpus.age')):
+    sizes = {}
+    for name in names:
+        try:
+            sizes[name] = int(subprocess.run(['git', 'cat-file', '-s', f'{ref}:{name}'], check=True,
+                                             capture_output=True, text=True).stdout)
+        except (subprocess.CalledProcessError, ValueError):
+            continue
+    return sizes
+
+
 def from_git(ref):
     """The briefing at ref and the newest earlier one from another KST day (None when history is too short)."""
     data = _git_json(ref)
@@ -289,12 +334,15 @@ def main(argv=None):
     ap.add_argument('--git-ref', help='briefing-data 커밋(예: FETCH_HEAD); 이전 날짜 공개본을 이력에서 찾는다')
     ap.add_argument('--usage', help='ai-usage.json 파일 (선택, --git-ref 이면 같은 커밋에서 읽음)')
     ap.add_argument('--now', help='기준 시각 ISO (기본: 지금)')
+    ap.add_argument('--stage', choices=('final', 'collection'), default='final',
+                    help='collection: 수집 직후(AI 실행 전) — AI 추천·주제 카드 검사를 뺀다')
     args = ap.parse_args(argv)
     try:
-        usage = None
+        usage, sizes = None, None
         if args.git_ref:
             data, previous = from_git(args.git_ref)
             usage = usage_from_git(args.git_ref)
+            sizes = sizes_from_git(args.git_ref)
         else:
             with open(args.briefing, encoding='utf-8') as f:
                 data = json.load(f)
@@ -309,7 +357,7 @@ def main(argv=None):
         print(f'briefing 을 읽지 못했습니다: {type(error).__name__}')
         return 1
     now = datetime.fromisoformat(args.now) if args.now else None
-    findings, facts = report(data, now, previous, usage)
+    findings, facts = report(data, now, previous, usage, sizes, args.stage)
     text = markdown(findings, facts)
     print(text)
     summary = os.environ.get('GITHUB_STEP_SUMMARY')

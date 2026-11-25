@@ -40,6 +40,12 @@ def stored_header(pick, now):
     return None if generated.tzinfo is None or generated > now else generated
 
 
+# Request settings for a regular daily pick (claude_trial.VARIANTS). Approved 2026-11-25 after 11 measured days
+# (variant_trial): the benefit card passed the host review 10/11 with adaptive-high vs 6/11 with thinking off, at
+# about $0.0025 instead of $0.0008 a request. Other kinds keep the regular request (festival passed 11/11 either way).
+REGULAR_VARIANTS = {'benefit': 'adaptive-high'}
+
+
 def daily_draft(root, folder, kind, current, review, now, invoke, runs):
     """At most one paid call a day for `kind`: (pick or None, model status, error codes).
 
@@ -53,7 +59,8 @@ def daily_draft(root, folder, kind, current, review, now, invoke, runs):
     save_text(input_path, json.dumps(current, ensure_ascii=False, separators=(',', ':')))
     state['days'][day] = {'status': 'attempted', 'input_file': str(input_path.relative_to(root))}
     save(state_path, state)
-    model = invoke(root, kind, input_path)
+    variant = REGULAR_VARIANTS.get(kind)
+    model = invoke(root, kind, input_path, variant=variant) if variant else invoke(root, kind, input_path)
     pick, errors = None, []
     if model['status'] == 'validated_draft':
         try:

@@ -9,7 +9,7 @@ from benefit_monitor.store import save
 
 NOW = datetime.fromisoformat('2026-11-30T07:00:00+09:00')
 OLD = (NOW - timedelta(days=8)).isoformat()
-NEW = (NOW - timedelta(days=4)).isoformat()  # KEEP_DAYS is 5 (2026-11-16)
+NEW = (NOW - timedelta(days=2)).isoformat()  # KEEP_DAYS is 3 (2026-11-25)
 
 
 def h(char):
@@ -63,13 +63,17 @@ class RetentionTests(unittest.TestCase):
         save(old_verify / 'metadata.json', {'kind': 'verify'})
         new_verify = self.run_dir(h('6'), (NOW - timedelta(days=2)).isoformat())
         save(new_verify / 'metadata.json', {'kind': 'verify'})
-        research = self.run_dir(h('7'), (NOW - timedelta(days=4)).isoformat())
+        # Since 2026-11-25 research runs are also kept 3 days (they live on in the gate corpus).
+        research = self.run_dir(h('7'), (NOW - timedelta(days=2)).isoformat())
         save(research / 'metadata.json', {'kind': 'research'})
+        old_research = self.run_dir(h('8'), (NOW - timedelta(days=4)).isoformat())
+        save(old_research / 'metadata.json', {'kind': 'research'})
         for name in ('cache/ai_review/state.json', 'cache/ai_publish/approved.json',
                      'cache/ai_publish/decisions.json', 'cache/ai_review/http.json'):
             save(self.root / name, {})
         retention.prune(self.root, NOW)
-        self.assertEqual((old_verify.exists(), new_verify.exists(), research.exists()), (False, True, True))
+        self.assertEqual((old_verify.exists(), new_verify.exists(), research.exists(), old_research.exists()),
+                         (False, True, True, False))
 
     def test_unreadable_reference_file_prunes_nothing(self):
         stale = self.run_dir(h('1'), OLD)
