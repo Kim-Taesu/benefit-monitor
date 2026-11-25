@@ -101,22 +101,6 @@ class ResearchSignatureBridgeTests(unittest.TestCase):
         with patch.object(trial, 'PROMPT_FOOTER', '다른 꼬리말'):
             self.assertNotEqual(fingerprint(ROOT), before)
 
-    def test_bridge_still_matches_the_current_research_contract(self):
-        from benefit_monitor import ai_review
-        self.assertEqual(ai_review.fingerprint(ROOT), ai_review.BRIDGED_FINGERPRINT,
-                         '조사 계약(지침·꼬리말·작업 지시·스키마·복원 규칙)이 바뀌었다. 보류·거절 후보가 하루 한도 안에서 '
-                         '다시 조사된다. 그 비용을 확인했다면 ai_review의 LEGACY/BRIDGED 상수와 이 검사를 함께 지운다.')
-
-    def test_legacy_signature_is_equivalent_only_while_bridged(self):
-        from benefit_monitor import ai_review
-        legacy = ai_review._signature('cid', 'h1,h2', ai_review.LEGACY_FINGERPRINT + '\ninv')
-        signature, same = ai_review._signatures('cid', 'h1,h2', ai_review.BRIDGED_FINGERPRINT, '\ninv')
-        self.assertEqual(same, {signature, legacy})
-        self.assertNotEqual(signature, legacy)
-        signature, same = ai_review._signatures('cid', 'h1,h2', 'a-later-contract', '\ninv')
-        self.assertEqual(same, {signature})
-
-
 class VariantTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(dir=ROOT)

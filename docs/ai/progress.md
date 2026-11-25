@@ -1,5 +1,13 @@
 # 개선 진행 기록
 
+## 2026-11-25 — 의미 판단을 조사 형식으로(C 1단계): 신청 주체·멈춤
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `1037ddf` 기준). [개선 단계](improvement-phases.md) C. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 네 번째 항목.
+- 변경: `research_guard.SEMANTIC_FIELDS`(`applicant`·`closure`), `wire_format`(값 검사, 두 필드는 빠져도 됨), `docs/ai/schemas/research-extraction-v3.schema.json`(두 필드 분기), `auto_publish.decide`(`not_personal`·`closed_by_source` 보류), `research-system.md` v2, `ai_review`의 지문 연결 상수 제거, 테스트(`test_wire_format.py` 새 필드·이전 응답 호환, `test_auto_publish.py` 보류만 늘어남, 연결 장치 테스트 2건 삭제, 프롬프트 버전 문자열).
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과.
+- 미검증: 모델이 새 필드를 실제로 얼마나 채우는지, 재조사로 보류가 몇 건 늘어나는지는 머지 뒤 AI 실행의 게이트 회귀 묶음 재생(`ai-usage.json`의 `gate_corpus`)과 보류 사유(`not_personal`·`closed_by_source`)로 본다. 새 스키마 문법 시험은 첫 조사 요청에서 자동으로 돈다.
+- 다음: 재조사가 끝나면(4~5일) 정규식 규칙별로 회귀 묶음에서 끄고 켜 영향을 비교한 뒤 겹치는 규칙을 줄인다.
+
 ## 2026-11-25 — 운영 조정 값 설정 파일 분리(G)
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `9facf33` 기준, 이후 `8517972` 병합). [개선 단계](improvement-phases.md) G. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 세 번째 항목.
