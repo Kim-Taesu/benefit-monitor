@@ -366,6 +366,10 @@ class ClaudeClient:
             web_search.validate_discovery(host)
             payload = self.payload(web_search.DISCOVERY_SYSTEM, web_search.discovery_text(host), web_search.MAX_TOKENS)
             payload['tools'] = [web_search.tool(web_search.DISCOVERY_MAX_USES)]
+            # 2026-11-26: on its first day all 3 requests answered "완료" without one search (usage: 0 searches,
+            # ~$0.0001 each). Haiku 5.5 accepts a forced tool_choice; web_search is the only tool, so "any" forces
+            # it. max_uses still bounds the searches; a max_uses_exceeded result is not billed.
+            payload['tool_choice'] = {'type': 'any'}
             return self._request('/v1/messages', payload, probe=True)
         web_search.validate(host)
         payload = self.payload(web_search.SYSTEM, web_search.user_text(host), web_search.MAX_TOKENS)

@@ -67,6 +67,11 @@ class ContractTests(unittest.TestCase):
         client.web_search(web_search.build_discovery('서울시', NOW))
         self.assertEqual(sent['system'], web_search.DISCOVERY_SYSTEM)
         self.assertEqual(sent['tools'][0]['max_uses'], web_search.DISCOVERY_MAX_USES)
+        self.assertEqual(sent['tool_choice'], {'type': 'any'})
+        # The follow-up search keeps the model's choice.
+        sent.clear()
+        client.web_search(web_search.build('c1', '한강 야외 영화제', '서울특별시', ['fee_status'], NOW))
+        self.assertNotIn('tool_choice', sent)
 
 
 class DiscoveryTests(TempRoot):
