@@ -361,6 +361,12 @@ class ClaudeClient:
         A provider 400 (for example web search disabled in the Console) fails this request without halting
         the trial, like a grammar probe; every other failure keeps the usual halt."""
         from . import web_search
+        if isinstance(host, dict) and host.get('schema_version') == web_search.DISCOVERY_SCHEMA_VERSION:
+            # Discovery search (2026-11-25): same tool, same ledger, an area and a month instead of a candidate.
+            web_search.validate_discovery(host)
+            payload = self.payload(web_search.DISCOVERY_SYSTEM, web_search.discovery_text(host), web_search.MAX_TOKENS)
+            payload['tools'] = [web_search.tool(web_search.DISCOVERY_MAX_USES)]
+            return self._request('/v1/messages', payload, probe=True)
         web_search.validate(host)
         payload = self.payload(web_search.SYSTEM, web_search.user_text(host), web_search.MAX_TOKENS)
         payload['tools'] = [web_search.tool()]
@@ -955,7 +961,10 @@ def search_command(root, folder, budget, input_arg, parser):
     if not input_path.is_relative_to(root) or input_path.stat().st_size > MAX_INPUT_FILE:
         parser.error('input must be a bounded project-local file')
     host = json.loads(input_path.read_text())
-    web_search.validate(host)
+    if isinstance(host, dict) and host.get('schema_version') == web_search.DISCOVERY_SCHEMA_VERSION:
+        web_search.validate_discovery(host)
+    else:
+        web_search.validate(host)
     client = ClaudeClient(folder, budget, configured_key(root))
     try:
         result = client.web_search(host)
@@ -968,10 +977,11 @@ def search_command(root, folder, budget, input_arg, parser):
         raise ValueError('output directory escapes trial root')
     destination.mkdir(parents=True, exist_ok=True, mode=0o700)
     urls = web_search.result_urls(result)
-    record = {'kind':'source_search', 'input':host, 'urls':urls, 'searches':web_search.searches_used(result),
+    rows = web_search.result_rows(result)
+    record = {'kind':'source_search', 'input':host, 'urls':urls, 'rows':rows, 'searches':web_search.searches_used(result),
               'stop_reason':result.get('stop_reason'), 'usage':result.get('usage'), 'cached':client.last_cached}
     (destination/'search-result.json').write_text(json.dumps(record, ensure_ascii=False, indent=2)+'\n')
-    print(json.dumps({'status':'search_done','run_id':run_id,'urls':urls,'searches':record['searches'],
+    print(json.dumps({'status':'search_done','run_id':run_id,'urls':urls,'rows':rows,'searches':record['searches'],
                       'cached':client.last_cached}, ensure_ascii=False))
     return 0
 

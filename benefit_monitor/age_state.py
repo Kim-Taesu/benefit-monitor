@@ -25,9 +25,11 @@ FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs
          'cache/variant_trial/',
          # Stage 2 tab checks (2026-11-20): notice reasons and festival checks are kept so only new titles
          # and changed festival texts are sent again.
-         'cache/tab_checks/')
+         'cache/tab_checks/',
+         # Discovery search (2026-11-25): leads stay candidates for 14 days and the day's search runs once.
+         'cache/discovery_search/')
 FILES={'report.json','cache/operational_state.json','cache/verified_items.json',
-       'cache/district_candidates.json','cache/collection_log.json'}
+       'cache/district_candidates.json','cache/district_more_pages.json','cache/collection_log.json'}
 
 
 def _allowed(name):

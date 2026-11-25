@@ -2,10 +2,27 @@
 
 ## 2026-11-25 — 운영 조정 값 설정 파일 분리(G)
 
-- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `9facf33` 기준). [개선 단계](improvement-phases.md) G. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 세 번째 항목.
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `9facf33` 기준, 이후 `8517972` 병합). [개선 단계](improvement-phases.md) G. 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 세 번째 항목.
 - 변경: `config/tuning.json`(값 12개, 승인 범위·단위·이유), `tuning.py`(검사·읽기, 잘못되면 예외), `festival_pick`·`runtime_retention`·`quality_report`·`gate_corpus`·`live_check`·`ai_usage`가 상수 대신 설정을 읽는다. 테스트 `test_tuning.py`(커밋된 파일 유효, 모든 값이 코드에서 쓰이고 그 외 값 없음, 범위 밖·형식 오류 거절, 파일 누락·모르는 이름 예외).
-- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 각 모듈이 읽는 값이 분리 전 상수와 같음을 확인했다(동작 변화 없음).
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과. 각 모듈이 읽는 값이 분리 전 상수와 같음을 확인했다(동작 변화 없음). main의 보관 축소(조사 2일·검증 1일, PR #89)와 병합하며 그 값을 설정 파일로 옮기고 범위 하한을 그 승인값으로 잡았다.
 - 다음: 범위를 바꿀 일이 생기면 대응표에 승인을 남긴 뒤 `min`/`max`를 고친다.
+
+## 2026-11-25 — AI 추가 실행 저장 실패(8 MiB)와 실행 상태 보관 축소
+
+- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `7a5367c` 기준). [정책 대응표](policy-map.md) 2026-11-25 마지막 항목.
+- 확인된 것: 수집 재실행(run 45539326917)은 성공했다(공개본 혜택 12건, AI 추천 4개 유지, 자치구 후보 39→66건, 강서구 4→5건). 이어 사용자 요청으로 돌린 AI 추가 실행(run 45551555583, `refresh_completed_day`)은 약 13분 뒤 `cloud_stopped_requires_review`, `ValueError: encrypted state exceeds 8 MiB`로 멈췄다. 실행 전 `ai-runtime.age`는 8,226,620바이트였다. 공개본·`ai-usage.json`은 바뀌지 않았고 오늘 추가 실행 1회는 소진됐다.
+- 변경: `runtime_retention.KEEP_DAYS` 3→2, `KEEP_VERIFY_DAYS` 3→1, 테스트 `test_runtime_retention.py`.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과.
+- 미검증: 키가 없어 실행 상태를 열어 보지 못했다. 사전 검사(압축 7.5 MiB)를 통과하고도 저장에서 넘친 이유(늘어난 자치구 후보 조사분이 하루 증가량을 키웠는지)는 추정이다. 다음 정규 실행에서 정리 건수·`ai-runtime.age` 크기·발굴 검색 결과(`ai_discovery`)를 본다.
+
+## 2026-11-25 — 목록에 없는 행사 찾기: 자치구 뉴스 범위 확장과 AI 발굴 검색
+
+- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `4914eff` 기준, 이후 `9facf33` 병합). 승인 범위는 [정책 대응표](policy-map.md) 2026-11-25 항목.
+- 배경: 강서구 마곡광장 윈터 스케이트장(12-24~2027-01-24, 구청 인스타그램 게시)이 화면에 없었다. 자치구 뉴스는 구별 첫 페이지의 혜택 단어 제목만 받았고, AI 웹 검색은 이미 목록에 있는 후보의 빈 필드만 채웠다. 목록에 없는 행사를 찾는 경로가 없었다.
+- 변경: `sources/seoul.json` `district_keywords`, `sources/gangseo.json`·`eunpyeong.json` `district_pages: 2`, 스키마 두 항목, `collectors/districts.py`(`title_words`·`collect_more`), `cli.py`(2페이지는 다른 출처 수집 뒤 남은 예산으로, `ai_discover`), `web_search.py`(발굴 입력 계약·`result_rows`), `claude_trial.py`(발굴 입력 분기, 결과 행에 제목), `discovery_search.py`(새 모듈), `ai_daily.py`(`discover_events` 정책, 기본 켜짐), `age_state.py`(새 캐시 보관), 테스트 `test_discovery_search.py`·`test_ai_review.py` 1건.
+- 실제 실행한 검사·결과: `TMPDIR="$PWD/.tools/verification-tmp" python3 -m unittest discover -s tests` 전체 통과.
+- 미검증: 작업 환경의 네트워크 정책이 `mediahub.seoul.go.kr`을 막아, 늘린 키워드·2페이지가 실제 강서구 목록에서 무엇을 더 잡는지 확인하지 못했다. 발굴 검색의 실제 결과(어떤 URL이 나오고 몇 건이 등록 출처인지)와 비용은 머지 뒤 첫 AI 일일 실행의 `report.json` `ai_discovery`와 `ai-usage.json`에서 본다. 스케이트장 안내가 등록 출처(구청·미디어허브)에 올라오지 않았다면 이번 변경으로도 후보가 되지 않고 `source_candidates`에만 남는다.
+- 다음: 1주일 동안 `ai_discovery.new_leads`·자동 공개 기여·`source_candidates`를 보고, 자주 나오는 미등록 공식 호스트(예: 구 시설 예약 사이트)를 출처로 등록할지 판단한다. 2페이지가 `http_budget`으로 자주 건너뛰어지는지도 본다.
 
 ## 2026-11-25 — 혜택 추천 높은 추론 설정 전환, 요청 설정 측정 종료
 
