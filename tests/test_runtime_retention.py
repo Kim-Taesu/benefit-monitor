@@ -9,7 +9,7 @@ from benefit_monitor.store import save
 
 NOW = datetime.fromisoformat('2026-11-30T07:00:00+09:00')
 OLD = (NOW - timedelta(days=8)).isoformat()
-NEW = (NOW - timedelta(days=1)).isoformat()  # KEEP_DAYS is 2 (2026-11-25)
+NEW = (NOW - timedelta(hours=20)).isoformat()  # KEEP_DAYS is 1 (2026-11-27)
 
 
 def h(char):
@@ -58,15 +58,15 @@ class RetentionTests(unittest.TestCase):
                      cached_doc, recent_doc):
             self.assertTrue(kept.exists(), kept)
 
-    def test_verification_runs_are_kept_one_day_research_two(self):
-        # 2026-11-25 (second change): verification runs 1 day, research runs 2 days.
+    def test_verification_and_research_runs_are_kept_one_day(self):
+        # 2026-11-27: research runs 1 day too (verification runs 1 day since 2026-11-25).
         old_verify = self.run_dir(h('5'), (NOW - timedelta(days=1, hours=1)).isoformat())
         save(old_verify / 'metadata.json', {'kind': 'verify'})
         new_verify = self.run_dir(h('6'), (NOW - timedelta(hours=20)).isoformat())
         save(new_verify / 'metadata.json', {'kind': 'verify'})
-        research = self.run_dir(h('7'), (NOW - timedelta(days=1, hours=1)).isoformat())
+        research = self.run_dir(h('7'), (NOW - timedelta(hours=20)).isoformat())
         save(research / 'metadata.json', {'kind': 'research'})
-        old_research = self.run_dir(h('8'), (NOW - timedelta(days=2, hours=1)).isoformat())
+        old_research = self.run_dir(h('8'), (NOW - timedelta(days=1, hours=1)).isoformat())
         save(old_research / 'metadata.json', {'kind': 'research'})
         for name in ('cache/ai_review/state.json', 'cache/ai_publish/approved.json',
                      'cache/ai_publish/decisions.json', 'cache/ai_review/http.json'):
