@@ -2,6 +2,16 @@
   "schema_version": 1,
   "notices": [
     {
+      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585875&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+      "title": "청년마음건강센터 기간제근로자 최종합격자 발표",
+      "reason": "result"
+    },
+    {
+      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585874&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+      "title": "성북구보건소 AI IoT기반 어르신 건강관리사업 기간제 근로자 예비합격자 최종합격 안내 공고",
+      "reason": "result"
+    },
+    {
       "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585814&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
       "title": "서울체력장 성북센터 기간제근로자 1차 서류전형 합격자 발표 및 2차 면접심사 안내 공고",
       "reason": "result"
@@ -74,6 +84,11 @@
     {
       "url": "https://www.gwanak.go.kr/site/health/ex/bbs/View.do?cbIdx=275&bcIdx=212691",
       "title": "서울특별시 관악구보건소 감염병예방사업 기간제근로자(임상병리사) 채용 공고",
+      "reason": "recruitment"
+    },
+    {
+      "url": "https://www.seocho.go.kr/site/sh/ex/bbs/View.do?cbIdx=91&bcIdx=412890",
+      "title": "2027년 서초보건지소 기간제근로자(운동사) 채용 공고",
       "reason": "recruitment"
     },
     {
