@@ -28,6 +28,9 @@ FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs
          'cache/tab_checks/',
          # Discovery search (2026-11-25): leads stay candidates for 14 days and the day's search runs once.
          'cache/discovery_search/')
+# Packed elsewhere (2026-11-27): the Claude response cache lives in half-month files (response_archive).
+# Restore still accepts old archives that carry it.
+EXCLUDED=('.tools/claude-trial/live/responses/',)
 FILES={'report.json','cache/operational_state.json','cache/verified_items.json',
        'cache/district_candidates.json','cache/district_more_pages.json','cache/collection_log.json'}
 
@@ -51,7 +54,7 @@ def _entries(root):
         if path.is_symlink():raise ValueError('runtime archive cannot contain links')
         if not path.is_file():continue
         name=path.relative_to(root).as_posix()
-        if name in CONTROL_FILES or path.name.startswith('.lock'):continue
+        if name in CONTROL_FILES or path.name.startswith('.lock') or name.startswith(EXCLUDED):continue
         if not _allowed(name):raise ValueError('forbidden runtime path')
         total+=path.stat().st_size
         if total>MAX_RUNTIME_BYTES or len(entries)>=MAX_FILES:raise ValueError('runtime archive too large')

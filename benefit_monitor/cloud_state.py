@@ -12,6 +12,7 @@ from urllib.error import HTTPError,URLError
 from urllib.request import Request,build_opener
 
 from .age_state import AgeState,pack_runtime,restore_runtime
+from . import response_archive
 from .research_probe import NoRedirect
 from .store import save,load
 from .briefing import SEOUL
@@ -26,6 +27,15 @@ MAX_RESPONSE=16*1024*1024
 OBJECT_MEDIA='application/vnd.github.object+json'
 # corpus (2026-11-24): the auto-publish gate's private regression corpus (gate_corpus); created by the first run.
 FILES={'control':'ai-control.age','runtime':'ai-runtime.age','collection':'ai-collection.age','corpus':'ai-corpus.age'}
+# Claude response cache shards (2026-11-27): responses-2026-11b -> ai-responses-2026-11b.age (response_archive).
+RESPONSE_KIND=re.compile(r'responses-(20\d\d-(?:0[1-9]|1[0-2])[ab])')
+
+
+def file_name(kind):
+    if kind in FILES:return FILES[kind]
+    match=RESPONSE_KIND.fullmatch(kind) if isinstance(kind,str) else None
+    if match:return 'ai-responses-'+match.group(1)+'.age'
+    raise ValueError('unknown cloud state file')
 CONTEXT='.tools/cloud-state/context.json'
 BUDGET='.tools/claude-trial/live/budget.json'
 # Upper bound for pre-revision (limit_revision < 2) controls only; revision 2 has no expiry.
@@ -116,8 +126,7 @@ class GitHubStateStore:
 
     def lease(self,kind):
         """Current blob sha of a state file without downloading it (works past the 1 MB contents limit)."""
-        if kind not in FILES:raise ValueError('unknown cloud state file')
-        meta=self._api('contents/'+FILES[kind]+'?ref='+BRANCH,accept=OBJECT_MEDIA)
+        meta=self._api('contents/'+file_name(kind)+'?ref='+BRANCH,accept=OBJECT_MEDIA)
         try:
             sha=meta['sha']
             if meta.get('type','file')!='file' or not re.fullmatch('[0-9a-f]{40}',sha):raise ValueError
@@ -125,7 +134,7 @@ class GitHubStateStore:
         return sha,meta
 
     def _cipher(self,kind,ref=None):
-        if kind not in FILES:raise ValueError('unknown cloud state file')
+        file_name(kind)
         if ref is not None:
             if kind!='runtime' or not re.fullmatch('[0-9a-f]{40}',ref):raise ValueError('immutable runtime blob required')
             data=self._api('git/blobs/'+ref)
@@ -148,14 +157,15 @@ class GitHubStateStore:
         return self.crypto.decrypt(raw),sha
 
     def write(self,kind,raw,expected_sha):
-        if kind not in FILES or expected_sha is not None and not re.fullmatch('[0-9a-f]{40}',expected_sha):
+        name=file_name(kind)
+        if expected_sha is not None and not re.fullmatch('[0-9a-f]{40}',expected_sha):
             raise ValueError('invalid cloud state file lease')
         cipher=self.crypto.encrypt(raw)
         if len(cipher)>MAX_CIPHER:raise ValueError('encrypted state exceeds 8 MiB')
         body={'message':'Update encrypted AI '+kind,'branch':BRANCH,'content':base64.b64encode(cipher).decode()}
         if expected_sha is not None:body['sha']=expected_sha
         try:
-            result=self._api('contents/'+FILES[kind],body)
+            result=self._api('contents/'+name,body)
         except ValueError:
             # 2026-11-11: a PUT can land while its response is lost (the retry then sees 409). Our exact
             # ciphertext on the remote means our write is the current state; anything else still raises.
@@ -202,6 +212,7 @@ class CloudSession:
             raise ValueError('unresolved cloud budget requires manual review')
         if data['runtime_sha'] is not None:
             runtime,_=store.read('runtime',data['runtime_sha']);restore_runtime(result.root,runtime)
+        response_archive.restore(result.root,store,data['budget'])
         save(safe_path(result.root,BUDGET),data['budget'])
         save(safe_path(result.root,'cache/ai_daily/days.json'),{'days':data['days']})
         result._save_context()
@@ -320,6 +331,8 @@ class CloudSession:
 
     def save_runtime(self):
         self._reload()
+        # Responses first: the runtime written next no longer carries them (2026-11-27).
+        response_archive.save_all(self.root,self.store,self.control['budget'],datetime.now(timezone.utc))
         lease,_=self.store.lease('runtime')
         sha=self.store.write('runtime',pack_runtime(self.root),lease)
         data=deepcopy(self.control);data['runtime_sha']=sha;self._commit(data)
