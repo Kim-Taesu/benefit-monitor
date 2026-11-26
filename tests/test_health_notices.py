@@ -78,6 +78,13 @@ class ParseTests(unittest.TestCase):
         self.assertFalse(h.hint('베이킹 클래스 모집 - 모집완료-'))
         self.assertFalse(h.hint('에볼라 안내'))
 
+    def test_hint_covers_fitness_measurement_notices(self):
+        self.assertTrue(h.hint('서울체력장, 내 체력을 관리하는 첫걸음'))
+        self.assertTrue(h.hint('서대문구 보건소 체력인증센터 「가족 체력측정」 참여 안내'))
+        self.assertTrue(h.hint('체성분 측정과 맞춤형 운동 처방 안내'))
+        self.assertFalse(h.hint('2026년 서울체력장 성북센터 운영 기간제근로자(운동사) 채용공고'))
+        self.assertFalse(h.hint('서울체력장 성북센터 기간제근로자 1차 서류전형 합격자 발표 및 2차 면접심사 안내 공고'))
+
 
 class CollectTests(unittest.TestCase):
     def setUp(self):
