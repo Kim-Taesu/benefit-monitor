@@ -93,6 +93,7 @@
       {"district": "강서구", "name": "대사증후군 관리", "url": "https://www.gangseo.seoul.kr/health/ht020103"},
       {"district": "강서구", "name": "임신 사전건강관리 지원", "url": "https://www.gangseo.seoul.kr/health/ht020231"},
       {"district": "강서구", "name": "마음건강검진 상담지원", "url": "https://www.gangseo.seoul.kr/health/ht020303"},
+      {"district": "강서구", "name": "체력측정·운동상담(운동처방실)", "url": "https://www.gangseo.seoul.kr/health/ht020101"},
       {"district": "구로구", "name": "결핵검사", "url": "https://www.guro.go.kr/health/contents.do?key=1319"},
       {"district": "구로구", "name": "대사증후군 관리", "url": "https://www.guro.go.kr/health/contents.do?key=1392"},
       {"district": "구로구", "name": "모바일 헬스케어", "url": "https://www.guro.go.kr/health/contents.do?key=4077"},
@@ -151,12 +152,13 @@
       "notes": [
         "2026-11-11 25개 구 실사: robots 허용·서버 HTML 15곳(강서·광진·동대문·성북·노원·서대문·구로·금천·영등포·관악·서초·강남·송파·강동 + 성남).",
         "robots 차단: 종로·용산·중랑·도봉(bbs.asp)·은평·마포·양천·동작. TLS 체인 실패: 중구·성동. 자동 접속 확인 화면: 강북.",
+        "2026-11-26 강서구 /health/ht020101(건강생활실천) 본문에 '보건소 운동처방실(체력측정 및 운동상담)' 안내가 있음을 확인해 상시 사업에 추가했다. 이 페이지는 3층·전화 예약으로 적혀 있고, 구 소식지 12월호의 '2층 서울체력장 강서센터·손목닥터9988 앱 예약'과 다르다. 페이지 문구를 고치지 않는다.",
         "성남시는 curl은 되지만 Python 표준 TLS에서 handshake 실패가 났다(2026-11-11 로컬). 실패면 그 게시판만 failed로 남는다."
       ]
     },
     "extraction": [
       "게시판별 detail 정규식에 맞는 링크(또는 onclick 글 번호로 만든 상세 GET 주소)의 글자를 제목으로, 그 뒤 첫 날짜를 등록일로 읽는다.",
-      "제목에 검진·접종·무료 등 단어가 있고 채용·고시 등 단어가 없으면 hint=true. 최근 45일 hint 공지만 AI 조사 후보가 된다."
+      "제목에 검진·접종·무료 등 단어가 있고 채용·고시 등 단어가 없으면 hint=true. 최근 45일 hint 공지만 AI 조사 후보가 된다. 2026-11-26부터 체력·체성분·운동처방도 hint 단어다(서울체력장 체력측정 공지)."
     ],
     "pitfalls": [
       "unavailable 게시판은 요청하지 않는다. robots·TLS·접속 확인 화면을 우회하지 않는다.",
