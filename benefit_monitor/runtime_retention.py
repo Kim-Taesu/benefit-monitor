@@ -3,7 +3,7 @@
 Only three growing folders are touched: run artifacts, staged AI inputs and cached official
 bodies. An entry is removed only when nothing current references it (the per-candidate review
 state, the decisions behind auto-published records, the official-body cache index) and its own
-recorded timestamp is older than 2 days (verification runs: 1 day). A missing or unreadable timestamp or reference file keeps
+recorded timestamp is older than 1 day (verification runs too). A missing or unreadable timestamp or reference file keeps
 everything. The ledger (budget.json), its response cache and the review queue are never touched.
 """
 from datetime import datetime, timedelta
@@ -18,6 +18,8 @@ from . import tuning
 # its 8 MiB file cap; research runs now live on in the private gate corpus (gate_corpus, ai-corpus.age).
 # 3 -> 2 (approved 2026-11-25, second time): the manual refresh that day stopped at save with
 # "encrypted state exceeds 8 MiB" (runtime 7.85 MiB before the run).
+# 2 -> 1 (approved 2026-11-27): one day after that the runtime grew back from 7,631,716 to 8,249,985 bytes,
+# above the 7.5 MiB preflight, with more candidates (district keywords, discovery search) to research.
 KEEP_DAYS = tuning.value('runtime.keep_days')  # config/tuning.json
 # Daily verification runs (up to 40) only feed that day's decision; their state lives in cache/ai_verify.
 # 3 -> 1 (approved 2026-11-25, same change): they are the largest group of runs (37 of 56 that day).
