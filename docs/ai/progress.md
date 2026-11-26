@@ -1,5 +1,14 @@
 # 개선 진행 기록
 
+## 2026-11-27 — 정규 실행 확인 후속: 멈춘 이유 기록, 실행 상태 구성 기록
+
+- 작업 단위와 범위: 같은 브랜치 `claude/bold-hamilton-85dxai`에 main `0fba51f`(#96·#97)를 머지(진행 기록 충돌만, 두 절 모두 보존)하고 이어서 고쳤다([정책 대응표](policy-map.md) 2026-11-27 항목).
+- 11-27 확인 결과: 공개 완료, AI 77건 $0.159(그중 분류 안 된 요청 3건·웹 검색 6회 $0.068). `ai-runtime.age` 8,249,985바이트(98%)로 다시 상한 근처, 품질 리포트 오류 1(이 상태). 공개 화면 점검 `stopped_before_result`(원장 행 없음, 이유 기록 없음). 청약 추천은 사실 검사(`fact`) 거절로 이틀째 규칙 카드. 회귀 묶음 174건 재생 변화 없음. #95 미머지라 혜택 추천은 여전히 측정으로 집계, 생활숲 공개 중.
+- 원인 조사(점검): 11-27 공개본(항목 73개, 23 KB)으로 입력을 만들어 저장·재검증 왕복이 서버 검증과 같음을 확인했다(입력 불일치 아님). 스키마는 고정이고 11-26 문법 시험이 통과했다. 원인은 확정하지 못했다.
+- 변경: `ai_review.invoke`(멈춘 이유 `reason`), `ops_review.refresh`(결과에 `reason`), `age_state.runtime_breakdown`, `cloud_daily.runtime_report`·`day_review`, `ai_usage`(`runtime` 행·요약 표·멈춘 이유), `quality_report._runtime_parts`. 테스트 `test_age_state`·`test_ai_review`·`test_ops_review`·`test_gate_corpus`.
+- 실제 실행한 검사·결과: 전체 단위 테스트 1253 통과(건너뜀 1).
+- 미검증: 다음 AI 일일 실행의 `ai-usage.json`에 `runtime`과 점검 멈춘 이유가 실제로 남는지. 큰 폴더가 보이면 줄이는 방법을 따로 제안한다.
+
 ## 2026-11-26 — 첫 운영 확인 후속: 승인 항목 보류 규칙 재적용, 점검 10개 제한, 사용량 분류, 품질 리포트 시점
 
 - 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `a513d8c` 기준). 11-26 새벽 확인에서 찾은 4건을 사용자가 승인했다([정책 대응표](policy-map.md) 2026-11-26 항목).

@@ -281,13 +281,25 @@ def day_review(root,store,now,start):
     except Exception:kinds={}
     try:corpus=gate_corpus.daily(store,runs,now,os.environ.get('GITHUB_SHA',''))
     except Exception as error:corpus={'status':'failed','reason':type(error).__name__}
-    ai_usage.upload(store,now.date().isoformat(),kinds,corpus,review)
+    runtime=runtime_report(root)
+    ai_usage.upload(store,now.date().isoformat(),kinds,corpus,review,runtime)
     summary=os.environ.get('GITHUB_STEP_SUMMARY')
     if summary:
         try:
-            with open(summary,'a',encoding='utf-8') as stream:stream.write(ai_usage.markdown(kinds,corpus,review))
+            with open(summary,'a',encoding='utf-8') as stream:stream.write(ai_usage.markdown(kinds,corpus,review,runtime))
         except OSError:pass
-    return {'usage':kinds,'gate_corpus':corpus,'ops_review':review}
+    return {'usage':kinds,'gate_corpus':corpus,'ops_review':review,'runtime':runtime}
+
+
+def runtime_report(root,top=8):
+    """Packed size of the runtime as saved today and its largest parts (2026-11-27: back at 98% with 2/1-day
+    retention and no way to see what grew). Allowlist folder names and sizes only; never fails the day."""
+    from .age_state import pack_runtime,runtime_breakdown
+    try:
+        rows=runtime_breakdown(root)
+        return {'packed':len(pack_runtime(root)),'files':sum(r['files'] for r in rows),'groups':rows[:top]}
+    except Exception as error:
+        return {'status':'failed','reason':type(error).__name__}
 
 
 def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=True,refresh_completed=False):

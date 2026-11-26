@@ -67,6 +67,35 @@ def pack_runtime(root):
     return gzip.compress(output.getvalue(),mtime=0)
 
 
+RUN_ID=re.compile(r'[0-9a-f]{64}')
+SAFE_PART=re.compile(r'[A-Za-z0-9._-]{1,40}')
+
+
+def _group(name):
+    """Allowlisted folder or file a runtime member counts toward; one level deeper for the trial folder, whose
+    runs, caches and probe records are the usual suspects (2026-11-27: the runtime was back at 98%)."""
+    for folder in FOLDERS:
+        if name.startswith(folder):
+            part=name[len(folder):].split('/',1)[0]
+            if folder=='.tools/claude-trial/live/':
+                return folder+(part if SAFE_PART.fullmatch(part) and not RUN_ID.fullmatch(part) else '*')
+            return folder
+    return name
+
+
+def runtime_breakdown(root):
+    """[{group, files, bytes, packed}] largest packed first: what each part adds to the packed runtime.
+    Names are code allowlist folders, so it is public-safe; packed is each group gzipped on its own, an estimate."""
+    groups={}
+    for name,path in _entries(root)[0]:
+        groups.setdefault(_group(name),[]).append(path)
+    rows=[]
+    for group,paths in groups.items():
+        raw=b''.join(p.read_bytes() for p in paths)
+        rows.append(dict(group=group,files=len(paths),bytes=len(raw),packed=len(gzip.compress(raw,mtime=0))))
+    return sorted(rows,key=lambda r:-r['packed'])
+
+
 # Paid work starts only with room for a full day of new runtime files under every limit.
 PREFLIGHT_FILES=MAX_FILES*3//4
 PREFLIGHT_BYTES=MAX_RUNTIME_BYTES*3//4

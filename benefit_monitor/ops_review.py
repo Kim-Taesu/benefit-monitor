@@ -121,6 +121,9 @@ def refresh(root, now, data, execute=True):
         save(state_path, state)
         model = invoke(root, 'ops_review', input_path)
         result = {'status': model.get('status') or 'failed'}
+        if model.get('reason'):
+            # 2026-11-27: a stop before any request showed no cause. safe_reason text, exit code or class name only.
+            result['reason'] = str(model['reason'])[:120]
         if model.get('status') == 'validated_draft':
             draft = load(TRIAL_RUNS / model['run_id'] / 'result.json', None)
             errors = review(draft, current)

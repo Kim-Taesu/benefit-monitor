@@ -283,6 +283,19 @@ class AIReviewTests(unittest.TestCase):
         self.assertEqual(observed[0][0][observed[0][0].index('--root')+1],str(ROOT))
         self.assertEqual(Path(observed[0][1]),ROOT)
 
+    def test_a_stop_before_any_result_keeps_a_short_cause(self):
+        # 2026-11-27: the operations review stopped before any request and no cause was recorded anywhere.
+        from types import SimpleNamespace
+        from benefit_monitor.ai_review import invoke
+        path=self.root/'staged.json';path.write_text('{}')
+        cases=[(SimpleNamespace(stdout=json.dumps({'status':'stopped','reason':'ValueError: ops review input differs'}),stderr='',returncode=1),
+                'ValueError: ops review input differs'),
+               (SimpleNamespace(stdout=json.dumps({'status':'grammar_rejected'}),stderr='',returncode=1),'grammar_rejected'),
+               (SimpleNamespace(stdout='',stderr='Traceback\n  File x\nKeyError: secret detail sk-ant-123',returncode=1),'exit_1:KeyError')]
+        for proc,reason in cases:
+            with patch('benefit_monitor.ai_review.subprocess.run',return_value=proc):
+                self.assertEqual(invoke(self.root,'ops_review',path),{'status':'stopped_before_result','run_id':None,'reason':reason})
+
     def test_small_daily_limit_rotates_candidates_instead_of_starving_the_rest(self):
         from benefit_monitor.ai_review import review_candidates
         candidates=[self.candidate,dict(self.candidate,url='https://www.seoul.go.kr/news/2')]

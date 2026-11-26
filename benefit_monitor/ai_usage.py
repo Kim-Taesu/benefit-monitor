@@ -51,7 +51,7 @@ def summarize(rows, runs):
     return {k: dict(v, usd=round(v['usd'], 6)) for k, v in sorted(kinds.items())}
 
 
-def add_day(history, day, kinds, corpus=None, review=None):
+def add_day(history, day, kinds, corpus=None, review=None, runtime=None):
     days = [d for d in (history or {}).get('days', []) if isinstance(d, dict) and d.get('day') != day]
     row = dict(day=day, kinds=kinds, total_usd=round(sum(k['usd'] for k in kinds.values()), 6),
                total_requests=sum(k['requests'] for k in kinds.values()))
@@ -59,12 +59,14 @@ def add_day(history, day, kinds, corpus=None, review=None):
         row['gate_corpus'] = corpus
     if review is not None:
         row['ops_review'] = review  # phase F: status, error codes, or findings of refs, enum codes and public quotes
+    if runtime is not None:
+        row['runtime'] = runtime  # 2026-11-27: packed runtime size and its largest allowlist folders
     days.append(row)
     days.sort(key=lambda d: d['day'])
     return dict(schema_version=1, days=days[-KEEP_DAYS:])
 
 
-def upload(store, day, kinds, corpus=None, review=None):
+def upload(store, day, kinds, corpus=None, review=None, runtime=None):
     """Best effort: read, add today's row and write briefing-data ai-usage.json. Never raises."""
     try:
         try:
@@ -73,7 +75,7 @@ def upload(store, day, kinds, corpus=None, review=None):
             history = json.loads(base64.b64decode(meta.get('content') or ''))
         except ValueError:
             sha, history = None, None  # Not created yet.
-        data = add_day(history, day, kinds, corpus, review)
+        data = add_day(history, day, kinds, corpus, review, runtime)
         body = {'message': 'Update AI usage', 'branch': 'briefing-data',
                 'content': base64.b64encode((json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode()).decode()}
         if sha:
@@ -84,7 +86,7 @@ def upload(store, day, kinds, corpus=None, review=None):
         return False
 
 
-def markdown(kinds, corpus=None, review=None):
+def markdown(kinds, corpus=None, review=None, runtime=None):
     lines = ['## AI 사용량', '', '| 종류 | 요청 | 실패 | 비용(USD) | 웹 검색 |', '|---|---|---|---|---|']
     lines += [f'| {k} | {v["requests"]} | {v["failed"]} | {v["usd"]:.4f} | {v["web_searches"]} |' for k, v in kinds.items()]
     if corpus:
@@ -103,4 +105,14 @@ def markdown(kinds, corpus=None, review=None):
         lines += [f'- `{f["ref"]}` {f["field"]} — {f["issue"]}: “{f["quote"]}”' for f in review.get('findings') or []]
         if review.get('errors'):
             lines.append(f'- 거절 사유: {", ".join(review["errors"])}')
+        if review.get('reason'):
+            lines.append(f'- 멈춘 이유: {review["reason"]}')
+    if runtime:
+        lines += ['', '## 실행 상태 파일 구성', '']
+        if runtime.get('groups') is None:
+            lines.append(f'- 상태: {runtime.get("status")} {runtime.get("reason") or ""}'.rstrip())
+        else:
+            lines.append(f'- 압축 {runtime["packed"] / 1024 / 1024:.2f} MiB · 파일 {runtime["files"]}개 (상한 8 MiB, 암호화 전)')
+            lines += ['', '| 폴더 | 파일 | 원본(KiB) | 압축 추정(KiB) |', '|---|---|---|---|']
+            lines += [f'| {g["group"]} | {g["files"]} | {g["bytes"] // 1024} | {g["packed"] // 1024} |' for g in runtime['groups']]
     return '\n'.join(lines) + '\n'
