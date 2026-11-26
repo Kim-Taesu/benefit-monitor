@@ -310,6 +310,11 @@ def usage_from_git(ref):
 
 def sizes_from_git(ref, names=('ai-runtime.age', 'ai-corpus.age')):
     sizes = {}
+    try:  # the response cache shards (2026-11-27) each have the same 8 MiB cap
+        listed = subprocess.run(['git', 'ls-tree', '--name-only', ref], check=True, capture_output=True, text=True).stdout
+        names = tuple(names) + tuple(sorted(n for n in listed.split() if re.fullmatch(r'ai-responses-20\d\d-\d\d[ab][.]age', n)))
+    except subprocess.CalledProcessError:
+        pass
     for name in names:
         try:
             sizes[name] = int(subprocess.run(['git', 'cat-file', '-s', f'{ref}:{name}'], check=True,

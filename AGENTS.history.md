@@ -268,3 +268,11 @@ Python 표준 라이브러리만 사용한다. 키는 Git 제외·600 권한의 
 - 어드민(`/admin.html`)에서 그날 문구를 끌 수 있다(`ai-takedowns.json`에 `{"kind":"festival_pick_text","day":...}` 또는 `{"kind":"benefit_pick_text","day":...}`). 끄면 그날 카드는 모든 공개 경로에서 규칙 카드가 된다.
 - 보건소 "이번 주 보건소 추천" 카드는 내용과 공개 데이터를 그대로 두고 표시만 줄인다: 처음 구 3곳, 구마다 대표 사업 1개만 문장, 나머지 사업은 이름 링크 한 줄, "AI 작성"은 제목 옆 한 번. 아래 "상시 운영 검진·건강관리" 목록의 AI 문장은 "AI 안내 보기"로 접는다. 유료 호출 변경은 없다.
 - `publish.py`·`public_snapshot.py`·`auto_release.py`가 바뀌어 `public/topic-publication.json`의 `policy_sha256`을 다시 기록했다. 주제 카드 게이트 로직은 바뀌지 않았다.
+
+## 승인된 응답 캐시 분리 저장 — 2026-11-27
+
+사용자가 `ai-runtime.age`가 8 MiB 상한의 98%라는 조사 결과와 세 안(A 응답 캐시 별도 암호화 파일, B 지난달 응답 정리, C Supabase)을 보고 "A안으로 진행해줘"로 승인했다. 같은 대화에서 "저장소가 부족하면 supabase 사용하는 것도 고려해봐"라고 했으나 새 외부 저장소는 쓰지 않았다.
+
+- Claude 응답 캐시를 briefing-data의 반월 암호화 파일 `ai-responses-YYYY-MMa.age`·`b.age`로 옮긴다. 원장 행 `started_at`의 서울 날짜로 나눈다. 같은 age 수신자·8 MiB 상한·비공개 유지.
+- 응답을 지우거나 원장을 고치지 않는다. 저장은 반월 파일을 줄이지 않고, 복원 사본이 원격과 다르면 멈춘다. 저장 순서는 응답 → 실행 상태 → 제어 파일이다.
+
