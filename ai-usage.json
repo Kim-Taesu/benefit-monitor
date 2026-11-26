@@ -178,6 +178,98 @@
           "too_many"
         ]
       }
+    },
+    {
+      "day": "2026-11-27",
+      "kinds": {
+        "benefit:measure": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.002315,
+          "web_searches": 0
+        },
+        "festival": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000798,
+          "web_searches": 0
+        },
+        "festival_check": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.00032,
+          "web_searches": 0
+        },
+        "grocery": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000523,
+          "web_searches": 0
+        },
+        "health": {
+          "requests": 10,
+          "failed": 0,
+          "usd": 0.005776,
+          "web_searches": 0
+        },
+        "notice_triage": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000279,
+          "web_searches": 0
+        },
+        "other": {
+          "requests": 3,
+          "failed": 0,
+          "usd": 0.068004,
+          "web_searches": 6
+        },
+        "research": {
+          "requests": 20,
+          "failed": 0,
+          "usd": 0.047702,
+          "web_searches": 0
+        },
+        "subscription": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000813,
+          "web_searches": 0
+        },
+        "topic": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.001179,
+          "web_searches": 0
+        },
+        "verify": {
+          "requests": 37,
+          "failed": 0,
+          "usd": 0.030995,
+          "web_searches": 0
+        }
+      },
+      "total_usd": 0.158704,
+      "total_requests": 77,
+      "gate_corpus": {
+        "status": "ok",
+        "added": 8,
+        "dropped": 0,
+        "records": 174,
+        "recorded_published": 26,
+        "oldest": "2026-11-25",
+        "newest": "2026-11-27",
+        "unchanged": 174,
+        "publish_to_held": 0,
+        "held_to_publish": 0,
+        "reasons_changed": 0,
+        "replay_failed": 0,
+        "reasons_added": {},
+        "reasons_removed": {}
+      },
+      "ops_review": {
+        "status": "stopped_before_result"
+      }
     }
   ]
 }
