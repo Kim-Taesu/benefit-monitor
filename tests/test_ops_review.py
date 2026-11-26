@@ -5,7 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from benefit_monitor import ops_review, quality_report, wire_format
+from benefit_monitor import ai_usage, ops_review, quality_report, wire_format
 from benefit_monitor.store import load, save
 
 NOW = datetime.fromisoformat('2026-11-24T04:10:00+09:00')
@@ -47,7 +47,11 @@ class ReviewTests(unittest.TestCase):
         for code, value in cases.items():
             with self.subTest(code=code):
                 self.assertIn(code, ops_review.review({'findings': [value]}, self.host))
-        self.assertEqual(ops_review.review({'findings': [self.finding()] * 11}, self.host), ['too_many'])
+        # More than ten valid findings are not an error (2026-11-26); only the first ten leave the run.
+        self.assertEqual(ops_review.review({'findings': [self.finding()] * 11}, self.host), [])
+        self.assertEqual(len(ops_review.public_findings({'findings': [self.finding()] * 11})), ops_review.MAX_FINDINGS)
+        bad = [self.finding()] * 10 + [self.finding(quote='없는 구절')]
+        self.assertEqual(ops_review.review({'findings': bad}, self.host), ['quote_not_in_field'])  # all are still checked
         self.assertEqual(ops_review.review({'findings': [], 'extra': 1}, self.host), ['draft_shape'])
 
     def test_wire_round_trip_and_no_free_text(self):
@@ -79,7 +83,7 @@ class RefreshTests(unittest.TestCase):
             good = {'findings': [dict(ref='item:0', field='summary', quote='오는 29일까지', issue='date_mismatch')]}
             result, calls = self.run_refresh(tmp, {'status': 'validated_draft', 'run_id': 'run1'}, good)
             self.assertEqual((calls, result['status']), (['ops_review'], 'completed'))
-            self.assertEqual(result['findings'], good['findings'])
+            self.assertEqual((result['findings'], result['total']), (good['findings'], 1))
             again, calls = self.run_refresh(tmp, {'status': 'validated_draft', 'run_id': 'run1'}, good)
             self.assertEqual((calls, again['status']), ([], 'already_tried'))
 
@@ -88,6 +92,10 @@ class RefreshTests(unittest.TestCase):
             bad = {'findings': [dict(ref='item:0', field='summary', quote='지어낸 문장', issue='date_mismatch')]}
             result, _ = self.run_refresh(tmp, {'status': 'validated_draft', 'run_id': 'run1'}, bad)
             self.assertEqual(result, {'status': 'rejected', 'errors': ['quote_not_in_field']})
+        with tempfile.TemporaryDirectory(dir=Path(ops_review.__file__).resolve().parents[1]) as tmp:
+            result, _ = self.run_refresh(tmp, {'status': 'stopped_before_result', 'run_id': None, 'reason': 'exit_1:KeyError'})
+            self.assertEqual(result, {'status': 'stopped_before_result', 'reason': 'exit_1:KeyError'})
+            self.assertEqual(ai_usage.markdown({}, None, result).count('멈춘 이유: exit_1:KeyError'), 1)
         with patch.object(ops_review, 'host', side_effect=RuntimeError('boom')):
             self.assertEqual(ops_review.refresh('.', NOW, DATA), {'status': 'failed', 'reason': 'RuntimeError'})
 

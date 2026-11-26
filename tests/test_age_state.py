@@ -73,6 +73,23 @@ class AgeStateTests(unittest.TestCase):
         with patch.object(module,'MAX_RUNTIME_BYTES',100):
             with self.assertRaisesRegex(ValueError,'too large'):module.pack_runtime(self.root)
 
+    def test_breakdown_names_allowlist_folders_only_largest_first(self):
+        # 2026-11-27: the runtime was back at 98% and nothing showed which part grew.
+        module=self.module('benefit_monitor.age_state')
+        for name,value in [('.tools/claude-trial/live/runs/'+'a'*64+'/input.json','x'*5000),
+                           ('.tools/claude-trial/live/'+'b'*64+'.json','{}'),
+                           ('.tools/claude-trial/live/grammar-probes.json','{}'),
+                           ('.tools/claude-trial/live/budget.json','{"requests":[]}'),
+                           ('cache/ai_review/queue/a.json','{"pending":true}')]:
+            path=self.root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_text(value)
+        rows=module.runtime_breakdown(self.root)
+        groups=[r['group'] for r in rows]
+        self.assertEqual(groups[0],'.tools/claude-trial/live/runs')
+        self.assertEqual(set(groups),{'.tools/claude-trial/live/runs','.tools/claude-trial/live/*',
+                                      '.tools/claude-trial/live/grammar-probes.json','cache/ai_review/'})
+        self.assertNotIn('a'*64,str(rows))  # run ids are not named
+        self.assertEqual(rows[0]['bytes'],5000)
+
     def test_runtime_preserves_review_but_excludes_control_and_credentials(self):
         module=self.module('benefit_monitor.age_state')
         for name,value in [('cache/ai_review/queue/a.json','{"pending":true}'),('.tools/claude-trial/live/budget.json','{"requests":[]}'),('cache/ai_daily/days.json','{}'),('.env.claude','fake-private-input')]:

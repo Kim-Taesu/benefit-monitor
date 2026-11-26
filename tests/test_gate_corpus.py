@@ -100,7 +100,7 @@ class UsageTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             base = host(D1)
             write_run(tmp, RUN_A, base, {}, kind='research', variant='baseline')
-            write_run(tmp, RUN_B, base, {}, kind='benefit', variant='adaptive-high')
+            write_run(tmp, RUN_B, base, {}, kind='benefit', variant='adaptive-medium')
             rows = [dict(id=RUN_A, status='completed', charged_microdollars=1500),
                     dict(id=RUN_B, status='completed', charged_microdollars=2500),
                     dict(id=RUN_C, status='failed', charged_microdollars=0,
@@ -109,6 +109,15 @@ class UsageTests(unittest.TestCase):
         self.assertEqual(kinds['research'], dict(requests=1, failed=0, usd=0.0015, web_searches=0))
         self.assertEqual(kinds['benefit:measure']['usd'], 0.0025)
         self.assertEqual(kinds['other'], dict(requests=1, failed=1, usd=0.0, web_searches=2))
+
+    def test_a_kinds_approved_regular_setting_is_not_measurement(self):
+        # 2026-11-26: the regular benefit pick runs with adaptive-high (pick_common.REGULAR_VARIANTS).
+        with tempfile.TemporaryDirectory() as tmp:
+            write_run(tmp, RUN_A, host(D1), {}, kind='benefit', variant='adaptive-high')
+            write_run(tmp, RUN_B, host(D1), {}, kind='festival', variant='adaptive-high')
+            rows = [dict(id=RUN_A, status='completed', charged_microdollars=3000),
+                    dict(id=RUN_B, status='completed', charged_microdollars=3000)]
+            self.assertEqual(set(ai_usage.summarize(rows, tmp)), {'benefit', 'festival:measure'})
 
     def test_history_keeps_one_row_per_day_and_31_days(self):
         history = None
@@ -119,6 +128,18 @@ class UsageTests(unittest.TestCase):
         self.assertEqual(len(history['days']), 31)
         self.assertEqual(history['days'][-1], dict(day='2026-11-08', kinds={}, total_usd=0, total_requests=0,
                                                    gate_corpus={'status': 'ok'}))
+
+    def test_runtime_breakdown_is_kept_and_shown(self):
+        runtime = dict(packed=8_000_000, files=900, groups=[
+            dict(group='.tools/claude-trial/live/runs', files=800, bytes=40_000_000, packed=6_291_456),
+            dict(group='cache/ai_review/', files=100, bytes=3_000_000, packed=1_048_576)])
+        history = ai_usage.add_day(None, '2026-11-27', {}, None, None, runtime)
+        self.assertEqual(history['days'][0]['runtime'], runtime)
+        text = ai_usage.markdown({}, None, None, runtime)
+        self.assertIn('| .tools/claude-trial/live/runs | 800 | 39062 | 6144 |', text)
+        self.assertEqual(quality_report._runtime_parts(history),
+                         ['실행 상태 큰 부분(2026-11-27, 압축 추정): .tools/claude-trial/live/runs 6.00 MiB, cache/ai_review/ 1.00 MiB'])
+        self.assertEqual(quality_report._runtime_parts(None), [])
 
 
 class QualityValueTests(unittest.TestCase):

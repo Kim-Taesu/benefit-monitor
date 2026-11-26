@@ -3,14 +3,17 @@ name: Quality report
 # fell back, or no longer passes today's checks (benefit_monitor/quality_report.py, 2026-11-24).
 # Public data only: no secrets, no model call, no network besides git. A red run is the alert.
 on:
-  # After each collection run. The AI run's approved snapshot is dispatched by the workflow token, which
-  # starts no workflow_run, so the daily schedule below reads the state after the AI run.
+  # After each collection run, and after each AI daily run (2026-11-26: the 07:23 KST schedule did not fire on
+  # 11-25 or 11-26, so the final state after the AI run went unchecked). The AI run's approved snapshot is
+  # dispatched by the workflow token and starts no workflow_run, but the AI run itself writes briefing.json to
+  # briefing-data before it ends. AI runs that publish nothing (most of the 15-minute backup runs) are skipped
+  # below by the "new briefing" check. The schedule stays as a backup.
   workflow_run:
-    workflows: ['Daily benefit briefing']
+    workflows: ['Daily benefit briefing', 'AI daily trial']
     types: [completed]
     branches: [main]
   schedule:
-    - cron: '23 22 * * *'  # 07:23 KST, after the 03:20~05:00 KST collection and AI run
+    - cron: '23 22 * * *'  # 07:23 KST backup
   workflow_dispatch:
 
 permissions:
@@ -50,6 +53,7 @@ jobs:
       - name: Check the published result
         if: steps.data.outputs.fresh == 'true'
         env:
-          # After a collection run the AI run has not filled picks and topic cards yet (2026-11-25).
-          STAGE: ${{ github.event_name == 'workflow_run' && 'collection' || 'final' }}
+          # After a collection run the AI run has not filled picks and topic cards yet (2026-11-25); after the
+          # AI daily run, on the schedule and by hand, the page is final.
+          STAGE: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Daily benefit briefing' && 'collection' || 'final' }}
         run: python -m benefit_monitor.quality_report --git-ref FETCH_HEAD --stage "$STAGE"

@@ -252,6 +252,18 @@ def _state(sizes):
     return found, facts
 
 
+def _runtime_parts(usage, top=3):
+    """The largest parts of the runtime from the last AI day (cloud_daily.runtime_report, 2026-11-27)."""
+    days = (usage or {}).get('days') or []
+    runtime = days[-1].get('runtime') if days and isinstance(days[-1], dict) else None
+    groups = runtime.get('groups') if isinstance(runtime, dict) else None
+    if not isinstance(groups, list) or not groups:
+        return []
+    parts = ', '.join(f'{g.get("group")} {int(g.get("packed") or 0) / 1024 / 1024:.2f} MiB'
+                      for g in groups[:top] if isinstance(g, dict))
+    return [f'실행 상태 큰 부분({days[-1].get("day")}, 압축 추정): {parts}']
+
+
 def _ai_dependent(finding):
     return finding.section in AI_SECTIONS or (finding.section == '공개' and '_pick' in finding.message)
 
@@ -278,7 +290,7 @@ def report(data, now=None, previous=None, usage=None, sizes=None, stage='final')
         found.append(Finding('warn', '리포트', f'AI 기여 검사 실패: {type(error).__name__}'))
     more, state_facts = _state(sizes)
     found += more
-    facts += state_facts
+    facts += state_facts + _runtime_parts(usage)
     if stage == 'collection':
         found = [f for f in found if not _ai_dependent(f)]
         facts.append('수집 직후 단계: AI 추천·주제 카드는 AI 실행 뒤 정기 리포트에서 검사합니다')

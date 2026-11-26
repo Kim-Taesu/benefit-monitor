@@ -67,9 +67,16 @@ def invoke(root,kind,input_path,variant=None):
             return {k:value[k] for k in ('status','run_id')}
         if value.get('status')=='stopped' and isinstance(value.get('reason'),str):
             return {'status':'stopped_before_result','run_id':None,'reason':value['reason'][:200]}
-    except (ValueError,KeyError,TypeError):
+        if isinstance(value.get('status'),str) and value['status'].startswith('grammar_'):
+            return {'status':'stopped_before_result','run_id':None,'reason':value['status'][:40]}
+    except (ValueError,KeyError,TypeError,AttributeError):
         pass
-    return {'status':'stopped_before_result','run_id':None}
+    # 2026-11-27: the CLI stopped with no JSON (an exception it does not catch) and the cause was invisible.
+    # Only the exit code and the exception class name from stderr's last line; never the message.
+    last=(getattr(proc,'stderr',None) or '').strip().splitlines()[-1:] or ['']
+    match=re.match(r'([A-Za-z_][A-Za-z0-9_.]{0,60}(?:Error|Exception|Exit))\b',last[0])
+    return {'status':'stopped_before_result','run_id':None,
+            'reason':f'exit_{getattr(proc,"returncode",None)}'+(':'+match.group(1) if match else '')}
 
 
 TRIAL_RUNS=Path(__file__).resolve().parents[1]/'.tools/claude-trial/live/runs'
