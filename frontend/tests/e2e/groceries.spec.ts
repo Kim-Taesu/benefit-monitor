@@ -89,6 +89,10 @@ for(const width of [390,1440])test(`grocery section: featured rows, calculator a
  await expect(section.locator('.grocery-more')).toHaveCount(0);
  const beef=section.locator('article',{hasText:'한우 등심'});
  await expect(beef.locator('.grocery-price strong')).toHaveText('13,676원');
+ // 카드마다 그 가격이 언제 조사값인지 짧게 붙인다.
+ const md=kst(1).slice(5).replace('-','.');
+ await expect(beef.locator('.grocery-asof')).toHaveText(`${md} 기준`);
+ await expect(section.locator('article',{hasText:'양파'}).locator('.grocery-asof')).toHaveAttribute('datetime',kst(1));
  await beef.locator('.grocery-toggle').click();await expect(beef.locator('.grocery-toggle')).toHaveAttribute('aria-expanded','true');
  await expect(beef.locator('.grocery-others')).toHaveText('다른 등급: 1++등급 15,645원 · 1등급 12,140원');
  const pork=section.locator('article',{hasText:'돼지 삼겹살'});await pork.locator('.grocery-toggle').click();

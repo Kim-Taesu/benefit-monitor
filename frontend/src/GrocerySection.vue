@@ -93,7 +93,7 @@ function pick(c:string){category.value=c;q.value='';shown.value=PAGE;}
           <span>지역별 {{ won(row.range.min) }}({{ row.range.minRegion }}) ~ {{ won(row.range.max) }}({{ row.range.maxRegion }})</span><span v-if="row.seoul">서울 {{ won(row.seoul) }}</span>
         </p>
         <p v-else class="grocery-compare"></p>
-        <p class="grocery-price"><strong>{{ won(row.current) }}</strong><span> / {{ unitOf(row) }}</span></p>
+        <p class="grocery-price"><strong>{{ won(row.current) }}</strong><span> / {{ unitOf(row) }}</span><time class="grocery-asof" :datetime="row.priceDate">{{ md(row.priceDate) }} 기준</time></p>
         <p class="grocery-verdict"><span v-if="level(row)" class="grocery-badge" :class="level(row)!.level">{{ level(row)!.label }}</span></p>
         <span class="grocery-chevron" aria-hidden="true">+</span>
         <div v-if="opened.has(rowKey(row))" class="grocery-more">
