@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-26T03:47:12.684931+09:00",
-  "day": "2026-11-26",
+  "generated_at": "2026-11-27T03:47:41.782746+09:00",
+  "day": "2026-11-27",
   "source": "rule",
   "summary": null,
   "picks": [
     {
-      "id": "2026940258",
-      "line": null
-    },
-    {
-      "id": "2026950090",
-      "line": null
-    },
-    {
       "id": "2026000505",
+      "line": null
+    },
+    {
+      "id": "2026000585",
+      "line": null
+    },
+    {
+      "id": "2026910304",
       "line": null
     }
   ]
