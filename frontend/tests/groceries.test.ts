@@ -27,6 +27,7 @@ test('parses produce and meat with categories and current price',()=>{
  assert.equal(pork.current,2768);
  assert.equal(pork.name,'돼지 삼겹살');
  assert.equal(pork.detail,'');
+ assert.equal(pork.priceDate,g.meatDate);
  const beef=parseGroceries(raw({meat:{survey_date:'2026-11-08',items:[meat({id:'4301-22-등심 1++등급',cut:'한우 등심',label:'등심 1++등급'}),meat({id:'9903-23-XL30구 일반란',cut:'계란 특란 30구',label:'XL30구 일반란',unit:'원/30구'})],missing:[]}}),NOW)!;
  assert.deepEqual(beef.rows.filter(r=>r.kind==='meat').map(r=>r.detail),['1++등급','XL30구 일반란']);
 });
@@ -36,6 +37,7 @@ test('falls back to the previous day when today is missing',()=>{
  const onion=g.rows[0];
  assert.equal(onion.current,2050);
  assert.equal(onion.currentLabel,'1일전');
+ assert.equal(onion.priceDate,'2026-11-05');
 });
 
 test('rejects stale, tampered or unsafe bundles',()=>{
@@ -159,7 +161,7 @@ function baselines(over:Record<string,unknown>={},items?:unknown[]){
 const basket=parseBaselines(baselines(),NOW);
 const byName=(n:string)=>basket.find(i=>i.name===n)!;
 function prow(over:Partial<PriceRow>={}):PriceRow{
- return {id:'양파|양파|1kg|상품',kind:'produce',name:'양파',detail:'',unit:'1kg',category:'채소',guideKey:'양파',current:2650,currentLabel:'당일',
+ return {id:'양파|양파|1kg|상품',kind:'produce',name:'양파',detail:'',unit:'1kg',category:'채소',guideKey:'양파',current:2650,currentLabel:'당일',priceDate:'2026-11-06',
   normal:null,yearAgo:null,weekAgo:null,range:null,seoul:null,featured:0,...over};
 }
 

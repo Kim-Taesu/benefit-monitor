@@ -7,7 +7,7 @@ export type Basis='kamis_wiki'|'grading'|'general';
 export interface Guide{basis:Basis;wiki?:string;updated?:string;good:string[];avoid?:string[];keep?:string;tip?:string;origin?:string;grade?:string}
 export interface PriceRow{
  id:string;kind:'produce'|'meat';name:string;detail:string;unit:string;category:string;guideKey:string;
- current:number;currentLabel:string;normal:number|null;yearAgo:number|null;weekAgo:number|null;
+ current:number;currentLabel:string;priceDate:string;normal:number|null;yearAgo:number|null;weekAgo:number|null;
  range:{min:number;minRegion:string;max:number;maxRegion:string}|null;seoul:number|null;featured:number;
 }
 export interface GroceryBundle{fetchedAt:string;notice:string;produceDate:string|null;meatDate:string|null;missing:string[];rows:PriceRow[]}
@@ -41,9 +41,10 @@ function fresh(date:unknown,now:number):date is string{
  const age=(Date.parse(kstDate(now))-Date.parse(date))/DAY;
  return age>=0&&age<=MAX_SURVEY_AGE;
 }
+function dayBefore(iso:string):string{return new Date(Date.parse(iso)-DAY).toISOString().slice(0,10);}
 function meatKey(cut:string):string{return MEAT_KEYS.find(k=>cut.startsWith(k))??'';}
 
-function produceRow(v:unknown):PriceRow|null{
+function produceRow(v:unknown,surveyDate:string):PriceRow|null{
  if(!record(v)||!exact(v,PRODUCE_KEYS))return null;
  if(!text(v.item,40)||!text(v.kind,60)||!text(v.unit,20)||!text(v.grade,10,true))return null;
  if(v.id!==[v.item,v.kind,v.unit,v.grade].join('|')||!PRICE_KEYS.every(k=>price(v[k])))return null;
@@ -54,10 +55,11 @@ function produceRow(v:unknown):PriceRow|null{
  const detail=[kind!==item?kind:'',v.grade&&v.grade!=='-'?v.grade:''].filter(Boolean).join(' · ');
  const guideKey=ITEMS[kind]?kind:item;
  return {id:v.id as string,kind:'produce',name:item,detail,unit:v.unit,category:CATEGORY_OF[item]??'기타',guideKey,
-  current,currentLabel:today!==null?'당일':'1일전',normal:v.normal as number|null,yearAgo:v.year_ago as number|null,
+  // KAMIS '1일전' is the calendar day before the survey date (Mondays have no such column).
+  current,currentLabel:today!==null?'당일':'1일전',priceDate:today!==null?surveyDate:dayBefore(surveyDate),normal:v.normal as number|null,yearAgo:v.year_ago as number|null,
   weekAgo:v.week_ago as number|null,range:null,seoul:null,featured:FEATURED_ORDER.get(item)??FEATURED_ORDER.get(kind)??-1};
 }
-function meatRow(v:unknown):PriceRow|null{
+function meatRow(v:unknown,surveyDate:string):PriceRow|null{
  if(!record(v)||!exact(v,MEAT_FIELDS))return null;
  if(!text(v.cut,30)||!text(v.label,40)||typeof v.unit!=='string'||!UNITS.has(v.unit))return null;
  if(typeof v.id!=='string'||!/^\d{4}-\d{2}-.+$/.test(v.id)||!v.id.endsWith('-'+v.label))return null;
@@ -68,7 +70,7 @@ function meatRow(v:unknown):PriceRow|null{
  const part=cut.split(' ').pop()??'';
  const detail=label.startsWith(part)?label.slice(part.length).trim():label;
  return {id:v.id,kind:'meat',name:cut,detail,unit:v.unit,category:'육류·계란',guideKey:meatKey(cut),
-  current:v.national as number,currentLabel:'전국 평균',normal:null,yearAgo:null,weekAgo:null,
+  current:v.national as number,currentLabel:'전국 평균',priceDate:surveyDate,normal:null,yearAgo:null,weekAgo:null,
   range:{min:v.min as number,minRegion:v.min_region,max:v.max as number,maxRegion:v.max_region},
   seoul:v.seoul as number|null,featured:FEATURED_ORDER.get(cut)??-1};
 }
@@ -83,9 +85,9 @@ export function parseGroceries(raw:unknown,now:number):GroceryBundle|null{
  const add=(row:PriceRow|null)=>{if(row&&!seen.has(row.kind+row.id)){seen.add(row.kind+row.id);rows.push(row);}};
  let produceDate:string|null=null,meatDate:string|null=null,missing:string[]=[];
  const p=g.produce,m=g.meat;
- if(record(p)&&Array.isArray(p.items)&&p.items.length<=400&&fresh(p.survey_date,now)){produceDate=p.survey_date;p.items.forEach(r=>add(produceRow(r)));}
+ if(record(p)&&Array.isArray(p.items)&&p.items.length<=400&&fresh(p.survey_date,now)){produceDate=p.survey_date;p.items.forEach(r=>add(produceRow(r,p.survey_date as string)));}
  if(record(m)&&Array.isArray(m.items)&&m.items.length<=100&&fresh(m.survey_date,now)){
-  meatDate=m.survey_date;m.items.forEach(r=>add(meatRow(r)));
+  meatDate=m.survey_date;m.items.forEach(r=>add(meatRow(r,m.survey_date as string)));
   if(Array.isArray(m.missing))missing=m.missing.filter((x):x is string=>text(x,30)).slice(0,20);
  }
  if(!rows.length)return null;
