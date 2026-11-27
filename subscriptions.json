@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "source": "subscriptions",
-  "fetched_at": "2026-11-27T03:31:00.526892+09:00",
+  "fetched_at": "2026-11-28T03:31:06.629293+09:00",
   "window_days": 14,
   "notice": "청약홈(한국부동산원) 청약 달력과 입주자모집공고 요약을 옮겼습니다. 신청 자격·당첨 가능성·층·호별 금액은 확인하지 않았으니 신청 전 모집공고문에서 확인하세요.",
   "items": [
@@ -111,7 +111,7 @@
         }
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000505&pblancNo=2026000505&atchmnflSeqNo=2012203&atchmnflSn=4",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026000585",
@@ -207,7 +207,7 @@
         }
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000585&pblancNo=2026000585&atchmnflSeqNo=2021027&atchmnflSn=5",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026910304",
@@ -286,7 +286,7 @@
       ],
       "special_kinds": [],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910304&pblancNo=2026910304&atchmnflSeqNo=2027367&atchmnflSn=2",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026930048",
@@ -303,7 +303,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aib/selectSubscrptCalenderView.do",
       "detail": "checked",
-      "checked_at": "2026-11-24T03:31:01.930250+09:00",
+      "checked_at": "2026-11-28T03:31:06.629293+09:00",
       "district": "화성시",
       "units": 1,
       "area_min": 84.97,
@@ -381,7 +381,7 @@
       ],
       "special_kinds": [],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910303&pblancNo=2026910303&atchmnflSeqNo=2027407&atchmnflSn=6",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026000591",
@@ -408,7 +408,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000591&pblancNo=2026000591",
       "detail": "checked",
-      "checked_at": "2026-11-24T03:31:01.930250+09:00",
+      "checked_at": "2026-11-28T03:31:06.629293+09:00",
       "district": "부천시 소사구",
       "units": 45,
       "area_min": 59.16,
@@ -509,7 +509,7 @@
         }
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000591&pblancNo=2026000591&atchmnflSeqNo=2027261&atchmnflSn=5",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026000575",
@@ -536,7 +536,7 @@
       ],
       "url": "https://www.applyhome.co.kr/ai/aia/selectAPTLttotPblancDetail.do?houseManageNo=2026000575&pblancNo=2026000575",
       "detail": "checked",
-      "checked_at": "2026-11-24T03:31:01.930250+09:00",
+      "checked_at": "2026-11-28T03:31:06.629293+09:00",
       "district": "남양주시",
       "units": 379,
       "area_min": 59.14,
@@ -611,7 +611,7 @@
         }
       ],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026000575&pblancNo=2026000575&atchmnflSeqNo=2027378&atchmnflSn=2",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026850057",
@@ -708,7 +708,7 @@
       ],
       "special_kinds": [],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026850057&pblancNo=2026850057&atchmnflSeqNo=2021998&atchmnflSn=5",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     },
     {
       "id": "2026910305",
@@ -751,7 +751,7 @@
       ],
       "special_kinds": [],
       "notice_pdf": "https://static.applyhome.co.kr/ai/aia/getAtchmnfl.do?houseManageNo=2026910305&pblancNo=2026910305&atchmnflSeqNo=2023020&atchmnflSn=4",
-      "trade_status": "checked"
+      "trade_status": "unavailable"
     }
   ]
 }
