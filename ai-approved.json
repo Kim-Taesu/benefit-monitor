@@ -112,7 +112,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-27T03:47:41.782746+09:00",
+      "checked_at": "2026-11-28T03:41:54.277370+09:00",
       "published_at": "2026-10-27",
       "basis": {
         "period_quotes": [
@@ -300,7 +300,11 @@
       "original_body_hash": "d41f25be5661574a2e4819794f4f360f55678aeb2adb2f8e033bb1b2ba665447"
     },
     "title_key": "생활숲마을숲,학교숲조성사업신청안내.12.31.목18...|보건소공지",
-    "decided_at": "2026-11-16T09:47:48.075411+09:00"
+    "decided_at": "2026-11-16T09:47:48.075411+09:00",
+    "status": "withdrawn",
+    "withdrawn_reason": "rule_not_personal",
+    "withdrawn_at": "2026-11-28T03:41:54.277370+09:00",
+    "recheck_priority": false
   },
   "a171a2762a00f40bd1aa51e6": {
     "schema_version": 1,
@@ -433,7 +437,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-27T03:47:41.782746+09:00",
+      "checked_at": "2026-11-28T03:41:54.277370+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -481,7 +485,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-27T03:41:53.052628+09:00",
+      "checked_at": "2026-11-28T03:41:54.277370+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -526,7 +530,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-27T03:47:41.782746+09:00",
+      "checked_at": "2026-11-28T03:41:54.277370+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -590,7 +594,11 @@
       "original_body_hash": "f1b57958063b501d46280300056f450425caba1896b871ec0ce321152d50017b"
     },
     "title_key": "북서울꿈의숲정원문화힐링센터_가드닝클래스|문화·예약",
-    "decided_at": "2026-11-27T03:47:41.782746+09:00"
+    "decided_at": "2026-11-27T03:47:41.782746+09:00",
+    "status": "withdrawn",
+    "withdrawn_reason": "body_changed",
+    "withdrawn_at": "2026-11-28T03:41:54.277370+09:00",
+    "recheck_priority": true
   },
   "3fc55948006078ab5b774342": {
     "schema_version": 1,
@@ -664,7 +672,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-27T03:41:53.052628+09:00",
+      "checked_at": "2026-11-28T03:41:54.277370+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
@@ -712,7 +720,7 @@
         }
       ],
       "document_count": 1,
-      "checked_at": "2026-11-27T03:47:41.782746+09:00",
+      "checked_at": "2026-11-28T03:41:54.277370+09:00",
       "published_at": "2026-10-22",
       "basis": {
         "period_quotes": [
@@ -810,7 +818,7 @@
         }
       ],
       "document_count": 2,
-      "checked_at": "2026-11-27T03:41:53.052628+09:00",
+      "checked_at": "2026-11-28T03:41:54.277370+09:00",
       "published_at": null,
       "basis": {
         "period_quotes": [
