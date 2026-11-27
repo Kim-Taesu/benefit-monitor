@@ -270,6 +270,147 @@
       "ops_review": {
         "status": "stopped_before_result"
       }
+    },
+    {
+      "day": "2026-11-28",
+      "kinds": {
+        "benefit": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.002836,
+          "web_searches": 0
+        },
+        "festival": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000833,
+          "web_searches": 0
+        },
+        "festival_check": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000296,
+          "web_searches": 0
+        },
+        "grocery": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000549,
+          "web_searches": 0
+        },
+        "health": {
+          "requests": 10,
+          "failed": 0,
+          "usd": 0.00531,
+          "web_searches": 0
+        },
+        "notice_triage": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.000277,
+          "web_searches": 0
+        },
+        "research": {
+          "requests": 18,
+          "failed": 0,
+          "usd": 0.041062,
+          "web_searches": 0
+        },
+        "subscription": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.00079,
+          "web_searches": 0
+        },
+        "topic": {
+          "requests": 1,
+          "failed": 0,
+          "usd": 0.001419,
+          "web_searches": 0
+        },
+        "verify": {
+          "requests": 27,
+          "failed": 0,
+          "usd": 0.025681,
+          "web_searches": 0
+        }
+      },
+      "total_usd": 0.079053,
+      "total_requests": 62,
+      "gate_corpus": {
+        "status": "ok",
+        "added": 11,
+        "dropped": 0,
+        "records": 185,
+        "recorded_published": 31,
+        "oldest": "2026-11-25",
+        "newest": "2026-11-28",
+        "unchanged": 185,
+        "publish_to_held": 0,
+        "held_to_publish": 0,
+        "reasons_changed": 0,
+        "replay_failed": 0,
+        "reasons_added": {},
+        "reasons_removed": {}
+      },
+      "ops_review": {
+        "status": "stopped_before_result",
+        "reason": "TrialError: completed response missing or corrupt no repeat charge"
+      },
+      "runtime": {
+        "packed": 7287499,
+        "files": 3684,
+        "groups": [
+          {
+            "group": ".tools/claude-trial/live/runs",
+            "files": 2132,
+            "bytes": 19557626,
+            "packed": 3214824
+          },
+          {
+            "group": ".tools/ai-inputs/",
+            "files": 427,
+            "bytes": 7582540,
+            "packed": 1697259
+          },
+          {
+            "group": "cache/ai_review/",
+            "files": 1073,
+            "bytes": 6085737,
+            "packed": 1394702
+          },
+          {
+            "group": "cache/ai_daily/",
+            "files": 5,
+            "bytes": 1235260,
+            "packed": 118889
+          },
+          {
+            "group": "report.json",
+            "files": 1,
+            "bytes": 842005,
+            "packed": 89768
+          },
+          {
+            "group": ".tools/ai-topic-inputs/",
+            "files": 23,
+            "bytes": 675738,
+            "packed": 70387
+          },
+          {
+            "group": "cache/ai_publish/",
+            "files": 7,
+            "bytes": 263538,
+            "packed": 67760
+          },
+          {
+            "group": "cache/verified_items.json",
+            "files": 1,
+            "bytes": 419167,
+            "packed": 44583
+          }
+        ]
+      }
     }
   ]
 }
