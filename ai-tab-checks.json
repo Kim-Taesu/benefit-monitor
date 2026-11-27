@@ -2,6 +2,11 @@
   "schema_version": 1,
   "notices": [
     {
+      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585899&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
+      "title": "서울체력장 성북센터 기간제근로자 최종합격자 안내 공고",
+      "reason": "result"
+    },
+    {
       "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585875&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
       "title": "청년마음건강센터 기간제근로자 최종합격자 발표",
       "reason": "result"
@@ -34,11 +39,6 @@
     {
       "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585395&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
       "title": "청년마음건강센터 기간제근로자 채용시험 공고",
-      "reason": "recruitment"
-    },
-    {
-      "url": "https://www.sb.go.kr/bogunso/selectBbsNttView.do?key=271&bbsNo=64&nttNo=9585382&searchCtgry=&searchCnd=all&searchKrwd=&integrDeptCode=&startDate=&endDate=&pageIndex=1",
-      "title": "AI IoT기반 어르신 건강관리사업 기간제 근로자 채용 공고",
       "reason": "recruitment"
     },
     {
