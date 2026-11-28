@@ -27,7 +27,9 @@ FOLDERS=('.tools/claude-trial/live/','.tools/ai-inputs/','.tools/ai-topic-inputs
          # and changed festival texts are sent again.
          'cache/tab_checks/',
          # Discovery search (2026-11-25): leads stay candidates for 14 days and the day's search runs once.
-         'cache/discovery_search/')
+         'cache/discovery_search/',
+         # Operations review (2026-11-28): the once-a-day record; saved again after the review (cloud_daily).
+         'cache/ops_review/')
 # Packed elsewhere (2026-11-27): the Claude response cache lives in half-month files (response_archive).
 # Restore still accepts old archives that carry it.
 EXCLUDED=('.tools/claude-trial/live/responses/',)

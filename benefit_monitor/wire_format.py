@@ -39,7 +39,10 @@ NOTICE_TRIAGE_WIRE = 'notice-triage-wire-v1'
 FESTIVAL_CHECK_WIRE = 'festival-check-wire-v1'
 BENEFIT_WIRE = 'benefit-wire-v1'
 SUBSCRIPTION_WIRE = 'subscription-wire-v1'
-OPS_REVIEW_WIRE = 'ops-review-wire-v1'
+# v2 (2026-11-28): same fields. The v1 grammar probe was paid on 11-26 but its cached answer and pass record were
+# written after the runtime save and lost, so every later run hit "completed response missing" for the same probe.
+# A new version is a new schema and a new probe (about $0.0001 once, approved "(나)"); the missing-response stop stays.
+OPS_REVIEW_WIRE = 'ops-review-wire-v2'
 UNION_LIMIT = 16
 OPTIONAL_LIMIT = 24
 GRAMMAR_UNION_LIMIT = 0
