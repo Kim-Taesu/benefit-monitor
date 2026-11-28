@@ -293,14 +293,17 @@ def day_review(root,store,now,start):
 
 def runtime_report(root,top=8):
     """Packed size of the runtime as saved today and its largest parts (2026-11-27: back at 98% with 2/1-day
-    retention and no way to see what grew). Allowlist folder names and sizes only; never fails the day."""
+    retention and no way to see what grew). Allowlist folder names and sizes only; never fails the day.
+    2026-11-28: plus how many stored runs, inputs and documents the current records still reference."""
     from .age_state import pack_runtime,runtime_breakdown
     try:
         rows=runtime_breakdown(root)
-        return {'packed':len(pack_runtime(root)),'files':sum(r['files'] for r in rows),'groups':rows[:top]}
+        out={'packed':len(pack_runtime(root)),'files':sum(r['files'] for r in rows),'groups':rows[:top]}
     except Exception as error:
         return {'status':'failed','reason':type(error).__name__}
-
+    try:out['references']=runtime_retention.referenced_share(root)
+    except Exception as error:out['references']={'status':'failed','reason':type(error).__name__}
+    return out
 
 def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,probe_only=False,close_unresolved=False,investigate=True,refresh_completed=False):
     trusted_environment()

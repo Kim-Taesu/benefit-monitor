@@ -115,4 +115,8 @@ def markdown(kinds, corpus=None, review=None, runtime=None):
             lines.append(f'- 압축 {runtime["packed"] / 1024 / 1024:.2f} MiB · 파일 {runtime["files"]}개 (상한 8 MiB, 암호화 전)')
             lines += ['', '| 폴더 | 파일 | 원본(KiB) | 압축 추정(KiB) |', '|---|---|---|---|']
             lines += [f'| {g["group"]} | {g["files"]} | {g["bytes"] // 1024} | {g["packed"] // 1024} |' for g in runtime['groups']]
+            refs = runtime.get('references') or {}
+            if refs.get('status') == 'ok':  # 2026-11-28: what the current records still hold (never pruned)
+                lines += ['', '| 정리 대상 폴더 | 저장 | 현재 기록이 참조(정리 안 됨) |', '|---|---|---|']
+                lines += [f'| {k} | {refs[k]["stored"]} | {refs[k]["referenced"]} |' for k in ('runs', 'inputs', 'documents') if k in refs]
     return '\n'.join(lines) + '\n'

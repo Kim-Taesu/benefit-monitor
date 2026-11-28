@@ -1,5 +1,13 @@
 # 개선 진행 기록
 
+## 2026-11-28 — 실행 상태 구성: 참조 중이라 정리되지 않는 수 기록
+
+- 작업 단위와 범위: 브랜치 `claude/blissful-ptolemy-lsbmfs`(main `e9f07f4` 기준).
+- 확인된 것(11-28 03:47 AI 실행, `ai-usage.json` `runtime`, `292066c`에서 추가된 기록): 압축 7.29 MB 중 조사 실행 기록(`.tools/claude-trial/live/runs`) 2,132개 파일 약 3.07 MiB, 조사 입력(`.tools/ai-inputs`) 427개 약 1.62 MiB, `cache/ai_review` 1,073개 약 1.33 MiB. 응답 캐시를 분리한 뒤에도 이 셋이 약 6 MiB다.
+- 변경: `runtime_retention.referenced_share`(실행 기록·입력·원문 사본마다 저장 수와 현재 기록이 참조하는 수, 숫자만), `cloud_daily.runtime_report`에 `references`로 추가, `ai_usage.markdown`이 Actions 요약에 표로 보인다. 정리 규칙·보관 기간은 바꾸지 않았다.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과(1263).
+- 미검증: 실제 참조 비율은 머지 뒤 첫 AI 실행의 `ai-usage.json` `runtime.references`에서 본다. 대부분이 참조 중이면 보관 기간을 더 줄여도 효과가 없고, 오래된 검토 상태가 계속 가리키는 기록을 정리하는 규칙(사람 승인 필요)을 검토한다.
+
 ## 2026-11-28 — 보관 1일 효과 확인, 발굴 검색이 응답 캐시에 막힌 문제
 
 - 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `e9f07f4` 기준).

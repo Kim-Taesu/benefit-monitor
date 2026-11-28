@@ -121,3 +121,20 @@ def prune(root, now):
             path.unlink()
             removed[count] += 1
     return dict(removed, status='pruned')
+
+
+def referenced_share(root):
+    """How many stored runs, inputs and documents the current records still reference (counts only)."""
+    refs = references(root)
+    if refs is None:
+        return {'status': 'unreadable_references'}
+    out = {'status': 'ok'}
+    for (relative, keep, count) in ((RUNS, refs[0], 'runs'), (INPUTS, refs[1], 'inputs'), (DOCUMENTS, refs[2], 'documents')):
+        folder = Path(root) / relative
+        names = [p for p in folder.iterdir()] if folder.is_dir() else []
+        if count == 'runs':
+            held = sum(p.name in keep for p in names if p.is_dir())
+        else:
+            held = sum(relative + '/' + p.name in keep for p in names if p.is_file())
+        out[count] = {'stored': len(names), 'referenced': held}
+    return out
