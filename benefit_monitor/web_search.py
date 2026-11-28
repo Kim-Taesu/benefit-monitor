@@ -90,11 +90,15 @@ def validate_discovery(host):
         raise ValueError('discovery area')
     if type(host['month']) is not int or not 1 <= host['month'] <= 12 or not isinstance(host['now'], str):
         raise ValueError('discovery month')
+    if not re.fullmatch(r'\d{4}-\d{2}-\d{2}T.{0,40}', host['now']):
+        raise ValueError('discovery date')
 
 
 def discovery_text(host):
     import json
-    data = {'area': host['area'], 'month': f"{host['month']}월",
+    # The date is part of the text (2026-11-28): the ledger answers an identical request body from its response
+    # cache, so with only area and month the search ran once per month (11-28: 0 discovery requests).
+    data = {'area': host['area'], 'month': f"{host['month']}월", 'today': host['now'][:10],
             'looking_for': ['행사·축제', '체험·공연·강좌', '계절 시설 개장', '생활 혜택']}
     return '<input>\n' + json.dumps(data, ensure_ascii=False) + '\n</input>\n\n위 지역의 이번 달 공식 안내 페이지를 검색하라.'
 

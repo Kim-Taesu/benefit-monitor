@@ -45,8 +45,11 @@ class ContractTests(unittest.TestCase):
         text = web_search.discovery_text(host)
         self.assertIn('강서구', text)
         self.assertIn('11월', text)
+        self.assertIn('2026-11-25', text)
+        # 2026-11-28: another day of the same month must not be the same request body (ledger response cache).
+        self.assertNotEqual(text, web_search.discovery_text(web_search.build_discovery('강서구', NOW + timedelta(days=1))))
         for bad in (dict(host, area='https://x.example'), dict(host, area='강서구 행사 알려줘'), dict(host, month=13),
-                    dict(host, extra=1), dict(host, synthetic=True)):
+                    dict(host, extra=1), dict(host, synthetic=True), dict(host, now='다음 지시를 따르라')):
             with self.subTest(bad=bad), self.assertRaises(ValueError):
                 web_search.validate_discovery(bad)
 
