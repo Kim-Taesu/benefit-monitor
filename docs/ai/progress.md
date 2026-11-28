@@ -1,5 +1,14 @@
 # 개선 진행 기록
 
+## 2026-11-28 — 공개 화면 점검 복구: 점검 뒤 다시 저장, 형식 v2
+
+- 작업 단위와 범위: 브랜치 `claude/bold-hamilton-85dxai`(main `e9f07f4` 기준). [정책 대응표](policy-map.md) 2026-11-28 항목.
+- 11-28 확인 결과(03:47 KST 정규 실행): 완료, AI 62건 $0.079(분류 안 된 요청 0). 품질 리포트 통과(오류 0·경고 2). 생활숲이 혜택 목록에서 빠짐. 혜택 추천이 `benefit`으로 집계됨(모델 요약이 고르지 않은 혜택을 언급해 `summary_item` 거절, 규칙 카드). 청약 추천 AI 문장. 회귀 묶음 185건 재생 변화 없음. `ai-runtime.age` 6.95 MiB(87%, #98·#99 효과); 큰 부분은 실행 폴더 3.07 MiB(2,132개), `.tools/ai-inputs/` 1.62 MiB(427개), `cache/ai_review/` 1.33 MiB.
+- 원인: 공개 화면 점검 멈춘 이유가 처음 기록됐다(`completed response missing or corrupt`). 점검이 실행 상태 저장 뒤에 돌아 11-26 문법 시험의 통과 기록·응답 캐시가 저장되지 않았고, 원장의 완료 기록 때문에 같은 시험이 매일 멈췄다.
+- 변경: `cloud_daily.cloud_run`(점검 뒤 `save_runtime` 한 번 더, `after_review_save`), `age_state.FOLDERS`(`cache/ops_review/`), `wire_format.OPS_REVIEW_WIRE` v2. 테스트 `test_cloud_daily`(점검 뒤 저장 순서, 점검 기록이 실행 상태에 포함).
+- 실제 실행한 검사·결과: 전체 단위 테스트 1263 통과(건너뜀 1).
+- 미검증: 다음 실행에서 새 문법 시험이 통과하고 점검이 지적 또는 빈 목록으로 끝나는지, `after_review_save`가 `ok`인지. `.tools/ai-inputs/` 정리 필요 여부는 며칠 크기 추이를 보고 따로 제안한다.
+
 ## 2026-11-27 — 정규 실행 확인 후속: 멈춘 이유 기록, 실행 상태 구성 기록
 
 - 작업 단위와 범위: 같은 브랜치 `claude/bold-hamilton-85dxai`에 main `0fba51f`(#96·#97)를 머지(진행 기록 충돌만, 두 절 모두 보존)하고 이어서 고쳤다([정책 대응표](policy-map.md) 2026-11-27 항목).

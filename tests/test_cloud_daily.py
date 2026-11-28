@@ -4,6 +4,7 @@ import importlib
 import json
 import os
 from datetime import datetime
+from pathlib import Path
 from unittest.mock import patch
 import unittest
 
@@ -273,6 +274,25 @@ class CloudDailyTests(unittest.TestCase):
             result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
         self.assertEqual(order,['publish','review'])
         self.assertEqual((result['status'],result['gate_corpus']),('completed',{'status':'ok'}))
+
+    def test_runtime_is_saved_again_after_the_review(self):
+        # 2026-11-28: the review's probe record and cached answer were written after the only runtime save and lost,
+        # so every later run stopped on "completed response missing" for the same probe.
+        m=self.module();order=[];real=m.CloudSession.save_runtime
+        def save(session):
+            order.append('save');return real(session)
+        def review(root,*a,**k):
+            order.append('review');(Path(root)/'cache/ops_review').mkdir(parents=True,exist_ok=True)
+            (Path(root)/'cache/ops_review/days.json').write_text('{"days":{}}');return {'ops_review':{'status':'completed'}}
+        with patch.object(m,'todays_refresh',return_value='ready'),patch.object(m,'daily',return_value={'status':'completed'}),\
+                patch.object(m.collection_snapshot,'restore',return_value=None),\
+                patch.object(m,'publish_snapshot',return_value={'status':'dispatched_not_yet_verified'}),\
+                patch.object(m,'day_review',side_effect=review),patch.object(m.CloudSession,'save_runtime',save):
+            result=m.cloud_run(self.root,now=NOW,check_only=False,store=self.fixture.store())
+        self.assertEqual(order[-2:],['review','save'])
+        self.assertEqual((result['status'],result['after_review_save']),('completed','ok'))
+        from benefit_monitor.age_state import _entries
+        self.assertIn('cache/ops_review/days.json',[name for name,_ in _entries(self.root)[0]])
 
     def test_day_review_errors_are_contained(self):
         m=self.module()

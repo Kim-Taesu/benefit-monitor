@@ -430,6 +430,10 @@ def cloud_run(root,now=None,check_only=True,store=None,resume=False,retry=False,
         session.finish(day,'completed')
         try:review=day_review(root,store,now,summary['requests'])  # After publication: it never delays or blocks the day.
         except Exception:review={}
+        # 2026-11-28: the review's paid answers, probe record and day record were written after the runtime save
+        # and lost every day. Save once more; a failure here leaves the published day as it is.
+        try:session.save_runtime();review['after_review_save']='ok'
+        except Exception as error:review['after_review_save']='failed: '+type(error).__name__
         return {'status':status,'delivery':delivery,'new_requests':len(new),'provider_failures':failures,
                 'halted':after['halted'],'retried_day':retried,'picks':pick_report(result),
                 'tab_checks':result.get('tab_checks') if isinstance(result.get('tab_checks'),dict) else None,'measurement':{k:v for k,v in measurement.items() if k!='request_ids'},
