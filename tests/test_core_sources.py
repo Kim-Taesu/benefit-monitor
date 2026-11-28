@@ -24,6 +24,16 @@ class CoreSourcesTests(unittest.TestCase):
         p.feed('<a href="/image" title="제휴 할인"><img alt="관리자 이미지"></a><a href="/news"><div class="title">기업 경영</div><div>할인 배경 설명</div></a>')
         self.assertEqual(p.items,{'https://official.example/image':'제휴 할인'})
 
+    def test_retail_newsroom_keeps_festa_titles_without_discount_words(self):
+        import json
+        source=json.loads((Path(__file__).resolve().parents[1]/'sources'/'retail.json').read_text(encoding='utf-8'))['collect']
+        p=ArticleLinks(source['html_url'],source['domains'],source['article_path_pattern'],source['keywords'])
+        base='https://www.shinsegaegroupnewsroom.com/'
+        p.feed(f'<a href="{base}emart-gorae-it-festa-dec/">이마트, 연말 ‘고래잇 페스타’ 개최</a>'
+               f'<a href="{base}emart-whale-week/">이마트 고래잇 위크 연다</a>'
+               f'<a href="{base}emart-esg-report/">이마트, ESG 보고서 발간</a>')
+        self.assertEqual(set(p.items),{base+'emart-gorae-it-festa-dec/',base+'emart-whale-week/'})
+
     def test_district_source_uses_actual_coverage_and_shared_verified_items(self):
         with TemporaryDirectory(dir=Path(__file__).resolve().parents[1]) as d:
             root=Path(d);save(root/'districts.json',dict(districts=[]))
