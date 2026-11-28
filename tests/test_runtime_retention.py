@@ -91,5 +91,27 @@ class RetentionTests(unittest.TestCase):
         self.assertTrue(response.exists() and queue.exists())
 
 
+
+
+class ReferencedShareTests(unittest.TestCase):
+    def test_counts_stored_and_referenced_entries_only(self):
+        import tempfile, json
+        from pathlib import Path
+        from benefit_monitor import runtime_retention as r
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in ('a' * 64, 'b' * 64):
+                (root / r.RUNS / name).mkdir(parents=True)
+            (root / r.INPUTS).mkdir(parents=True)
+            (root / r.INPUTS / ('c' * 64 + '.json')).write_text('{}')
+            (root / 'cache/ai_review').mkdir(parents=True)
+            (root / 'cache/ai_review/state.json').write_text(json.dumps({'items': {'x': {'run_id': 'a' * 64}}}))
+            share = r.referenced_share(root)
+        self.assertEqual(share['status'], 'ok')
+        self.assertEqual(share['runs'], {'stored': 2, 'referenced': 1})
+        self.assertEqual(share['inputs'], {'stored': 1, 'referenced': 0})
+        self.assertEqual(share['documents'], {'stored': 0, 'referenced': 0})
+
+
 if __name__ == '__main__':
     unittest.main()
