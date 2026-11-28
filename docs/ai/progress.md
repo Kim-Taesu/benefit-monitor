@@ -9,6 +9,26 @@
 - 실제 실행한 검사·결과: 전체 단위 테스트 1263 통과(건너뜀 1).
 - 미검증: 다음 실행에서 새 문법 시험이 통과하고 점검이 지적 또는 빈 목록으로 끝나는지, `after_review_save`가 `ok`인지. `.tools/ai-inputs/` 정리 필요 여부는 며칠 크기 추이를 보고 따로 제안한다.
 
+## 2026-11-28 — 실행 상태 구성: 참조 중이라 정리되지 않는 수 기록
+
+- 작업 단위와 범위: 브랜치 `claude/blissful-ptolemy-lsbmfs`(main `e9f07f4` 기준).
+- 확인된 것(11-28 03:47 AI 실행, `ai-usage.json` `runtime`, `292066c`에서 추가된 기록): 압축 7.29 MB 중 조사 실행 기록(`.tools/claude-trial/live/runs`) 2,132개 파일 약 3.07 MiB, 조사 입력(`.tools/ai-inputs`) 427개 약 1.62 MiB, `cache/ai_review` 1,073개 약 1.33 MiB. 응답 캐시를 분리한 뒤에도 이 셋이 약 6 MiB다.
+- 변경: `runtime_retention.referenced_share`(실행 기록·입력·원문 사본마다 저장 수와 현재 기록이 참조하는 수, 숫자만), `cloud_daily.runtime_report`에 `references`로 추가, `ai_usage.markdown`이 Actions 요약에 표로 보인다. 정리 규칙·보관 기간은 바꾸지 않았다.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과(1263).
+- 미검증: 실제 참조 비율은 머지 뒤 첫 AI 실행의 `ai-usage.json` `runtime.references`에서 본다. 대부분이 참조 중이면 보관 기간을 더 줄여도 효과가 없고, 오래된 검토 상태가 계속 가리키는 기록을 정리하는 규칙(사람 승인 필요)을 검토한다.
+
+## 2026-11-28 — 보관 1일 효과 확인, 발굴 검색이 응답 캐시에 막힌 문제
+
+- 작업 단위와 범위: 브랜치 `claude/nice-franklin-x7ta5l`(main `e9f07f4` 기준).
+- 확인된 것(11-28 03:47 KST AI 정규 실행, `briefing-data` 기준):
+  - 실행 성공, 유료 요청 62건·$0.079.
+  - `ai-runtime.age` 8,249,985 → 7,289,476바이트(#98 보관 1일 효과, 8 MiB까지 약 1.1 MB).
+  - 공개 혜택 12 → 14건, AI 추천 4개 유지, `live_check` 실패 0. 스케이트장은 아직 없다.
+- 문제: 발굴 요청이 0건이었다(`ai-usage.json`에 `other` 없음). 원장은 요청 본문 해시를 요청 ID로 쓰고, 같은 본문이 이미 완료됐으면 저장된 응답을 돌려준다(`claude_trial._request`). 발굴 본문은 지역·달·도구 설정뿐이라, 11-27 요청과 11-28 요청이 같았다. 즉 발굴 검색이 한 달에 한 번만 돌게 돼 있었다.
+- 변경: `web_search.discovery_text`에 기준일(`today`, 입력 `now`의 날짜)을 넣고, `validate_discovery`가 `now` 형식을 검사한다. 테스트 `test_discovery_search.py`.
+- 실제 실행한 검사·결과: 전체 단위 테스트 통과.
+- 미검증: 다음 실행에서 발굴 요청 3건·검색 6회가 다시 기록되는지(`ai-usage.json` `other`).
+
 ## 2026-11-27 — 정규 실행 확인 후속: 멈춘 이유 기록, 실행 상태 구성 기록
 
 - 작업 단위와 범위: 같은 브랜치 `claude/bold-hamilton-85dxai`에 main `0fba51f`(#96·#97)를 머지(진행 기록 충돌만, 두 절 모두 보존)하고 이어서 고쳤다([정책 대응표](policy-map.md) 2026-11-27 항목).
